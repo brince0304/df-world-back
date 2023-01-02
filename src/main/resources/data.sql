@@ -1,0 +1,2 @@
+insert into USER_ACCOUNT (USER_ID, EMAIL, NICKNAME, PASSWORD) VALUES ( 'test','test@email.com','test','1234' );
+insert into USER_ACCOUNT_ROLES (USER_ACCOUNT_USER_ID, ROLES) VALUES ( 'test','ROLE_USER' );
