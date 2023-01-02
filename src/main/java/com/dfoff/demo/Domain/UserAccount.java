@@ -9,7 +9,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -21,13 +23,13 @@ import java.util.Set;
         {@Index(columnList = "email", unique = true)
                 , @Index(columnList = "nickname", unique = true)})
 @Builder
+@EqualsAndHashCode(of = "userId", callSuper = false)
 public class UserAccount extends AuditingFields {
     @Id
     @Column(length = 50)
     private String userId;
 
     @Setter
-    @Column(length = 50)
     private String password;
 
     @Setter
@@ -41,7 +43,7 @@ public class UserAccount extends AuditingFields {
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
     @Setter
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     private Set<SecurityRole> roles;
 
 
@@ -49,11 +51,14 @@ public class UserAccount extends AuditingFields {
     @RequiredArgsConstructor
     @Builder
     @Setter
+    @ToString
     public static class PrincipalDto implements UserDetails {
-        private final String userId;
+        private final String username;
         private final String password;
         private final String nickname;
         private final String email;
+
+        private final List<GrantedAuthority> authorities;
 
 
         @Override
@@ -63,44 +68,52 @@ public class UserAccount extends AuditingFields {
 
         @Override
         public String getPassword() {
-            return null;
+            return this.password;
         }
 
         @Override
         public String getUsername() {
-            return null;
+            return this.username;
         }
 
         @Override
         public boolean isAccountNonExpired() {
-            return false;
+            return true;
         }
 
         @Override
         public boolean isAccountNonLocked() {
-            return false;
+            return true;
         }
 
         @Override
         public boolean isCredentialsNonExpired() {
-            return false;
+            return true;
         }
 
         @Override
         public boolean isEnabled() {
-            return false;
+            return true;
         }
     }
 
     @AllArgsConstructor
     @Builder
     @Getter
+    @ToString
+    @EqualsAndHashCode
     public static class UserAccountDto {
         private final String userId;
-        private final String password;
+        @Setter
+        private  String password;
         private final String nickname;
         private final String email;
         private final Set<SecurityRole> roles;
+
+        private final LocalDateTime createdAt;
+        private final String createdBy;
+        private final LocalDateTime modifiedAt;
+        private final String modifiedBy;
 
         public static UserAccountDto from(UserAccount userAccount) {
             return UserAccountDto.builder()
@@ -109,6 +122,10 @@ public class UserAccount extends AuditingFields {
                     .nickname(userAccount.getNickname())
                     .email(userAccount.getEmail())
                     .roles(userAccount.getRoles())
+                    .createdAt(userAccount.getCreatedAt())
+                    .createdBy(userAccount.getCreatedBy())
+                    .modifiedAt(userAccount.getModifiedAt())
+                    .modifiedBy(userAccount.getModifiedBy())
                     .build();
         }
 
@@ -127,6 +144,8 @@ public class UserAccount extends AuditingFields {
 
     @Builder
     @Getter
+    @ToString
+    @EqualsAndHashCode
     public static class UserAccountUpdateRequest{
         @NotEmpty
         private final String userId;
@@ -147,6 +166,15 @@ public class UserAccount extends AuditingFields {
             this.email = email;
         }
 
+        public UserAccountDto toDto(){
+            return UserAccountDto.builder()
+                    .userId(userId)
+                    .password(password)
+                    .nickname(nickname)
+                    .email(email)
+                    .build();
+        }
+
 
         public UserAccount toEntity() {
             return UserAccount.builder()
@@ -156,6 +184,55 @@ public class UserAccount extends AuditingFields {
                     .email(email)
                     .build();
         }
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @ToString
+    @EqualsAndHashCode
+    public static class UserAccountSignUpRequest{
+        private final String userId;
+        private final String password;
+        private final String passwordCheck;
+        private final String nickname;
+        private final String email;
+
+        private final Set<SecurityRole> roles = Set.of(SecurityRole.ROLE_USER);
+
+
+
+        public UserAccountDto toDto(){
+            return UserAccountDto.builder()
+                    .userId(userId)
+                    .password(password)
+                    .nickname(nickname)
+                    .email(email)
+                    .roles(roles)
+                    .build();
+        }
+
+
+        public UserAccount toEntity() {
+            return UserAccount.builder()
+                    .userId(userId)
+                    .password(password)
+                    .nickname(nickname)
+                    .email(email)
+                    .roles(roles)
+                    .build();
+        }
+    }
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class LoginDto{
+        private String username;
+        private String password;
+
+
+
+
     }
 
 

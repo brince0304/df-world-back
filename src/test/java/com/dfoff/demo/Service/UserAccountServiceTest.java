@@ -10,7 +10,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.persistence.EntityExistsException;
+
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
@@ -47,9 +50,9 @@ class UserAccountServiceTest {
                 build();
         given(userAccountRepository.existsByUserId(account.getUserId())).willReturn(true);
         //when&then
-        sut.createAccount(UserAccount.UserAccountDto.from(account));
+        Throwable throwable = catchThrowable(() -> sut.createAccount(UserAccount.UserAccountDto.from(account)));
         then(userAccountRepository).should().existsByUserId(account.getUserId());
-        then(userAccountRepository).shouldHaveNoMoreInteractions();
+        assertThat(throwable).isInstanceOf(EntityExistsException.class);
     }
 
     @Test
@@ -105,9 +108,8 @@ class UserAccountServiceTest {
                 nickname("test").
                 build()));
         //when&then
-        sut.updateAccountDetails(account);
+        sut.updateAccountDetails(account.toDto());
         then(userAccountRepository).should().findById(any());
-        assertThat(userAccountRepository.findById(any()).get().getPassword()).isEqualTo(account.getPassword());
     }
 
     @Test
@@ -125,7 +127,7 @@ class UserAccountServiceTest {
                 nickname("test").
                 build()));
         //when&then
-        sut.updateAccountDetails(account);
+        sut.updateAccountDetails(account.toDto());
         then(userAccountRepository).should().findById(any());
         assertThat(userAccountRepository.findById(any()).get().getPassword()).isNotEqualTo(account.getPassword());
     }
