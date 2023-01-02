@@ -1,0 +1,2 @@
+insert into USER_ACCOUNT (USER_ID, CREATED_AT, CREATED_BY, MODIFIED_AT, MODIFIED_BY, EMAIL, NICKNAME, PASSWORD) VALUES ( 'test',now(),'test',now(),'test','test@email.com','test','$2a$10$ahvirS8Sy8m116bQKfr7huSb0QXcky9oYE7Lba6A0lC7wIxDVCPR2' );
+insert into USER_ACCOUNT_ROLES (USER_ACCOUNT_USER_ID, ROLES) VALUES ( 'test','ROLE_USER' );
