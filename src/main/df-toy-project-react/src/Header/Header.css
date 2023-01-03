@@ -1,0 +1,28 @@
+.silver-nav {
+    display: flex;
+    background-color: black;
+    padding-left: 20px;
+    width: 100%;
+    color: ghostwhite;
+}
+.logo{
+    text-decoration-line: none;
+    color: ghostwhite;
+    font-size: 20px;
+    font-weight: bold;
+    padding-right: 20px;
+
+}
+.navbar-text{
+    text-decoration-line: none;
+}
+a { text-decoration:none }
+.login-button{
+    color: silver;
+    font-size: 20px;
+    font-weight: bold;
+
+    padding: 5px;
+    text-decoration-line: none;
+
+}
