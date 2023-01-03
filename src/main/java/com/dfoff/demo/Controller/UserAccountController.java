@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,15 @@ public class UserAccountController {
     private final UserAccountService userAccountService;
     private final Bcrypt bcrypt;
 
+    @PostMapping("/api/user/login")
+    public ResponseEntity<?> login(@RequestBody UserAccount.LoginDto dto) {
+        try {
+            UserAccount.UserAccountDto accountDto = userAccountService.loginByUserId(dto);
+            return new ResponseEntity<>(accountDto.getUserId(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 
     @PostMapping("/api/user")
     public ResponseEntity<?> createAccount(@RequestBody UserAccount.UserAccountSignUpRequest request){

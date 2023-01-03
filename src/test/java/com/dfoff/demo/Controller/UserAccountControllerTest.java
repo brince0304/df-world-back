@@ -81,7 +81,7 @@ class UserAccountControllerTest {
                 .build());
 
         //when&then
-        mvc.perform(post("/login").content(mapper.writeValueAsString(loginDto)).contentType(MediaType.APPLICATION_JSON))
+        mvc.perform(post("/api/user/login").content(mapper.writeValueAsString(loginDto)).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
