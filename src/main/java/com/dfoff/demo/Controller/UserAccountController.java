@@ -7,10 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Objects;
 
@@ -24,17 +22,19 @@ public class UserAccountController {
     @PostMapping("/api/user/login")
     public ResponseEntity<?> login(@RequestBody UserAccount.LoginDto dto) {
         try {
+            log.info("login: {}", dto);
             UserAccount.UserAccountDto accountDto = userAccountService.loginByUserId(dto);
             return new ResponseEntity<>(accountDto.getUserId(), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("잘못된 아이디나 비밀번호입니다.", HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @PostMapping("/api/user")
     public ResponseEntity<?> createAccount(@RequestBody UserAccount.UserAccountSignUpRequest request){
         try {
-            log.info("회원가입 요청");
+            log.info("singUp: {}", request);
             if (request.getPassword().equals(request.getPasswordCheck())) {
                 UserAccount.UserAccountDto dto = request.toDto();
                 dto.setPassword(bcrypt.encode(request.getPassword()));

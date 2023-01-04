@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css'>
+  <link href="/css/header.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
+          integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js"
+          integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+          crossorigin="anonymous"></script>
+</head>
+<body>
+<header id="header">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Navbar</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/" th:if="${#authentication.isAuthenticated()==true}">Home</a>
+            <a class="nav-link active" aria-current="page" href="/" th:if="${#authentication.isAuthenticated()==false}" th:text="${#authentication.getPrincipal()}"></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:if="${#authentication.isAuthenticated()==true}" data-toggle="modal" data-target="#loginModal" >로그인</a>
+            <a class="nav-link" onclick="logoutAlert()" th:if="${#authentication.isAuthenticated()==false}">로그아웃</a>
+          </li>
+        </ul>
+        <form class="d-flex" role="search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Modal -->
+  <div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header border-bottom-0">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="limiter">
+            <div class="container-login100">
+              <div class="wrap-login100">
+                <div class="login100-form-title" style="background-image: url(Desktop/brincestudy/JAVA/df-toy-project/src/main/resources/static/Login/images/bg-01.jpg);">
+					<span class="login100-form-title-1">
+						Sign In
+					</span>
+                </div>
+
+                <form class="login100-form validate-form">
+                  <div class="wrap-input100 validate-input m-b-26" data-validate="Username is required">
+                    <span class="label-input100">Username</span>
+                    <input class="input100" id="username" type="text" name="username" placeholder="Enter username">
+                    <span class="focus-input100"></span>
+                  </div>
+
+                  <div class="wrap-input100 validate-input m-b-18" data-validate="Password is required">
+                    <span class="label-input100">Password</span>
+                    <input class="input100" id="password" type="password" name="pass" placeholder="Enter password">
+                    <span class="focus-input100"></span>
+                  </div>
+
+                  <div class="flex-sb-m w-full p-b-30">
+                    <div class="contact100-form-checkbox">
+                      <input class="input-checkbox100" id="remember-me" type="checkbox" name="remember-me">
+                      <label class="label-checkbox100" for="remember-me">
+                        Remember me
+                      </label>
+                    </div>
+
+                    <div>
+                      <a href="#" class="txt1">
+                        Forgot Password?
+                      </a>
+                    </div>
+                  </div>
+
+                  <div class="container-login100-form-btn">
+                    <button type="button" onclick="tryLogin()" class="login100-form-btn">
+                      Login
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer d-flex justify-content-center">
+          <div class="signup-section">Not a member yet? <a href="#a" class="text-info"> Sign Up</a>.</div>
+        </div>
+      </div>
+    </div>
+
+
+
+</header>
+
+
+<!-- Jquery needed -->
+<!-- jQuery -->
+<!-- Popper JS -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js'></script>
+<!-- Bootstrap JS -->
+<script src='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'></script>
+<script src='./header/header.js'></script>
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+
+<!-- Function used to shrink nav bar removing paddings and adding black background -->
+<script>
+  $(window).scroll(function() {
+    if ($(document).scrollTop() > 50) {
+      $('.nav').addClass('affix');
+      console.log("OK");
+    } else {
+      $('.nav').removeClass('affix');
+    }
+  });
+
+  $(document).ready(function() {$('#loginModal').modal('show');
+    $(function () {
+      $('[data-toggle="tooltip"]').tooltip()
+    })
+  });
+
+
+
+
+</script>
+</body>
+</html>
