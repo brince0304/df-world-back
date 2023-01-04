@@ -1,5 +1,6 @@
 package com.dfoff.demo.Config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -11,15 +12,24 @@ import java.util.Optional;
 
 @EnableJpaAuditing
 @Configuration
+@Slf4j
 public class JpaConfig {
     @Bean
     public AuditorAware<String> auditorAware() {
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        if(authentication == null) {
-            return () -> Optional.of("anonymous");
+        if(authentication!=null) {
+            if(authentication.isAuthenticated()) {
+                log.info("authentication: {}", authentication);
+                return () -> Optional.of(authentication.getName());
+            }
+            else{
+                log.info("authentication: {}", authentication);
+                return () -> Optional.of("anonymous");
+            }
         }
-        else {
-            return () -> Optional.of(authentication.getDetails().toString());
+        else{
+            log.info(SecurityContextHolder.getContext().toString());
+            return () -> Optional.of("anonymous");
         }
     }
 }
