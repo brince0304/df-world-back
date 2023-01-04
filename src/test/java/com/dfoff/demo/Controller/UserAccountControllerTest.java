@@ -4,6 +4,7 @@ import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.SecurityConfig.SecurityConfig;
 import com.dfoff.demo.SecurityConfig.SecurityService;
 import com.dfoff.demo.Service.UserAccountService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +16,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -55,6 +59,46 @@ class UserAccountControllerTest {
     }
 
     @Test
+    @DisplayName("[view] [POST] 아이디 중복검사")
+    void givenUserId_whenValidateUserId_thenGetsResult() throws Exception {
+        //given
+        given(userAccountService.existsByUserId(any())).willReturn(true);
+        Map<String,String> map = new HashMap<>();
+        map.put("username","test");
+        //when
+        //then
+        mvc.perform(post("/api/user/id").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(map)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("[view] [POST] 닉네임 중복검사")
+    void givenNickname_whenValidateNickname_thenGetsResult() throws Exception {
+        //given
+        given(userAccountService.existsByNickname(any())).willReturn(true);
+        Map<String,String> map = new HashMap<>();
+        map.put("nickname","test");
+        //when
+        //then
+        mvc.perform(post("/api/user/nickname").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(map)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("[view] [POST] 이메일 중복검사")
+    void givenEmail_whenValidateEmail_thenGetsResult() throws Exception {
+        //given
+        given(userAccountService.existsByEmail(any())).willReturn(true);
+        Map<String,String> map = new HashMap<>();
+        map.put("email","test");
+        //when
+        //then
+        mvc.perform(post("/api/user/email").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(map)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("[view] [POST] /api/user - 회원가입 시도")
     void givenUserDetails_whenCreatingUserAccount_thenCreatesUserAccount() throws Exception {
         //given
         given(userAccountService.createAccount(any())).willReturn(true);
@@ -65,7 +109,10 @@ class UserAccountControllerTest {
                 .andExpect(status().isOk());
     }
 
+
+
     @Test
+    @DisplayName("[view] [POST] /api/user/login - 로그인 시도")
     void givenSignupDto_whenLogin_thenLogin() throws Exception {
         //given
         UserAccount.LoginDto loginDto = UserAccount.LoginDto.builder()

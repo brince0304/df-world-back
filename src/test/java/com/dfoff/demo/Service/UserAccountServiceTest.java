@@ -39,6 +39,38 @@ class UserAccountServiceTest {
     }
 
     @Test
+    void givenUserId_whenValidateUserId_thenReturnBoolean() {
+        //given
+        given(userAccountRepository.existsByUserId(any())).willReturn(true);
+        //when
+        boolean result = sut.existsByUserId("test");
+
+        //then
+        assertThat(result).isTrue();
+    }
+
+    @Test
+    void givenNickname_whenValidateUserId_thenReturnBoolean() {
+        //given
+        given(userAccountRepository.existsByNickname(any())).willReturn(true);
+        //when
+        boolean result = sut.existsByNickname("test");
+
+        //then
+        assertThat(result).isTrue();
+    }
+    @Test
+    void givenEmail_whenValidateUserId_thenReturnBoolean() {
+        //given
+        given(userAccountRepository.existsByEmail(any())).willReturn(true);
+        //when
+        boolean result = sut.existsByEmail("test");
+
+        //then
+        assertThat(result).isTrue();
+    }
+
+    @Test
     @DisplayName("createAccount() - 계정생성 테스트 예외 - 이미 존재하는 아이디")
     void givenExistsAccountId_whenCreatingUserAccount_thenDoNotCreateAccount() {
         //given
