@@ -43,6 +43,18 @@ public class UserAccountService {
         return true;
     }
 
+    public boolean existsByUserId(String userId) {
+        return userAccountRepository.existsByUserId(userId);
+    }
+
+    public boolean existsByEmail(String email) {
+        return userAccountRepository.existsByEmail(email);
+    }
+
+    public boolean existsByNickname(String nickname) {
+        return userAccountRepository.existsByNickname(nickname);
+    }
+
 
 
     public boolean updateAccountDetails(UserAccount.UserAccountDto request) {
@@ -80,10 +92,10 @@ public class UserAccountService {
     }
 
     public UserAccount.UserAccountDto loginByUserId(UserAccount.LoginDto dto) {
-        UserAccount account = userAccountRepository.findById(dto.getUsername()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        log.info("authentication: {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         return UserAccount.UserAccountDto.builder().build();
     }
 }

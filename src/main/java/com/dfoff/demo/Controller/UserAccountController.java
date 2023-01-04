@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Map;
 import java.util.Objects;
 
 @RestController
@@ -29,6 +30,34 @@ public class UserAccountController {
             return new ResponseEntity<>("잘못된 아이디나 비밀번호입니다.", HttpStatus.BAD_REQUEST);
         }
     }
+    @PostMapping("/api/user/id")
+    public String checkId(@RequestBody Map<String,String> map) {
+        log.info("username: {}", map.get("username"));
+        boolean result = userAccountService.existsByUserId(map.get("username"));
+        if(result){
+            return "false";
+        }
+        return "true";
+    }
+    @PostMapping("/api/user/nickname")
+    public String checkNickname(@RequestBody Map<String,String> map) {
+        log.info("nickname: {}", map.get("nickname"));
+        boolean result = userAccountService.existsByNickname(map.get("nickname"));
+        if(result){
+            return "false";
+        }
+        return "true";
+    }
+    @PostMapping("/api/user/email")
+    public String checkEmail(@RequestBody Map<String,String> map) {
+        log.info("email: {}", map.get("email"));
+        boolean result = userAccountService.existsByEmail(map.get("email"));
+        if(result){
+            return "false";
+        }
+        return "true";
+    }
+
 
 
     @PostMapping("/api/user")
