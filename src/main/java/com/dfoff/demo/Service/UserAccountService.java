@@ -6,6 +6,12 @@ import com.dfoff.demo.Repository.UserAccountRepository;
 import com.dfoff.demo.Util.Bcrypt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.security.SecurityConfig;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +24,7 @@ import javax.persistence.EntityExistsException;
 @Transactional
 public class UserAccountService {
     private final UserAccountRepository userAccountRepository;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final Bcrypt bcrypt;
 
 
@@ -34,6 +41,18 @@ public class UserAccountService {
         log.info("account: {}", account);
         userAccountRepository.save(account.toEntity());
         return true;
+    }
+
+    public boolean existsByUserId(String userId) {
+        return userAccountRepository.existsByUserId(userId);
+    }
+
+    public boolean existsByEmail(String email) {
+        return userAccountRepository.existsByEmail(email);
+    }
+
+    public boolean existsByNickname(String nickname) {
+        return userAccountRepository.existsByNickname(nickname);
     }
 
 
@@ -70,5 +89,13 @@ public class UserAccountService {
             return true;
         }
         return false;
+    }
+
+    public UserAccount.UserAccountDto loginByUserId(UserAccount.LoginDto dto) {
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(token);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        log.info("authentication: {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return UserAccount.UserAccountDto.builder().build();
     }
 }

@@ -7,10 +7,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Map;
 import java.util.Objects;
 
 @RestController
@@ -20,11 +20,50 @@ public class UserAccountController {
     private final UserAccountService userAccountService;
     private final Bcrypt bcrypt;
 
+    @PostMapping("/api/user/login")
+    public ResponseEntity<?> login(@RequestBody UserAccount.LoginDto dto) {
+        try {
+            log.info("login: {}", dto);
+            UserAccount.UserAccountDto accountDto = userAccountService.loginByUserId(dto);
+            return new ResponseEntity<>(accountDto.getUserId(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("잘못된 아이디나 비밀번호입니다.", HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PostMapping("/api/user/id")
+    public String checkId(@RequestBody Map<String,String> map) {
+        log.info("username: {}", map.get("username"));
+        boolean result = userAccountService.existsByUserId(map.get("username"));
+        if(result){
+            return "false";
+        }
+        return "true";
+    }
+    @PostMapping("/api/user/nickname")
+    public String checkNickname(@RequestBody Map<String,String> map) {
+        log.info("nickname: {}", map.get("nickname"));
+        boolean result = userAccountService.existsByNickname(map.get("nickname"));
+        if(result){
+            return "false";
+        }
+        return "true";
+    }
+    @PostMapping("/api/user/email")
+    public String checkEmail(@RequestBody Map<String,String> map) {
+        log.info("email: {}", map.get("email"));
+        boolean result = userAccountService.existsByEmail(map.get("email"));
+        if(result){
+            return "false";
+        }
+        return "true";
+    }
+
+
 
     @PostMapping("/api/user")
     public ResponseEntity<?> createAccount(@RequestBody UserAccount.UserAccountSignUpRequest request){
         try {
-            log.info("회원가입 요청");
+            log.info("singUp: {}", request);
             if (request.getPassword().equals(request.getPasswordCheck())) {
                 UserAccount.UserAccountDto dto = request.toDto();
                 dto.setPassword(bcrypt.encode(request.getPassword()));
