@@ -300,7 +300,6 @@ table {
 }
 
 html {
-  font-size: 62.5%;
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
@@ -751,7 +750,11 @@ code {
   background-color: #f9f2f4;
   border-radius: 4px;
 }
-
+.stick{
+  position:fixed;
+  top:0px;
+  z-index:99;
+}
 pre {
   display: block;
   padding: 9.5px;
