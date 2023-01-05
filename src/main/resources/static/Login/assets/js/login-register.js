@@ -78,6 +78,18 @@ function shakeModal(){
     }, 1000 ); 
 }
 
+function logoutAlert(){
+    $.ajax({
+        url: "/api/user/logout",
+        type: "GET",
+        success: function (data) {
+            console.log(data);
+            alert("로그아웃 되었습니다.");
+            location.reload();
+        }
+    });
+}
+
 
 
 

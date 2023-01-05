@@ -48,7 +48,7 @@
                         </li>
                         <li><a class="nav-link" sec:authorize="!isAuthenticated()" data-toggle="modal" href="#"
                                data-target="#loginModal">로그인</a>
-                            <a class="nav-link" sec:authorize="isAuthenticated()" onclick="logoutAlert()" href="#"
+                            <a class="nav-link" sec:authorize="isAuthenticated()" href="javascript: logoutAlert();"
                                th:if="${#authentication!=null}">로그아웃</a>
                         </li>
 
