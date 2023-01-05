@@ -7,11 +7,6 @@ $(window).scroll(function() {
     }
 });
 
-$(document).ready(function() {$('#loginModal').modal('show');
-    $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
-    })
-});
 
 
 $(window).scroll(function() {

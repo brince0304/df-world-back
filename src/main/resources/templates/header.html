@@ -33,7 +33,7 @@
 
 
             <div class="site-logo">
-                <a th:href="@{/main.df}"  class="text-black"><span class="text-primary">Brand</span></a>
+                <a th:href="@{/main.df}" class="text-black"><span class="text-primary">던파모아온오프</span></a>
             </div>
 
             <div class="col-12">
@@ -44,7 +44,7 @@
                             <a class="nav-link active" aria-current="page" th:href="@{/main.df}"
                                th:if="${#authentication.getPrincipal()==null}">Home</a>
                             <a class="nav-link active" sec:authorize="isAuthenticated()" aria-current="page"
-                               th:href="@{/main.df}" th:text="마이페이지"></a>
+                               th:href="@{/user/myPage.df}" th:text="마이페이지"></a>
                         </li>
                         <li><a class="nav-link" sec:authorize="!isAuthenticated()" data-toggle="modal" href="#"
                                data-target="#loginModal">로그인</a>
@@ -53,33 +53,29 @@
                         </li>
 
                         <li class="has-children">
-                            <a href="#about-section" class="nav-link">메뉴</a>
+                            <a href="#about-section" class="nav-link">컨텐츠</a>
                             <ul class="dropdown arrow-top">
-                                <li><a href="#team-section" class="nav-link">메뉴1</a></li>
-                                <li><a href="#pricing-section" class="nav-link">메뉴2</a></li>
-                                <li><a href="#faq-section" class="nav-link">메뉴3</a></li>
-                                <li class="has-children">
-                                    <a href="#">More Links</a>
-                                    <ul class="dropdown">
-                                        <li><a href="#">Menu One</a></li>
-                                        <li><a href="#">Menu Two</a></li>
-                                        <li><a href="#">Menu Three</a></li>
-                                    </ul>
-                                </li>
+                                <li><a href="#team-section" class="nav-link">버프력 검색</a></li>
+                                <li><a href="#pricing-section" class="nav-link">경매장</a></li>
+                                <li><a href="#faq-section" class="nav-link">카드 도감</a></li>
+                                <li><a href="#faq-section" class="nav-link">아바타 정옵표</a></li>
+                                <li><a href="#faq-section" class="nav-link">직업 분포도</a></li>
+                                <li><a href="#faq-section" class="nav-link">장비 통계</a></li>
+                                <li><a href="#faq-section" class="nav-link">오늘의 등급</a></li>
                             </ul>
                         </li>
 
-                        <li><a href="#why-us-section" class="nav-link">Why Us</a></li>
+                        <li><a href="#why-us-section" class="nav-link">랭킹</a></li>
 
-                        <li><a href="#testimonials-section" class="nav-link">Testimonials</a></li>
-                        <li><a href="#blog-section" class="nav-link">Blog</a></li>
-                        <li><a href="#contact-section" class="nav-link">Contact</a></li>
+                        <li><a href="#testimonials-section" class="nav-link">게시판</a></li>
                     </ul>
                 </nav>
 
             </div>
 
-            <div class="toggle-button d-inline-block d-lg-none"><a href="#" class="site-menu-toggle py-5 js-menu-toggle text-black"><span class="icon-menu h3"></span></a></div>
+            <div class="toggle-button d-inline-block d-lg-none"><a href="#"
+                                                                   class="site-menu-toggle py-5 js-menu-toggle text-black"><span
+                    class="icon-menu h3"></span></a></div>
 
         </div>
     </div>
