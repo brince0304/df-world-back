@@ -25,8 +25,29 @@ public class DFJob {
     private String jobName;
 
 
+    @Getter
+    @AllArgsConstructor
+    @Builder
+    public static class DFJobDTO{
+        private final String jobId;
+        private final String jobName;
+
+        public static DFJobDTO from(DFJob dfJob){
+            return DFJobDTO.builder()
+                    .jobId(dfJob.getJobId())
+                    .jobName(dfJob.getJobName())
+                    .build();
+        }
+
+        public static DFJob toEntity(DFJobDTO dfJobDTO){
+            return DFJob.builder()
+                    .jobId(dfJobDTO.getJobId())
+                    .jobName(dfJobDTO.getJobName())
+                    .build();
+        }
+    }
     @javax.annotation.Generated("jsonschema2pojo")
-    public static class DFJobDTO {
+    public static class DFJobJSONDTO {
 
         @SerializedName("rows")
         @Expose
@@ -36,14 +57,14 @@ public class DFJob {
          * No args constructor for use in serialization
          *
          */
-        public DFJobDTO() {
+        public DFJobJSONDTO() {
         }
 
         /**
          *
          * @param rows
          */
-        public DFJobDTO(List<Row> rows) {
+        public DFJobJSONDTO(List<Row> rows) {
             super();
             this.rows = rows;
         }
@@ -59,7 +80,7 @@ public class DFJob {
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append(DFJobDTO.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+            sb.append(DFJobJSONDTO.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
             sb.append("rows");
             sb.append('=');
             sb.append(((this.rows == null)?"<null>":this.rows));
@@ -84,10 +105,10 @@ public class DFJob {
             if (other == this) {
                 return true;
             }
-            if ((other instanceof DFJobDTO) == false) {
+            if ((other instanceof DFJobJSONDTO) == false) {
                 return false;
             }
-            DFJobDTO rhs = ((DFJobDTO) other);
+            DFJobJSONDTO rhs = ((DFJobJSONDTO) other);
             return ((this.rows == rhs.rows)||((this.rows!= null)&&this.rows.equals(rhs.rows)));
         }
 

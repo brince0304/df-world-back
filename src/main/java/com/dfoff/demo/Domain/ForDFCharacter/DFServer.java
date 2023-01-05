@@ -19,13 +19,34 @@ import java.util.List;
 @EqualsAndHashCode(of = "serverId")
 public class DFServer {
     @Id
-    String serverId;
+    private String serverId;
     @Setter
     @Column (nullable = false)
-    String serverName;
+    private String serverName;
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class DFServerDTO{
+        private final String serverId;
+        private final String serverName;
+
+        public static DFServerDTO from(DFServer dfServer){
+            return DFServerDTO.builder()
+                    .serverId(dfServer.getServerId())
+                    .serverName(dfServer.getServerName())
+                    .build();
+        }
+
+        public static DFServer toEntity(DFServerDTO dfServerDTO){
+            return DFServer.builder()
+                    .serverId(dfServerDTO.getServerId())
+                    .serverName(dfServerDTO.getServerName())
+                    .build();
+        }
+    }
 
     @javax.annotation.Generated("jsonschema2pojo")
-    public static class DFServerDTO {
+    public static class DFServerJSONDTO {
 
         @SerializedName("rows")
         @Expose
@@ -35,14 +56,14 @@ public class DFServer {
          * No args constructor for use in serialization
          *
          */
-        public DFServerDTO() {
+        public DFServerJSONDTO() {
         }
 
         /**
          *
          * @param rows
          */
-        public DFServerDTO(List<Row> rows) {
+        public DFServerJSONDTO(List<Row> rows) {
             super();
             this.rows = rows;
         }
@@ -58,7 +79,7 @@ public class DFServer {
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append(DFServerDTO.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+            sb.append(DFServerJSONDTO.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
             sb.append("rows");
             sb.append('=');
             sb.append(((this.rows == null)?"<null>":this.rows));
@@ -83,10 +104,10 @@ public class DFServer {
             if (other == this) {
                 return true;
             }
-            if ((other instanceof DFServerDTO) == false) {
+            if ((other instanceof DFServerJSONDTO) == false) {
                 return false;
             }
-            DFServerDTO rhs = ((DFServerDTO) other);
+            DFServerJSONDTO rhs = ((DFServerJSONDTO) other);
             return ((this.rows == rhs.rows)||((this.rows!= null)&&this.rows.equals(rhs.rows)));
         }
 

@@ -40,6 +40,8 @@ public class UserAccount extends AuditingFields {
     @Column(length = 100, unique = true)
     private String email;
 
+
+
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
     @Setter
@@ -96,18 +98,37 @@ public class UserAccount extends AuditingFields {
             return true;
         }
     }
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    public static class UserAccountResponse{
+        private final String userId;
+        private final String nickname;
+        private final String email;
+        private final Set<SecurityRole> roles;
+
+        public static UserAccountResponse of(UserAccountDTO userAccount){
+            return UserAccountResponse.builder()
+                    .userId(userAccount.getUserId())
+                    .nickname(userAccount.getNickname())
+                    .email(userAccount.getEmail())
+                    .roles(userAccount.getRoles())
+                    .build();
+        }
+    }
 
     @AllArgsConstructor
     @Builder
     @Getter
     @ToString
     @EqualsAndHashCode
-    public static class UserAccountDto {
+    public static class UserAccountDTO {
         private final String userId;
         @Setter
         private  String password;
         private final String nickname;
         private final String email;
+
         private final Set<SecurityRole> roles;
 
         private final LocalDateTime createdAt;
@@ -115,8 +136,8 @@ public class UserAccount extends AuditingFields {
         private final LocalDateTime modifiedAt;
         private final String modifiedBy;
 
-        public static UserAccountDto from(UserAccount userAccount) {
-            return UserAccountDto.builder()
+        public static UserAccountDTO from(UserAccount userAccount) {
+            return UserAccountDTO.builder()
                     .userId(userAccount.getUserId())
                     .password(userAccount.getPassword())
                     .nickname(userAccount.getNickname())
@@ -128,14 +149,27 @@ public class UserAccount extends AuditingFields {
                     .modifiedBy(userAccount.getModifiedBy())
                     .build();
         }
+        public static UserAccountDTO from(PrincipalDto principalDto){
+            return UserAccountDTO.builder()
+                    .userId(principalDto.getUsername())
+                    .password(principalDto.getPassword())
+                    .nickname(principalDto.getNickname())
+                    .email(principalDto.getEmail())
+                    .roles(null)
+                    .createdAt(null)
+                    .createdBy(null)
+                    .modifiedAt(null)
+                    .modifiedBy(null)
+                    .build();
+        }
 
-        public UserAccount toEntity() {
+        public static UserAccount toEntity(UserAccountDTO userAccountDto) {
             return UserAccount.builder()
-                    .userId(userId)
-                    .password(password)
-                    .nickname(nickname)
-                    .email(email)
-                    .roles(roles)
+                    .userId(userAccountDto.getUserId())
+                    .password(userAccountDto.getPassword())
+                    .nickname(userAccountDto.getNickname())
+                    .email(userAccountDto.getEmail())
+                    .roles(userAccountDto.getRoles())
                     .build();
         }
 
@@ -166,8 +200,8 @@ public class UserAccount extends AuditingFields {
             this.email = email;
         }
 
-        public UserAccountDto toDto(){
-            return UserAccountDto.builder()
+        public UserAccountDTO toDto(){
+            return UserAccountDTO.builder()
                     .userId(userId)
                     .password(password)
                     .nickname(nickname)
@@ -202,8 +236,8 @@ public class UserAccount extends AuditingFields {
 
 
 
-        public UserAccountDto toDto(){
-            return UserAccountDto.builder()
+        public UserAccountDTO toDto(){
+            return UserAccountDTO.builder()
                     .userId(userId)
                     .password(password)
                     .nickname(nickname)
