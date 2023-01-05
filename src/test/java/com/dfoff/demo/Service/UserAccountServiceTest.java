@@ -33,7 +33,7 @@ class UserAccountServiceTest {
                 nickname("test").
                 build();
         //when&then
-        sut.createAccount(UserAccount.UserAccountDTO.from(account));
+        sut.createAccount(UserAccount.UserAccountDTO.from(account),any());
         then(userAccountRepository).should().save(account);
     }
 
@@ -81,7 +81,7 @@ class UserAccountServiceTest {
                 build();
         given(userAccountRepository.existsByUserId(account.getUserId())).willReturn(true);
         //when&then
-        Throwable throwable = catchThrowable(() -> sut.createAccount(UserAccount.UserAccountDTO.from(account)));
+        Throwable throwable = catchThrowable(() -> sut.createAccount(UserAccount.UserAccountDTO.from(account),any()));
         then(userAccountRepository).should().existsByUserId(account.getUserId());
         assertThat(throwable).isInstanceOf(EntityExistsException.class);
     }
