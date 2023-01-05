@@ -11,9 +11,14 @@ import org.springframework.web.servlet.ModelAndView;
 @AllArgsConstructor
 public class MainController {
 
-    @GetMapping("/")
+    @GetMapping("/main.df")
     public ModelAndView main() throws ParseException {
         return new ModelAndView("index");
+    }
+
+    @GetMapping("/")
+    public ModelAndView index() throws ParseException {
+        return new ModelAndView("redirect:/main.df");
     }
 
 }

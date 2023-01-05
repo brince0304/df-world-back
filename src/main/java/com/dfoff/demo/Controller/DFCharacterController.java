@@ -15,14 +15,14 @@ public class DFCharacterController {
     private final DFCharacterService DFCharacterService;
 
     @GetMapping("/df/update.df")
-    public ResponseEntity<?> getServerAndJobListForUpdate(){
+    public ModelAndView getServerAndJobListForUpdate(){
         try {
             DFCharacterService.getJobList();
             DFCharacterService.getServerStatus();
-            return new ResponseEntity<>(new ModelAndView("/index"), null, 200);
+            return new ModelAndView("redirect:/main.df");
         } catch (Exception e) {
             log.error("error", e);
-            return new ResponseEntity<>(new ModelAndView("/index"), null, 500);
+            return new ModelAndView("redirect:/main.df");
         }
     }
 

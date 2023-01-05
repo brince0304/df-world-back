@@ -33,7 +33,7 @@
 
 
             <div class="site-logo">
-                <a href="/" class="text-black"><span class="text-primary">Brand</a>
+                <a th:href="@{/main.df}"  class="text-black"><span class="text-primary">Brand</span></a>
             </div>
 
             <div class="col-12">
@@ -41,10 +41,10 @@
 
                     <ul class="site-menu main-menu js-clone-nav ml-auto d-none d-lg-block">
                         <li>
-                            <a class="nav-link active" aria-current="page" href="/"
+                            <a class="nav-link active" aria-current="page" th:href="@{/main.df}"
                                th:if="${#authentication.getPrincipal()==null}">Home</a>
                             <a class="nav-link active" sec:authorize="isAuthenticated()" aria-current="page"
-                               href="/" th:text="마이페이지"></a>
+                               th:href="@{/main.df}" th:text="마이페이지"></a>
                         </li>
                         <li><a class="nav-link" sec:authorize="!isAuthenticated()" data-toggle="modal" href="#"
                                data-target="#loginModal">로그인</a>
