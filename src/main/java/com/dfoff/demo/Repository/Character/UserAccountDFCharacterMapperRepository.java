@@ -13,5 +13,7 @@ public interface UserAccountDFCharacterMapperRepository extends JpaRepository<Us
 
     UserAccountDFCharacterMapper findByUserAccountAndDfCharacter(String userAccountId, String dfCharacterId);
 
+    boolean existsByUserAccount(@Param("user_account_id")UserAccount userAccount);
+
     boolean existsByUserAccountAndDfCharacter(@Param("user_account_id")  UserAccount userAccount, @Param("df_character_id")DFCharacter character);
 }

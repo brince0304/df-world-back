@@ -10,6 +10,7 @@ import lombok.*;
 
 import javax.annotation.Generated;
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -64,6 +65,13 @@ public class DFCharacter extends AuditingFields {
         private final DFJob.DFJobDTO dfJob;
         private final DFJobGrow.DFJobGrowDTO dfJobGrow;
 
+        private final LocalDateTime createdAt;
+        private final LocalDateTime modifiedAt;
+
+        private final String createdBy;
+
+        private final String modifiedBy;
+
 
         public static DFCharacterDTO from (DFCharacter entity){
             return DFCharacterDTO.builder()
@@ -73,6 +81,10 @@ public class DFCharacter extends AuditingFields {
                     .dfServer(DFServer.DFServerDTO.from(entity.getDfServer()))
                     .dfJob(DFJob.DFJobDTO.from(entity.getDfJob()))
                     .dfJobGrow(DFJobGrow.DFJobGrowDTO.from(entity.getDfJobGrow()))
+                    .createdAt(entity.getCreatedAt())
+                    .modifiedAt(entity.getModifiedAt())
+                    .createdBy(entity.getCreatedBy())
+                    .modifiedBy(entity.getModifiedBy())
                     .build();
         }
 

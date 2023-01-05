@@ -1,9 +1,11 @@
 package com.dfoff.demo.Controller;
 
 import com.dfoff.demo.Domain.DFCharacter;
+import com.dfoff.demo.Domain.EnumType.SaveFile.CharacterIconType;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Domain.UserAccountDFCharacterMapper;
 import com.dfoff.demo.Repository.Character.UserAccountDFCharacterMapperRepository;
+import com.dfoff.demo.Service.SaveFileService;
 import com.dfoff.demo.Service.UserAccountDFCharacterMapperService;
 import com.dfoff.demo.Service.UserAccountService;
 import com.dfoff.demo.Util.Bcrypt;
@@ -24,6 +26,7 @@ import java.util.Set;
 public class UserAccountController {
     private final UserAccountService userAccountService;
     private final UserAccountDFCharacterMapperService mapperService;
+    private final SaveFileService saveFileService;
 
 
     private final Bcrypt bcrypt;
@@ -75,6 +78,7 @@ public class UserAccountController {
             if (request.getPassword().equals(request.getPasswordCheck())) {
                 UserAccount.UserAccountDTO dto = request.toDto();
                 dto.setPassword(bcrypt.encode(request.getPassword()));
+                dto.setProfileIcon(saveFileService.getFileByFileName("icon_char_0.png"));
                 if (userAccountService.createAccount(dto)) {
                     return new ResponseEntity<>(request.getUserId(), HttpStatus.OK);
                 }
@@ -82,7 +86,7 @@ public class UserAccountController {
             return new ResponseEntity<>("비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
         catch (Exception e){
-            log.error("회원가입 실패");
+            e.printStackTrace();
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }

@@ -39,6 +39,10 @@ public class UserAccount extends AuditingFields {
     @Setter
     @Column(length = 100, unique = true)
     private String email;
+    @Setter
+    @JoinColumn(name = "save_file_id")
+    @OneToOne(fetch = FetchType.LAZY)
+    private SaveFile profileIcon;
 
 
 
@@ -60,7 +64,10 @@ public class UserAccount extends AuditingFields {
         private final String nickname;
         private final String email;
 
+        private final SaveFile.SaveFileDTO profileIcon;
+
         private final List<GrantedAuthority> authorities;
+
 
 
         @Override
@@ -105,6 +112,8 @@ public class UserAccount extends AuditingFields {
         private final String userId;
         private final String nickname;
         private final String email;
+
+        private final SaveFile.SaveFileDTO profileIcon;
         private final Set<SecurityRole> roles;
 
         public static UserAccountResponse of(UserAccountDTO userAccount){
@@ -113,6 +122,7 @@ public class UserAccount extends AuditingFields {
                     .nickname(userAccount.getNickname())
                     .email(userAccount.getEmail())
                     .roles(userAccount.getRoles())
+                    .profileIcon(userAccount.getProfileIcon())
                     .build();
         }
     }
@@ -128,6 +138,8 @@ public class UserAccount extends AuditingFields {
         private  String password;
         private final String nickname;
         private final String email;
+        @Setter
+        private SaveFile.SaveFileDTO profileIcon;
 
         private final Set<SecurityRole> roles;
 
@@ -143,6 +155,7 @@ public class UserAccount extends AuditingFields {
                     .nickname(userAccount.getNickname())
                     .email(userAccount.getEmail())
                     .roles(userAccount.getRoles())
+                    .profileIcon(SaveFile.SaveFileDTO.from(userAccount.getProfileIcon()))
                     .createdAt(userAccount.getCreatedAt())
                     .createdBy(userAccount.getCreatedBy())
                     .modifiedAt(userAccount.getModifiedAt())
@@ -155,6 +168,7 @@ public class UserAccount extends AuditingFields {
                     .password(principalDto.getPassword())
                     .nickname(principalDto.getNickname())
                     .email(principalDto.getEmail())
+                    .profileIcon(principalDto.getProfileIcon())
                     .roles(null)
                     .createdAt(null)
                     .createdBy(null)
@@ -169,6 +183,7 @@ public class UserAccount extends AuditingFields {
                     .password(userAccountDto.getPassword())
                     .nickname(userAccountDto.getNickname())
                     .email(userAccountDto.getEmail())
+                    .profileIcon(SaveFile.SaveFileDTO.toEntity(userAccountDto.getProfileIcon()))
                     .roles(userAccountDto.getRoles())
                     .build();
         }

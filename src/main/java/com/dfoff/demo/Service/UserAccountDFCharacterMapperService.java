@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -24,6 +25,9 @@ public class UserAccountDFCharacterMapperService {
                 .build());
     }
     public Set<DFCharacter.DFCharacterDTO> getDFCharactersByUserAccount(UserAccount.UserAccountDTO userAccountDTO) {
+        if(!userAccountDFCharacterMapperRepository.existsByUserAccount(UserAccount.UserAccountDTO.toEntity(userAccountDTO))) {
+            return new HashSet<>();
+        }
         return DFCharacter.DFCharacterDTO
                 .fromMapper(UserAccountDFCharacterMapper.UserAccountDFCharacterMapperDTO
                         .from(userAccountDFCharacterMapperRepository

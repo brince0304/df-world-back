@@ -1,6 +1,8 @@
 package com.dfoff.demo.Service;
 
+import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
+import com.dfoff.demo.Repository.SaveFileRepository;
 import com.dfoff.demo.Repository.UserAccountRepository;
 import com.dfoff.demo.Util.Bcrypt;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +37,7 @@ public class UserAccountService {
             throw new EntityExistsException("이미 존재하는 닉네임입니다.");
         }
         log.info("account: {}", account);
-        userAccountRepository.save(UserAccount.UserAccountDTO.toEntity(account));
+        UserAccount account0 = userAccountRepository.save(UserAccount.UserAccountDTO.toEntity(account));
         return true;
     }
 
