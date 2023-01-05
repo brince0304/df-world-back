@@ -12,8 +12,6 @@ import javax.persistence.*;
 @Builder
 @EqualsAndHashCode(of = "jobGrowName")
 public class DFJobGrow {
-
-
     @Setter
     @Column (nullable = false)
     private String jobGrowId;
