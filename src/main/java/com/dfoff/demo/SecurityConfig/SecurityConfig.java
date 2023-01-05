@@ -36,8 +36,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.formLogin()
-                .and().rememberMe().rememberMeCookieName("remember-me").rememberMeParameter("remember-me")
-                .userDetailsService(securityService)
                 .and()
                 .logout().logoutRequestMatcher(new AntPathRequestMatcher("/api/user/logout"))
                 .logoutSuccessUrl("/").deleteCookies("JSESSIONID")
@@ -46,7 +44,6 @@ public class SecurityConfig {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/**").permitAll()
-                .antMatchers("/Login/**").permitAll()
                 .and()
                 .build();
 
