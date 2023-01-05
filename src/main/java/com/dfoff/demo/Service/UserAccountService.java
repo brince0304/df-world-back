@@ -1,18 +1,14 @@
 package com.dfoff.demo.Service;
 
-import com.dfoff.demo.Domain.EnumType.SecurityRole;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Repository.UserAccountRepository;
 import com.dfoff.demo.Util.Bcrypt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.security.SecurityConfig;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +24,7 @@ public class UserAccountService {
     private final Bcrypt bcrypt;
 
 
-    public boolean createAccount(UserAccount.UserAccountDto account) {
+    public boolean createAccount(UserAccount.UserAccountDTO account) {
         if (userAccountRepository.existsByUserId(account.getUserId())) {
             throw new EntityExistsException("이미 존재하는 아이디입니다.");
         }
@@ -39,7 +35,7 @@ public class UserAccountService {
             throw new EntityExistsException("이미 존재하는 닉네임입니다.");
         }
         log.info("account: {}", account);
-        userAccountRepository.save(account.toEntity());
+        userAccountRepository.save(UserAccount.UserAccountDTO.toEntity(account));
         return true;
     }
 
@@ -57,7 +53,7 @@ public class UserAccountService {
 
 
 
-    public boolean updateAccountDetails(UserAccount.UserAccountDto request) {
+    public boolean updateAccountDetails(UserAccount.UserAccountDTO request) {
         UserAccount account = userAccountRepository.findById(request.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         if (userAccountRepository.existsByEmail(request.getEmail())) {
             log.info("이미 존재하는 이메일입니다.");
@@ -76,11 +72,11 @@ public class UserAccountService {
         return true;
     }
     @Transactional(readOnly = true)
-    public UserAccount.UserAccountDto getUserAccountById(String userId) {
+    public UserAccount.UserAccountDTO getUserAccountById(String userId) {
         if(userAccountRepository.existsByUserId(userId)){
-            return UserAccount.UserAccountDto.from(userAccountRepository.getReferenceById(userId));
+            return UserAccount.UserAccountDTO.from(userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다.")));
         }
-        return UserAccount.UserAccountDto.builder().build();
+        return null;
     }
 
     public boolean deleteUserAccountById(String userId) {
@@ -91,11 +87,13 @@ public class UserAccountService {
         return false;
     }
 
-    public UserAccount.UserAccountDto loginByUserId(UserAccount.LoginDto dto) {
+    public UserAccount.UserAccountDTO loginByUserId(UserAccount.LoginDto dto) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         log.info("authentication: {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        return UserAccount.UserAccountDto.builder().build();
+        return UserAccount.UserAccountDTO.builder().build();
     }
+
+
 }

@@ -1,6 +1,6 @@
 package com.dfoff.demo.SecurityConfig;
 
-import com.dfoff.demo.Domain.EnumType.SecurityRole;
+import com.dfoff.demo.Domain.EnumType.UserAccount.SecurityRole;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service

@@ -2,7 +2,6 @@ package com.dfoff.demo.Service;
 
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Repository.UserAccountRepository;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +33,7 @@ class UserAccountServiceTest {
                 nickname("test").
                 build();
         //when&then
-        sut.createAccount(UserAccount.UserAccountDto.from(account));
+        sut.createAccount(UserAccount.UserAccountDTO.from(account));
         then(userAccountRepository).should().save(account);
     }
 
@@ -82,7 +81,7 @@ class UserAccountServiceTest {
                 build();
         given(userAccountRepository.existsByUserId(account.getUserId())).willReturn(true);
         //when&then
-        Throwable throwable = catchThrowable(() -> sut.createAccount(UserAccount.UserAccountDto.from(account)));
+        Throwable throwable = catchThrowable(() -> sut.createAccount(UserAccount.UserAccountDTO.from(account)));
         then(userAccountRepository).should().existsByUserId(account.getUserId());
         assertThat(throwable).isInstanceOf(EntityExistsException.class);
     }
@@ -118,7 +117,7 @@ class UserAccountServiceTest {
                 build();
         given(userAccountRepository.existsByUserId(account.getUserId())).willReturn(false);
         //when
-        UserAccount.UserAccountDto dto  = sut.getUserAccountById(account.getUserId());
+        UserAccount.UserAccountDTO dto  = sut.getUserAccountById(account.getUserId());
 
         //then
         assertThat(dto.getUserId()).isNull();
