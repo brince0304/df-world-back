@@ -1,28 +1,38 @@
 package com.dfoff.demo.Controller;
 
+import com.dfoff.demo.Domain.DFCharacter;
 import com.dfoff.demo.Domain.UserAccount;
+import com.dfoff.demo.Domain.UserAccountDFCharacterMapper;
+import com.dfoff.demo.Repository.Character.UserAccountDFCharacterMapperRepository;
+import com.dfoff.demo.Service.UserAccountDFCharacterMapperService;
 import com.dfoff.demo.Service.UserAccountService;
 import com.dfoff.demo.Util.Bcrypt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @Slf4j
 @RequiredArgsConstructor
 public class UserAccountController {
     private final UserAccountService userAccountService;
+    private final UserAccountDFCharacterMapperService mapperService;
+
+
     private final Bcrypt bcrypt;
 
     @PostMapping("/api/user/login")
     public ResponseEntity<?> login(@RequestBody UserAccount.LoginDto dto) {
         try {
             log.info("login: {}", dto);
-            UserAccount.UserAccountDto accountDto = userAccountService.loginByUserId(dto);
+            UserAccount.UserAccountDTO accountDto = userAccountService.loginByUserId(dto);
             return new ResponseEntity<>(accountDto.getUserId(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("잘못된 아이디나 비밀번호입니다.", HttpStatus.BAD_REQUEST);
@@ -63,7 +73,7 @@ public class UserAccountController {
         try {
             log.info("singUp: {}", request);
             if (request.getPassword().equals(request.getPasswordCheck())) {
-                UserAccount.UserAccountDto dto = request.toDto();
+                UserAccount.UserAccountDTO dto = request.toDto();
                 dto.setPassword(bcrypt.encode(request.getPassword()));
                 if (userAccountService.createAccount(dto)) {
                     return new ResponseEntity<>(request.getUserId(), HttpStatus.OK);
@@ -76,4 +86,25 @@ public class UserAccountController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/user/myPage.df")
+    public ModelAndView getMyPage(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto){
+        try {
+            if (principalDto == null) {
+                return new ModelAndView("redirect:/main.df");
+            }
+            ModelAndView mav = new ModelAndView("/mypage/mypage");
+            mav.addObject("user", UserAccount.UserAccountResponse.of(userAccountService.getUserAccountById(principalDto.getUsername())));
+            Set<DFCharacter.DFCharacterDTO> characters = mapperService.getDFCharactersByUserAccount(UserAccount.UserAccountDTO.from(principalDto));
+            mav.addObject("characters", characters);
+            return mav;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return new ModelAndView("redirect:/main.df");
+        }
+
+    }
+
+
 }
