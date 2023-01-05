@@ -1,6 +1,6 @@
 package com.dfoff.demo.Domain;
 
-import com.dfoff.demo.Domain.EnumType.SecurityRole;
+import com.dfoff.demo.Domain.EnumType.UserAccount.SecurityRole;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
 import io.micrometer.core.lang.Nullable;
 import lombok.*;
