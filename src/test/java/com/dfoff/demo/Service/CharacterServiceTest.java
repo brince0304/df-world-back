@@ -1,9 +1,5 @@
 package com.dfoff.demo.Service;
 
-import com.dfoff.demo.Repository.Character.DFCharacterRepository;
-import com.dfoff.demo.Repository.Character.DFJobGrowRepository;
-import com.dfoff.demo.Repository.Character.DFJobRepository;
-import com.dfoff.demo.Repository.Character.DFServerRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,9 +17,9 @@ import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
 
-class DFCharacterServiceTest {
+class CharacterServiceTest {
     @InjectMocks
-    DFCharacterService sut;
+    CharacterService sut;
 
     @Mock
     DFCharacterRepository DFCharacterRepository;
@@ -39,8 +35,8 @@ class DFCharacterServiceTest {
 
     @BeforeEach
     void setUp() {
-        sut.getJobListAndSave();
-        sut.getServerStatusAndSave();
+        sut.getJobList();
+        sut.getServerStatus();
     }
 
 
@@ -49,7 +45,7 @@ class DFCharacterServiceTest {
         //given
         long count = dfServerRepository.count();
         //when
-        sut.getServerStatusAndSave();
+        sut.getServerStatus();
         //then
         then(dfServerRepository).should().saveAll(any());
     }
@@ -58,7 +54,7 @@ class DFCharacterServiceTest {
     void getJobListAndSaveTest() throws JsonProcessingException {
         //given
         //when
-        sut.getJobListAndSave();
+        sut.getJobList();
         //then
         then(dfJobRepository).should().saveAll(any());
     }

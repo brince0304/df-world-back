@@ -1,12 +1,7 @@
 package com.dfoff.demo.Controller;
 
-import com.dfoff.demo.Domain.DFCharacter;
-import com.dfoff.demo.Domain.EnumType.SaveFile.CharacterIconType;
 import com.dfoff.demo.Domain.UserAccount;
-import com.dfoff.demo.Domain.UserAccountDFCharacterMapper;
-import com.dfoff.demo.Repository.Character.UserAccountDFCharacterMapperRepository;
 import com.dfoff.demo.Service.SaveFileService;
-import com.dfoff.demo.Service.UserAccountDFCharacterMapperService;
 import com.dfoff.demo.Service.UserAccountService;
 import com.dfoff.demo.Util.Bcrypt;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +20,6 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class UserAccountController {
     private final UserAccountService userAccountService;
-    private final UserAccountDFCharacterMapperService mapperService;
     private final SaveFileService saveFileService;
 
 
@@ -99,8 +93,6 @@ public class UserAccountController {
             }
             ModelAndView mav = new ModelAndView("/mypage/mypage");
             mav.addObject("user", UserAccount.UserAccountResponse.of(userAccountService.getUserAccountById(principalDto.getUsername())));
-            Set<DFCharacter.DFCharacterDTO> characters = mapperService.getDFCharactersByUserAccount(UserAccount.UserAccountDTO.from(principalDto));
-            mav.addObject("characters", characters);
             return mav;
         }
         catch (Exception e){

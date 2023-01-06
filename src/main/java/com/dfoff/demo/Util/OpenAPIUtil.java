@@ -1,7 +1,6 @@
 package com.dfoff.demo.Util;
 
-import com.dfoff.demo.Domain.ForDFCharacter.DFJob;
-import com.dfoff.demo.Domain.ForDFCharacter.DFJobGrow;
+
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +33,9 @@ public class OpenAPIUtil {
 
     public static final String CHARACTER_SEARCH_URL = "https://api.neople.co.kr/df/servers/<serverId>/characters?characterName=<characterName>&jobId=<jobId>&jobGrowId=<jobGrowId>&limit="+LIMIT+"&wordType="+WORD_TYPE+"&apikey="+API_KEY;
 
+    public static final String CHARACTER_DETAILS_URL = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>?apikey="+API_KEY;
+
+    public static final String CHARACTER_ABILITY_URL = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/status?apikey="+API_KEY;
 
 
 
@@ -47,11 +49,22 @@ public class OpenAPIUtil {
         return CHARACTER_SEARCH_URL.replace("<serverId>", serverId)
                 .replace("<characterName>", characterName).replace("<jobId>", "").replace("<jobGrowId>", "");
     }
+
+    public static String getCharacterAbilityUrl(String serverId, String characterId) {
+        return CHARACTER_ABILITY_URL.replace("<serverId>", serverId)
+                .replace("<characterId>", characterId);
+    }
+
+    public static String getCharacterDetailsUrl(String serverId, String characterId) {
+        return CHARACTER_DETAILS_URL.replace("<serverId>", serverId)
+                .replace("<characterId>", characterId);
+    }
     public static String getCharacterImgUrl(String serverId, String characterId, String zoom) {
         return CHARACTER_IMG_URL.replace("<serverId>", serverId)
                 .replace("<characterId>", characterId)
                 .replace("<zoom>", zoom);
     }
+
     public static <T> T parseUtil(String url, Class<T> clazz) {
         HashMap<String, String> result = new HashMap<>();
         RestTemplate restTemplate = new RestTemplate();
@@ -64,32 +77,5 @@ public class OpenAPIUtil {
         return gson.fromJson(response.getBody().toString(), clazz);
     }
 
-    public static HashMap<List<DFJob>, List<DFJobGrow>> parseDFJobDTO(DFJob.DFJobJSONDTO dfJobJSONDTO) {
-        HashMap<List<DFJob>, List<DFJobGrow>> result = new HashMap<>();
-        List<DFJob> dfJobList = new ArrayList<>();
-        List<DFJobGrow> dfJobGrowList = new ArrayList<>();
-        for (DFJob.DFJobJSONDTO.Row row : dfJobJSONDTO.getRows()) {
-            DFJob dfJob = DFJob.builder().jobId(row.getJobId()).jobName(row.getJobName()).build();
-            DFJobGrow dfJobGrow = DFJobGrow.builder().jobGrowId(row.getJobId()).jobGrowName(row.getJobName()).jobName(dfJob).build();
-            dfJobList.add(dfJob);
-            dfJobGrowList.add(dfJobGrow);
-            for (DFJob.DFJobJSONDTO.Row__1 row__1 : row.getRows()) {
-                dfJobGrowList.add(DFJobGrow.builder().jobName(dfJob).jobGrowId(row__1.getJobGrowId()).jobGrowName(row__1.getJobGrowName()).build());
-                if (row__1.getNext() != null) {
-                    DFJob.DFJobJSONDTO.Next next = row__1.getNext();
-                    dfJobGrowList.add(DFJobGrow.builder().jobName(dfJob).jobGrowId(next.getJobGrowId()).jobGrowName(next.getJobGrowName()).build());
-                    if (next.getNext() != null) {
-                        DFJob.DFJobJSONDTO.Next__1 next1 = next.getNext();
-                        dfJobGrowList.add(DFJobGrow.builder().jobName(dfJob).jobGrowId(next1.getJobGrowId()).jobGrowName(next1.getJobGrowName()).build());
-                        if (next1.getNext() != null) {
-                            DFJob.DFJobJSONDTO.Next__2 next2 = next1.getNext();
-                            dfJobGrowList.add(DFJobGrow.builder().jobName(dfJob).jobGrowId(next2.getJobGrowId()).jobGrowName(next2.getJobGrowName()).build());
-                        }
-                    }
-                }
-            }
-        }
-        result.put(dfJobList, dfJobGrowList);
-        return result;
-    }
+
 }
