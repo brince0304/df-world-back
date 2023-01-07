@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<thlogic>
+    <attr sel="#header" th:replace="header :: header" />
+    <attr sel="#footer" th:replace="footer :: footer" />
+
+    <attr sel="#pagination" th:with="start=${sliceNumber}, end=(${(resultSize == 1) ? 1 : (start + (maxPage - 1) < resultSize ? start + (maxPage - 1) : resultSize)})">
+        <attr sel="li[0]/a"
+              th:text="'previous'"
+              th:href="@{/character/search.df(page=${start}, serverId=${serverId}, characterName=${characterName})}"
+              th:class="'page-link' + (${sliceNumber} <= 1 ? ' disabled' : '')"
+        />
+        <attr sel="li[1]" th:class="page-item" th:each="pageNumber : ${#numbers.sequence(start, end)}">
+            <attr sel="a"
+                  th:text="${pageNumber}"
+                  th:href="@{/character/search.df(page=${pageNumber}, serverId=${serverId}, characterName=${characterName})}"
+                  th:class="'page-link' + (${pageNumber} == ${thisPage} ? ' disabled' : '')"
+            />
+        </attr>
+        <attr sel="li[2]/a"
+              th:text="'next'"
+              th:href="@{/character/search.df(page=${start + 4}, serverId=${serverId}, characterName=${characterName})}"
+              th:class="'page-link' + (${resultSize} >= ${end} ? '' : 'disabled')"
+        />
+    </attr>
+</thlogic>
