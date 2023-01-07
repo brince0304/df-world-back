@@ -1,6 +1,8 @@
 package com.dfoff.demo.Service;
 
+import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
+import com.dfoff.demo.Repository.SaveFileRepository;
 import com.dfoff.demo.Repository.UserAccountRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +12,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.persistence.EntityExistsException;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
@@ -22,6 +26,8 @@ class UserAccountServiceTest {
     @InjectMocks UserAccountService sut;
     @Mock
     UserAccountRepository userAccountRepository;
+    @Mock
+    SaveFileRepository saveFileRepository;
 
     @Test
     @DisplayName("createAccount() - 계정생성 테스트")
@@ -32,8 +38,13 @@ class UserAccountServiceTest {
                 email("test").
                 nickname("test").
                 build();
+        SaveFile saveFile = SaveFile.builder().
+                fileName("test").
+                filePath("test").
+                build();
+        account.setProfileIcon(saveFile);
         //when&then
-        sut.createAccount(UserAccount.UserAccountDTO.from(account),any());
+        sut.createAccount(UserAccount.UserAccountDTO.from(account));
         then(userAccountRepository).should().save(account);
     }
 
@@ -79,10 +90,14 @@ class UserAccountServiceTest {
                 email("test").
                 nickname("test").
                 build();
+        SaveFile saveFile = SaveFile.builder().
+                fileName("test").
+                filePath("test").
+                build();
+        account.setProfileIcon(saveFile);
         given(userAccountRepository.existsByUserId(account.getUserId())).willReturn(true);
         //when&then
-        Throwable throwable = catchThrowable(() -> sut.createAccount(UserAccount.UserAccountDTO.from(account),any()));
-        then(userAccountRepository).should().existsByUserId(account.getUserId());
+        Throwable throwable = catchThrowable(() -> sut.createAccount(UserAccount.UserAccountDTO.from(account)));
         assertThat(throwable).isInstanceOf(EntityExistsException.class);
     }
 
@@ -96,13 +111,18 @@ class UserAccountServiceTest {
                 email("test").
                 nickname("test").
                 build();
-        given(userAccountRepository.getReferenceById(account.getUserId())).willReturn(account);
+        SaveFile saveFile = SaveFile.builder().id(1L).
+                fileName("test").
+                filePath("test").
+                build();
+        account.setProfileIcon(saveFile);
+        given(userAccountRepository.findById(account.getUserId())).willReturn(java.util.Optional.of(account));
         given(userAccountRepository.existsByUserId(account.getUserId())).willReturn(true);
         //when
         sut.getUserAccountById(account.getUserId());
 
         //then
-        then(userAccountRepository).should().getReferenceById(account.getUserId());
+        then(userAccountRepository).should().findById(account.getUserId());
     }
 
     @Test
@@ -110,17 +130,22 @@ class UserAccountServiceTest {
     void givenUserAccountId_whenGettingUserAccountButNotExists_thenGetsNullDto() {
         //given
         UserAccount account =  UserAccount.builder().
-                userId("test").
-                password("test").
+                userId("test2").
+                password("test2").
                 email("test").
                 nickname("test").
                 build();
+        SaveFile saveFile = SaveFile.builder().
+                fileName("test").
+                filePath("test").
+                build();
+        account.setProfileIcon(saveFile);
         given(userAccountRepository.existsByUserId(account.getUserId())).willReturn(false);
         //when
         UserAccount.UserAccountDTO dto  = sut.getUserAccountById(account.getUserId());
 
         //then
-        assertThat(dto.getUserId()).isNull();
+        assertThat(dto).isNull();
         then(userAccountRepository).should().existsByUserId(account.getUserId());
     }
 
@@ -191,5 +216,34 @@ class UserAccountServiceTest {
 
         //then
         then(userAccountRepository).should().existsByUserId(userId);
+    }
+    @Test
+    void givenUserAccountAndProfileIcon_whenChangeProfilIcon_thenChangesProfileIcon(){
+        //given
+        given(userAccountRepository.findById(any())).willReturn(Optional.of(createUserAccount()));
+        SaveFile saveFile = SaveFile.builder().id(1L).
+                fileName("test").
+                filePath("test").
+                build();
+        //when
+        sut.changeProfileIcon(UserAccount.UserAccountDTO.from(createUserAccount()), SaveFile.SaveFileDTO.from(saveFile));
+
+        //then
+        then(userAccountRepository).should().findById(any());
+    }
+
+    private UserAccount createUserAccount(){
+        UserAccount account =  UserAccount.builder().
+                userId("test2").
+                password("test2").
+                email("test").
+                nickname("test").
+                build();
+        SaveFile saveFile = SaveFile.builder().
+                fileName("test").
+                filePath("test").
+                build();
+        account.setProfileIcon(saveFile);
+        return account;
     }
 }

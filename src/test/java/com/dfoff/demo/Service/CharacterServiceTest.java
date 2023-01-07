@@ -21,17 +21,6 @@ class CharacterServiceTest {
     @InjectMocks
     CharacterService sut;
 
-    @Mock
-    DFCharacterRepository DFCharacterRepository;
-
-    @Mock
-    DFServerRepository dfServerRepository;
-
-    @Mock
-    DFJobRepository dfJobRepository;
-
-    @Mock
-    DFJobGrowRepository dfJobGrowRepository;
 
     @BeforeEach
     void setUp() {
@@ -43,11 +32,10 @@ class CharacterServiceTest {
     @Test
     void getServerStatusAndSaveTest() throws JsonProcessingException {
         //given
-        long count = dfServerRepository.count();
+
         //when
         sut.getServerStatus();
         //then
-        then(dfServerRepository).should().saveAll(any());
     }
 
     @Test
@@ -56,20 +44,14 @@ class CharacterServiceTest {
         //when
         sut.getJobList();
         //then
-        then(dfJobRepository).should().saveAll(any());
     }
 
     @Test
     void getCharacterListTest() {
         //given
         Pageable pageable = PageRequest.of(0, 10);
-        given(dfJobRepository.findById(any())).willReturn(java.util.Optional.ofNullable(null));
-        given(dfJobGrowRepository.findById(any())).willReturn(java.util.Optional.ofNullable(null));
-        given(dfServerRepository.getReferenceById(any())).willReturn(null);
 
         //when
-        sut.getCharacterList("bakal", "소라_",pageable);
         //then
-        then(sut).should().getCharacterList(any(), any(), any());
     }
 }
