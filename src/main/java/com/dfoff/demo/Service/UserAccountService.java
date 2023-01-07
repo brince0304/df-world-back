@@ -1,8 +1,9 @@
 package com.dfoff.demo.Service;
 
+import com.dfoff.demo.Domain.AccountCharacterConnector;
 import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
-import com.dfoff.demo.Repository.SaveFileRepository;
+import com.dfoff.demo.Repository.AccountCharacterConnectorRepository;
 import com.dfoff.demo.Repository.UserAccountRepository;
 import com.dfoff.demo.Util.Bcrypt;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityExistsException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +28,8 @@ public class UserAccountService {
     private final UserAccountRepository userAccountRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final Bcrypt bcrypt;
+
+    private final AccountCharacterConnectorRepository connectorRepository;
 
 
     public boolean createAccount(UserAccount.UserAccountDTO account) {
@@ -73,6 +79,29 @@ public class UserAccountService {
         }
         return true;
     }
+    public void connectAccountAndCharacter(UserAccount.UserAccountDTO dto, String characterId) {
+        UserAccount account = userAccountRepository.findById(dto.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+        connectorRepository.save(AccountCharacterConnector.builder()
+                .userAccount(account)
+                .characterId(characterId)
+                .build());
+    }
+
+    public List<AccountCharacterConnector.AccountCharacterConnectorDTO> getCharacterListByAccount(UserAccount.UserAccountDTO dto) {
+        UserAccount account = userAccountRepository.findById(dto.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+        List<AccountCharacterConnector.AccountCharacterConnectorDTO> connectorList = connectorRepository.findByUserAccount(account).stream().map(AccountCharacterConnector.AccountCharacterConnectorDTO::from).collect(Collectors.toList());
+        if(connectorList.size() == 0) {
+            return new ArrayList<>();
+        }
+        return connectorList;
+    }
+
+    public void changeProfileIcon (UserAccount.UserAccountDTO dto, SaveFile.SaveFileDTO iconDto){
+        UserAccount account = userAccountRepository.findById(dto.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+        account.setProfileIcon(SaveFile.SaveFileDTO.toEntity(iconDto));
+    }
+
+
     @Transactional(readOnly = true)
     public UserAccount.UserAccountDTO getUserAccountById(String userId) {
         if(userAccountRepository.existsByUserId(userId)){

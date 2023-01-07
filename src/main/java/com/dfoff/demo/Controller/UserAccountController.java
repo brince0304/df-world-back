@@ -1,6 +1,7 @@
 package com.dfoff.demo.Controller;
 
 import com.dfoff.demo.Domain.UserAccount;
+import com.dfoff.demo.Service.CharacterService;
 import com.dfoff.demo.Service.SaveFileService;
 import com.dfoff.demo.Service.UserAccountService;
 import com.dfoff.demo.Util.Bcrypt;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Map;
-import java.util.Set;
 
 @RestController
 @Slf4j
@@ -21,6 +21,9 @@ import java.util.Set;
 public class UserAccountController {
     private final UserAccountService userAccountService;
     private final SaveFileService saveFileService;
+
+    private final CharacterService characterService;
+
 
 
     private final Bcrypt bcrypt;
@@ -35,32 +38,32 @@ public class UserAccountController {
             return new ResponseEntity<>("잘못된 아이디나 비밀번호입니다.", HttpStatus.BAD_REQUEST);
         }
     }
-    @PostMapping("/api/user/id")
-    public String checkId(@RequestBody Map<String,String> map) {
-        log.info("username: {}", map.get("username"));
-        boolean result = userAccountService.existsByUserId(map.get("username"));
-        if(result){
-            return "false";
-        }
-        return "true";
-    }
-    @PostMapping("/api/user/nickname")
-    public String checkNickname(@RequestBody Map<String,String> map) {
-        log.info("nickname: {}", map.get("nickname"));
-        boolean result = userAccountService.existsByNickname(map.get("nickname"));
-        if(result){
-            return "false";
-        }
-        return "true";
-    }
-    @PostMapping("/api/user/email")
-    public String checkEmail(@RequestBody Map<String,String> map) {
-        log.info("email: {}", map.get("email"));
-        boolean result = userAccountService.existsByEmail(map.get("email"));
-        if(result){
-            return "false";
-        }
-        return "true";
+
+    @GetMapping("/api/user/validate")
+    public String checkEmail(@RequestParam (required = false) String email,
+                             @RequestParam (required = false) String nickname,
+                             @RequestParam (required = false) String username) {
+       if(email != null){
+           log.info("email: {}", email);
+           boolean result = userAccountService.existsByEmail(email);
+           if(result){
+               return "false";
+           }
+           return "true";
+         }else if(nickname != null){
+              log.info("nickname: {}", nickname);
+              boolean result = userAccountService.existsByNickname(nickname);
+              if(result){
+                return "false";
+              }
+              return "true";
+       }else if(username != null){
+           log.info("username: {}", username);
+              boolean result = userAccountService.existsByUserId(username);
+                if(result){
+                    return "false";
+                }
+       }return "true";
     }
 
 
@@ -93,14 +96,33 @@ public class UserAccountController {
             }
             ModelAndView mav = new ModelAndView("/mypage/mypage");
             mav.addObject("user", UserAccount.UserAccountResponse.of(userAccountService.getUserAccountById(principalDto.getUsername())));
+            mav.addObject("characters", characterService.getCharacterAbilityList(userAccountService.getCharacterListByAccount(UserAccount.UserAccountDTO.from(principalDto))));
             return mav;
         }
         catch (Exception e){
             e.printStackTrace();
             return new ModelAndView("redirect:/main.df");
         }
+    }
 
+    @PutMapping("/api/user/profile.df")
+    public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
+                                           @RequestParam (required = false) String nickname,
+                                           @RequestParam (required = false) String email,
+                                           @RequestParam (required = false) String password,
+                                           @RequestParam (required = false) String passwordCheck,
+                                             @RequestParam (required = false) String profileIcon){
+
+        try {
+            userAccountService.changeProfileIcon(UserAccount.UserAccountDTO.from(principalDto),saveFileService.getFileByFileName(profileIcon));
+            return new ResponseEntity<>("프로필 사진이 변경되었습니다.", HttpStatus.OK);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
     }
 
 
-}
+
