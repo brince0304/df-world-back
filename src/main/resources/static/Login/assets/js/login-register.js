@@ -15,7 +15,6 @@ function showRegisterForm(){
         $('.modal-title').html('소셜 회원가입');
     }); 
     $('.error').removeClass('alert alert-danger').html('');
-       
 }
 function showLoginForm(){
     $('#loginModal .registerBox').fadeOut('fast',function(){
@@ -34,7 +33,6 @@ function openLoginModal(){
     setTimeout(function(){
         $('#loginModal').modal('show');    
     }, 230);
-    
 }
 function openRegisterModal(){
     showRegisterForm();

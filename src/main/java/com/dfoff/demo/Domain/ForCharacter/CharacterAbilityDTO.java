@@ -15,10 +15,34 @@ import java.util.List;
 public class CharacterAbilityDTO {
 
 
+        private String characterId;
 
-    private List<Buff> buff = null;
+        private String characterName;
 
-    private List<Status__1> status = null;
+        private Integer level;
+
+        private String jobId;
+
+        private String jobGrowId;
+
+        private String jobName;
+
+        private String jobGrowName;
+
+        private String adventureName;
+
+        private String guildId;
+
+        private String guildName;
+
+        private String adventureFame;
+
+        private List<Buff> buff = null;
+
+        private List<Status__1> status = null;
+
+
+
 
     @Generated("jsonschema2pojo")
     public static class CharacterAbilityJSONDTO {
@@ -62,20 +86,30 @@ public class CharacterAbilityDTO {
 
         /**
          * No args constructor for use in serialization
-         *
          */
         public CharacterAbilityJSONDTO() {
         }
 
-        public CharacterAbilityDTO toDTO(){
-            return CharacterAbilityDTO.builder()
+        public CharacterAbilityDTO toDTO() {
+            CharacterAbilityDTO characterAbilityDTO = CharacterAbilityDTO.builder()
+                    .characterId(characterId)
+                    .characterName(characterName)
+                    .level(level)
+                    .jobId(jobId)
+                    .jobGrowId(jobGrowId)
+                    .jobName(jobName)
+                    .jobGrowName(jobGrowName)
+                    .adventureName(adventureName)
+                    .guildId(guildId)
+                    .guildName(guildName)
                     .buff(buff)
                     .status(status)
                     .build();
+            return characterAbilityDTO;
         }
 
+
         /**
-         *
          * @param jobName
          * @param jobId
          * @param level
@@ -207,54 +241,54 @@ public class CharacterAbilityDTO {
             sb.append(CharacterAbilityJSONDTO.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
             sb.append("characterId");
             sb.append('=');
-            sb.append(((this.characterId == null)?"<null>":this.characterId));
+            sb.append(((this.characterId == null) ? "<null>" : this.characterId));
             sb.append(',');
             sb.append("characterName");
             sb.append('=');
-            sb.append(((this.characterName == null)?"<null>":this.characterName));
+            sb.append(((this.characterName == null) ? "<null>" : this.characterName));
             sb.append(',');
             sb.append("level");
             sb.append('=');
-            sb.append(((this.level == null)?"<null>":this.level));
+            sb.append(((this.level == null) ? "<null>" : this.level));
             sb.append(',');
             sb.append("jobId");
             sb.append('=');
-            sb.append(((this.jobId == null)?"<null>":this.jobId));
+            sb.append(((this.jobId == null) ? "<null>" : this.jobId));
             sb.append(',');
             sb.append("jobGrowId");
             sb.append('=');
-            sb.append(((this.jobGrowId == null)?"<null>":this.jobGrowId));
+            sb.append(((this.jobGrowId == null) ? "<null>" : this.jobGrowId));
             sb.append(',');
             sb.append("jobName");
             sb.append('=');
-            sb.append(((this.jobName == null)?"<null>":this.jobName));
+            sb.append(((this.jobName == null) ? "<null>" : this.jobName));
             sb.append(',');
             sb.append("jobGrowName");
             sb.append('=');
-            sb.append(((this.jobGrowName == null)?"<null>":this.jobGrowName));
+            sb.append(((this.jobGrowName == null) ? "<null>" : this.jobGrowName));
             sb.append(',');
             sb.append("adventureName");
             sb.append('=');
-            sb.append(((this.adventureName == null)?"<null>":this.adventureName));
+            sb.append(((this.adventureName == null) ? "<null>" : this.adventureName));
             sb.append(',');
             sb.append("guildId");
             sb.append('=');
-            sb.append(((this.guildId == null)?"<null>":this.guildId));
+            sb.append(((this.guildId == null) ? "<null>" : this.guildId));
             sb.append(',');
             sb.append("guildName");
             sb.append('=');
-            sb.append(((this.guildName == null)?"<null>":this.guildName));
+            sb.append(((this.guildName == null) ? "<null>" : this.guildName));
             sb.append(',');
             sb.append("buff");
             sb.append('=');
-            sb.append(((this.buff == null)?"<null>":this.buff));
+            sb.append(((this.buff == null) ? "<null>" : this.buff));
             sb.append(',');
             sb.append("status");
             sb.append('=');
-            sb.append(((this.status == null)?"<null>":this.status));
+            sb.append(((this.status == null) ? "<null>" : this.status));
             sb.append(',');
-            if (sb.charAt((sb.length()- 1)) == ',') {
-                sb.setCharAt((sb.length()- 1), ']');
+            if (sb.charAt((sb.length() - 1)) == ',') {
+                sb.setCharAt((sb.length() - 1), ']');
             } else {
                 sb.append(']');
             }
@@ -264,18 +298,18 @@ public class CharacterAbilityDTO {
         @Override
         public int hashCode() {
             int result = 1;
-            result = ((result* 31)+((this.jobName == null)? 0 :this.jobName.hashCode()));
-            result = ((result* 31)+((this.level == null)? 0 :this.level.hashCode()));
-            result = ((result* 31)+((this.adventureName == null)? 0 :this.adventureName.hashCode()));
-            result = ((result* 31)+((this.jobGrowName == null)? 0 :this.jobGrowName.hashCode()));
-            result = ((result* 31)+((this.guildId == null)? 0 :this.guildId.hashCode()));
-            result = ((result* 31)+((this.guildName == null)? 0 :this.guildName.hashCode()));
-            result = ((result* 31)+((this.jobId == null)? 0 :this.jobId.hashCode()));
-            result = ((result* 31)+((this.jobGrowId == null)? 0 :this.jobGrowId.hashCode()));
-            result = ((result* 31)+((this.characterName == null)? 0 :this.characterName.hashCode()));
-            result = ((result* 31)+((this.characterId == null)? 0 :this.characterId.hashCode()));
-            result = ((result* 31)+((this.buff == null)? 0 :this.buff.hashCode()));
-            result = ((result* 31)+((this.status == null)? 0 :this.status.hashCode()));
+            result = ((result * 31) + ((this.jobName == null) ? 0 : this.jobName.hashCode()));
+            result = ((result * 31) + ((this.level == null) ? 0 : this.level.hashCode()));
+            result = ((result * 31) + ((this.adventureName == null) ? 0 : this.adventureName.hashCode()));
+            result = ((result * 31) + ((this.jobGrowName == null) ? 0 : this.jobGrowName.hashCode()));
+            result = ((result * 31) + ((this.guildId == null) ? 0 : this.guildId.hashCode()));
+            result = ((result * 31) + ((this.guildName == null) ? 0 : this.guildName.hashCode()));
+            result = ((result * 31) + ((this.jobId == null) ? 0 : this.jobId.hashCode()));
+            result = ((result * 31) + ((this.jobGrowId == null) ? 0 : this.jobGrowId.hashCode()));
+            result = ((result * 31) + ((this.characterName == null) ? 0 : this.characterName.hashCode()));
+            result = ((result * 31) + ((this.characterId == null) ? 0 : this.characterId.hashCode()));
+            result = ((result * 31) + ((this.buff == null) ? 0 : this.buff.hashCode()));
+            result = ((result * 31) + ((this.status == null) ? 0 : this.status.hashCode()));
             return result;
         }
 
@@ -288,7 +322,7 @@ public class CharacterAbilityDTO {
                 return false;
             }
             CharacterAbilityJSONDTO rhs = ((CharacterAbilityJSONDTO) other);
-            return (((((((((((((this.jobName == rhs.jobName)||((this.jobName!= null)&&this.jobName.equals(rhs.jobName)))&&((this.level == rhs.level)||((this.level!= null)&&this.level.equals(rhs.level))))&&((this.adventureName == rhs.adventureName)||((this.adventureName!= null)&&this.adventureName.equals(rhs.adventureName))))&&((this.jobGrowName == rhs.jobGrowName)||((this.jobGrowName!= null)&&this.jobGrowName.equals(rhs.jobGrowName))))&&((this.guildId == rhs.guildId)||((this.guildId!= null)&&this.guildId.equals(rhs.guildId))))&&((this.guildName == rhs.guildName)||((this.guildName!= null)&&this.guildName.equals(rhs.guildName))))&&((this.jobId == rhs.jobId)||((this.jobId!= null)&&this.jobId.equals(rhs.jobId))))&&((this.jobGrowId == rhs.jobGrowId)||((this.jobGrowId!= null)&&this.jobGrowId.equals(rhs.jobGrowId))))&&((this.characterName == rhs.characterName)||((this.characterName!= null)&&this.characterName.equals(rhs.characterName))))&&((this.characterId == rhs.characterId)||((this.characterId!= null)&&this.characterId.equals(rhs.characterId))))&&((this.buff == rhs.buff)||((this.buff!= null)&&this.buff.equals(rhs.buff))))&&((this.status == rhs.status)||((this.status!= null)&&this.status.equals(rhs.status))));
+            return (((((((((((((this.jobName == rhs.jobName) || ((this.jobName != null) && this.jobName.equals(rhs.jobName))) && ((this.level == rhs.level) || ((this.level != null) && this.level.equals(rhs.level)))) && ((this.adventureName == rhs.adventureName) || ((this.adventureName != null) && this.adventureName.equals(rhs.adventureName)))) && ((this.jobGrowName == rhs.jobGrowName) || ((this.jobGrowName != null) && this.jobGrowName.equals(rhs.jobGrowName)))) && ((this.guildId == rhs.guildId) || ((this.guildId != null) && this.guildId.equals(rhs.guildId)))) && ((this.guildName == rhs.guildName) || ((this.guildName != null) && this.guildName.equals(rhs.guildName)))) && ((this.jobId == rhs.jobId) || ((this.jobId != null) && this.jobId.equals(rhs.jobId)))) && ((this.jobGrowId == rhs.jobGrowId) || ((this.jobGrowId != null) && this.jobGrowId.equals(rhs.jobGrowId)))) && ((this.characterName == rhs.characterName) || ((this.characterName != null) && this.characterName.equals(rhs.characterName)))) && ((this.characterId == rhs.characterId) || ((this.characterId != null) && this.characterId.equals(rhs.characterId)))) && ((this.buff == rhs.buff) || ((this.buff != null) && this.buff.equals(rhs.buff)))) && ((this.status == rhs.status) || ((this.status != null) && this.status.equals(rhs.status))));
         }
 
     }
@@ -308,13 +342,11 @@ public class CharacterAbilityDTO {
 
         /**
          * No args constructor for use in serialization
-         *
          */
         public Buff() {
         }
 
         /**
-         *
          * @param level
          * @param name
          * @param status
@@ -356,18 +388,18 @@ public class CharacterAbilityDTO {
             sb.append(Buff.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
             sb.append("name");
             sb.append('=');
-            sb.append(((this.name == null)?"<null>":this.name));
+            sb.append(((this.name == null) ? "<null>" : this.name));
             sb.append(',');
             sb.append("level");
             sb.append('=');
-            sb.append(((this.level == null)?"<null>":this.level));
+            sb.append(((this.level == null) ? "<null>" : this.level));
             sb.append(',');
             sb.append("status");
             sb.append('=');
-            sb.append(((this.status == null)?"<null>":this.status));
+            sb.append(((this.status == null) ? "<null>" : this.status));
             sb.append(',');
-            if (sb.charAt((sb.length()- 1)) == ',') {
-                sb.setCharAt((sb.length()- 1), ']');
+            if (sb.charAt((sb.length() - 1)) == ',') {
+                sb.setCharAt((sb.length() - 1), ']');
             } else {
                 sb.append(']');
             }
@@ -377,9 +409,9 @@ public class CharacterAbilityDTO {
         @Override
         public int hashCode() {
             int result = 1;
-            result = ((result* 31)+((this.name == null)? 0 :this.name.hashCode()));
-            result = ((result* 31)+((this.level == null)? 0 :this.level.hashCode()));
-            result = ((result* 31)+((this.status == null)? 0 :this.status.hashCode()));
+            result = ((result * 31) + ((this.name == null) ? 0 : this.name.hashCode()));
+            result = ((result * 31) + ((this.level == null) ? 0 : this.level.hashCode()));
+            result = ((result * 31) + ((this.status == null) ? 0 : this.status.hashCode()));
             return result;
         }
 
@@ -392,7 +424,7 @@ public class CharacterAbilityDTO {
                 return false;
             }
             Buff rhs = ((Buff) other);
-            return ((((this.name == rhs.name)||((this.name!= null)&&this.name.equals(rhs.name)))&&((this.level == rhs.level)||((this.level!= null)&&this.level.equals(rhs.level))))&&((this.status == rhs.status)||((this.status!= null)&&this.status.equals(rhs.status))));
+            return ((((this.name == rhs.name) || ((this.name != null) && this.name.equals(rhs.name))) && ((this.level == rhs.level) || ((this.level != null) && this.level.equals(rhs.level)))) && ((this.status == rhs.status) || ((this.status != null) && this.status.equals(rhs.status))));
         }
 
     }
@@ -405,21 +437,19 @@ public class CharacterAbilityDTO {
         private String name;
         @SerializedName("value")
         @Expose
-        private Double value;
+        private String value;
 
         /**
          * No args constructor for use in serialization
-         *
          */
         public Status__1() {
         }
 
         /**
-         *
          * @param name
          * @param value
          */
-        public Status__1(String name, Double value) {
+        public Status__1(String name, String value) {
             super();
             this.name = name;
             this.value = value;
@@ -433,11 +463,11 @@ public class CharacterAbilityDTO {
             this.name = name;
         }
 
-        public Double getValue() {
+        public String getValue() {
             return value;
         }
 
-        public void setValue(Double value) {
+        public void setValue(String value) {
             this.value = value;
         }
 
@@ -447,14 +477,14 @@ public class CharacterAbilityDTO {
             sb.append(Status__1.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
             sb.append("name");
             sb.append('=');
-            sb.append(((this.name == null)?"<null>":this.name));
+            sb.append(((this.name == null) ? "<null>" : this.name));
             sb.append(',');
             sb.append("value");
             sb.append('=');
-            sb.append(((this.value == null)?"<null>":this.value));
+            sb.append(((this.value == null) ? "<null>" : this.value));
             sb.append(',');
-            if (sb.charAt((sb.length()- 1)) == ',') {
-                sb.setCharAt((sb.length()- 1), ']');
+            if (sb.charAt((sb.length() - 1)) == ',') {
+                sb.setCharAt((sb.length() - 1), ']');
             } else {
                 sb.append(']');
             }
@@ -464,8 +494,8 @@ public class CharacterAbilityDTO {
         @Override
         public int hashCode() {
             int result = 1;
-            result = ((result* 31)+((this.name == null)? 0 :this.name.hashCode()));
-            result = ((result* 31)+((this.value == null)? 0 :this.value.hashCode()));
+            result = ((result * 31) + ((this.name == null) ? 0 : this.name.hashCode()));
+            result = ((result * 31) + ((this.value == null) ? 0 : this.value.hashCode()));
             return result;
         }
 
@@ -478,7 +508,7 @@ public class CharacterAbilityDTO {
                 return false;
             }
             Status__1 rhs = ((Status__1) other);
-            return (((this.name == rhs.name)||((this.name!= null)&&this.name.equals(rhs.name)))&&((this.value == rhs.value)||((this.value!= null)&&this.value.equals(rhs.value))));
+            return (((this.name == rhs.name) || ((this.name != null) && this.name.equals(rhs.name))) && ((this.value == rhs.value) || ((this.value != null) && this.value.equals(rhs.value))));
         }
 
     }
@@ -495,13 +525,11 @@ public class CharacterAbilityDTO {
 
         /**
          * No args constructor for use in serialization
-         *
          */
         public Status() {
         }
 
         /**
-         *
          * @param name
          * @param value
          */
@@ -533,14 +561,14 @@ public class CharacterAbilityDTO {
             sb.append(Status.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
             sb.append("name");
             sb.append('=');
-            sb.append(((this.name == null)?"<null>":this.name));
+            sb.append(((this.name == null) ? "<null>" : this.name));
             sb.append(',');
             sb.append("value");
             sb.append('=');
-            sb.append(((this.value == null)?"<null>":this.value));
+            sb.append(((this.value == null) ? "<null>" : this.value));
             sb.append(',');
-            if (sb.charAt((sb.length()- 1)) == ',') {
-                sb.setCharAt((sb.length()- 1), ']');
+            if (sb.charAt((sb.length() - 1)) == ',') {
+                sb.setCharAt((sb.length() - 1), ']');
             } else {
                 sb.append(']');
             }
@@ -550,8 +578,8 @@ public class CharacterAbilityDTO {
         @Override
         public int hashCode() {
             int result = 1;
-            result = ((result* 31)+((this.name == null)? 0 :this.name.hashCode()));
-            result = ((result* 31)+((this.value == null)? 0 :this.value.hashCode()));
+            result = ((result * 31) + ((this.name == null) ? 0 : this.name.hashCode()));
+            result = ((result * 31) + ((this.value == null) ? 0 : this.value.hashCode()));
             return result;
         }
 
@@ -564,7 +592,7 @@ public class CharacterAbilityDTO {
                 return false;
             }
             Status rhs = ((Status) other);
-            return (((this.name == rhs.name)||((this.name!= null)&&this.name.equals(rhs.name)))&&((this.value == rhs.value)||((this.value!= null)&&this.value.equals(rhs.value))));
+            return (((this.name == rhs.name) || ((this.name != null) && this.name.equals(rhs.name))) && ((this.value == rhs.value) || ((this.value != null) && this.value.equals(rhs.value))));
         }
 
     }

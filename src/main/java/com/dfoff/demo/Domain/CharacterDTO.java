@@ -2,7 +2,6 @@ package com.dfoff.demo.Domain;
 
 
 import com.dfoff.demo.Domain.ForCharacter.CharacterAbilityDTO;
-import com.dfoff.demo.Domain.ForCharacter.CharacterDetailsDTO;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
@@ -27,7 +26,6 @@ public class CharacterDTO {
 
     private String characterId;
 
-    private CharacterDetailsDTO characterDetailsDTO;
 
     private CharacterAbilityDTO characterAbilityDTO;
 
