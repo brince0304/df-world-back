@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="/header/fonts/icomoon/style.css">
 
     <link rel="stylesheet" href="/header/css/owl.carousel.min.css">
-
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/header/css/bootstrap.min.css">
     <!-- Style -->
@@ -404,7 +403,16 @@
                 margin-right: 1rem;
             }
         }
-
+        .userIcon{
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 28px;
+            height: 28px;
+            object-fit: cover;
+        }
         .card-margin {
             margin-bottom: 1.875rem;
         }
@@ -473,9 +481,7 @@
             border-radius: 10px !important;
         }
 
-        a:hover {
-            background-color: #ccc !important;
-        }
+
 
 
         .btn-outlined:active {
@@ -496,6 +502,42 @@
             box-shadow: none !important;
         }
 
+        .ub {
+            margin: 0;
+            display: inline-table;
+        }
+
+        .ub > li {
+            display: inline-block;
+            width: 42px;
+            height: 42px;
+            padding: 5 5;
+            border: 1px solid #ebf2f8;
+            background-color: #f4f6f6;
+            margin-right: 10px;
+            margin-bottom: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ub > li:hover, .ub > li.active {
+            background-color: #17a2b8;
+            color: #fff;
+        }
+
+        #sortable > li {
+            border: 1px solid #ebf2f8;
+            background-color: #f4f6f6;
+            position: relative;
+            overflow: hidden;
+            padding: 7px;
+            margin-bottom: 5px;
+        }
+
+        #sortable > li:hover, #sortable > li.active {
+            background-color: #17a2b8;
+            color: #fff;
+        }
 
 
     </style>
@@ -537,15 +579,14 @@
                     <i class="mdi mdi-settings-outline"></i>
 
 
-                    <a href="#" class="
-                         btn-outlined btn-black text-muted"><img src="https://img.icons8.com/metro/26/000000/link.png"
+                    <a href="#" class="btn btn-outlined btn-black text-muted"><img src="https://img.icons8.com/metro/26/000000/link.png"
                                                                  width="20" height="20" id="plus">
                         <small>캐릭터 등록</small> </a>
 
 
                     <a href="#" class="btn btn-outlined btn-black text-muted "><img
                             src="https://img.icons8.com/metro/26/000000/more.png" width="20" height="20"
-                            class="mr-2 more"><small>활동 내역</small></a>
+                            class="mr-2 more"><small> 활동 내역</small></a>
                     <span class="vl ml-3"></span>
                 </div>
 
@@ -553,7 +594,7 @@
                     <ul class="list-inline">
                         <li class="list-inline-item"><a data-toggle="modal"
                                                         data-target="#iconSelectModal" href="#" class="
-                         btn-outlined btn-black text-muted"> <img
+                         btn btn-outlined btn-black text-muted"> <img
                                 th:src="@{/api/getFile.df(name=${user.getProfileIcon().getFileName()})}" src=""
                                 alt="DP" class="  rounded-circle img-fluid " width="35" height="35"> <img
                                 th:src="@{/images/icons/modify_icon.png}" src=""
@@ -659,7 +700,8 @@
                                                   style="color:#FF0004;"></span> 이메일 중복확인
                                         </div>
                                     </div>
-                                    <input type="password" class="input-lg form-control" name="password1Update" id="password1Update"
+                                    <input type="password" class="input-lg form-control" name="password1Update"
+                                           id="password1Update"
                                            placeholder="New Password" autocomplete="off">
                                     <div class="row">
                                         <div class="col-sm-6">
@@ -675,7 +717,8 @@
                                                   style="color:#FF0004;"></span> 숫자 포함
                                         </div>
                                     </div>
-                                    <input type="password" class="input-lg form-control" name="password2Update" id="password2Update"
+                                    <input type="password" class="input-lg form-control" name="password2Update"
+                                           id="password2Update"
                                            placeholder="Repeat Password" autocomplete="off">
                                     <div class="row">
                                         <div class="col-sm-12">
@@ -694,84 +737,146 @@
             </div>
         </div>
     </div>
-
-    <div class="modal fade login" id="iconSelectModal" data-backdrop="false" style="  position: fixed;
-  top:0; left: 0; bottom: 0; right: 0;
-  background: rgba(0, 0, 0, 0.8);">
-        <div class="modal-dialog login animated">
-            <div class="modal-content">
+    <div class="modal fade" id="iconSelectModal" tabindex="-1" role="dialog"  aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" style="max-width:500px" role="document">
+            <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="closeButton"><img
-                            src="/header/images/close.png" alt="닫기" style="width:20px ; height:20px"></button>
-                    <h4 style="text-align:left">아이콘을 변경합니다!</h4>
+                    <h5 class="modal-title" id="exampleModalLabel">환영합니다!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
-                <div class="modal-body">
-                    <div class="box">
-                        <div class="content">
-                            <h4  style="text-align: center">원하는 아이콘을 선택해주세요!</h4>
-                            <div class="form">
-                                <a class="btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(0)"> <img
-                                        th:src="@{/images/icon_char/icon_char_0.png}" src=""
-                                        alt="DP" class="  rounded-circle img-fluid " width="35" height="35"></a>
-                                <a class="btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(1)"> <img
-                                        th:src="@{/images/icon_char/icon_char_1.png}" src=""
-                                        alt="DP" class="  rounded-circle img-fluid " width="35" height="35"></a>
-                                <a class="btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(2)"> <img
-                                        th:src="@{/images/icon_char/icon_char_2.png}" src=""
-                                        alt="DP" class="  rounded-circle img-fluid " width="35" height="35"></a>
-                                <a class="btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(3)"> <img
-                                        th:src="@{/images/icon_char/icon_char_3.png}" src=""
-                                        alt="DP" class="  rounded-circle img-fluid " width="35" height="35"></a>
-                                <a class="btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(4)"> <img
-                                        th:src="@{/images/icon_char/icon_char_4.png}" src=""
-                                        alt="DP" class="  rounded-circle img-fluid " width="35" height="35"></a>
-                                <a class="btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(5)"> <img
-                                        th:src="@{/images/icon_char/icon_char_5.png}" src=""
-                                        alt="DP" class="  rounded-circle img-fluid " width="35" height="35"></a>
-                                <a class="btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(6)"> <img
-                                        th:src="@{/images/icon_char/icon_char_6.png}" src=""
-                                        alt="DP" class="  rounded-circle img-fluid " width="35" height="35"></a>
+                <div class="modal-body" style="position: relative;
+    flex: 1 1 auto;
+    padding: 1rem;">
+                    <span style="color: #898989;"> 변경을 원하는 아이콘을 선택해주세요!</span>
+                    <ul class="ub p-0 mt-3 mb-3" style="    margin: 0;
+    display: inline-table; box-sizing: border-box;">
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(0)"> <img
+                                    th:src="@{/images/icon_char/icon_char_0.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(1)"> <img
+                                    th:src="@{/images/icon_char/icon_char_1.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(2)"> <img
+                                    th:src="@{/images/icon_char/icon_char_2.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(3)"> <img
+                                    th:src="@{/images/icon_char/icon_char_3.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(4)"> <img
+                                    th:src="@{/images/icon_char/icon_char_4.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(5)"> <img
+                                    th:src="@{/images/icon_char/icon_char_5.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(6)"> <img
+                                    th:src="@{/images/icon_char/icon_char_6.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(7)"> <img
+                                    th:src="@{/images/icon_char/icon_char_7.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(8)"> <img
+                                    th:src="@{/images/icon_char/icon_char_8.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(9)"> <img
+                                    th:src="@{/images/icon_char/icon_char_9.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(10)"> <img
+                                    th:src="@{/images/icon_char/icon_char_10.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(11)"> <img
+                                    th:src="@{/images/icon_char/icon_char_11.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(12)"> <img
+                                    th:src="@{/images/icon_char/icon_char_12.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(13)"> <img
+                                    th:src="@{/images/icon_char/icon_char_13.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(14)"> <img
+                                    th:src="@{/images/icon_char/icon_char_14.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#" onclick="changeProfileIcon(15)"> <img
+                                    th:src="@{/images/icon_char/icon_char_15.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
 
-                            </div>
-                        </div>
-                    </div>
+
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
                 </div>
             </div>
         </div>
     </div>
+
 </div>
-    <footer id="footer">
-        푸터
-    </footer>
-    <script src="/header/js/jquery.sticky.js"></script>
-    <script src="/header/js/main.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.1.js"></script>
-    <!-- Popper JS -->
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js'></script>
-    <!-- Bootstrap JS -->
-    <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'></script>
-    <script th:href="@{/js/scriptfile.js}"></script>
+<footer id="footer">
+    푸터
+</footer>
+<script src="/header/js/jquery.sticky.js"></script>
+<script src="/header/js/main.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.1.js"></script>
+<!-- Popper JS -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js'></script>
+<!-- Bootstrap JS -->
+<script src='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'></script>
+<script th:href="@{/js/scriptfile.js}"></script>
 </body>
 <script>
-    function changeProfileIcon(number){
-        if(confirm("아이콘을 변경하시겠습니까?")){
-            const iconName = "icon_char_" + number+".png";
+    function changeProfileIcon(number) {
+        if (confirm("아이콘을 변경하시겠습니까?")) {
+            const iconName = "icon_char_" + number + ".png";
             $.ajax({
-                url: "/api/user/profile.df?profileIcon="+iconName,
+                url: "/api/user/profile.df?profileIcon=" + iconName,
                 type: "PUT",
                 data: {
                     iconNumber: number
                 },
                 success: function (data) {
 
-                        alert("아이콘 변경이 완료되었습니다.");
-                        location.reload();
+                    alert("아이콘 변경이 완료되었습니다.");
+                    location.reload();
                 },
                 error: function (request, status, error) {
                     alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
                 }
             });
-        }else{
+        } else {
             return;
         }
     }
@@ -790,19 +895,19 @@
         $('body').append('<div id="mobile-body-overly"></div>');
         $('#mobile-nav').find('.menu-has-children').prepend('<i class="fa fa-chevron-down"></i>');
 
-        $(document).on('click', '.menu-has-children i', function(e) {
+        $(document).on('click', '.menu-has-children i', function (e) {
             $(this).next().toggleClass('menu-item-active');
             $(this).nextAll('ul').eq(0).slideToggle();
             $(this).toggleClass("fa-chevron-up fa-chevron-down");
         });
 
-        $(document).on('click', '#mobile-nav-toggle', function(e) {
+        $(document).on('click', '#mobile-nav-toggle', function (e) {
             $('body').toggleClass('mobile-nav-active');
             $('#mobile-nav-toggle i').toggleClass('fa-times fa-bars');
             $('#mobile-body-overly').toggle();
         });
 
-        $(document).click(function(e) {
+        $(document).click(function (e) {
             var container = $("#mobile-nav, #mobile-nav-toggle");
             if (!container.is(e.target) && container.has(e.target).length === 0) {
                 if ($('body').hasClass('mobile-nav-active')) {
@@ -817,7 +922,7 @@
     }
 
     // Smooth scroll for the menu and links with .scrollto classes
-    $('.nav-menu a, #mobile-nav a, .scrollto').on('click', function() {
+    $('.nav-menu a, #mobile-nav a, .scrollto').on('click', function () {
         if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
             var target = $(this.hash);
             if (target.length) {
@@ -826,7 +931,7 @@
                 if ($('#header').length) {
                     top_space = $('#header').outerHeight();
 
-                    if( ! $('#header').hasClass('header-fixed') ) {
+                    if (!$('#header').hasClass('header-fixed')) {
                         top_space = top_space - 20;
                     }
                 }

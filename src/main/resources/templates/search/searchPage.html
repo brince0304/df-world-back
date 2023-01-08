@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <link href="/Login/assets/css/bootstrap.css" rel="stylesheet" />
+    <link href="/Login/assets/css/bootstrap.css" rel="stylesheet"/>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link href="/Login/assets/css/login-register.css" rel="stylesheet" />
+    <link href="/Login/assets/css/login-register.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
 
     <link rel="stylesheet" href="/header/fonts/icomoon/style.css">
@@ -20,12 +20,15 @@
     <script src="/Login/assets/js/bootstrap.js" type="text/javascript"></script>
     <script src="/Login/assets/js/login-register.js" type="text/javascript"></script>
     <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css'>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <title>던파모아 온오프</title>
     <style>
-        body{margin-top:20px;
-            background:#eee;
+        body {
+            margin-top: 20px;
+            background: #eee;
         }
+
         .single_advisor_profile {
             position: relative;
             margin-bottom: 50px;
@@ -36,6 +39,7 @@
             -webkit-box-shadow: 0 0.25rem 1rem 0 rgba(47, 91, 234, 0.125);
             box-shadow: 0 0.25rem 1rem 0 rgba(47, 91, 234, 0.125);
         }
+
         .single_advisor_profile .advisor_thumb {
             position: relative;
             z-index: 1;
@@ -45,6 +49,7 @@
             background-color: transparent;
             overflow: hidden;
         }
+
         .single_advisor_profile .advisor_thumb::after {
             -webkit-transition-duration: 500ms;
             transition-duration: 500ms;
@@ -58,12 +63,14 @@
             -webkit-transform: rotate(-15deg);
             transform: rotate(-15deg);
         }
+
         @media only screen and (max-width: 575px) {
             .single_advisor_profile .advisor_thumb::after {
                 height: 160px;
                 bottom: -90px;
             }
         }
+
         .single_advisor_profile .advisor_thumb .social-info {
             position: absolute;
             z-index: 1;
@@ -72,18 +79,22 @@
             right: 30px;
             text-align: right;
         }
+
         .single_advisor_profile .advisor_thumb .social-info a {
             font-size: 14px;
             color: #020710;
             padding: 0 5px;
         }
+
         .single_advisor_profile .advisor_thumb .social-info a:hover,
         .single_advisor_profile .advisor_thumb .social-info a:focus {
             color: transparent;
         }
+
         .single_advisor_profile .advisor_thumb .social-info a:last-child {
             padding-right: 0;
         }
+
         .single_advisor_profile .single_advisor_details_info {
             position: relative;
             z-index: 1;
@@ -94,6 +105,7 @@
             border-radius: 0 0 15px 15px;
             background-color: #ffffff;
         }
+
         .single_advisor_profile .single_advisor_details_info::after {
             -webkit-transition-duration: 500ms;
             transition-duration: 500ms;
@@ -106,53 +118,64 @@
             top: 12px;
             right: 30px;
         }
+
         .single_advisor_profile .single_advisor_details_info h6 {
             margin-bottom: 0.25rem;
             -webkit-transition-duration: 500ms;
             transition-duration: 500ms;
         }
+
         @media only screen and (min-width: 768px) and (max-width: 991px) {
             .single_advisor_profile .single_advisor_details_info h6 {
                 font-size: 14px;
             }
         }
+
         .single_advisor_profile .single_advisor_details_info p {
             -webkit-transition-duration: 500ms;
             transition-duration: 500ms;
             margin-bottom: 0;
             font-size: 14px;
         }
+
         @media only screen and (min-width: 768px) and (max-width: 991px) {
             .single_advisor_profile .single_advisor_details_info p {
                 font-size: 12px;
             }
         }
+
         .single_advisor_profile:hover .advisor_thumb::after,
         .single_advisor_profile:focus .advisor_thumb::after {
             background-color: transparent;
         }
+
         .single_advisor_profile:hover .advisor_thumb .social-info a,
         .single_advisor_profile:focus .advisor_thumb .social-info a {
             color: #ffffff;
         }
+
         .single_advisor_profile:hover .advisor_thumb .social-info a:hover,
         .single_advisor_profile:hover .advisor_thumb .social-info a:focus,
         .single_advisor_profile:focus .advisor_thumb .social-info a:hover,
         .single_advisor_profile:focus .advisor_thumb .social-info a:focus {
             color: #ffffff;
         }
+
         .single_advisor_profile:hover .single_advisor_details_info,
         .single_advisor_profile:focus .single_advisor_details_info {
             background-color: silver;
         }
+
         .single_advisor_profile:hover .single_advisor_details_info::after,
         .single_advisor_profile:focus .single_advisor_details_info::after {
             background-color: #ffffff;
         }
+
         .single_advisor_profile:hover .single_advisor_details_info h6,
         .single_advisor_profile:focus .single_advisor_details_info h6 {
             color: #ffffff;
         }
+
         .single_advisor_profile:hover .single_advisor_details_info p,
         .single_advisor_profile:focus .single_advisor_details_info p {
             color: #ffffff;
@@ -203,218 +226,305 @@
             text-decoration: none;
         }
 
-        .widget-26 .widget-26-job-title .time {
-            font-size: 12px;
-            font-weight: 400;
+        .characterContainer {
+            padding-left: 10px !important;
+            padding-right: 10px !important;
         }
 
-        .widget-26 .widget-26-job-info {
-            min-width: 100px;
-            font-weight: 400;
+        .characterItem {
+            padding: 3px !important;
         }
 
-        .widget-26 .widget-26-job-info p {
-            line-height: 1.5;
-            color: #3c4142;
-            font-size: 0.8125rem;
+        .card {
+            overflow: hidden;
         }
 
-        .widget-26 .widget-26-job-info .location {
-            color: #3c4142;
-        }
-
-        .widget-26 .widget-26-job-salary {
-            min-width: 70px;
-            font-weight: 400;
-            color: #3c4142;
-            font-size: 0.8125rem;
-        }
-
-        .widget-26 .widget-26-job-category {
-            padding: .5rem;
-            display: inline-flex;
-            white-space: nowrap;
-            border-radius: 15px;
-        }
-
-        .widget-26 .widget-26-job-category .indicator {
-            width: 13px;
-            height: 13px;
-            margin-right: .5rem;
-            float: left;
-            border-radius: 50%;
-        }
-
-        .widget-26 .widget-26-job-category span {
-            font-size: 0.8125rem;
-            color: #3c4142;
-            font-weight: 600;
-        }
-
-        .widget-26 .widget-26-job-starred svg {
-            width: 20px;
-            height: 20px;
-            color: #fd8b2c;
-        }
-
-        .widget-26 .widget-26-job-starred svg.starred {
-            fill: #fd8b2c;
-        }
-        .bg-soft-base {
-            background-color: #e1f5f7;
-        }
-        .bg-soft-warning {
-            background-color: #fff4e1;
-        }
-        .bg-soft-success {
-            background-color: #d1f6f2;
-        }
-        .bg-soft-danger {
-            background-color: #fedce0;
-        }
-        .bg-soft-info {
-            background-color: #d7efff;
-        }
-
-
-        .search-form {
-            width: 80%;
-            margin: 0 auto;
-            margin-top: 1rem;
-        }
-
-        .search-form input {
-            height: 100%;
-            background: transparent;
-            border: 0;
-            display: block;
+        .custon-card-header {
+            position: absolute;
             width: 100%;
-            padding: 1rem;
-            height: 100%;
-            font-size: 1rem;
+            padding: 3px;
+            color: #ad7d52 !important;
+            font-size: 13px;
+            font-weight: 500;
         }
 
-        .search-form select {
-            background: transparent;
-            border: 0;
-            padding: 1rem;
-            height: 100%;
-            font-size: 1rem;
+        .icon-fame {
+            width: 16px;
+            margin-right: 5px;
+            margin-left: 5px;
         }
 
-        .search-form select:focus {
-            border: 0;
-        }
-
-        .search-form button {
-            height: 100%;
-            width: 100%;
-            font-size: 1rem;
-        }
-
-        .search-form button svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        .search-body {
-            margin-bottom: 1.5rem;
-        }
-
-        .search-body .search-filters .filter-list {
-            margin-bottom: 1.3rem;
-        }
-
-        .search-body .search-filters .filter-list .title {
-            color: #3c4142;
-            margin-bottom: 1rem;
-        }
-
-        .search-body .search-filters .filter-list .filter-text {
-            color: #727686;
-        }
-
-        .search-body .search-result .result-header {
-            margin-bottom: 2rem;
-        }
-
-        .search-body .search-result .result-header .records {
-            color: #3c4142;
-        }
-
-        .search-body .search-result .result-header .result-actions {
-            text-align: right;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .search-body .search-result .result-header .result-actions .result-sorting {
-            display: flex;
-            align-items: center;
-        }
-
-        .search-body .search-result .result-header .result-actions .result-sorting span {
-            flex-shrink: 0;
-            font-size: 0.8125rem;
-        }
-
-        .search-body .search-result .result-header .result-actions .result-sorting select {
-            color: #68CBD7;
-        }
-
-        .search-body .search-result .result-header .result-actions .result-sorting select option {
-            color: #3c4142;
-        }
-
-        @media (min-width: 768px) and (max-width: 991.98px) {
-            .search-body .search-filters {
-                display: flex;
+        @media (min-width: 411px)
+            .charImg {
+                bottom: 30px;
             }
+
+            .charImg {
+                height: 80%;
+                cursor: pointer;
+            }
+
+            .zoom {
+                -ms-transform: scale(1.2, 1.2);
+                -webkit-transform: scale(1.2, 1.2);
+                transform: scale(1.2, 1.2);
+                opacity: 1;
+            }
+
+            a {
+                text-decoration: none;
+            }
+
+            .card-body {
+                padding: 10px 2px 2px 8px;
+            }
+
+            .server-name {
+                font-size: 13px;
+                color: #868686;
+                letter-spacing: 2px;
+                font-weight: 600;
+            }
+
+            .info-span {
+                font-size: 12px;
+                white-space: nowrap;
+            }
+
+            .job-name {
+                color: #ad7d52 !important;
+            }
+
+            .dmgView {
+                padding: 0;
+                padding-bottom: 3px;
+                text-align: center;
+                min-height: 28px;
+            }
+
+            .widget-26 .widget-26-job-title .time {
+                font-size: 12px;
+                font-weight: 400;
+            }
+
+            .widget-26 .widget-26-job-info {
+                min-width: 100px;
+                font-weight: 400;
+            }
+
+            .widget-26 .widget-26-job-info p {
+                line-height: 1.5;
+                color: #3c4142;
+                font-size: 0.8125rem;
+            }
+
+            .widget-26 .widget-26-job-info .location {
+                color: #3c4142;
+            }
+
+            .widget-26 .widget-26-job-salary {
+                min-width: 70px;
+                font-weight: 400;
+                color: #3c4142;
+                font-size: 0.8125rem;
+            }
+
+            .widget-26 .widget-26-job-category {
+                padding: .5rem;
+                display: inline-flex;
+                white-space: nowrap;
+                border-radius: 15px;
+            }
+
+            .widget-26 .widget-26-job-category .indicator {
+                width: 13px;
+                height: 13px;
+                margin-right: .5rem;
+                float: left;
+                border-radius: 50%;
+            }
+
+            .widget-26 .widget-26-job-category span {
+                font-size: 0.8125rem;
+                color: #3c4142;
+                font-weight: 600;
+            }
+
+            .widget-26 .widget-26-job-starred svg {
+                width: 20px;
+                height: 20px;
+                color: #fd8b2c;
+            }
+
+            .widget-26 .widget-26-job-starred svg.starred {
+                fill: #fd8b2c;
+            }
+
+            .bg-soft-base {
+                background-color: #e1f5f7;
+            }
+
+            .bg-soft-warning {
+                background-color: #fff4e1;
+            }
+
+            .bg-soft-success {
+                background-color: #d1f6f2;
+            }
+
+            .bg-soft-danger {
+                background-color: #fedce0;
+            }
+
+            .bg-soft-info {
+                background-color: #d7efff;
+            }
+
+
+            .search-form {
+                width: 80%;
+                margin: 0 auto;
+                margin-top: 1rem;
+            }
+
+            .search-form input {
+                height: 100%;
+                background: transparent;
+                border: 0;
+                display: block;
+                width: 100%;
+                padding: 1rem;
+                height: 100%;
+                font-size: 1rem;
+            }
+
+            .search-form select {
+                background: transparent;
+                border: 0;
+                padding: 1rem;
+                height: 100%;
+                font-size: 1rem;
+            }
+
+            .search-form select:focus {
+                border: 0;
+            }
+
+            .search-form button {
+                height: 100%;
+                width: 100%;
+                font-size: 1rem;
+            }
+
+            .search-form button svg {
+                width: 24px;
+                height: 24px;
+            }
+
+            .search-body {
+                margin-bottom: 1.5rem;
+            }
+
             .search-body .search-filters .filter-list {
-                margin-right: 1rem;
+                margin-bottom: 1.3rem;
             }
-        }
 
-        .card-margin {
-            margin-bottom: 1.875rem;
-        }
-
-        @media (min-width: 992px){
-            .col-lg-2 {
-                flex: 0 0 16.66667%;
-                max-width: 16.66667%;
+            .search-body .search-filters .filter-list .title {
+                color: #3c4142;
+                margin-bottom: 1rem;
             }
-        }
 
-        .card-margin {
-            margin-bottom: 1.875rem;
-        }
-        .card {
-            border: 0;
-            box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
-            -webkit-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
-            -moz-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
-            -ms-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
-        }
-        .card {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            min-width: 0;
-            word-wrap: break-word;
-            background-color: #ffffff;
-            background-clip: border-box;
-            border: 1px solid #e6e4e9;
-            border-radius: 8px;
-        }
+            .search-body .search-filters .filter-list .filter-text {
+                color: #727686;
+            }
+
+            .search-body .search-result .result-header {
+                margin-bottom: 2rem;
+            }
+
+            .search-body .search-result .result-header .records {
+                color: #3c4142;
+            }
+
+            .search-body .search-result .result-header .result-actions {
+                text-align: right;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .search-body .search-result .result-header .result-actions .result-sorting {
+                display: flex;
+                align-items: center;
+            }
+
+            .search-body .search-result .result-header .result-actions .result-sorting span {
+                flex-shrink: 0;
+                font-size: 0.8125rem;
+            }
+
+            .search-body .search-result .result-header .result-actions .result-sorting select {
+                color: #68CBD7;
+            }
+
+            .search-body .search-result .result-header .result-actions .result-sorting select option {
+                color: #3c4142;
+            }
+
+            @media (min-width: 768px) and (max-width: 991.98px) {
+                .search-body .search-filters {
+                    display: flex;
+                }
+
+                .search-body .search-filters .filter-list {
+                    margin-right: 1rem;
+                }
+            }
+
+            .card-margin {
+                margin-bottom: 1.875rem;
+            }
+
+            @media (min-width: 992px) {
+                .col-lg-2 {
+                    flex: 0 0 16.66667%;
+                    max-width: 16.66667%;
+                }
+            }
+
+            .card-margin {
+                margin-bottom: 1.875rem;
+            }
+
+            .card {
+                border: 0;
+                box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+                -webkit-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+                -moz-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+                -ms-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+            }
+
+            .card {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+                word-wrap: break-word;
+                background-color: #ffffff;
+                background-clip: border-box;
+                border: 1px solid #e6e4e9;
+                border-radius: 8px;
+            }
+            .characterItem {
+                padding: 3px !important;
+            }
     </style>
 </head>
 <body>
 <header id="header">
     헤더
 </header>
-<div class="container-fluid m-0 bg-secondary" >
+<div class="container-fluid m-0 bg-secondary">
     <div class="row" style="margin-top : 92px">
         <div class="col-lg-12 card-margin">
             <div class="card search-form">
@@ -438,11 +548,18 @@
                                         </select>
                                     </div>
                                     <div class="col-lg-8 col-md-7 col-sm-6 p-0">
-                                        <input type="text" placeholder="입력" class="form-control" id="characterName" name="characterName">
+                                        <input type="text" placeholder="입력" class="form-control" id="characterName"
+                                               name="characterName">
                                     </div>
                                     <div class="col-lg-1 col-md-2 col-sm-2 p-0">
                                         <button type="submit" class="btn btn-base">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                                 stroke-linecap="round" stroke-linejoin="round"
+                                                 class="feather feather-search">
+                                                <circle cx="11" cy="11" r="8"></circle>
+                                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                            </svg>
                                         </button>
                                     </div>
                                 </div>
@@ -455,7 +572,7 @@
     </div>
 
     <div class="row">
-        <div class="col-12">
+        <div class="col-sm-12 col-md-12 col-xl-8 col-lg-8">
             <div class="card card-margin">
                 <div class="card-body">
                     <div class="row search-body">
@@ -463,24 +580,53 @@
                             <div class="search-result">
                                 <div class="result-body">
                                     <div class="table-responsive">
-                                        <div class="container">
-                                            <div class="row">
-                                                <!-- Single Advisor-->
-                                                <div th:each="char : ${characterResults}" class="col-12 col-sm-6 col-lg-3">
-                                                    <div class="single_advisor_profile wow fadeInUp" data-wow-delay="0.2s" style="visibility: visible; animation-delay: 0.2s; animation-name: fadeInUp;">
-                                                        <!-- Team Thumb-->
-                                                        <div class="advisor_thumb"><img th:if="${char.getCharacterAbilityDTO().adventureFame!=null && char.getCharacterAbilityDTO().adventureFame!='0' }" th:src="@{/images/icon_char/icon_status_fame.png}" src="" width="15px" height="15px" alt="명성"> <span th:if="${char.getCharacterAbilityDTO().adventureFame!=null && char.getCharacterAbilityDTO().adventureFame!='0' }" style="vertical-align: top ; align-content: end" th:text="${char.characterAbilityDTO.adventureFame}"></span>
-                                                            <img src="" th:if="${char.getCharacterAbilityDTO().adventureFame!=null && char.getCharacterAbilityDTO().adventureFame!='0' }"  th:src="@{'https://img-api.neople.co.kr/df/servers/'+${char.serverId}+'/characters/' + ${char.characterId} + '?zoom=2'}" width="270px" height="360px"  alt="캐릭터 이미지" />
-                                                            <img src="" th:if="${char.getCharacterAbilityDTO().adventureFame==null || char.getCharacterAbilityDTO().adventureFame=='0' }"  th:src="@{'https://img-api.neople.co.kr/df/servers/'+${char.serverId}+'/characters/' + ${char.characterId} + '?zoom=2'}" width="270px" height="385px"  alt="캐릭터 이미지" />
-
-                                                            <!-- Social Info-->
-                                                            <div class="social-info"><a href="#"><i class="fa fa-facebook"></i></a><a href="#"><i class="fa fa-twitter"></i></a><a href="#"><i class="fa fa-linkedin"></i></a></div>
+                                            <div class="characterContainer row" style="min-height: 350px;">
+                                                <div th:each="char : ${characterResults}"
+                                                     class="characterItem col-6 col-sm-4 col-lg-3 col-xl-3">
+                                                    <div class="card" th:data-id="${char.characterId}"
+                                                         th:data-server="${char.serverId}">
+                                                        <div class="card-header custon-card-header">
+                                                            <span><img class="icon-fame"
+                                                                       th:src="@{/images/icon_char/icon_status_fame.png}"
+                                                                       src="" alt="fame"
+                                                                       th:text="${char.characterAbilityDTO.adventureFame}"></span>
                                                         </div>
-                                                        <!-- Team Details-->
-                                                        <div class="single_advisor_details_info" style="text-align : left">
-                                                            <h6 th:text="${char.characterAbilityDTO.characterName}" >Samantha Sarah</h6>
-                                                            <p class="designation" style="color: black" th:if="${char.characterAbilityDTO.adventureName!=null}" th:text="${char.characterAbilityDTO.adventureName}" >Founder &amp; CEO</p>
-                                                            <p class="designation" style="color: black" th:if="${char.characterAbilityDTO.adventureName==null}" th:text="${'모험단 없음'}"></p>
+
+                                                        <a class="charImg zoom" data-id="cain">
+                                                            <img class="card-img-top zoom" style="position: relative;"
+                                                                 th:src="@{'https://img-api.neople.co.kr/df/servers/'+${char.serverId}+'/characters/' + ${char.characterId} + '?zoom=1'}"
+                                                                 src="">
+                                                        </a>
+                                                        <div class="card-body">
+
+                                                            <span class="server-name "></span>
+
+                                                            <h5 class="character-name m-0"
+                                                                th:text="${char.characterAbilityDTO.characterName}">
+                                                                김치</h5>
+                                                            <span class="info-span"
+                                                                  th:text="'LV.'+${char.characterAbilityDTO.level}">
+
+											Lv.100
+
+										<a class="job-name" th:text="${char.characterAbilityDTO.jobGrowName}">
+
+
+												眞 데몬슬레이어
+
+										</a>
+									</span>
+                                                        </div>
+                                                        <div class="card-footer text-muted dmgView">
+
+                                                            <a style="display: inline-block">
+                                                                <span class="badge jobBadge"
+                                                                      th:text="${char.characterAbilityDTO.jobGrowName}"></span>
+                                                                <span class="badge bg-light text-dark"
+                                                                      style="font-size: 14px; padding: 0 2px 0 2px;">3.9억</span>
+                                                            </a>
+
+
                                                         </div>
                                                     </div>
                                                 </div>
@@ -489,7 +635,8 @@
                                         <div class="row">
                                             <nav id="pagination" aria-label="Page navigation">
                                                 <ul class="pagination justify-content-center">
-                                                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                                                    <li class="page-item"><a class="page-link" href="#">Previous</a>
+                                                    </li>
                                                     <li class="page-item"><a class="page-link" href="#">1</a></li>
                                                     <li class="page-item"><a class="page-link" href="#">Next</a></li>
                                                 </ul>
@@ -505,8 +652,11 @@
             </div>
         </div>
     </div>
+
+</div>
+
 <footer id="footer">
-  푸터
+    푸터
 </footer>
 <script src="/header/js/jquery.sticky.js"></script>
 <script src="/header/js/main.js"></script>
