@@ -1,18 +1,16 @@
-package com.dfoff.demo.Domain;
+package com.dfoff.demo.Domain.ForCharacter;
 
 
-import com.dfoff.demo.Domain.ForCharacter.CharacterAbilityDTO;
+import com.dfoff.demo.Domain.CharacterEntity;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 
 import javax.annotation.Generated;
-import java.util.Collections;
+import javax.persistence.Id;
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 
 @Builder
@@ -26,11 +24,33 @@ public class CharacterDTO {
 
     private String characterId;
 
+    private String characterName;
+
+    private Integer level;
+
+    private String jobId;
+
+    private String jobGrowId;
+
+    private String jobName;
+
+    private String jobGrowName;
 
     private CharacterAbilityDTO characterAbilityDTO;
 
 
-
+    public static CharacterEntity toEntity(CharacterDTO dto) {
+        return CharacterEntity.builder()
+                .characterId(dto.getCharacterId())
+                .characterName(dto.getCharacterName())
+                .serverId(dto.getServerId())
+                .level(dto.getLevel())
+                .jobId(dto.getJobId())
+                .jobGrowId(dto.getJobGrowId())
+                .jobName(dto.getJobName())
+                .jobGrowName(dto.getJobGrowName())
+                .build();
+    }
 
     @Generated("jsonschema2pojo")
     public static class CharacterJSONDTO {
@@ -50,6 +70,12 @@ public class CharacterDTO {
             List<CharacterDTO> characterDtoList = rows.stream().map(row -> CharacterDTO.builder()
                     .serverId(row.getServerId())
                     .characterId(row.getCharacterId())
+                    .characterName(row.getCharacterName())
+                    .level(row.getLevel())
+                    .jobId(row.getJobId())
+                    .jobGrowId(row.getJobGrowId())
+                    .jobName(row.getJobName())
+                    .jobGrowName(row.getJobGrowName())
                     .build()).collect(Collectors.toList());
             return characterDtoList;
 

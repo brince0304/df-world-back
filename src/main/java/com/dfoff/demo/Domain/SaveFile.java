@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @AllArgsConstructor
@@ -24,6 +25,20 @@ public class SaveFile extends AuditingFields {
     private String fileName;
     @Setter
     private String filePath;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SaveFile)) return false;
+        SaveFile saveFile = (SaveFile) o;
+        return id.equals(saveFile.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
     @Setter
     private String fileType;
     @Setter

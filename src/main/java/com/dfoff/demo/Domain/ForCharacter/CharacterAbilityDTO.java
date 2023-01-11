@@ -1,11 +1,17 @@
 package com.dfoff.demo.Domain.ForCharacter;
 
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import io.hypersistence.utils.hibernate.type.json.JsonType;
 import lombok.*;
+import org.hibernate.annotations.TypeDef;
 
 import javax.annotation.Generated;
+import javax.persistence.ColumnResult;
+import javax.persistence.Table;
 import java.util.List;
+
 
 @Getter
 @ToString
@@ -43,10 +49,27 @@ public class CharacterAbilityDTO {
 
 
 
+        public static CharacterAbilityJSONDTO toAbilityJSONDTO(CharacterAbilityDTO dto){
+            return CharacterAbilityJSONDTO.builder()
+                    .characterId(dto.getCharacterId())
+                    .characterName(dto.getCharacterName())
+                    .level(dto.getLevel())
+                    .jobId(dto.getJobId())
+                    .jobGrowId(dto.getJobGrowId())
+                    .jobName(dto.getJobName())
+                    .jobGrowName(dto.getJobGrowName())
+                    .adventureName(dto.getAdventureName())
+                    .guildId(dto.getGuildId())
+                    .guildName(dto.getGuildName())
+                    .buff(dto.getBuff())
+                    .status(dto.getStatus())
+                    .build();
+        }
 
-    @Generated("jsonschema2pojo")
+
+    @TypeDef(name = "json", typeClass = JsonType.class, defaultForType = CharacterAbilityJSONDTO.class)
+    @Builder
     public static class CharacterAbilityJSONDTO {
-
         @SerializedName("characterId")
         @Expose
         private String characterId;
@@ -89,6 +112,8 @@ public class CharacterAbilityDTO {
          */
         public CharacterAbilityJSONDTO() {
         }
+
+
 
         public CharacterAbilityDTO toDTO() {
             CharacterAbilityDTO characterAbilityDTO = CharacterAbilityDTO.builder()
