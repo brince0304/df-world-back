@@ -2,6 +2,7 @@ package com.dfoff.demo.Domain;
 
 import com.dfoff.demo.Domain.EnumType.UserAccount.SecurityRole;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
+import com.dfoff.demo.UserAccountCharacterMapper;
 import io.micrometer.core.lang.Nullable;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -10,9 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,7 +23,6 @@ import java.util.Set;
         {@Index(columnList = "email", unique = true)
                 , @Index(columnList = "nickname", unique = true)})
 @Builder
-@EqualsAndHashCode(of = "userId", callSuper = false)
 public class UserAccount extends AuditingFields {
     @Id
     @Column(length = 50)
@@ -40,11 +39,28 @@ public class UserAccount extends AuditingFields {
     @Column(length = 100, unique = true)
     private String email;
     @Setter
-    @JoinColumn(name = "save_file_id")
+    @JoinColumn(name = "profile_img_id")
     @OneToOne(fetch = FetchType.LAZY)
+    @ToString.Exclude
     private SaveFile profileIcon;
 
+    @OneToMany (mappedBy = "userAccount",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Set<UserAccountCharacterMapper> characterEntities = new LinkedHashSet<>();
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof UserAccount)) return false;
+        UserAccount that = (UserAccount) o;
+        return userId.equals(that.userId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId);
+    }
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
@@ -141,6 +157,8 @@ public class UserAccount extends AuditingFields {
         @Setter
         private SaveFile.SaveFileDTO profileIcon;
 
+        private final Set<CharacterEntityDto> characterEntityDtos;
+
         private final Set<SecurityRole> roles;
 
         private final LocalDateTime createdAt;
@@ -156,6 +174,7 @@ public class UserAccount extends AuditingFields {
                     .email(userAccount.getEmail())
                     .roles(userAccount.getRoles())
                     .profileIcon(SaveFile.SaveFileDTO.from(userAccount.getProfileIcon()))
+                    .characterEntityDtos(userAccount.getCharacterEntities().stream().map(UserAccountCharacterMapper::getCharacter).map(CharacterEntityDto::toDto).collect(Collectors.toSet()))
                     .createdAt(userAccount.getCreatedAt())
                     .createdBy(userAccount.getCreatedBy())
                     .modifiedAt(userAccount.getModifiedAt())
@@ -183,6 +202,7 @@ public class UserAccount extends AuditingFields {
                     .password(userAccountDto.getPassword())
                     .nickname(userAccountDto.getNickname())
                     .email(userAccountDto.getEmail())
+                    .characterEntities(userAccountDto.getCharacterEntityDtos()==null?new LinkedHashSet<>(): userAccountDto.getCharacterEntityDtos().stream().map(CharacterEntityDto::toEntity).map(o-> UserAccountCharacterMapper.of(UserAccountDTO.toEntity(userAccountDto),o)).collect(Collectors.toSet()))
                     .profileIcon(SaveFile.SaveFileDTO.toEntity(userAccountDto.getProfileIcon()))
                     .roles(userAccountDto.getRoles())
                     .build();
