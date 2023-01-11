@@ -40,6 +40,36 @@
              th:text="${'모험단 없음'}"></p>
         </div>
 
+
+        <nav style="text-align: center;">
+          <ul class="pagination"
+              th:with="start=${(characters.number/5)*5 + 1},
+                    last=(${start + 9 < characters.totalPages ? start + 9 : characters.totalPages})">
+            <li>
+              <a th:href="@{/character/search.df(page=0,characterName=${characterName},serverId=${serverId})}" aria-label="First">
+                <span aria-hidden="true">First</span>
+              </a>
+            </li>
+
+            <li th:class="${characters.first} ? 'disabled'">
+              <a th:href="${characters.first} ? '#' :@{/character/search.df(page=${characters.number -1},characterName=${characterName},serverId=${serverId})}" aria-label="Previous">
+                <span aria-hidden="true">&lt;</span>
+              </a>
+            </li>
+
+            <li th:each="page: ${#numbers.sequence(start , last)}" th:class="${page == characters.number + 1} ? 'active'">
+              <a th:text="${page }" th:href="@{/character/search.df(page=${page -1},characterName=${characterName},serverId=${serverId})}"></a>
+            </li>
+
+
+            <li>
+              <a th:href="@{/character/search.df(page=${characters.totalPages -1},characterName=${characterName},serverId=${serverId})}" aria-label="Last">
+                <span aria-hidden="true">Last</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+
         <!-- 임시 -->
         <div class="row">
           <div class="col-sm-12 col-md-12 col-xl-8 col-lg-8">
@@ -132,5 +162,43 @@
     </div>
   </div>
 </div>
+
+<form th:action="@{/character/search.df}" id="search-form" method="get">
+  <div class="row">
+    <div class="col-12">
+      <div class="row no-gutters">
+        <div class="col-lg-3 col-md-3 col-sm-4 p-0">
+          <select name="serverId" class="form-control" id="serverId">
+            <option value="all">전체</option>
+            <option value="adventure">모험단</option>
+            <option value="cain">카인</option>
+            <option value="diregie">디레지에</option>
+            <option value="siroco">시로코</option>
+            <option value="prey">프레이</option>
+            <option value="casillas">카시야스</option>
+            <option value="hilder">힐더</option>
+            <option value="anton">안톤</option>
+            <option value="bakal">바칼</option>
+          </select>
+        </div>
+        <div class="col-lg-8 col-md-7 col-sm-6 p-0">
+          <input type="text" placeholder="입력" class="form-control" id="characterName"
+                 name="characterName">
+        </div>
+        <div class="col-lg-1 col-md-2 col-sm-2 p-0">
+          <button type="submit" class="btn btn-base">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round"
+                 class="feather feather-search">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
 </body>
 </html>

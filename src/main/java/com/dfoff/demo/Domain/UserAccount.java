@@ -40,7 +40,7 @@ public class UserAccount extends AuditingFields {
     private String email;
     @Setter
     @JoinColumn(name = "profile_img_id")
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.EAGER)
     @ToString.Exclude
     private SaveFile profileIcon;
 
@@ -132,7 +132,7 @@ public class UserAccount extends AuditingFields {
         private final SaveFile.SaveFileDTO profileIcon;
         private final Set<SecurityRole> roles;
 
-        public static UserAccountResponse of(UserAccountDTO userAccount){
+        public static UserAccountResponse from(UserAccountDTO userAccount){
             return UserAccountResponse.builder()
                     .userId(userAccount.getUserId())
                     .nickname(userAccount.getNickname())
@@ -157,7 +157,7 @@ public class UserAccount extends AuditingFields {
         @Setter
         private SaveFile.SaveFileDTO profileIcon;
 
-        private final Set<CharacterEntityDto> characterEntityDtos;
+        private final Set<CharacterEntity.CharacterEntityDto> characterEntityDtos;
 
         private final Set<SecurityRole> roles;
 
@@ -174,7 +174,9 @@ public class UserAccount extends AuditingFields {
                     .email(userAccount.getEmail())
                     .roles(userAccount.getRoles())
                     .profileIcon(SaveFile.SaveFileDTO.from(userAccount.getProfileIcon()))
-                    .characterEntityDtos(userAccount.getCharacterEntities().stream().map(UserAccountCharacterMapper::getCharacter).map(CharacterEntityDto::toDto).collect(Collectors.toSet()))
+                    .characterEntityDtos(
+                            userAccount.getCharacterEntities()==null? new LinkedHashSet<>() : userAccount.getCharacterEntities().stream()
+                                    .map(UserAccountCharacterMapper::getCharacter).map(CharacterEntity.CharacterEntityDto::toDto).collect(Collectors.toSet()))
                     .createdAt(userAccount.getCreatedAt())
                     .createdBy(userAccount.getCreatedBy())
                     .modifiedAt(userAccount.getModifiedAt())
@@ -202,7 +204,10 @@ public class UserAccount extends AuditingFields {
                     .password(userAccountDto.getPassword())
                     .nickname(userAccountDto.getNickname())
                     .email(userAccountDto.getEmail())
-                    .characterEntities(userAccountDto.getCharacterEntityDtos()==null?new LinkedHashSet<>(): userAccountDto.getCharacterEntityDtos().stream().map(CharacterEntityDto::toEntity).map(o-> UserAccountCharacterMapper.of(UserAccountDTO.toEntity(userAccountDto),o)).collect(Collectors.toSet()))
+                    .characterEntities(
+                            userAccountDto.getCharacterEntityDtos()==null ? new LinkedHashSet<>()
+                                    : userAccountDto.getCharacterEntityDtos().stream()
+                                    .map(CharacterEntity.CharacterEntityDto::toEntity).map(o-> UserAccountCharacterMapper.of(UserAccountDTO.toEntity(userAccountDto),o)).collect(Collectors.toSet()))
                     .profileIcon(SaveFile.SaveFileDTO.toEntity(userAccountDto.getProfileIcon()))
                     .roles(userAccountDto.getRoles())
                     .build();

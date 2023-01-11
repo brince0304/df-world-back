@@ -1,6 +1,7 @@
 package com.dfoff.demo.Domain.ForCharacter;
 
 
+import com.dfoff.demo.Domain.CharacterEntity;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import io.hypersistence.utils.hibernate.type.json.JsonType;
@@ -63,6 +64,21 @@ public class CharacterAbilityDTO {
                     .guildName(dto.getGuildName())
                     .buff(dto.getBuff())
                     .status(dto.getStatus())
+                    .build();
+        }
+
+        public static CharacterEntity toEntity(CharacterAbilityDTO dto){
+            return CharacterEntity.builder()
+                    .characterId(dto.getCharacterId())
+                    .characterName(dto.getCharacterName())
+                    .level(dto.getLevel())
+                    .jobId(dto.getJobId())
+                    .jobGrowId(dto.getJobGrowId())
+                    .jobName(dto.getJobName())
+                    .jobGrowName(dto.getJobGrowName())
+                    .adventureName(dto.getAdventureName())
+                    .adventureFame(dto.getAdventureFame())
+                    .adventureName(dto.getAdventureName())
                     .build();
         }
 

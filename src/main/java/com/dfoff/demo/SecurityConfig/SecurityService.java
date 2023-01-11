@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -39,7 +40,7 @@ public class SecurityService implements UserDetailsService {
                 .password(account.getPassword())
                 .nickname(account.getNickname())
                 .email(account.getEmail())
-                .profileIcon(SaveFile.SaveFileDTO.from(account.getProfileIcon()))
+                .profileIcon(Objects.requireNonNull(SaveFile.SaveFileDTO.from(account.getProfileIcon())))
                 .authorities(authorities)
                 .build();
     }

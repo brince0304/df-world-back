@@ -1,8 +1,6 @@
 package com.dfoff.demo.Controller;
 
 import com.dfoff.demo.Domain.CharacterEntity;
-import com.dfoff.demo.Domain.CharacterEntityDto;
-import com.dfoff.demo.Domain.ForCharacter.CharacterDTO;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Service.CharacterService;
 import com.dfoff.demo.Service.SaveFileService;
@@ -10,7 +8,6 @@ import com.dfoff.demo.Service.UserAccountService;
 import com.dfoff.demo.Util.Bcrypt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +47,7 @@ public class UserAccountController {
     }
 
     @GetMapping("/api/user/validate")
-    public String checkEmail(@RequestParam (required = false) String email,
+    public String checkExist(@RequestParam (required = false) String email,
                              @RequestParam (required = false) String nickname,
                              @RequestParam (required = false) String username) {
        if(email != null){
@@ -90,11 +87,11 @@ public class UserAccountController {
                 return new ResponseEntity<>("서버와 캐릭터 이름을 입력해주세요.", HttpStatus.BAD_REQUEST);
             }
             if (serverId.equals("adventure")) {
-                return new ResponseEntity<>(characterService.getCharacterByAdventureName(characterName, pageable).toList(), HttpStatus.OK);
+                return new ResponseEntity<>(characterService.getCharacterByAdventureName(characterName, pageable).map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).toList(), HttpStatus.OK);
             }
-            List<CompletableFuture<CharacterEntityDto>> dtos = new ArrayList<>();
-            List<CharacterEntityDto> dtos1 = characterService.getCharacterDTOs(serverId, characterName);
-            for (CharacterEntityDto dto : dtos1.subList(0, Math.min(dtos1.size(), 15))) {
+            List<CompletableFuture<CharacterEntity.CharacterEntityDto>> dtos = new ArrayList<>();
+            List<CharacterEntity.CharacterEntityDto> dtos1 = characterService.getCharacterDTOs(serverId, characterName);
+            for (CharacterEntity.CharacterEntityDto dto : dtos1.subList(0, Math.min(dtos1.size(), 15))) {
                 if(dto.getLevel()>=100) {
                     dtos.add(characterService.getCharacterAbilityThenSaveAsync(dto));
                 }else{
@@ -102,7 +99,7 @@ public class UserAccountController {
                 }
             }
             int size = Math.min(dtos.size(), 15);
-            return new ResponseEntity<>(dtos.stream().map(CompletableFuture::join).collect(Collectors.toList()).subList(0,size), HttpStatus.OK);
+            return new ResponseEntity<>(dtos.stream().map(CompletableFuture::join).map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toList()).subList(0,size), HttpStatus.OK);
             } catch(Exception e){
                 log.info("error: {}", e.getMessage());
                 return new ResponseEntity<>("캐릭터를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
@@ -132,6 +129,7 @@ public class UserAccountController {
 
     @PostMapping("/api/user/char.df")
     public ResponseEntity<?> addCharacter(@RequestParam (required = false) String request,
+                                          @RequestParam (required = false) String serverId,
                                           @RequestParam (required = false) String characterId,
                                           @AuthenticationPrincipal UserAccount.PrincipalDto userAccountDTO) {
         try {
@@ -139,9 +137,9 @@ public class UserAccountController {
                 return new ResponseEntity<>("로그인이 필요합니다.", HttpStatus.BAD_REQUEST);
             }
             if(request.equals("add")){
-                characterService.addCharacter(UserAccount.UserAccountDTO.from(userAccountDTO), characterService.getCharacter(characterId));
+                characterService.addCharacter(UserAccount.UserAccountDTO.from(userAccountDTO), characterService.getCharacter(serverId,characterId));
             }else if(request.equals("delete")){
-                characterService.deleteCharacter(UserAccount.UserAccountDTO.from(userAccountDTO), characterService.getCharacter(characterId));
+                characterService.deleteCharacter(UserAccount.UserAccountDTO.from(userAccountDTO), characterService.getCharacter(serverId,characterId));
             }
             return new ResponseEntity<>("success", HttpStatus.OK);
         } catch (Exception e) {
@@ -158,8 +156,8 @@ public class UserAccountController {
             }
             ModelAndView mav = new ModelAndView("/mypage/mypage");
             UserAccount.UserAccountDTO userAccountDTO = userAccountService.getUserAccountById(principalDto.getUsername());
-            mav.addObject("user", UserAccount.UserAccountResponse.of(userAccountDTO));
-            mav.addObject("characters", userAccountDTO.getCharacterEntityDtos());
+            mav.addObject("user", UserAccount.UserAccountResponse.from(userAccountDTO));
+            mav.addObject("characters", userAccountDTO.getCharacterEntityDtos().stream().map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toSet()));
             return mav;
         }
         catch (Exception e){

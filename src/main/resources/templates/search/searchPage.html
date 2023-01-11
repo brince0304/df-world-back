@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet" />
+    <link href="/css/searchForm.css" rel="stylesheet" />
     <link href="/Login/assets/css/bootstrap.css" rel="stylesheet"/>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="/Login/assets/css/login-register.css" rel="stylesheet"/>
+    <link href="/Login/assets/css/main.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
 
     <link rel="stylesheet" href="/header/fonts/icomoon/style.css">
@@ -23,561 +31,160 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <title>던파모아 온오프</title>
-    <style>
-        body {
-            margin-top: 20px;
-            background: #eee;
+    <style>@-ms-viewport{width:device-width;}
+    @-o-viewport{width:device-width;}
+    @viewport{width:device-width;}
+    html {
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+    }
+    body {
+        min-height: 1000px;
+        overflow-x: hidden !important;
+        overflow-y: hidden !important;
+    }
+    @media (max-width:360px){
+        body{
+            width:360px !important;
+            position:absolute;
         }
-
-        .single_advisor_profile {
-            position: relative;
-            margin-bottom: 50px;
-            -webkit-transition-duration: 500ms;
-            transition-duration: 500ms;
-            z-index: 1;
-            border-radius: 15px;
-            -webkit-box-shadow: 0 0.25rem 1rem 0 rgba(47, 91, 234, 0.125);
-            box-shadow: 0 0.25rem 1rem 0 rgba(47, 91, 234, 0.125);
+    }
+    @media(max-width:992px) {
+        .col-sm-0, .col-md-0 {
+            display: none;
         }
+    }
 
-        .single_advisor_profile .advisor_thumb {
-            position: relative;
-            z-index: 1;
-            border-radius: 15px 15px 0 0;
-            margin: 0 auto;
-            padding: 30px 30px 0 30px;
-            background-color: transparent;
-            overflow: hidden;
+    @media(min-width:993px) {
+        .col-sm-0, .col-md-0 {
+            display: block;
         }
-
-        .single_advisor_profile .advisor_thumb::after {
-            -webkit-transition-duration: 500ms;
-            transition-duration: 500ms;
-            position: absolute;
-            width: 150%;
-            height: 80px;
-            bottom: -45px;
-            left: -25%;
-            content: "";
-            background-color: #ffffff;
-            -webkit-transform: rotate(-15deg);
-            transform: rotate(-15deg);
+    }
+    .pagination-outer{ text-align: center; }
+    .pagination{
+        font-family: 'Ubuntu', sans-serif;
+        display: inline-flex;
+        position: relative;
+    }
+    .pagination li a.page-link{
+        color: #000;
+        background: transparent;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 39px;
+        height: 40px;
+        width: 40px;
+        padding: 0;
+        margin: 0 6px;
+        border: none;
+        border-radius: 0;
+        position: relative;
+        z-index: 1;
+        transition: all 0.3s ease 0s;
+    }
+    .pagination li a.page-link:hover,
+    .pagination li a.page-link:focus,
+    .pagination li.active a.page-link:hover,
+    .pagination li.active a.page-link{
+        color: #fff;
+        background: #08b8e0;
+    }
+    .pagination li a.page-link:before{
+        content: '';
+        background: linear-gradient(#029fbc,#08b8e0);
+        height: 100%;
+        width: 100%;
+        border-radius: 50%;
+        opacity: 0;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: -1;
+        transition: all 0.3s ease 0s;
+    }
+    .pagination li:first-child a.page-link:before{ background: linear-gradient(to right, #029fbc,#08b8e0); }
+    .pagination li:last-child a.page-link:before{ background: linear-gradient(to left, #029fbc,#08b8e0); }
+    .pagination li a.page-link:hover:before,
+    .pagination li a.page-link:focus:before,
+    .pagination li.active a.page-link:hover:before,
+    .pagination li.active a.page-link:before{
+        opacity: 1;
+        top: -50%;
+    }
+    .pagination li:first-child a.page-link:hover:before,
+    .pagination li:first-child a.page-link:focus:before,
+    .pagination li.active:first-child a.page-link:hover:before,
+    .pagination li.active:first-child a.page-link:before{
+        top: 0;
+        left: -50%;
+    }
+    .pagination li:last-child a.page-link:hover:before,
+    .pagination li:last-child a.page-link:focus:before,
+    .pagination li.active:last-child a.page-link:hover:before,
+    .pagination li.active:last-child a.page-link:before{
+        top: 0;
+        left: 50%;
+    }
+    @media only screen and (max-width: 480px){
+        .pagination{
+            font-size: 0;
+            display: inline-block;
         }
-
-        @media only screen and (max-width: 575px) {
-            .single_advisor_profile .advisor_thumb::after {
-                height: 160px;
-                bottom: -90px;
-            }
+        .pagination li{
+            display: inline-block;
+            vertical-align: top;
+            margin: 0 0 22px;
         }
-
-        .single_advisor_profile .advisor_thumb .social-info {
-            position: absolute;
-            z-index: 1;
-            width: 100%;
-            bottom: 0;
-            right: 30px;
-            text-align: right;
-        }
-
-        .single_advisor_profile .advisor_thumb .social-info a {
-            font-size: 14px;
-            color: #020710;
-            padding: 0 5px;
-        }
-
-        .single_advisor_profile .advisor_thumb .social-info a:hover,
-        .single_advisor_profile .advisor_thumb .social-info a:focus {
-            color: transparent;
-        }
-
-        .single_advisor_profile .advisor_thumb .social-info a:last-child {
-            padding-right: 0;
-        }
-
-        .single_advisor_profile .single_advisor_details_info {
-            position: relative;
-            z-index: 1;
-            padding: 30px;
-            text-align: right;
-            -webkit-transition-duration: 500ms;
-            transition-duration: 500ms;
-            border-radius: 0 0 15px 15px;
-            background-color: #ffffff;
-        }
-
-        .single_advisor_profile .single_advisor_details_info::after {
-            -webkit-transition-duration: 500ms;
-            transition-duration: 500ms;
-            position: absolute;
-            z-index: 1;
-            width: 50px;
-            height: 3px;
-            background-color: transparent;
-            content: "";
-            top: 12px;
-            right: 30px;
-        }
-
-        .single_advisor_profile .single_advisor_details_info h6 {
-            margin-bottom: 0.25rem;
-            -webkit-transition-duration: 500ms;
-            transition-duration: 500ms;
-        }
-
-        @media only screen and (min-width: 768px) and (max-width: 991px) {
-            .single_advisor_profile .single_advisor_details_info h6 {
-                font-size: 14px;
-            }
-        }
-
-        .single_advisor_profile .single_advisor_details_info p {
-            -webkit-transition-duration: 500ms;
-            transition-duration: 500ms;
-            margin-bottom: 0;
-            font-size: 14px;
-        }
-
-        @media only screen and (min-width: 768px) and (max-width: 991px) {
-            .single_advisor_profile .single_advisor_details_info p {
-                font-size: 12px;
-            }
-        }
-
-        .single_advisor_profile:hover .advisor_thumb::after,
-        .single_advisor_profile:focus .advisor_thumb::after {
-            background-color: transparent;
-        }
-
-        .single_advisor_profile:hover .advisor_thumb .social-info a,
-        .single_advisor_profile:focus .advisor_thumb .social-info a {
-            color: #ffffff;
-        }
-
-        .single_advisor_profile:hover .advisor_thumb .social-info a:hover,
-        .single_advisor_profile:hover .advisor_thumb .social-info a:focus,
-        .single_advisor_profile:focus .advisor_thumb .social-info a:hover,
-        .single_advisor_profile:focus .advisor_thumb .social-info a:focus {
-            color: #ffffff;
-        }
-
-        .single_advisor_profile:hover .single_advisor_details_info,
-        .single_advisor_profile:focus .single_advisor_details_info {
-            background-color: silver;
-        }
-
-        .single_advisor_profile:hover .single_advisor_details_info::after,
-        .single_advisor_profile:focus .single_advisor_details_info::after {
-            background-color: #ffffff;
-        }
-
-        .single_advisor_profile:hover .single_advisor_details_info h6,
-        .single_advisor_profile:focus .single_advisor_details_info h6 {
-            color: #ffffff;
-        }
-
-        .single_advisor_profile:hover .single_advisor_details_info p,
-        .single_advisor_profile:focus .single_advisor_details_info p {
-            color: #ffffff;
-        }
-
-        .widget-26 {
-            color: #3c4142;
-            font-weight: 400;
-        }
-
-        .widget-26 tr:first-child td {
-            border: 0;
-        }
-
-        .widget-26 .widget-26-job-emp-img img {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-        }
-
-        .widget-26 .widget-26-job-title {
-            min-width: 200px;
-        }
-
-        .widget-26 .widget-26-job-title a {
-            font-weight: 400;
-            font-size: 0.875rem;
-            color: #3c4142;
-            line-height: 1.5;
-        }
-
-        .widget-26 .widget-26-job-title a:hover {
-            color: #68CBD7;
-            text-decoration: none;
-        }
-
-        .widget-26 .widget-26-job-title .employer-name {
-            margin: 0;
-            line-height: 1.5;
-            font-weight: 400;
-            color: #3c4142;
-            font-size: 0.8125rem;
-            color: #3c4142;
-        }
-
-        .widget-26 .widget-26-job-title .employer-name:hover {
-            color: #68CBD7;
-            text-decoration: none;
-        }
-
-        .characterContainer {
-            padding-left: 10px !important;
-            padding-right: 10px !important;
-        }
-
-        .characterItem {
-            padding: 3px !important;
-        }
-
-        .card {
-            overflow: hidden;
-        }
-
-        .custon-card-header {
-            position: absolute;
-            width: 100%;
-            padding: 3px;
-            color: #ad7d52 !important;
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .icon-fame {
-            width: 16px;
-            margin-right: 5px;
-            margin-left: 5px;
-        }
-
-        @media (min-width: 411px)
-            .charImg {
-                bottom: 30px;
-            }
-
-            .charImg {
-                height: 80%;
-                cursor: pointer;
-            }
-
-            .zoom {
-                -ms-transform: scale(1.2, 1.2);
-                -webkit-transform: scale(1.2, 1.2);
-                transform: scale(1.2, 1.2);
-                opacity: 1;
-            }
-
-            a {
-                text-decoration: none;
-            }
-
-            .card-body {
-                padding: 10px 2px 2px 8px;
-            }
-
-            .server-name {
-                font-size: 13px;
-                color: #868686;
-                letter-spacing: 2px;
-                font-weight: 600;
-            }
-
-            .info-span {
-                font-size: 12px;
-                white-space: nowrap;
-            }
-
-            .job-name {
-                color: #ad7d52 !important;
-            }
-
-            .dmgView {
-                padding: 0;
-                padding-bottom: 3px;
-                text-align: center;
-                min-height: 28px;
-            }
-
-            .widget-26 .widget-26-job-title .time {
-                font-size: 12px;
-                font-weight: 400;
-            }
-
-            .widget-26 .widget-26-job-info {
-                min-width: 100px;
-                font-weight: 400;
-            }
-
-            .widget-26 .widget-26-job-info p {
-                line-height: 1.5;
-                color: #3c4142;
-                font-size: 0.8125rem;
-            }
-
-            .widget-26 .widget-26-job-info .location {
-                color: #3c4142;
-            }
-
-            .widget-26 .widget-26-job-salary {
-                min-width: 70px;
-                font-weight: 400;
-                color: #3c4142;
-                font-size: 0.8125rem;
-            }
-
-            .widget-26 .widget-26-job-category {
-                padding: .5rem;
-                display: inline-flex;
-                white-space: nowrap;
-                border-radius: 15px;
-            }
-
-            .widget-26 .widget-26-job-category .indicator {
-                width: 13px;
-                height: 13px;
-                margin-right: .5rem;
-                float: left;
-                border-radius: 50%;
-            }
-
-            .widget-26 .widget-26-job-category span {
-                font-size: 0.8125rem;
-                color: #3c4142;
-                font-weight: 600;
-            }
-
-            .widget-26 .widget-26-job-starred svg {
-                width: 20px;
-                height: 20px;
-                color: #fd8b2c;
-            }
-
-            .widget-26 .widget-26-job-starred svg.starred {
-                fill: #fd8b2c;
-            }
-
-            .bg-soft-base {
-                background-color: #e1f5f7;
-            }
-
-            .bg-soft-warning {
-                background-color: #fff4e1;
-            }
-
-            .bg-soft-success {
-                background-color: #d1f6f2;
-            }
-
-            .bg-soft-danger {
-                background-color: #fedce0;
-            }
-
-            .bg-soft-info {
-                background-color: #d7efff;
-            }
-
-
-            .search-form {
-                width: 80%;
-                margin: 0 auto;
-                margin-top: 1rem;
-            }
-
-            .search-form input {
-                height: 100%;
-                background: transparent;
-                border: 0;
-                display: block;
-                width: 100%;
-                padding: 1rem;
-                height: 100%;
-                font-size: 1rem;
-            }
-
-            .search-form select {
-                background: transparent;
-                border: 0;
-                padding: 1rem;
-                height: 100%;
-                font-size: 1rem;
-            }
-
-            .search-form select:focus {
-                border: 0;
-            }
-
-            .search-form button {
-                height: 100%;
-                width: 100%;
-                font-size: 1rem;
-            }
-
-            .search-form button svg {
-                width: 24px;
-                height: 24px;
-            }
-
-            .search-body {
-                margin-bottom: 1.5rem;
-            }
-
-            .search-body .search-filters .filter-list {
-                margin-bottom: 1.3rem;
-            }
-
-            .search-body .search-filters .filter-list .title {
-                color: #3c4142;
-                margin-bottom: 1rem;
-            }
-
-            .search-body .search-filters .filter-list .filter-text {
-                color: #727686;
-            }
-
-            .search-body .search-result .result-header {
-                margin-bottom: 2rem;
-            }
-
-            .search-body .search-result .result-header .records {
-                color: #3c4142;
-            }
-
-            .search-body .search-result .result-header .result-actions {
-                text-align: right;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-            }
-
-            .search-body .search-result .result-header .result-actions .result-sorting {
-                display: flex;
-                align-items: center;
-            }
-
-            .search-body .search-result .result-header .result-actions .result-sorting span {
-                flex-shrink: 0;
-                font-size: 0.8125rem;
-            }
-
-            .search-body .search-result .result-header .result-actions .result-sorting select {
-                color: #68CBD7;
-            }
-
-            .search-body .search-result .result-header .result-actions .result-sorting select option {
-                color: #3c4142;
-            }
-
-            @media (min-width: 768px) and (max-width: 991.98px) {
-                .search-body .search-filters {
-                    display: flex;
-                }
-
-                .search-body .search-filters .filter-list {
-                    margin-right: 1rem;
-                }
-            }
-
-            .card-margin {
-                margin-bottom: 1.875rem;
-            }
-
-            @media (min-width: 992px) {
-                .col-lg-2 {
-                    flex: 0 0 16.66667%;
-                    max-width: 16.66667%;
-                }
-            }
-
-            .card-margin {
-                margin-bottom: 1.875rem;
-            }
-
-            .card {
-                border: 0;
-                box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
-                -webkit-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
-                -moz-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
-                -ms-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
-            }
-
-            .card {
-                position: relative;
-                display: flex;
-                flex-direction: column;
-                min-width: 0;
-                word-wrap: break-word;
-                background-color: #ffffff;
-                background-clip: border-box;
-                border: 1px solid #e6e4e9;
-                border-radius: 8px;
-            }
-
-            .characterItem {
-                padding: 3px !important;
-            }
-
-            .charThumb img {
-                max-width: 100%;
-                height: auto;
-                display: block;
-            }
+    }
     </style>
 </head>
 <body>
 <header id="header">
     헤더
 </header>
-<div class="container-fluid m-0 ">
+<div class="container">
     <div class="row" style="margin-top : 92px">
         <div class="col-lg-12 card-margin">
-            <div class="card search-form" style="width: 700px">
+            <div class="search-form" >
                 <div class="card-body p-0">
+                    <div class="s003">
                     <form th:action="@{/character/search.df}" id="search-form" method="get">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="row no-gutters">
-                                    <div class="col-lg-3 col-md-3 col-sm-4 p-0">
-                                        <select name="serverId" class="form-control" id="serverId">
-                                            <option value="all">전체</option>
-                                            <option value="adventure">모험단</option>
-                                            <option value="cain">카인</option>
-                                            <option value="diregie">디레지에</option>
-                                            <option value="siroco">시로코</option>
-                                            <option value="prey">프레이</option>
-                                            <option value="casillas">카시야스</option>
-                                            <option value="hilder">힐더</option>
-                                            <option value="anton">안톤</option>
-                                            <option value="bakal">바칼</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-lg-8 col-md-7 col-sm-6 p-0">
-                                        <input type="text" placeholder="입력" class="form-control" id="characterName"
-                                               name="characterName">
-                                    </div>
-                                    <div class="col-lg-1 col-md-2 col-sm-2 p-0">
-                                        <button type="submit" class="btn btn-base">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                 stroke-linecap="round" stroke-linejoin="round"
-                                                 class="feather feather-search">
-                                                <circle cx="11" cy="11" r="8"></circle>
-                                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </div>
+                    <div class="inner-form">
+                        <div class="input-field first-wrap">
+                            <div class="input-select">
+                                <select data-trigger=""  name="serverId" id="serverId">
+                                    <option value="all">전체</option>
+                                    <option value="adventure">모험단</option>
+                                    <option value="cain">카인</option>
+                                    <option value="diregie">디레지에</option>
+                                    <option value="siroco">시로코</option>
+                                    <option value="prey">프레이</option>
+                                    <option value="casillas">카시야스</option>
+                                    <option value="hilder">힐더</option>
+                                    <option value="anton">안톤</option>
+                                    <option value="bakal">바칼</option>
+                                </select>
                             </div>
                         </div>
-                    </form>
+                        <div class="input-field second-wrap">
+                            <input type="text" placeholder="입력" class="form-control" id="characterName"
+                                   name="characterName" />
+                        </div>
+                        <div class="input-field third-wrap">
+                            <button class="btn-search" type="submit">
+                                <svg class="svg-inline--fa fa-search fa-w-16" aria-hidden="true" data-prefix="fas" data-icon="search" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                    <path fill="currentColor" d="M505 442.7L405.3 343c-4.5-4.5-10.6-7-17-7H372c27.6-35.3 44-79.7 44-128C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c48.3 0 92.7-16.4 128-44v16.3c0 6.4 2.5 12.5 7 17l99.7 99.7c9.4 9.4 24.6 9.4 33.9 0l28.3-28.3c9.4-9.4 9.4-24.6.1-34zM208 336c-70.7 0-128-57.2-128-128 0-70.7 57.2-128 128-128 70.7 0 128 57.2 128 128 0 70.7-57.2 128-128 128z"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="row " style="width:1200px ; margin:auto;">
+    <div class="row ">
         <div class="col-12">
             <div class="card card-margin">
                 <div class="card-body">
@@ -587,14 +194,12 @@
                                 <div class="result-body">
                                     <div class="table-responsive">
                                         <div class="container">
-                                            <div class="row charThumb">
+                                            <div class="row charThumb ">
                                                 <!-- Single Advisor-->
                                                 <div th:each="char : ${characters}" class="col-12 col-sm-6 col-lg-3">
                                                     <div
-                                                         class="single_advisor_profile wow fadeInUp characterCard"
-                                                         data-wow-delay="0.2s"
-                                                         style="background-image: url('/images/icon_char/bg_char.jpeg') ;   background-repeat: no-repeat;   background-position: center;
-                                                            background-size: cover;">
+                                                         class="single_advisor_profile wow fadeInUp characterCard "
+                                                         data-wow-delay="0.2s">
 
                                                         <!-- Team Thumb-->
                                                         <span class="badge bg-light text-dark" >
@@ -615,41 +220,31 @@
                                                         <!-- Team Details-->
                                                         <div class="single_advisor_details_info"
                                                              style="text-align: left">
-                                                            <h4 style="color: #898989;" th:text="${char.serverId}" id="charServerId"></h4>
+                                                            <h4 style="color: #898989;" th:text="${char.getServerName(char.getServerId())}" id="charServerId"></h4>
                                                             <h6 th:text="${char.characterName}">
                                                                 Samantha Sarah</h6>
                                                             <p style="color: #898989" th:text="${char.jobGrowName}"></p>
                                                             <p class="designation" style="color: #898989"
-                                                                th:text="${char.adventureName}">
+                                                                th:text="${char.adventureName}" th:if="${char.adventureName!=null}">
+                                                            <p class="designation" style="color: #898989"
+                                                               th:text="'모험단 갱신필요'" th:if="${char.adventureName==null}">
                                                                </p> <p style="display:inline" th:text=" 'Lv.'+${char.level}"></p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <nav style="text-align: center;">
-                                                <ul class="pagination"
-                                                    th:with="start=${(characters.number/5)*5 + 1},
-                    last=(${start + 9 < characters.totalPages ? start + 9 : characters.totalPages})">
-                                                    <li>
-                                                        <a th:href="@{/character/search.df(page=0,characterName=${characterName},serverId=${serverId})}" aria-label="First">
-                                                            <span aria-hidden="true">First</span>
+                                            <nav class="pagination-outer" aria-label="Page navigation">
+                                                <ul class="pagination" th:with="start=${(characters.number/5)*5 + 1},
+                    last=(${start + 4 < characters.totalPages ? start + 4 : characters.totalPages})">
+                                                    <li class="page-item" th:class="${characters.first} ? 'disabled'">
+                                                        <a th:href="${characters.first} ? '#' :@{/character/search.df(page=${0},characterName=${characterName},serverId=${serverId})}"  class="page-link" aria-label="Previous" >
+                                                            <span aria-hidden="true">«</span>
                                                         </a>
                                                     </li>
-
-                                                    <li th:class="${characters.first} ? 'disabled'">
-                                                        <a th:href="${characters.first} ? '#' :@{/character/search.df(page=${characters.number -1},characterName=${characterName},serverId=${serverId})}" aria-label="Previous">
-                                                            <span aria-hidden="true">&lt;</span>
-                                                        </a>
-                                                    </li>
-
-                                                    <li th:each="page: ${#numbers.sequence(start , last)}" th:class="${page == characters.number + 1} ? 'active'">
-                                                        <a th:text="${page }" th:href="@{/character/search.df(page=${page -1},characterName=${characterName},serverId=${serverId})}"></a>
-                                                    </li>
-
-
-                                                    <li>
-                                                        <a th:href="@{/character/search.df(page=${characters.totalPages -1},characterName=${characterName},serverId=${serverId})}" aria-label="Last">
-                                                            <span aria-hidden="true">Last</span>
+                                                    <li  class="page-item" th:if="${characters.size>0}" th:each="page: ${#numbers.sequence(start , last)}" th:class="${page == characters.number + 1} ? 'active'" ><a class="page-link" th:text="${page }" th:href="@{/character/search.df(page=${page -1},characterName=${characterName},serverId=${serverId})}" >1</a></li>
+                                                    <li class="page-item">
+                                                        <a href="#" class="page-link" aria-label="Next" th:if="${characters.size>12}" th:href="@{/character/search.df(page=${characters.totalPages -1},characterName=${characterName},serverId=${serverId})}" >
+                                                            <span aria-hidden="true">»</span>
                                                         </a>
                                                     </li>
                                                 </ul>
@@ -680,11 +275,24 @@
 <!-- Bootstrap JS -->
 <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'></script>
 <script src="/js/scriptfile.js"></script>
-
+<script src="/js/choices.js"></script>
 
 </body>
 <script>
-
+    function pic() {
+        var bgm = ['/images/icon_char/bg_char.jpeg','/images/icon_char/bg_char_02.png', '/images/icon_char/bg_char_03.png'];
+        $('.characterCard').css({
+            'background' : 'url('+ bgm[Math.floor(Math.random() * bgm.length)] + ') no-repeat',
+            'background-position' : 'center',
+        'background-size': 'cover'
+        });
+    }
+    pic();
+    const choices = new Choices('[data-trigger]',
+        {
+            searchEnabled: false,
+            itemSelectText: '',
+        });
 
 
 </script>

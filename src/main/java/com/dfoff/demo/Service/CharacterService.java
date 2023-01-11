@@ -2,7 +2,6 @@ package com.dfoff.demo.Service;
 
 
 import com.dfoff.demo.Domain.CharacterEntity;
-import com.dfoff.demo.Domain.CharacterEntityDto;
 import com.dfoff.demo.Domain.ForCharacter.CharacterDTO;
 import com.dfoff.demo.Domain.ForCharacter.CharacterAbilityDTO;
 import com.dfoff.demo.Domain.ForCharacter.JobDTO;
@@ -40,39 +39,56 @@ public class CharacterService {
 
     private final Gson gson = OpenAPIUtil.getGson();
 
+    public List<CharacterEntity.CharacterEntityDto> getCharacterDTOs(String serverId, String characterName) {
+        if (characterName == null || characterName.equals("")) {
+            return List.of();
+        }
+        List<CharacterDTO> characterDTOList = parseUtil(OpenAPIUtil.getCharacterSearchUrl(serverId, characterName), CharacterDTO.CharacterJSONDTO.class).toDTO();
+        List<CharacterEntity> characterEntityList = characterDTOList.stream().map(CharacterEntity.CharacterEntityDto::toEntity).collect(Collectors.toList());
+        characterEntityRepository.saveAll(characterEntityList);
+        return characterEntityList.stream().map(CharacterEntity.CharacterEntityDto::toDto).collect(Collectors.toList());
+    }
 
-    public boolean addCharacter(UserAccount.UserAccountDTO account, CharacterEntityDto character) { //캐릭터가 존재하지 않을 이유가 없음
-        if (userAccountRepository.existsByUserId(account.getUserId()) ) {
-            CharacterEntity characterEntity = characterEntityRepository.findById(character.getCharacterId()).orElseThrow(() -> new IllegalArgumentException("캐릭터가 존재하지 않습니다."));
+    public CharacterEntity.CharacterEntityDto getCharacter(String serverId,String characterId) {
+        CharacterEntity characterEntity = characterEntityRepository.findById(characterId).orElseGet(()->CharacterAbilityDTO.toEntity(parseUtil(OpenAPIUtil.getCharacterAbilityUrl(serverId, characterId), CharacterAbilityDTO.CharacterAbilityJSONDTO.class).toDTO()));
+        return CharacterEntity.CharacterEntityDto.toDto(characterEntity);
+    }
+
+    public Page<CharacterEntity.CharacterEntityDto> getCharacterByAdventureName(String adventureName, Pageable pageable) {
+        return characterEntityRepository.findAllByAdventureNameContaining(adventureName, pageable).map(CharacterEntity.CharacterEntityDto::toDto);
+    }
+
+    @Async
+    public CompletableFuture<CharacterEntity.CharacterEntityDto> getCharacterAbilityThenSaveAsync(CharacterEntity.CharacterEntityDto dto) {
+        CharacterEntity entity = characterEntityRepository.save(CharacterEntity.CharacterEntityDto.toEntity(dto));
+        CharacterAbilityDTO characterDto = parseUtil(OpenAPIUtil.getCharacterAbilityUrl(dto.getServerId(), dto.getCharacterId()), CharacterAbilityDTO.CharacterAbilityJSONDTO.class).toDTO();
+        entity.setAdventureFame(characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().isEmpty() ? "0" : characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().get().getValue());
+        entity.setAdventureName(characterDto.getAdventureName());
+        entity.setServerId(dto.getServerId());
+        return CompletableFuture.completedFuture(CharacterEntity.CharacterEntityDto.toDto(entity));
+    }
+
+    public void addCharacter(UserAccount.UserAccountDTO account, CharacterEntity.CharacterEntityDto character) { //캐릭터가 존재하지 않을 이유가 없음
+        if (userAccountRepository.existsByUserId(account.getUserId())) {
             UserAccount userAccount = userAccountRepository.findById(account.getUserId()).orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+            CharacterEntity characterEntity = characterEntityRepository.findById(character.getCharacterId()).orElseGet(() -> CharacterEntity.CharacterEntityDto.toEntity(character));
             UserAccountCharacterMapper mapper = UserAccountCharacterMapper.of(userAccount, characterEntity);
             mapperRepository.save(mapper);
-            return true;
         }
-        return false;
-    }
-
-    public Page<CharacterEntityDto> getCharacterByAdventureName(String adventureName, Pageable pageable){
-        return characterEntityRepository.findAllByAdventureNameContaining(adventureName, pageable).map(CharacterEntityDto::toDto);
     }
 
 
-    public boolean deleteCharacter(UserAccount.UserAccountDTO dto, CharacterEntityDto character) {
+    public void deleteCharacter(UserAccount.UserAccountDTO dto, CharacterEntity.CharacterEntityDto character) {
         if (userAccountRepository.existsByUserId(dto.getUserId())) {
-            CharacterEntity characterEntity = characterEntityRepository.findById(character.getCharacterId()).orElseThrow(() -> new IllegalArgumentException("캐릭터가 존재하지 않습니다."));
+            CharacterEntity characterEntity = characterEntityRepository.findById(character.getCharacterId()).orElseGet(() -> CharacterEntity.CharacterEntityDto.toEntity(character));
             UserAccount userAccount = userAccountRepository.findById(dto.getUserId()).orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
             UserAccountCharacterMapper mapper = mapperRepository.findByUserAccountAndCharacter(userAccount, characterEntity);
-            mapper.setCharacter(null);
-            mapper.setUserAccount(null);
-            return true;
+            if(mapper!=null) {
+                mapper.setCharacter(null);
+                mapper.setUserAccount(null);
+            }
         }
-        return false;
 
-    }
-
-    public CharacterEntityDto getCharacter(String characterId) {
-        CharacterEntity characterEntity = characterEntityRepository.findById(characterId).orElseThrow(() -> new IllegalArgumentException("캐릭터가 존재하지 않습니다."));
-        return CharacterEntityDto.toDto(characterEntity);
     }
 
 
@@ -85,31 +101,6 @@ public class CharacterService {
         JobDTO.JobJSONDTO jobJSONDTO = parseUtil(OpenAPIUtil.JOB_LIST_URL, JobDTO.JobJSONDTO.class);
         jobJSONDTO.toDTO();
     }
-
-    public List<CharacterEntityDto> getCharacterDTOs(String serverId, String characterName) {
-        if (characterName == null || characterName.equals("")) {
-            return List.of();
-        }
-        List<CharacterDTO> characterDTOList = parseUtil(OpenAPIUtil.getCharacterSearchUrl(serverId, characterName), CharacterDTO.CharacterJSONDTO.class).toDTO();
-        for(CharacterDTO characterDTO : characterDTOList) {
-            characterEntityRepository.save(CharacterDTO.toEntity(characterDTO));
-        }
-        return characterDTOList.stream().map(CharacterEntityDto::from).collect(Collectors.toList());
-    }
-
-
-
-    @Async
-    public CompletableFuture<CharacterEntityDto> getCharacterAbilityThenSaveAsync(CharacterEntityDto dto) {
-        CharacterEntity entity = characterEntityRepository.save(CharacterEntityDto.toEntity(dto));
-        CharacterAbilityDTO characterDto = parseUtil(OpenAPIUtil.getCharacterAbilityUrl(dto.getServerId(), dto.getCharacterId()), CharacterAbilityDTO.CharacterAbilityJSONDTO.class).toDTO();
-        entity.setAdventureFame(characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().isEmpty() ? "0" : characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().get().getValue());
-        entity.setAdventureName(characterDto.getAdventureName());
-        entity.setServerId(dto.getServerId());
-        return CompletableFuture.completedFuture(CharacterEntityDto.toDto(entity));
-    }
-
-
 
 
 }

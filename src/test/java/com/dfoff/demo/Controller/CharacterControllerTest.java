@@ -9,8 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @DisplayName("View 컨트롤러 - 인증")
@@ -27,11 +29,10 @@ class CharacterControllerTest {
         this.characterService = characterService;
     }
 
-    @Test
-    void getServerAndJobListForUpdate() throws Exception {
-        //when&then
-        mvc.perform(get("/df/update.df"))
-                .andExpect(status().is3xxRedirection());
 
+    @Test
+    void searchCharacter() throws Exception {
+        mvc.perform(get("/character/search.df?characterName=테스트&serverId=all"))
+                .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML));
     }
 }
