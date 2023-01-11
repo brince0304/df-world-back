@@ -39,6 +39,95 @@
           <p class="designation" style="color: black" th:if="${char.characterAbilityDTO.adventureName==null}"
              th:text="${'모험단 없음'}"></p>
         </div>
+
+        <!-- 임시 -->
+        <div class="row">
+          <div class="col-sm-12 col-md-12 col-xl-8 col-lg-8">
+            <div class="card card-margin">
+              <div class="card-body">
+                <div class="row search-body">
+                  <div class="col-lg-12">
+                    <div class="search-result">
+                      <div class="result-body">
+                        <div class="table-responsive">
+                          <div class="characterContainer row" style="min-height: 350px;">
+                            <div th:each="char : ${characters}"
+                                 class="characterItem col-6 col-sm-4 col-lg-3 col-xl-3">
+                              <div class="card" th:data-id="${char.characterId}"
+                                   th:data-server="${char.serverId}">
+                                <div class="card-header custon-card-header">
+                                                            <span><img class="icon-fame"
+                                                                       th:src="@{/images/icon_char/icon_status_fame.png}"
+                                                                       src="" alt="fame"
+                                                                       th:text="${char.adventureFame}"></span>
+                                </div>
+
+                                <a class="charImg zoom" data-id="cain">
+                                  <img class="card-img-top zoom" style="position: relative;"
+                                       th:src="@{'https://img-api.neople.co.kr/df/servers/'+${char.serverId}+'/characters/' + ${char.characterId} + '?zoom=1'}"
+                                       src="">
+                                </a>
+                                <div class="card-body">
+
+                                  <span class="server-name "></span>
+
+                                  <h5 class="character-name m-0"
+                                      th:text="${char.characterName}">
+                                    김치</h5>
+                                  <span class="info-span"
+                                        th:text="'LV.'+${char.level}">
+
+											Lv.100
+
+										<a class="job-name" th:text="${char.jobGrowName}">
+
+
+												眞 데몬슬레이어
+
+										</a>
+									</span>
+                                </div>
+                                <div class="card-footer text-muted dmgView">
+
+                                  <a style="display: inline-block">
+                                                                <span class="badge jobBadge"
+                                                                      th:text="${char.jobGrowName}"></span>
+                                    <span class="badge bg-light text-dark"
+                                          style="font-size: 14px; padding: 0 2px 0 2px;">3.9억</span>
+                                  </a>
+
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row">
+                          <nav id="pagination"  th:with="start=${(characters.number/maxPage)*maxPage + 1}, end=(${(characters.totalPages == 0) ? 1 : (start + (maxPage - 1) < characters.totalPages ? start + (maxPage - 1) : characters.totalPages)})" aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                              <li  class="page-item"><a th:text="'previous'"
+                                                        th:href="@{/character/search.df(page=${start}, serverId=${serverId}, characterName=${characterName})}"
+                                                        th:class="'page-link' + (${start} <= 1 ? ' disabled' : '')" class="page-link" href="#" >Previous</a>
+                              </li>
+                              <li class="page-item"  th:class="page-item" th:each="pageNumber : ${#numbers.sequence(start, end)}" ><a class="page-link" href="#" th:text="${pageNumber}"
+                                                                                                                                      th:href="@{/character/search.df(page=${pageNumber}, serverId=${serverId}, characterName=${characterName})}"
+                                                                                                                                      th:class="'page-link' + (${pageNumber} == ${characters.number} ? ' disabled' : '')">1</a></li>
+                              <li class="page-item"><a class="page-link" href="#"  th:text="'next'"
+                                                       th:href="@{/character/search.df(page=${start + 5}, serverId=${serverId}, characterName=${characterName})}"
+                                                       th:class="'page-link' + (${characters.number} >= ${end} ? '' : 'disabled')">Next</a></li>
+                            </ul>
+                          </nav>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
       </div>
     </div>
   </div>
