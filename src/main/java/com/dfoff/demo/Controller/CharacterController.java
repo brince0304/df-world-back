@@ -35,7 +35,7 @@ public class CharacterController {
     @GetMapping("/character/search.df")
     public ModelAndView searchCharacterInfo(@RequestParam(required = false) String serverId,
                                             @RequestParam(required = false) String characterName,
-                                            @PageableDefault(size = 10) Pageable pageable) throws ExecutionException, InterruptedException {
+                                            @PageableDefault(size = 12) Pageable pageable) throws ExecutionException, InterruptedException {
         ModelAndView mav = new ModelAndView("/search/searchPage");
         if (serverId == null || characterName == null) {
             mav.addObject("characters", Page.empty());
