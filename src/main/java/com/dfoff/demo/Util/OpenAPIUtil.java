@@ -12,16 +12,14 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 public class OpenAPIUtil {
     public static final String API_KEY = "qQpswERaNSg1ifEA7rbze6oNJrej4JJW";
     private static final Gson gson = getGson();
 
-    public static final String LIMIT = "50";
+    public static final String LIMIT = "100";
 
     public static final String WORD_TYPE = "full";
 
@@ -74,8 +72,22 @@ public class OpenAPIUtil {
         ResponseEntity<?> response = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, String.class);
         log.info("response: {}", response);
         log.info("url: {}", url);
-        return gson.fromJson(response.getBody().toString(), clazz);
+        return gson.fromJson(Objects.requireNonNull(response.getBody()).toString(), clazz);
     }
 
+    public static <T> List<T> getPage(List<T> sourceList, String page, int pageSize) {
+        int pageNum = Integer.parseInt(page);
+        if (pageSize <= 0 || pageNum <= 0) {
+            return Collections.emptyList();
+        }
+
+        int fromIndex = (pageNum - 1) * pageSize;
+        if (sourceList == null || sourceList.size() <= fromIndex) {
+            return Collections.emptyList();
+        }
+
+        // toIndex exclusive
+        return sourceList.subList(fromIndex, Math.min(fromIndex + pageSize, sourceList.size()));
+    }
 
 }
