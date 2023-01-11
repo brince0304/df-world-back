@@ -1,9 +1,10 @@
 package com.dfoff.demo.Service;
 
-import com.dfoff.demo.Domain.AccountCharacterConnector;
+import com.dfoff.demo.Domain.CharacterEntity;
+import com.dfoff.demo.Domain.CharacterEntityDto;
 import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
-import com.dfoff.demo.Repository.AccountCharacterConnectorRepository;
+import com.dfoff.demo.Repository.CharacterEntityRepository;
 import com.dfoff.demo.Repository.UserAccountRepository;
 import com.dfoff.demo.Util.Bcrypt;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityExistsException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +27,6 @@ public class UserAccountService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final Bcrypt bcrypt;
 
-    private final AccountCharacterConnectorRepository connectorRepository;
 
 
     public boolean createAccount(UserAccount.UserAccountDTO account) {
@@ -46,6 +43,7 @@ public class UserAccountService {
         UserAccount account0 = userAccountRepository.save(UserAccount.UserAccountDTO.toEntity(account));
         return true;
     }
+
 
     public boolean existsByUserId(String userId) {
         return userAccountRepository.existsByUserId(userId);
@@ -79,26 +77,13 @@ public class UserAccountService {
         }
         return true;
     }
-    public void connectAccountAndCharacter(UserAccount.UserAccountDTO dto, String characterId) {
-        UserAccount account = userAccountRepository.findById(dto.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
-        connectorRepository.save(AccountCharacterConnector.builder()
-                .userAccount(account)
-                .characterId(characterId)
-                .build());
-    }
 
-    public List<AccountCharacterConnector.AccountCharacterConnectorDTO> getCharacterListByAccount(UserAccount.UserAccountDTO dto) {
-        UserAccount account = userAccountRepository.findById(dto.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
-        List<AccountCharacterConnector.AccountCharacterConnectorDTO> connectorList = connectorRepository.findByUserAccount(account).stream().map(AccountCharacterConnector.AccountCharacterConnectorDTO::from).collect(Collectors.toList());
-        if(connectorList.size() == 0) {
-            return new ArrayList<>();
-        }
-        return connectorList;
-    }
 
-    public void changeProfileIcon (UserAccount.UserAccountDTO dto, SaveFile.SaveFileDTO iconDto){
+
+    public boolean changeProfileIcon (UserAccount.UserAccountDTO dto, SaveFile.SaveFileDTO iconDto){
         UserAccount account = userAccountRepository.findById(dto.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         account.setProfileIcon(SaveFile.SaveFileDTO.toEntity(iconDto));
+        return true;
     }
 
 
@@ -127,4 +112,27 @@ public class UserAccountService {
     }
 
 
+    public boolean chagePassword(UserAccount.UserAccountDTO accountDTO,String password) {
+        UserAccount account = userAccountRepository.findById(accountDTO.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+        account.setPassword(bcrypt.encode(password));
+        return true;
+    }
+
+    public boolean changeNickname(UserAccount.UserAccountDTO accountDTO, String nickname) {
+        UserAccount account = userAccountRepository.findById(accountDTO.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+        if(userAccountRepository.existsByNickname(nickname)){
+            return false;
+        }
+        account.setNickname(nickname);
+        return true;
+    }
+
+    public boolean changeEmail(UserAccount.UserAccountDTO accountDTO, String email) {
+        UserAccount account = userAccountRepository.findById(accountDTO.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+        if(userAccountRepository.existsByEmail(email)){
+            return false;
+        }
+        account.setEmail(email);
+        return true;
+    }
 }
