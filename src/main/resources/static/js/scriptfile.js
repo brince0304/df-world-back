@@ -17,6 +17,10 @@ $(window).scroll(function() {
         $('.nav').removeClass('affix');
     }
 });
+
+
+
+
 $(document).ready(function() {
     var s = $("#navbar");
     var pos = s.position();

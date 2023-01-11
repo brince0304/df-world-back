@@ -515,8 +515,15 @@
                 border: 1px solid #e6e4e9;
                 border-radius: 8px;
             }
+
             .characterItem {
                 padding: 3px !important;
+            }
+
+            .charThumb img {
+                max-width: 100%;
+                height: auto;
+                display: block;
             }
     </style>
 </head>
@@ -524,10 +531,10 @@
 <header id="header">
     헤더
 </header>
-<div class="container-fluid m-0 bg-secondary">
+<div class="container-fluid m-0 ">
     <div class="row" style="margin-top : 92px">
         <div class="col-lg-12 card-margin">
-            <div class="card search-form">
+            <div class="card search-form" style="width: 700px">
                 <div class="card-body p-0">
                     <form th:action="@{/character/search.df}" id="search-form" method="get">
                         <div class="row">
@@ -570,9 +577,8 @@
             </div>
         </div>
     </div>
-
-    <div class="row">
-        <div class="col-sm-12 col-md-12 col-xl-8 col-lg-8">
+    <div class="row " style="width:1200px ; margin:auto;">
+        <div class="col-12">
             <div class="card card-margin">
                 <div class="card-body">
                     <div class="row search-body">
@@ -580,65 +586,72 @@
                             <div class="search-result">
                                 <div class="result-body">
                                     <div class="table-responsive">
-                                            <div class="characterContainer row" style="min-height: 350px;">
-                                                <div th:each="char : ${characterResults}"
-                                                     class="characterItem col-6 col-sm-4 col-lg-3 col-xl-3">
-                                                    <div class="card" th:data-id="${char.characterId}"
-                                                         th:data-server="${char.serverId}">
-                                                        <div class="card-header custon-card-header">
-                                                            <span><img class="icon-fame"
-                                                                       th:src="@{/images/icon_char/icon_status_fame.png}"
-                                                                       src="" alt="fame"
-                                                                       th:text="${char.characterAbilityDTO.adventureFame}"></span>
+                                        <div class="container">
+                                            <div class="row charThumb">
+                                                <!-- Single Advisor-->
+                                                <div th:each="char : ${characters}" class="col-12 col-sm-6 col-lg-3">
+                                                    <div
+                                                         class="single_advisor_profile wow fadeInUp characterCard"
+                                                         data-wow-delay="0.2s"
+                                                         style="background-image: url('/images/icon_char/bg_char.jpeg') ;   background-repeat: no-repeat;   background-position: center;
+                                                            background-size: cover;">
+
+                                                        <!-- Team Thumb-->
+                                                        <span class="badge bg-light text-dark" >
+                                                            <img class="icon-fame"
+                                                                 th:src="@{/images/icon_char/icon_status_fame.png}"
+                                                                 src="" alt="fame" style="float : left; float : top ;display:inline"
+                                                                 > <small style="color: #d39e00 ; display:inline"  th:text="${char.adventureFame}"></small> </span>
+                                                        <div class="advisor_thumb">
+                                                            <img th:src="@{'https://img-api.neople.co.kr/df/servers/'+${char.serverId}+'/characters/' + ${char.characterId} + '?zoom=2'}"
+                                                                 src="" alt="">
+                                                            <!-- Social Info-->
+                                                            <div class="social-info"><a href="#"><i
+                                                                    class="fa fa-facebook"></i> 데미지 데미지</a><a
+                                                                    href="#"><i
+                                                                    class="fa fa-twitter"></i></a><a href="#"><i
+                                                                    class="fa fa-linkedin"></i></a></div>
                                                         </div>
-
-                                                        <a class="charImg zoom" data-id="cain">
-                                                            <img class="card-img-top zoom" style="position: relative;"
-                                                                 th:src="@{'https://img-api.neople.co.kr/df/servers/'+${char.serverId}+'/characters/' + ${char.characterId} + '?zoom=1'}"
-                                                                 src="">
-                                                        </a>
-                                                        <div class="card-body">
-
-                                                            <span class="server-name "></span>
-
-                                                            <h5 class="character-name m-0"
-                                                                th:text="${char.characterAbilityDTO.characterName}">
-                                                                김치</h5>
-                                                            <span class="info-span"
-                                                                  th:text="'LV.'+${char.characterAbilityDTO.level}">
-
-											Lv.100
-
-										<a class="job-name" th:text="${char.characterAbilityDTO.jobGrowName}">
-
-
-												眞 데몬슬레이어
-
-										</a>
-									</span>
-                                                        </div>
-                                                        <div class="card-footer text-muted dmgView">
-
-                                                            <a style="display: inline-block">
-                                                                <span class="badge jobBadge"
-                                                                      th:text="${char.characterAbilityDTO.jobGrowName}"></span>
-                                                                <span class="badge bg-light text-dark"
-                                                                      style="font-size: 14px; padding: 0 2px 0 2px;">3.9억</span>
-                                                            </a>
-
-
+                                                        <!-- Team Details-->
+                                                        <div class="single_advisor_details_info"
+                                                             style="text-align: left">
+                                                            <h4 style="color: #898989;" th:text="${char.serverId}" id="charServerId"></h4>
+                                                            <h6 th:text="${char.characterName}">
+                                                                Samantha Sarah</h6>
+                                                            <p style="color: #898989" th:text="${char.jobGrowName}"></p>
+                                                            <p class="designation" style="color: #898989"
+                                                                th:text="${char.adventureName}">
+                                                               </p> <p style="display:inline" th:text=" 'Lv.'+${char.level}"></p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="row">
-                                            <nav id="pagination" aria-label="Page navigation">
-                                                <ul class="pagination justify-content-center">
-                                                    <li class="page-item"><a class="page-link" href="#">Previous</a>
+                                            <nav style="text-align: center;">
+                                                <ul class="pagination"
+                                                    th:with="start=${(characters.number/5)*5 + 1},
+                    last=(${start + 9 < characters.totalPages ? start + 9 : characters.totalPages})">
+                                                    <li>
+                                                        <a th:href="@{/character/search.df(page=0,characterName=${characterName},serverId=${serverId})}" aria-label="First">
+                                                            <span aria-hidden="true">First</span>
+                                                        </a>
                                                     </li>
-                                                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+
+                                                    <li th:class="${characters.first} ? 'disabled'">
+                                                        <a th:href="${characters.first} ? '#' :@{/character/search.df(page=${characters.number -1},characterName=${characterName},serverId=${serverId})}" aria-label="Previous">
+                                                            <span aria-hidden="true">&lt;</span>
+                                                        </a>
+                                                    </li>
+
+                                                    <li th:each="page: ${#numbers.sequence(start , last)}" th:class="${page == characters.number + 1} ? 'active'">
+                                                        <a th:text="${page }" th:href="@{/character/search.df(page=${page -1},characterName=${characterName},serverId=${serverId})}"></a>
+                                                    </li>
+
+
+                                                    <li>
+                                                        <a th:href="@{/character/search.df(page=${characters.totalPages -1},characterName=${characterName},serverId=${serverId})}" aria-label="Last">
+                                                            <span aria-hidden="true">Last</span>
+                                                        </a>
+                                                    </li>
                                                 </ul>
                                             </nav>
                                         </div>
@@ -652,6 +665,7 @@
             </div>
         </div>
     </div>
+
 
 </div>
 
@@ -669,4 +683,12 @@
 
 
 </body>
+<script>
+
+
+
+</script>
+
+
+
 </html>
