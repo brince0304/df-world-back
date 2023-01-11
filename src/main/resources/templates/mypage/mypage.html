@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
     <link href="/Login/assets/css/main.css" rel="stylesheet"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link th:href="@{/Login/assets/css/bootstrap.css}" rel="stylesheet"/>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -103,7 +103,7 @@
                                 <div class="result-body">
                                     <div class="table-responsive">
                                         <div class="container">
-                                            <div class="row charThumb" >
+                                            <div class="row charThumb">
                                                 <!-- Single Advisor-->
                                                 <div th:each="char : ${characters}" class="col-12 col-sm-6 col-lg-3">
                                                     <div class="single_advisor_profile wow fadeInUp characterCard"
@@ -115,10 +115,14 @@
                                                         <span class="badge bg-light text-dark">
                                                             <img class="icon-fame"
                                                                  th:src="@{/images/icon_char/icon_status_fame.png}"
-                                                                 src="" alt="fame" style="float : left; float : top ; display:inline" > <small style=" display:inline; color: #d39e00" th:text="${char.adventureFame}"></small> </span>
+                                                                 src="" alt="fame"
+                                                                 style="float : left; float : top ; display:inline"> <small
+                                                                style=" display:inline; color: #d39e00"
+                                                                th:text="${char.adventureFame}"></small> </span>
                                                         <span class="badge bg-light text-dark" type="button"
-                                                              th:id="${char.characterId}"
-                                                              th:onclick="deleteCharacter(this.getAttribute('id'))"
+                                                              th:data-id="${char.characterId}"
+                                                              th:data-server="${char.serverId}"
+                                                              th:onclick="deleteCharacter(this.getAttribute('data-server') , this.getAttribute('data-id'))"
                                                               style="display:inline ; float:right; float: top">삭제</span>
                                                         <div class="advisor_thumb">
                                                             <img th:src="@{'https://img-api.neople.co.kr/df/servers/'+${char.serverId}+'/characters/' + ${char.characterId} + '?zoom=2'}"
@@ -133,13 +137,16 @@
                                                         <!-- Team Details-->
                                                         <div class="single_advisor_details_info"
                                                              style="text-align: left">
-                                                            <h4 style="color: #898989;" th:text="${char.serverId}" id="charServerId"></h4>
+                                                            <h4 style="color: #898989;" th:text="${char.serverId}"
+                                                                id="charServerId"></h4>
                                                             <h6 th:text="${char.characterName}">
                                                                 Samantha Sarah</h6>
                                                             <p style="color: #898989" th:text="${char.jobGrowName}"></p>
                                                             <p class="designation" style="color: #898989"
                                                                th:text="${char.adventureName}">
-                                                                </p> <p style="display:inline" th:text=" 'Lv.'+${char.level}"></p>
+                                                            </p>
+                                                            <p style="display:inline"
+                                                               th:text=" 'Lv.'+${char.level}"></p>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -163,27 +170,25 @@
             <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
                 <div class="modal-header" style="padding: 5px;">
                     <div class="input-group" style="z-index: 1;">
-                        <form>
-                            <div class="input-group">
-                                <select name="serverId" id="serverId">
-                                    <option value="all">전체</option>
-                                    <option value="adventure">모험단</option>
-                                    <option value="cain">카인</option>
-                                    <option value="diregie">디레지에</option>
-                                    <option value="siroco">시로코</option>
-                                    <option value="prey">프레이</option>
-                                    <option value="casillas">카시야스</option>
-                                    <option value="hilder">힐더</option>
-                                    <option value="anton">안톤</option>
-                                    <option value="bakal">바칼</option>
-                                </select>
-                                <input type="text" placeholder="입력" class="form-control" id="characterName"
-                                       name="characterName">
-                                <button type="button" class="btn btn-info" style="height:39px;" id="btn-search" href="#"
-                                        onclick="searchCharacter()">검색
-                                </button>
-                            </div>
-                        </form>
+                        <div class="input-group">
+                            <select name="serverId" id="serverId">
+                                <option value="all">전체</option>
+                                <option value="adventure">모험단</option>
+                                <option value="cain">카인</option>
+                                <option value="diregie">디레지에</option>
+                                <option value="siroco">시로코</option>
+                                <option value="prey">프레이</option>
+                                <option value="casillas">카시야스</option>
+                                <option value="hilder">힐더</option>
+                                <option value="anton">안톤</option>
+                                <option value="bakal">바칼</option>
+                            </select>
+                            <input type="text" placeholder="입력" class="form-control" id="characterName"
+                                   name="characterName">
+                            <button type="button" class="btn btn-info" style="height:39px;" id="btn-search" href="#"
+                                    onclick="searchCharacter()">검색
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <div id="searchBody" class="modal-body" style="min-height: 300px; max-height: 500px; overflow: auto;">
@@ -742,11 +747,11 @@
         }
     }
 
-    function setCharacter(serverId, characterName) {
+    function setCharacter(serverId, characterId) {
 
         if (confirm("캐릭터를 추가하시겠습니까?")) {
             $.ajax({
-                url: "/api/user/char.df?characterId=" + characterName + "&serverId=" + serverId + "&request=add",
+                url: "/api/user/char.df?characterId=" + characterId + "&serverId=" + serverId + "&request=add",
                 type: "POST",
                 success: function (data) {
                     alert("캐릭터가 추가되었습니다.");
@@ -760,12 +765,11 @@
     }
 
 
-
-    function deleteCharacter(characterName) {
+    function deleteCharacter(serverId,characterId) {
 
         if (confirm("캐릭터를 삭제하시겠습니까?")) {
             $.ajax({
-                url: "/api/user/char.df?characterId=" + characterName + "&request=delete",
+                url: "/api/user/char.df?serverId="+serverId +"&characterId=" + characterId + "&request=delete",
                 type: "POST",
                 success: function (data) {
                     alert("캐릭터가 삭제되었습니다.");
@@ -777,22 +781,32 @@
         }
     }
 
-    $(document).ready(function(){
-        $('#charServerId').change(function(){
+    $(document).ready(function () {
+        $('#charServerId').change(function () {
             const serverId = $(this).val();
             $('#charServerId').val(getServerName(serverId));
         });
     })
 
     function pic() {
-        var bgm = ['/images/icon_char/bg_char.jpeg','/images/icon_char/bg_char_02.png', '/images/icon_char/bg_char_03.png'];
+        var bgm = ['/images/icon_char/bg_char.jpeg', '/images/icon_char/bg_char_02.png', '/images/icon_char/bg_char_03.png'];
         $('.characterCard').css({
-            'background' : 'url('+ bgm[Math.floor(Math.random() * bgm.length)] + ') no-repeat',
-            'background-position' : 'center',
+            'background': 'url(' + bgm[Math.floor(Math.random() * bgm.length)] + ') no-repeat',
+            'background-position': 'center',
             'background-size': 'cover'
         });
     }
-    pic();
 
+    pic();
+    $(function () {
+        $('#characterName').keypress(function (e) {
+            if (e.keyCode == 13) {
+                searchCharacter();
+
+            }
+        });
+
+
+    });
 </script>
 </html>

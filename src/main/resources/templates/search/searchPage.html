@@ -220,12 +220,14 @@
                                                         <!-- Team Details-->
                                                         <div class="single_advisor_details_info"
                                                              style="text-align: left">
-                                                            <h4 style="color: #898989;" th:text="${char.serverId}" id="charServerId"></h4>
+                                                            <h4 style="color: #898989;" th:text="${char.getServerName(char.getServerId())}" id="charServerId"></h4>
                                                             <h6 th:text="${char.characterName}">
                                                                 Samantha Sarah</h6>
                                                             <p style="color: #898989" th:text="${char.jobGrowName}"></p>
                                                             <p class="designation" style="color: #898989"
-                                                                th:text="${char.adventureName}">
+                                                                th:text="${char.adventureName}" th:if="${char.adventureName!=null}">
+                                                            <p class="designation" style="color: #898989"
+                                                               th:text="'모험단 갱신필요'" th:if="${char.adventureName==null}">
                                                                </p> <p style="display:inline" th:text=" 'Lv.'+${char.level}"></p>
                                                         </div>
                                                     </div>
@@ -239,7 +241,7 @@
                                                             <span aria-hidden="true">«</span>
                                                         </a>
                                                     </li>
-                                                    <li  class="page-item"  th:each="page: ${#numbers.sequence(start , last)}" th:class="${page == characters.number + 1} ? 'active'" ><a class="page-link" th:text="${page }" th:href="@{/character/search.df(page=${page -1},characterName=${characterName},serverId=${serverId})}" >1</a></li>
+                                                    <li  class="page-item" th:if="${characters.size>0}" th:each="page: ${#numbers.sequence(start , last)}" th:class="${page == characters.number + 1} ? 'active'" ><a class="page-link" th:text="${page }" th:href="@{/character/search.df(page=${page -1},characterName=${characterName},serverId=${serverId})}" >1</a></li>
                                                     <li class="page-item">
                                                         <a href="#" class="page-link" aria-label="Next" th:if="${characters.size>12}" th:href="@{/character/search.df(page=${characters.totalPages -1},characterName=${characterName},serverId=${serverId})}" >
                                                             <span aria-hidden="true">»</span>
