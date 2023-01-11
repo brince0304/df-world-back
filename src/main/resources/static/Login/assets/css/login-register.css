@@ -74,6 +74,25 @@
 	animation-name: shake;
 }
 
+@-ms-viewport{width:device-width;}
+@-o-viewport{width:device-width;}
+@viewport{width:device-width;}
+html {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+}
+body {
+    min-height: 1000px;
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+}
+@media (max-width:360px){
+    body{
+        width:360px !important;
+        position:absolute;
+    }
+}
+
 .login .modal-dialog{
     width: 350px;
 }
@@ -203,6 +222,7 @@
         width: 100%;
     }
 }
+
 
 .big-login, .big-register{
     background-color: #00bbff;
