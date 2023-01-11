@@ -525,6 +525,9 @@
                 height: auto;
                 display: block;
             }
+        .characterCard{
+            background-repeat: no-repeat;
+        }
     </style>
 </head>
 <body>
@@ -587,14 +590,12 @@
                                 <div class="result-body">
                                     <div class="table-responsive">
                                         <div class="container">
-                                            <div class="row charThumb">
+                                            <div class="row charThumb ">
                                                 <!-- Single Advisor-->
                                                 <div th:each="char : ${characters}" class="col-12 col-sm-6 col-lg-3">
                                                     <div
-                                                         class="single_advisor_profile wow fadeInUp characterCard"
-                                                         data-wow-delay="0.2s"
-                                                         style="background-image: url('/images/icon_char/bg_char.jpeg') ;   background-repeat: no-repeat;   background-position: center;
-                                                            background-size: cover;">
+                                                         class="single_advisor_profile wow fadeInUp characterCard "
+                                                         data-wow-delay="0.2s">
 
                                                         <!-- Team Thumb-->
                                                         <span class="badge bg-light text-dark" >
@@ -684,7 +685,15 @@
 
 </body>
 <script>
-
+    function pic() {
+        var bgm = ['/images/icon_char/bg_char.jpeg','/images/icon_char/bg_char_02.png', '/images/icon_char/bg_char_03.png'];
+        $('.characterCard').css({
+            'background' : 'url('+ bgm[Math.floor(Math.random() * bgm.length)] + ') no-repeat',
+            'background-position' : 'center',
+        'background-size': 'cover'
+        });
+    }
+    pic();
 
 
 </script>

@@ -1306,5 +1306,15 @@
         });
     })
 
+    function pic() {
+        var bgm = ['/images/icon_char/bg_char.jpeg','/images/icon_char/bg_char_02.png', '/images/icon_char/bg_char_03.png'];
+        $('.characterCard').css({
+            'background' : 'url('+ bgm[Math.floor(Math.random() * bgm.length)] + ') no-repeat',
+            'background-position' : 'center',
+            'background-size': 'cover'
+        });
+    }
+    pic();
+
 </script>
 </html>
