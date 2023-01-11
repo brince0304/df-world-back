@@ -15,6 +15,6 @@ insert into SAVE_FILE (FILE_NAME,FILE_PATH,FILE_SIZE,FILE_TYPE,CREATED_AT,CREATE
 insert into SAVE_FILE (FILE_NAME,FILE_PATH,FILE_SIZE,FILE_TYPE,CREATED_AT,CREATED_BY,MODIFIED_AT,MODIFIED_BY) values ('icon_char_14.png','/Users/brinc/Desktop/brincestudy/JAVA/df-toy-project/src/main/resources/static/images/icon_char/','0','.png',now(),'brinc',now(),'brinc');
 insert into SAVE_FILE (FILE_NAME,FILE_PATH,FILE_SIZE,FILE_TYPE,CREATED_AT,CREATED_BY,MODIFIED_AT,MODIFIED_BY) values ('icon_char_15.png','/Users/brinc/Desktop/brincestudy/JAVA/df-toy-project/src/main/resources/static/images/icon_char/','0','.png',now(),'brinc',now(),'brinc');
 
-insert into USER_ACCOUNT (USER_ID, CREATED_AT, CREATED_BY, MODIFIED_AT, MODIFIED_BY, EMAIL, NICKNAME, PASSWORD,PROFILE_IMG_ID) VALUES ( 'test',now(),'test',now(),'test','test@email.com','test','$2a$10$ahvirS8Sy8m116bQKfr7huSb0QXcky9oYE7Lba6A0lC7wIxDVCPR2', 1 );
+insert into USER_ACCOUNT (USER_ID, CREATED_AT, CREATED_BY, MODIFIED_AT, MODIFIED_BY, EMAIL, NICKNAME, PASSWORD,PROFILE_IMG_ID) VALUES ( 'test',now(),'test',now(),'test','test@email.com','test','$2a$10$DAd.J6N1fv8ecD0UsYKOu.yPnrAQe.lw4pJmLaX6d3fhJ5Bzllw5.', 1 );
 insert into USER_ACCOUNT_ROLES (USER_ACCOUNT_USER_ID, ROLES) VALUES ( 'test','ROLE_USER' );
 
