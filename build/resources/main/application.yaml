@@ -23,11 +23,12 @@ spring:
   jpa:
     defer-datasource-initialization: true
     open-in-view: true
-    hibernate.ddl-auto: create
-    show-sql: true
+    hibernate.ddl-auto: create-drop
+    show-sql: false
     properties:
       hibernate.format_sql: true
       hibernate.default_batch_fetch_size: 100
+
   sql:
     init:
       mode: always
