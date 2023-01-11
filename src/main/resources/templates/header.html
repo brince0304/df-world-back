@@ -17,74 +17,46 @@
             crossorigin="anonymous"></script>
 </head>
 <body>
-<div class="site-mobile-menu site-navbar-target">
-    <div class="site-mobile-menu-header">
-        <div class="site-mobile-menu-close mt-3">
-            <span class="icon-close2 js-menu-toggle"></span>
-        </div>
-    </div>
-    <div class="site-mobile-menu-body"></div>
-</div>
-<header class="site-navbar js-sticky-header site-navbar-target" role="banner" id="header">
-
-
+<header id="header">
     <div class="container">
-        <div class="row align-items-center position-relative">
 
-
-            <div class="site-logo">
-                <a th:href="@{/main.df}"  class="text-black"><span class="text-primary">Brand</span></a>
-            </div>
-
-            <div class="col-12">
-                <nav id="navbar" class="site-navigation text-right ml-auto " role="navigation">
-
-                    <ul class="site-menu main-menu js-clone-nav ml-auto d-none d-lg-block">
-                        <li>
-                            <a class="nav-link active" aria-current="page" th:href="@{/main.df}"
-                               th:if="${#authentication.getPrincipal()==null}">Home</a>
-                            <a class="nav-link active" sec:authorize="isAuthenticated()" aria-current="page"
-                               th:href="@{/main.df}" th:text="마이페이지"></a>
-                        </li>
-                        <li><a class="nav-link" sec:authorize="!isAuthenticated()" data-toggle="modal" href="#"
-                               data-target="#loginModal">로그인</a>
-                            <a class="nav-link" sec:authorize="isAuthenticated()" href="javascript: logoutAlert();"
-                               th:if="${#authentication!=null}">로그아웃</a>
-                        </li>
-
-                        <li class="has-children">
-                            <a href="#about-section" class="nav-link">메뉴</a>
-                            <ul class="dropdown arrow-top">
-                                <li><a href="#team-section" class="nav-link">메뉴1</a></li>
-                                <li><a href="#pricing-section" class="nav-link">메뉴2</a></li>
-                                <li><a href="#faq-section" class="nav-link">메뉴3</a></li>
-                                <li class="has-children">
-                                    <a href="#">More Links</a>
-                                    <ul class="dropdown">
-                                        <li><a href="#">Menu One</a></li>
-                                        <li><a href="#">Menu Two</a></li>
-                                        <li><a href="#">Menu Three</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-
-                        <li><a href="#why-us-section" class="nav-link">Why Us</a></li>
-
-                        <li><a href="#testimonials-section" class="nav-link">Testimonials</a></li>
-                        <li><a href="#blog-section" class="nav-link">Blog</a></li>
-                        <li><a href="#contact-section" class="nav-link">Contact</a></li>
-                    </ul>
-                </nav>
-
-            </div>
-
-            <div class="toggle-button d-inline-block d-lg-none"><a href="#" class="site-menu-toggle py-5 js-menu-toggle text-black"><span class="icon-menu h3"></span></a></div>
-
+        <div id="logo" class="pull-left">
+            <h1><a href="/" class="scrollto">던파온오프모아프리미엄</a></h1>
+            <!-- Uncomment below if you prefer to use an image logo -->
+            <!-- <a href="#intro"><img src="img/logo.png" alt="" title="" /></a>-->
         </div>
+
+        <nav id="nav-menu-container">
+            <ul class="nav-menu">
+                <li ><a th:href="@{/main.df}">메인화면</a></li>
+                <li><a th:href="@{/character/search.df}">캐릭터 검색</a></li>
+                <li><a sec:authorize="!isAuthenticated()" data-toggle="modal" href="#"
+                       data-target="#loginModal">로그인</a>
+                    <a sec:authorize="isAuthenticated()" href="javascript: logoutAlert();"
+                       th:if="${#authentication!=null}">로그아웃</a></li>
+                <li><a  sec:authorize="isAuthenticated()"
+                        th:href="@{/user/myPage.df}" th:text="마이페이지"></a></li>
+                <li><a href="">랭킹</a></li>
+                <li><a href="">게시판</a></li>
+
+                <li class="menu-has-children"><a href="">컨텐츠</a>
+                    <ul>
+                        <li><a href="#team-section">버프력 검색</a></li>
+                        <li><a href="#pricing-section">경매장</a></li>
+                        <li><a href="#faq-section">카드 도감</a></li>
+                        <li><a href="#faq-section">아바타 정옵표</a></li>
+                        <li><a href="#faq-section">직업 분포도</a></li>
+                        <li><a href="#faq-section">장비 통계</a></li>
+                        <li><a href="#faq-section">오늘의 등급</a></li>
+                    </ul>
+                </li>
+                <!-- <li><a href="">Contact</a></li> -->
+            </ul>
+        </nav><!-- #nav-menu-container -->
+
     </div>
 
-    <div class="modal fade login" id="loginModal" style="  position: fixed;
+    <div class="modal fade login" id="loginModal" data-backdrop="false" style="  position: fixed;
   top:0; left: 0; bottom: 0; right: 0;
   background: rgba(0, 0, 0, 0.8);">
         <div class="modal-dialog login animated">
@@ -201,7 +173,10 @@
         </div>
     </div>
 
+
+
 </header>
+
 
 
 <!-- Jquery needed -->

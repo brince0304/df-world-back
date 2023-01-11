@@ -1,53 +1,29 @@
-package com.dfoff.demo.Domain.ForDFCharacter;
+package com.dfoff.demo.Domain.ForCharacter;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
 
 import javax.annotation.Generated;
-import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-@Entity
-@NoArgsConstructor (access = lombok.AccessLevel.PROTECTED)
-@AllArgsConstructor
+
 @Getter
-@ToString
+@AllArgsConstructor
 @Builder
-@EqualsAndHashCode(of = "jobName")
-public class DFJob {
+@ToString
+public class JobDTO {
+    private final String jobId;
+    private final String jobName;
 
-    @Setter
-    @Column (nullable = false)
-    private String jobId;
-    @Id
-    @Column (nullable = false)
-    private String jobName;
+    private final Set<JobGrowDTO> jobGrowDTOSet = new HashSet<>();
 
 
-    @Getter
-    @AllArgsConstructor
-    @Builder
-    public static class DFJobDTO{
-        private final String jobId;
-        private final String jobName;
-
-        public static DFJobDTO from(DFJob dfJob){
-            return DFJobDTO.builder()
-                    .jobId(dfJob.getJobId())
-                    .jobName(dfJob.getJobName())
-                    .build();
-        }
-
-        public static DFJob toEntity(DFJobDTO dfJobDTO){
-            return DFJob.builder()
-                    .jobId(dfJobDTO.getJobId())
-                    .jobName(dfJobDTO.getJobName())
-                    .build();
-        }
-    }
-    @javax.annotation.Generated("jsonschema2pojo")
-    public static class DFJobJSONDTO {
+    @Generated("jsonschema2pojo")
+    public static class JobJSONDTO {
 
         @SerializedName("rows")
         @Expose
@@ -55,16 +31,14 @@ public class DFJob {
 
         /**
          * No args constructor for use in serialization
-         *
          */
-        public DFJobJSONDTO() {
+        public JobJSONDTO() {
         }
 
         /**
-         *
          * @param rows
          */
-        public DFJobJSONDTO(List<Row> rows) {
+        public JobJSONDTO(List<Row> rows) {
             super();
             this.rows = rows;
         }
@@ -77,16 +51,57 @@ public class DFJob {
             this.rows = rows;
         }
 
+        public List<JobDTO> toDTO() {
+            List<JobDTO> jobDTOSet = new ArrayList<>();
+            for (Row row : rows) {
+                JobDTO jobDTO = JobDTO.builder()
+                        .jobId(row.getJobId())
+                        .jobName(row.getJobName())
+                        .build();
+                for (Row__1 row__1 : row.getRows()) {
+                    JobGrowDTO jobGrowDTO = JobGrowDTO.builder()
+                            .jobGrowId(row__1.getJobGrowId())
+                            .jobGrowName(row__1.getJobGrowName())
+                            .build();
+                    jobDTO.getJobGrowDTOSet().add(jobGrowDTO);
+                    if (row__1.getNext() != null) {
+                        JobGrowDTO jobGrowDTO0 = JobGrowDTO.builder()
+                                .jobGrowId(row__1.getNext().getJobGrowId())
+                                .jobGrowName(row__1.getNext().getJobGrowName())
+                                .build();
+                        jobDTO.getJobGrowDTOSet().add(jobGrowDTO0);
+                        if (row__1.getNext().getNext() != null) {
+                            JobGrowDTO jobGrowDTO1 = JobGrowDTO.builder()
+                                    .jobGrowId(row__1.getNext().getNext().getJobGrowId())
+                                    .jobGrowName(row__1.getNext().getNext().getJobGrowName())
+                                    .build();
+                            jobDTO.getJobGrowDTOSet().add(jobGrowDTO0);
+                            if (row__1.getNext().getNext().getNext() != null) {
+                                JobGrowDTO jobGrowDTO2 = JobGrowDTO.builder()
+                                        .jobGrowId(row__1.getNext().getNext().getNext().getJobGrowId())
+                                        .jobGrowName(row__1.getNext().getNext().getNext().getJobGrowName())
+                                        .build();
+                                jobDTO.getJobGrowDTOSet().add(jobGrowDTO2);
+                            }
+                        }
+                    }
+                }
+                jobDTOSet.add(jobDTO);
+            }
+
+            return jobDTOSet;
+        }
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append(DFJobJSONDTO.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+            sb.append(JobJSONDTO.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
             sb.append("rows");
             sb.append('=');
-            sb.append(((this.rows == null)?"<null>":this.rows));
+            sb.append(((this.rows == null) ? "<null>" : this.rows));
             sb.append(',');
-            if (sb.charAt((sb.length()- 1)) == ',') {
-                sb.setCharAt((sb.length()- 1), ']');
+            if (sb.charAt((sb.length() - 1)) == ',') {
+                sb.setCharAt((sb.length() - 1), ']');
             } else {
                 sb.append(']');
             }
@@ -96,7 +111,7 @@ public class DFJob {
         @Override
         public int hashCode() {
             int result = 1;
-            result = ((result* 31)+((this.rows == null)? 0 :this.rows.hashCode()));
+            result = ((result * 31) + ((this.rows == null) ? 0 : this.rows.hashCode()));
             return result;
         }
 
@@ -105,14 +120,14 @@ public class DFJob {
             if (other == this) {
                 return true;
             }
-            if ((other instanceof DFJobJSONDTO) == false) {
+            if ((other instanceof JobJSONDTO) == false) {
                 return false;
             }
-            DFJobJSONDTO rhs = ((DFJobJSONDTO) other);
-            return ((this.rows == rhs.rows)||((this.rows!= null)&&this.rows.equals(rhs.rows)));
+            JobJSONDTO rhs = ((JobJSONDTO) other);
+            return ((this.rows == rhs.rows) || ((this.rows != null) && this.rows.equals(rhs.rows)));
         }
 
-        @javax.annotation.Generated("jsonschema2pojo")
+        @Generated("jsonschema2pojo")
         public static class Next {
 
             @SerializedName("jobGrowId")
@@ -126,16 +141,13 @@ public class DFJob {
             private Next__1 next;
 
 
-
             /**
              * No args constructor for use in serialization
-             *
              */
             public Next() {
             }
 
             /**
-             *
              * @param next
              * @param jobGrowId
              * @param jobGrowName
@@ -177,18 +189,18 @@ public class DFJob {
                 sb.append(Next.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
                 sb.append("jobGrowId");
                 sb.append('=');
-                sb.append(((this.jobGrowId == null)?"<null>":this.jobGrowId));
+                sb.append(((this.jobGrowId == null) ? "<null>" : this.jobGrowId));
                 sb.append(',');
                 sb.append("jobGrowName");
                 sb.append('=');
-                sb.append(((this.jobGrowName == null)?"<null>":this.jobGrowName));
+                sb.append(((this.jobGrowName == null) ? "<null>" : this.jobGrowName));
                 sb.append(',');
                 sb.append("next");
                 sb.append('=');
-                sb.append(((this.next == null)?"<null>":this.next));
+                sb.append(((this.next == null) ? "<null>" : this.next));
                 sb.append(',');
-                if (sb.charAt((sb.length()- 1)) == ',') {
-                    sb.setCharAt((sb.length()- 1), ']');
+                if (sb.charAt((sb.length() - 1)) == ',') {
+                    sb.setCharAt((sb.length() - 1), ']');
                 } else {
                     sb.append(']');
                 }
@@ -198,9 +210,9 @@ public class DFJob {
             @Override
             public int hashCode() {
                 int result = 1;
-                result = ((result* 31)+((this.next == null)? 0 :this.next.hashCode()));
-                result = ((result* 31)+((this.jobGrowName == null)? 0 :this.jobGrowName.hashCode()));
-                result = ((result* 31)+((this.jobGrowId == null)? 0 :this.jobGrowId.hashCode()));
+                result = ((result * 31) + ((this.next == null) ? 0 : this.next.hashCode()));
+                result = ((result * 31) + ((this.jobGrowName == null) ? 0 : this.jobGrowName.hashCode()));
+                result = ((result * 31) + ((this.jobGrowId == null) ? 0 : this.jobGrowId.hashCode()));
                 return result;
             }
 
@@ -213,12 +225,12 @@ public class DFJob {
                     return false;
                 }
                 Next rhs = ((Next) other);
-                return ((((this.next == rhs.next)||((this.next!= null)&&this.next.equals(rhs.next)))&&((this.jobGrowName == rhs.jobGrowName)||((this.jobGrowName!= null)&&this.jobGrowName.equals(rhs.jobGrowName))))&&((this.jobGrowId == rhs.jobGrowId)||((this.jobGrowId!= null)&&this.jobGrowId.equals(rhs.jobGrowId))));
+                return ((((this.next == rhs.next) || ((this.next != null) && this.next.equals(rhs.next))) && ((this.jobGrowName == rhs.jobGrowName) || ((this.jobGrowName != null) && this.jobGrowName.equals(rhs.jobGrowName)))) && ((this.jobGrowId == rhs.jobGrowId) || ((this.jobGrowId != null) && this.jobGrowId.equals(rhs.jobGrowId))));
             }
 
         }
 
-        @javax.annotation.Generated("jsonschema2pojo")
+        @Generated("jsonschema2pojo")
         public static class Row__1 {
 
             @SerializedName("jobGrowId")
@@ -233,13 +245,11 @@ public class DFJob {
 
             /**
              * No args constructor for use in serialization
-             *
              */
             public Row__1() {
             }
 
             /**
-             *
              * @param next
              * @param jobGrowId
              * @param jobGrowName
@@ -281,18 +291,18 @@ public class DFJob {
                 sb.append(Row__1.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
                 sb.append("jobGrowId");
                 sb.append('=');
-                sb.append(((this.jobGrowId == null)?"<null>":this.jobGrowId));
+                sb.append(((this.jobGrowId == null) ? "<null>" : this.jobGrowId));
                 sb.append(',');
                 sb.append("jobGrowName");
                 sb.append('=');
-                sb.append(((this.jobGrowName == null)?"<null>":this.jobGrowName));
+                sb.append(((this.jobGrowName == null) ? "<null>" : this.jobGrowName));
                 sb.append(',');
                 sb.append("next");
                 sb.append('=');
-                sb.append(((this.next == null)?"<null>":this.next));
+                sb.append(((this.next == null) ? "<null>" : this.next));
                 sb.append(',');
-                if (sb.charAt((sb.length()- 1)) == ',') {
-                    sb.setCharAt((sb.length()- 1), ']');
+                if (sb.charAt((sb.length() - 1)) == ',') {
+                    sb.setCharAt((sb.length() - 1), ']');
                 } else {
                     sb.append(']');
                 }
@@ -302,9 +312,9 @@ public class DFJob {
             @Override
             public int hashCode() {
                 int result = 1;
-                result = ((result* 31)+((this.next == null)? 0 :this.next.hashCode()));
-                result = ((result* 31)+((this.jobGrowName == null)? 0 :this.jobGrowName.hashCode()));
-                result = ((result* 31)+((this.jobGrowId == null)? 0 :this.jobGrowId.hashCode()));
+                result = ((result * 31) + ((this.next == null) ? 0 : this.next.hashCode()));
+                result = ((result * 31) + ((this.jobGrowName == null) ? 0 : this.jobGrowName.hashCode()));
+                result = ((result * 31) + ((this.jobGrowId == null) ? 0 : this.jobGrowId.hashCode()));
                 return result;
             }
 
@@ -317,12 +327,12 @@ public class DFJob {
                     return false;
                 }
                 Row__1 rhs = ((Row__1) other);
-                return ((((this.next == rhs.next)||((this.next!= null)&&this.next.equals(rhs.next)))&&((this.jobGrowName == rhs.jobGrowName)||((this.jobGrowName!= null)&&this.jobGrowName.equals(rhs.jobGrowName))))&&((this.jobGrowId == rhs.jobGrowId)||((this.jobGrowId!= null)&&this.jobGrowId.equals(rhs.jobGrowId))));
+                return ((((this.next == rhs.next) || ((this.next != null) && this.next.equals(rhs.next))) && ((this.jobGrowName == rhs.jobGrowName) || ((this.jobGrowName != null) && this.jobGrowName.equals(rhs.jobGrowName)))) && ((this.jobGrowId == rhs.jobGrowId) || ((this.jobGrowId != null) && this.jobGrowId.equals(rhs.jobGrowId))));
             }
 
         }
 
-        @javax.annotation.Generated("jsonschema2pojo")
+        @Generated("jsonschema2pojo")
         public static class Row {
 
             @SerializedName("jobId")
@@ -337,13 +347,11 @@ public class DFJob {
 
             /**
              * No args constructor for use in serialization
-             *
              */
             public Row() {
             }
 
             /**
-             *
              * @param jobName
              * @param jobId
              * @param rows
@@ -385,18 +393,18 @@ public class DFJob {
                 sb.append(Row.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
                 sb.append("jobId");
                 sb.append('=');
-                sb.append(((this.jobId == null)?"<null>":this.jobId));
+                sb.append(((this.jobId == null) ? "<null>" : this.jobId));
                 sb.append(',');
                 sb.append("jobName");
                 sb.append('=');
-                sb.append(((this.jobName == null)?"<null>":this.jobName));
+                sb.append(((this.jobName == null) ? "<null>" : this.jobName));
                 sb.append(',');
                 sb.append("rows");
                 sb.append('=');
-                sb.append(((this.rows == null)?"<null>":this.rows));
+                sb.append(((this.rows == null) ? "<null>" : this.rows));
                 sb.append(',');
-                if (sb.charAt((sb.length()- 1)) == ',') {
-                    sb.setCharAt((sb.length()- 1), ']');
+                if (sb.charAt((sb.length() - 1)) == ',') {
+                    sb.setCharAt((sb.length() - 1), ']');
                 } else {
                     sb.append(']');
                 }
@@ -406,9 +414,9 @@ public class DFJob {
             @Override
             public int hashCode() {
                 int result = 1;
-                result = ((result* 31)+((this.jobName == null)? 0 :this.jobName.hashCode()));
-                result = ((result* 31)+((this.jobId == null)? 0 :this.jobId.hashCode()));
-                result = ((result* 31)+((this.rows == null)? 0 :this.rows.hashCode()));
+                result = ((result * 31) + ((this.jobName == null) ? 0 : this.jobName.hashCode()));
+                result = ((result * 31) + ((this.jobId == null) ? 0 : this.jobId.hashCode()));
+                result = ((result * 31) + ((this.rows == null) ? 0 : this.rows.hashCode()));
                 return result;
             }
 
@@ -421,12 +429,12 @@ public class DFJob {
                     return false;
                 }
                 Row rhs = ((Row) other);
-                return ((((this.jobName == rhs.jobName)||((this.jobName!= null)&&this.jobName.equals(rhs.jobName)))&&((this.jobId == rhs.jobId)||((this.jobId!= null)&&this.jobId.equals(rhs.jobId))))&&((this.rows == rhs.rows)||((this.rows!= null)&&this.rows.equals(rhs.rows))));
+                return ((((this.jobName == rhs.jobName) || ((this.jobName != null) && this.jobName.equals(rhs.jobName))) && ((this.jobId == rhs.jobId) || ((this.jobId != null) && this.jobId.equals(rhs.jobId)))) && ((this.rows == rhs.rows) || ((this.rows != null) && this.rows.equals(rhs.rows))));
             }
 
         }
 
-        @javax.annotation.Generated("jsonschema2pojo")
+        @Generated("jsonschema2pojo")
         public static class Next__2 {
 
             @SerializedName("jobGrowId")
@@ -438,13 +446,11 @@ public class DFJob {
 
             /**
              * No args constructor for use in serialization
-             *
              */
             public Next__2() {
             }
 
             /**
-             *
              * @param jobGrowId
              * @param jobGrowName
              */
@@ -476,14 +482,14 @@ public class DFJob {
                 sb.append(Next__2.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
                 sb.append("jobGrowId");
                 sb.append('=');
-                sb.append(((this.jobGrowId == null)?"<null>":this.jobGrowId));
+                sb.append(((this.jobGrowId == null) ? "<null>" : this.jobGrowId));
                 sb.append(',');
                 sb.append("jobGrowName");
                 sb.append('=');
-                sb.append(((this.jobGrowName == null)?"<null>":this.jobGrowName));
+                sb.append(((this.jobGrowName == null) ? "<null>" : this.jobGrowName));
                 sb.append(',');
-                if (sb.charAt((sb.length()- 1)) == ',') {
-                    sb.setCharAt((sb.length()- 1), ']');
+                if (sb.charAt((sb.length() - 1)) == ',') {
+                    sb.setCharAt((sb.length() - 1), ']');
                 } else {
                     sb.append(']');
                 }
@@ -493,8 +499,8 @@ public class DFJob {
             @Override
             public int hashCode() {
                 int result = 1;
-                result = ((result* 31)+((this.jobGrowName == null)? 0 :this.jobGrowName.hashCode()));
-                result = ((result* 31)+((this.jobGrowId == null)? 0 :this.jobGrowId.hashCode()));
+                result = ((result * 31) + ((this.jobGrowName == null) ? 0 : this.jobGrowName.hashCode()));
+                result = ((result * 31) + ((this.jobGrowId == null) ? 0 : this.jobGrowId.hashCode()));
                 return result;
             }
 
@@ -507,7 +513,7 @@ public class DFJob {
                     return false;
                 }
                 Next__2 rhs = ((Next__2) other);
-                return (((this.jobGrowName == rhs.jobGrowName)||((this.jobGrowName!= null)&&this.jobGrowName.equals(rhs.jobGrowName)))&&((this.jobGrowId == rhs.jobGrowId)||((this.jobGrowId!= null)&&this.jobGrowId.equals(rhs.jobGrowId))));
+                return (((this.jobGrowName == rhs.jobGrowName) || ((this.jobGrowName != null) && this.jobGrowName.equals(rhs.jobGrowName))) && ((this.jobGrowId == rhs.jobGrowId) || ((this.jobGrowId != null) && this.jobGrowId.equals(rhs.jobGrowId))));
             }
 
         }
@@ -527,13 +533,11 @@ public class DFJob {
 
             /**
              * No args constructor for use in serialization
-             *
              */
             public Next__1() {
             }
 
             /**
-             *
              * @param next
              * @param jobGrowId
              * @param jobGrowName
@@ -575,18 +579,18 @@ public class DFJob {
                 sb.append(Next__1.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
                 sb.append("jobGrowId");
                 sb.append('=');
-                sb.append(((this.jobGrowId == null)?"<null>":this.jobGrowId));
+                sb.append(((this.jobGrowId == null) ? "<null>" : this.jobGrowId));
                 sb.append(',');
                 sb.append("jobGrowName");
                 sb.append('=');
-                sb.append(((this.jobGrowName == null)?"<null>":this.jobGrowName));
+                sb.append(((this.jobGrowName == null) ? "<null>" : this.jobGrowName));
                 sb.append(',');
                 sb.append("next");
                 sb.append('=');
-                sb.append(((this.next == null)?"<null>":this.next));
+                sb.append(((this.next == null) ? "<null>" : this.next));
                 sb.append(',');
-                if (sb.charAt((sb.length()- 1)) == ',') {
-                    sb.setCharAt((sb.length()- 1), ']');
+                if (sb.charAt((sb.length() - 1)) == ',') {
+                    sb.setCharAt((sb.length() - 1), ']');
                 } else {
                     sb.append(']');
                 }
@@ -596,9 +600,9 @@ public class DFJob {
             @Override
             public int hashCode() {
                 int result = 1;
-                result = ((result* 31)+((this.next == null)? 0 :this.next.hashCode()));
-                result = ((result* 31)+((this.jobGrowName == null)? 0 :this.jobGrowName.hashCode()));
-                result = ((result* 31)+((this.jobGrowId == null)? 0 :this.jobGrowId.hashCode()));
+                result = ((result * 31) + ((this.next == null) ? 0 : this.next.hashCode()));
+                result = ((result * 31) + ((this.jobGrowName == null) ? 0 : this.jobGrowName.hashCode()));
+                result = ((result * 31) + ((this.jobGrowId == null) ? 0 : this.jobGrowId.hashCode()));
                 return result;
             }
 
@@ -611,7 +615,7 @@ public class DFJob {
                     return false;
                 }
                 Next__1 rhs = ((Next__1) other);
-                return ((((this.next == rhs.next)||((this.next!= null)&&this.next.equals(rhs.next)))&&((this.jobGrowName == rhs.jobGrowName)||((this.jobGrowName!= null)&&this.jobGrowName.equals(rhs.jobGrowName))))&&((this.jobGrowId == rhs.jobGrowId)||((this.jobGrowId!= null)&&this.jobGrowId.equals(rhs.jobGrowId))));
+                return ((((this.next == rhs.next) || ((this.next != null) && this.next.equals(rhs.next))) && ((this.jobGrowName == rhs.jobGrowName) || ((this.jobGrowName != null) && this.jobGrowName.equals(rhs.jobGrowName)))) && ((this.jobGrowId == rhs.jobGrowId) || ((this.jobGrowId != null) && this.jobGrowId.equals(rhs.jobGrowId))));
             }
 
         }

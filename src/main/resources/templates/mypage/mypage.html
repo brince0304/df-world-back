@@ -1,32 +1,903 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <link th:href="@{/login/assets/css/bootstrap.css}" rel="stylesheet" />
+    <link th:href="@{/Login/assets/css/bootstrap.css}" rel="stylesheet"/>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link th:href="@{/login/assets/css/login-register.css}" rel="stylesheet" />
+    <link th:href="@{/Login/assets/css/login-register.css}" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
 
     <link rel="stylesheet" href="/header/fonts/icomoon/style.css">
 
     <link rel="stylesheet" href="/header/css/owl.carousel.min.css">
-
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/header/css/bootstrap.min.css">
     <!-- Style -->
     <link rel="stylesheet" href="/header/css/style.css">
     <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
-    <script th:src="@{/login/assets/js/jquery-1.10.2.js}" type="text/javascript"></script>
-    <script th:src="@{/login/assets/js/bootstrap.js}" type="text/javascript"></script>
-    <script th:src="@{/login/assets/js/login-register.js}" type="text/javascript"></script>
+    <script th:src="@{/Login/assets/js/jquery-1.10.2.js}" type="text/javascript"></script>
+    <script th:src="@{/Login/assets/js/bootstrap.js}" type="text/javascript"></script>
+    <script th:src="@{/Login/assets/js/login-register.js}" type="text/javascript"></script>
     <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css'>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <title>Title</title>
+    <style>
+        .search-item {
+            cursor: pointer;
+        }
+
+        body {
+            margin-top: 20px;
+            background: #eee;
+        }
+
+        .single_advisor_profile {
+            position: relative;
+            margin-bottom: 50px;
+            -webkit-transition-duration: 500ms;
+            transition-duration: 500ms;
+            z-index: 1;
+            border-radius: 15px;
+            -webkit-box-shadow: 0 0.25rem 1rem 0 rgba(47, 91, 234, 0.125);
+            box-shadow: 0 0.25rem 1rem 0 rgba(47, 91, 234, 0.125);
+        }
+
+        .single_advisor_profile .advisor_thumb {
+            position: relative;
+            z-index: 1;
+            border-radius: 15px 15px 0 0;
+            margin: 0 auto;
+            padding: 30px 30px 0 30px;
+            background-color: transparent;
+            overflow: hidden;
+        }
+
+        .single_advisor_profile .advisor_thumb::after {
+            -webkit-transition-duration: 500ms;
+            transition-duration: 500ms;
+            position: absolute;
+            width: 150%;
+            height: 80px;
+            bottom: -45px;
+            left: -25%;
+            content: "";
+            background-color: #ffffff;
+            -webkit-transform: rotate(-15deg);
+            transform: rotate(-15deg);
+        }
+
+        @media only screen and (max-width: 575px) {
+            .single_advisor_profile .advisor_thumb::after {
+                height: 160px;
+                bottom: -90px;
+            }
+        }
+
+        .single_advisor_profile .advisor_thumb .social-info {
+            position: absolute;
+            z-index: 1;
+            width: 100%;
+            bottom: 0;
+            right: 30px;
+            text-align: right;
+        }
+
+        .single_advisor_profile .advisor_thumb .social-info a {
+            font-size: 14px;
+            color: #020710;
+            padding: 0 5px;
+        }
+
+        .single_advisor_profile .advisor_thumb .social-info a:hover,
+        .single_advisor_profile .advisor_thumb .social-info a:focus {
+            color: transparent;
+        }
+
+        .single_advisor_profile .advisor_thumb .social-info a:last-child {
+            padding-right: 0;
+        }
+
+        .single_advisor_profile .single_advisor_details_info {
+            position: relative;
+            z-index: 1;
+            padding: 30px;
+            text-align: right;
+            -webkit-transition-duration: 500ms;
+            transition-duration: 500ms;
+            border-radius: 0 0 15px 15px;
+            background-color: #ffffff;
+        }
+
+        .single_advisor_profile .single_advisor_details_info::after {
+            -webkit-transition-duration: 500ms;
+            transition-duration: 500ms;
+            position: absolute;
+            z-index: 1;
+            width: 50px;
+            height: 3px;
+            background-color: transparent;
+            content: "";
+            top: 12px;
+            right: 30px;
+        }
+
+        .single_advisor_profile .single_advisor_details_info h6 {
+            margin-bottom: 0.25rem;
+            -webkit-transition-duration: 500ms;
+            transition-duration: 500ms;
+        }
+
+        @media only screen and (min-width: 768px) and (max-width: 991px) {
+            .single_advisor_profile .single_advisor_details_info h6 {
+                font-size: 14px;
+            }
+        }
+
+        .single_advisor_profile .single_advisor_details_info p {
+            -webkit-transition-duration: 500ms;
+            transition-duration: 500ms;
+            margin-bottom: 0;
+            font-size: 14px;
+        }
+
+        @media only screen and (min-width: 768px) and (max-width: 991px) {
+            .single_advisor_profile .single_advisor_details_info p {
+                font-size: 12px;
+            }
+        }
+
+        .single_advisor_profile:hover .advisor_thumb::after,
+        .single_advisor_profile:focus .advisor_thumb::after {
+            background-color: transparent;
+        }
+
+        .single_advisor_profile:hover .advisor_thumb .social-info a,
+        .single_advisor_profile:focus .advisor_thumb .social-info a {
+            color: #ffffff;
+        }
+
+        .single_advisor_profile:hover .advisor_thumb .social-info a:hover,
+        .single_advisor_profile:hover .advisor_thumb .social-info a:focus,
+        .single_advisor_profile:focus .advisor_thumb .social-info a:hover,
+        .single_advisor_profile:focus .advisor_thumb .social-info a:focus {
+            color: #ffffff;
+        }
+
+        .single_advisor_profile:hover .single_advisor_details_info,
+        .single_advisor_profile:focus .single_advisor_details_info {
+            background-color: silver;
+        }
+
+        .single_advisor_profile:hover .single_advisor_details_info::after,
+        .single_advisor_profile:focus .single_advisor_details_info::after {
+            background-color: #ffffff;
+        }
+
+        .single_advisor_profile:hover .single_advisor_details_info h6,
+        .single_advisor_profile:focus .single_advisor_details_info h6 {
+            color: #ffffff;
+        }
+
+        .single_advisor_profile:hover .single_advisor_details_info p,
+        .single_advisor_profile:focus .single_advisor_details_info p {
+            color: #ffffff;
+        }
+
+        .widget-26 {
+            color: #3c4142;
+            font-weight: 400;
+        }
+
+        .widget-26 tr:first-child td {
+            border: 0;
+        }
+
+        .widget-26 .widget-26-job-emp-img img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+        }
+
+        .widget-26 .widget-26-job-title {
+            min-width: 200px;
+        }
+
+        .widget-26 .widget-26-job-title a {
+            font-weight: 400;
+            font-size: 0.875rem;
+            color: #3c4142;
+            line-height: 1.5;
+        }
+
+        .widget-26 .widget-26-job-title a:hover {
+            color: #68CBD7;
+            text-decoration: none;
+        }
+
+        .widget-26 .widget-26-job-title .employer-name {
+            margin: 0;
+            line-height: 1.5;
+            font-weight: 400;
+            color: #3c4142;
+            font-size: 0.8125rem;
+            color: #3c4142;
+        }
+
+        .widget-26 .widget-26-job-title .employer-name:hover {
+            color: #68CBD7;
+            text-decoration: none;
+        }
+
+        .widget-26 .widget-26-job-title .time {
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        .widget-26 .widget-26-job-info {
+            min-width: 100px;
+            font-weight: 400;
+        }
+
+        .widget-26 .widget-26-job-info p {
+            line-height: 1.5;
+            color: #3c4142;
+            font-size: 0.8125rem;
+        }
+
+        .widget-26 .widget-26-job-info .location {
+            color: #3c4142;
+        }
+
+        .widget-26 .widget-26-job-salary {
+            min-width: 70px;
+            font-weight: 400;
+            color: #3c4142;
+            font-size: 0.8125rem;
+        }
+
+        .widget-26 .widget-26-job-category {
+            padding: .5rem;
+            display: inline-flex;
+            white-space: nowrap;
+            border-radius: 15px;
+        }
+
+        .widget-26 .widget-26-job-category .indicator {
+            width: 13px;
+            height: 13px;
+            margin-right: .5rem;
+            float: left;
+            border-radius: 50%;
+        }
+
+        .widget-26 .widget-26-job-category span {
+            font-size: 0.8125rem;
+            color: #3c4142;
+            font-weight: 600;
+        }
+
+        .widget-26 .widget-26-job-starred svg {
+            width: 20px;
+            height: 20px;
+            color: #fd8b2c;
+        }
+
+        .widget-26 .widget-26-job-starred svg.starred {
+            fill: #fd8b2c;
+        }
+
+        .bg-soft-base {
+            background-color: #e1f5f7;
+        }
+
+        .bg-soft-warning {
+            background-color: #fff4e1;
+        }
+
+        .bg-soft-success {
+            background-color: #d1f6f2;
+        }
+
+        .bg-soft-danger {
+            background-color: #fedce0;
+        }
+
+        .bg-soft-info {
+            background-color: #d7efff;
+        }
+
+
+        .search-form {
+            width: 80%;
+            margin: 0 auto;
+            margin-top: 1rem;
+        }
+
+        .search-form input {
+            height: 100%;
+            background: transparent;
+            border: 0;
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            height: 100%;
+            font-size: 1rem;
+        }
+
+        .search-form select {
+            background: transparent;
+            border: 0;
+            padding: 1rem;
+            height: 100%;
+            font-size: 1rem;
+        }
+
+        .search-form select:focus {
+            border: 0;
+        }
+
+        .search-form button {
+            height: 100%;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .search-form button svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .search-body {
+            margin-bottom: 1.5rem;
+        }
+
+        .search-body .search-filters .filter-list {
+            margin-bottom: 1.3rem;
+        }
+
+        .search-body .search-filters .filter-list .title {
+            color: #3c4142;
+            margin-bottom: 1rem;
+        }
+
+        .search-body .search-filters .filter-list .filter-text {
+            color: #727686;
+        }
+
+        .search-body .search-result .result-header {
+            margin-bottom: 2rem;
+        }
+
+        .search-body .search-result .result-header .records {
+            color: #3c4142;
+        }
+
+        .search-body .search-result .result-header .result-actions {
+            text-align: right;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-body .search-result .result-header .result-actions .result-sorting {
+            display: flex;
+            align-items: center;
+        }
+
+        .search-body .search-result .result-header .result-actions .result-sorting span {
+            flex-shrink: 0;
+            font-size: 0.8125rem;
+        }
+
+        .search-body .search-result .result-header .result-actions .result-sorting select {
+            color: #68CBD7;
+        }
+
+        .search-body .search-result .result-header .result-actions .result-sorting select option {
+            color: #3c4142;
+        }
+
+        @media (min-width: 768px) and (max-width: 991.98px) {
+            .search-body .search-filters {
+                display: flex;
+            }
+
+            .search-body .search-filters .filter-list {
+                margin-right: 1rem;
+            }
+        }
+
+        .userIcon {
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 28px;
+            height: 28px;
+            object-fit: cover;
+        }
+
+        .card-margin {
+            margin-bottom: 1.875rem;
+        }
+
+        @media (min-width: 992px) {
+            .col-lg-2 {
+                flex: 0 0 16.66667%;
+                max-width: 16.66667%;
+            }
+        }
+
+        .card-margin {
+            margin-bottom: 1.875rem;
+        }
+
+        .card {
+            border: 0;
+            box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+            -webkit-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+            -moz-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+            -ms-box-shadow: 0px 0px 10px 0px rgba(82, 63, 105, 0.1);
+        }
+
+        .card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #ffffff;
+            background-clip: border-box;
+            border: 1px solid #e6e4e9;
+            border-radius: 8px;
+        }
+
+
+        #star {
+            margin-left: -5px !important;
+            vertical-align: bottom !important;
+            opacity: 0.5;
+        }
+
+
+        .more {
+            opacity: 0.5 !important;
+        }
+
+        .btn:hover {
+            color: black !important;
+        }
+
+        .vl {
+            margin: 8px !important;
+            width: 2px;
+            border-right: 1px solid #aaaaaa;
+            height: 25px;
+        }
+
+
+        #plus {
+            opacity: 0.8;
+        }
+
+
+        .card {
+            border-radius: 10px !important;
+        }
+
+
+        .btn-outlined:active {
+            color: #FFF;
+            border-color: #fff !important;
+        }
+
+
+        img {
+
+            cursor: pointer;
+            overflow: visible;
+        }
+
+        .btn:focus,
+        .btn:active {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        .ub {
+            margin: 0;
+            display: inline-table;
+        }
+
+        .ub > li {
+            display: inline-block;
+            width: 42px;
+            height: 42px;
+            padding: 5 5;
+            border: 1px solid #ebf2f8;
+            background-color: #f4f6f6;
+            margin-right: 10px;
+            margin-bottom: 5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ub > li:hover, .ub > li.active {
+            background-color: #17a2b8;
+            color: #fff;
+        }
+
+        #sortable > li {
+            border: 1px solid #ebf2f8;
+            background-color: #f4f6f6;
+            position: relative;
+            overflow: hidden;
+            padding: 7px;
+            margin-bottom: 5px;
+        }
+
+        #sortable > li:hover, #sortable > li.active {
+            background-color: #17a2b8;
+            color: #fff;
+        }
+        .charThumb img{
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+
+    </style>
 </head>
 <body>
-<header id="header">헤더</header>
-<span th:text="${user.getNickname()}"></span>
-<footer id="footer">푸터</footer>
+<header id="header">
+    헤더
+</header>
+<div class="container" style="margin-top : 92px">
+    <div class="card mt-5 border-5 pt-2 active pb-0 px-3">
+        <div class="card-body ">
+            <div class="row">
+                <div class="col-12 ">
+                    <h4 class="card-title "><b th:text="${user.getNickname()} +'님 환영합니다!'">Program Title</b></h4>
+
+                </div>
+                <div class="col">
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        <p class="card-text text-muted small ">
+                            <img src="https://img.icons8.com/metro/26/000000/star.png" class="mr-1 " width="19"
+                                 height="19" id="star"> <span class="vl mr-2 ml-0"></span>
+
+                            <span class="font-weight-bold">아이디 : </span><span
+                                th:text="${user.getUserId()}+' 이메일 : '+${user.getEmail()}"></span></p>
+                    </h6>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card-footer bg-white px-0 ">
+            <div class="row">
+
+                <div class=" col-md-auto ">
+                    <a class="btn btn-outlined btn-black text-muted bg-transparent"
+                       data-wow-delay="0.7s" data-toggle="modal" href="#"
+                       data-target="#detailModifyModal"><img src="https://img.icons8.com/ios/50/000000/settings.png"
+                                                             width="19" height="19"> <small>정보 수정</small></a>
+
+                    <i class="mdi mdi-settings-outline"></i>
+
+
+                    <a href="#" class="btn btn-outlined btn-black text-muted" data-toggle="modal"
+                       data-target="#charSearchModal">
+                        <img src="https://img.icons8.com/metro/26/000000/link.png" width="20" height="20">
+                        <small>캐릭터 등록</small> </a>
+
+
+                    <a href="#" class="btn btn-outlined btn-black text-muted "><img
+                            src="https://img.icons8.com/metro/26/000000/more.png" width="20" height="20"
+                            class="mr-2 more"><small> 활동 내역</small></a>
+                    <span class="vl ml-3"></span>
+                </div>
+
+                <div class="col-md-auto ">
+                    <ul class="list-inline">
+                        <li class="list-inline-item"><a data-toggle="modal"
+                                                        data-target="#iconSelectModal" href="#" class="
+                         btn btn-outlined btn-black text-muted"> <img
+                                th:src="@{/api/getFile.df(name=${user.getProfileIcon().getFileName()})}" src=""
+                                alt="DP" class="  rounded-circle img-fluid " width="20" height="20"> <small>프로필 아이콘
+                            변경</small> </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card card-margin">
+                <div class="card-body">
+                    <div class="row search-body">
+                        <div class="col-lg-12">
+                            <div class="search-result">
+                                <div class="result-body">
+                                    <div class="table-responsive">
+                                        <div class="container">
+                                            <div class="row charThumb" >
+                                                <!-- Single Advisor-->
+                                                <div th:each="char : ${characters}" class="col-12 col-sm-6 col-lg-3">
+                                                    <div class="single_advisor_profile wow fadeInUp characterCard"
+                                                         data-wow-delay="0.2s"
+                                                         style="background-image: url('/images/icon_char/bg_char.jpeg') ;   background-repeat: no-repeat;   background-position: center;
+                                                            background-size: cover;">
+
+                                                        <!-- Team Thumb-->
+                                                        <span class="badge bg-light text-dark">
+                                                            <img class="icon-fame"
+                                                                 th:src="@{/images/icon_char/icon_status_fame.png}"
+                                                                 src="" alt="fame" style="float : left; float : top ; display:inline" > <small style=" display:inline; color: #d39e00" th:text="${char.adventureFame}"></small> </span>
+                                                        <span class="badge bg-light text-dark" type="button"
+                                                              th:id="${char.characterId}"
+                                                              th:onclick="deleteCharacter(this.getAttribute('id'))"
+                                                              style="display:inline ; float:right; float: top">삭제</span>
+                                                        <div class="advisor_thumb">
+                                                            <img th:src="@{'https://img-api.neople.co.kr/df/servers/'+${char.serverId}+'/characters/' + ${char.characterId} + '?zoom=2'}"
+                                                                 src="" alt="">
+                                                            <!-- Social Info-->
+                                                            <div class="social-info"><a href="#"><i
+                                                                    class="fa fa-facebook"></i> 데미지 데미지</a><a
+                                                                    href="#"><i
+                                                                    class="fa fa-twitter"></i></a><a href="#"><i
+                                                                    class="fa fa-linkedin"></i></a></div>
+                                                        </div>
+                                                        <!-- Team Details-->
+                                                        <div class="single_advisor_details_info"
+                                                             style="text-align: left">
+                                                            <h4 style="color: #898989;" th:text="${char.serverId}" id="charServerId"></h4>
+                                                            <h6 th:text="${char.characterName}">
+                                                                Samantha Sarah</h6>
+                                                            <p style="color: #898989" th:text="${char.jobGrowName}"></p>
+                                                            <p class="designation" style="color: #898989"
+                                                               th:text="${char.adventureName}">
+                                                                </p> <p style="display:inline" th:text=" 'Lv.'+${char.level}"></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="charSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"
+         aria-hidden="true">
+        <div class="modal-dialog" style="max-width:500px" role="document">
+            <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
+                <div class="modal-header" style="padding: 5px;">
+                    <div class="input-group" style="z-index: 1;">
+                        <form>
+                            <div class="input-group">
+                                <select name="serverId" id="serverId">
+                                    <option value="all">전체</option>
+                                    <option value="adventure">모험단</option>
+                                    <option value="cain">카인</option>
+                                    <option value="diregie">디레지에</option>
+                                    <option value="siroco">시로코</option>
+                                    <option value="prey">프레이</option>
+                                    <option value="casillas">카시야스</option>
+                                    <option value="hilder">힐더</option>
+                                    <option value="anton">안톤</option>
+                                    <option value="bakal">바칼</option>
+                                </select>
+                                <input type="text" placeholder="입력" class="form-control" id="characterName"
+                                       name="characterName">
+                                <button type="button" class="btn btn-info" style="height:39px;" id="btn-search" href="#"
+                                        onclick="searchCharacter()">검색
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div id="searchBody" class="modal-body" style="min-height: 300px; max-height: 500px; overflow: auto;">
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="detailModifyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" style="max-width:500px" role="document">
+            <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel0">정보를 수정합니다!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="position: relative;
+    flex: 1 1 auto;
+    padding: 1rem;">
+                    <label for="nicknameUpdate" style="color: #898989;">닉네임</label>
+                    <div class="input-group mb-3" id="nicknameUpdateForm">
+                        <input type="text" class="form-control" id="nicknameUpdate" placeholder="새 닉네임을 입력해주세요.">
+                        <button class="btn btn-outline-secondary" type="button" id="nicknameUpdateBtn"
+                                onclick="updateNickname()">변경
+                        </button>
+                        <div class="valid-feedback" id="nicknameUpdateVal">사용 가능한 닉네임 입니다.</div>
+                        <div class="invalid-feedback" id="nicknameUpdateNonVal">중복된 닉네임이 존재합니다.</div>
+                    </div>
+                    <label for="passwordUpdate" style="color: #898989;">비밀번호</label>
+                    <div class="input-group mb-3" id="passwordUpdateForm">
+                        <input type="text" class="form-control" id="passwordUpdate" placeholder="새로운 비밀번호를 입력해주세요.">
+                    </div>
+                    <label for="passwordCheckUpdate" style="color: #898989;">비밀번호 확인</label>
+                    <div class="input-group mb-3" id="passwordUpdateForm">
+                        <input type="text" class="form-control" id="passwordCheckUpdate" placeholder="비밀번호를 재입력 해주세요.">
+                        <button class="btn btn-outline-secondary" type="button" id="passwordUpdateBtn"
+                                onclick="updatePassword()">변경
+                        </button>
+                        <div class="valid-feedback" id="passwordUpdateVal">사용 가능한 비밀번호 입니다.</div>
+                        <div class="invalid-feedback" id="passwordUpdateNonVal">비밀번호가 일치하지 않습니다.</div>
+                    </div>
+                    <label for="emailUpdate" style="color: #898989;">이메일</label>
+                    <div class="input-group mb-3" id="emailUpdateForm">
+                        <input type="text" class="form-control" id="emailUpdate" placeholder="새 이메일을 입력해주세요.">
+                        <button class="btn btn-outline-secondary" type="button" id="emailUpdateBtn"
+                                onclick="updateEmail()">변경
+                        </button>
+                        <div class="valid-feedback" id="emailUpdateVal">사용 가능한 이메일 입니다.</div>
+                        <div class="invalid-feedback" id="emailUpdateNonVal">중복된 이메일이 존재합니다.</div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="iconSelectModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" style="max-width:500px" role="document">
+            <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">환영합니다!</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body" style="position: relative;
+    flex: 1 1 auto;
+    padding: 1rem;">
+                    <span style="color: #898989;"> 변경을 원하는 아이콘을 선택해주세요!</span>
+                    <ul class="ub p-0 mt-3 mb-3" style="    margin: 0;
+    display: inline-table; box-sizing: border-box;">
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#"
+                               onclick="changeProfileIcon(0)"> <img
+                                    th:src="@{/images/icon_char/icon_char_0.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#"
+                               onclick="changeProfileIcon(1)"> <img
+                                    th:src="@{/images/icon_char/icon_char_1.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#"
+                               onclick="changeProfileIcon(2)"> <img
+                                    th:src="@{/images/icon_char/icon_char_2.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#"
+                               onclick="changeProfileIcon(3)"> <img
+                                    th:src="@{/images/icon_char/icon_char_3.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#"
+                               onclick="changeProfileIcon(4)"> <img
+                                    th:src="@{/images/icon_char/icon_char_4.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#"
+                               onclick="changeProfileIcon(5)"> <img
+                                    th:src="@{/images/icon_char/icon_char_5.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#"
+                               onclick="changeProfileIcon(6)"> <img
+                                    th:src="@{/images/icon_char/icon_char_6.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#"
+                               onclick="changeProfileIcon(7)"> <img
+                                    th:src="@{/images/icon_char/icon_char_7.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#"
+                               onclick="changeProfileIcon(8)"> <img
+                                    th:src="@{/images/icon_char/icon_char_8.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#"
+                               onclick="changeProfileIcon(9)"> <img
+                                    th:src="@{/images/icon_char/icon_char_9.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#"
+                               onclick="changeProfileIcon(10)"> <img
+                                    th:src="@{/images/icon_char/icon_char_10.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#"
+                               onclick="changeProfileIcon(11)"> <img
+                                    th:src="@{/images/icon_char/icon_char_11.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#"
+                               onclick="changeProfileIcon(12)"> <img
+                                    th:src="@{/images/icon_char/icon_char_12.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#"
+                               onclick="changeProfileIcon(13)"> <img
+                                    th:src="@{/images/icon_char/icon_char_13.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#"
+                               onclick="changeProfileIcon(14)"> <img
+                                    th:src="@{/images/icon_char/icon_char_14.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+                        <li>
+                            <a class="userIcon btn-outlined btn-black text-muted" href="#"
+                               onclick="changeProfileIcon(15)"> <img
+                                    th:src="@{/images/icon_char/icon_char_15.png}" src=""
+                                    alt="DP" class="  rounded-circle img-fluid " width="28" height="28"></a>
+                        </li>
+
+
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<footer id="footer">
+    푸터
+</footer>
 <script src="/header/js/jquery.sticky.js"></script>
 <script src="/header/js/main.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.1.js"></script>
@@ -36,4 +907,404 @@
 <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'></script>
 <script th:href="@{/js/scriptfile.js}"></script>
 </body>
+<script>
+    let emailCheck = false;
+    let nicknameCheck = false;
+    let passwordBooleanCheck = false;
+
+    function changeProfileIcon(number) {
+        if (confirm("아이콘을 변경하시겠습니까?")) {
+            const iconName = "icon_char_" + number + ".png";
+            $.ajax({
+                url: "/api/user/profile.df?profileIcon=" + iconName,
+                type: "PUT",
+                data: {
+                    iconNumber: number
+                },
+                success: function (data) {
+
+                    alert("아이콘 변경이 완료되었습니다.");
+                    location.reload();
+                },
+                error: function (request, status, error) {
+                    alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                }
+            });
+        } else {
+            return;
+        }
+    }
+
+    // Mobile Navigation
+    if ($('#nav-menu-container').length) {
+        var $mobile_nav = $('#nav-menu-container').clone().prop({
+            id: 'mobile-nav'
+        });
+        $mobile_nav.find('> ul').attr({
+            'class': '',
+            'id': ''
+        });
+        $('body').append($mobile_nav);
+        $('body').prepend('<button type="button" id="mobile-nav-toggle"><i class="fa fa-bars"></i></button>');
+        $('body').append('<div id="mobile-body-overly"></div>');
+        $('#mobile-nav').find('.menu-has-children').prepend('<i class="fa fa-chevron-down"></i>');
+
+        $(document).on('click', '.menu-has-children i', function (e) {
+            $(this).next().toggleClass('menu-item-active');
+            $(this).nextAll('ul').eq(0).slideToggle();
+            $(this).toggleClass("fa-chevron-up fa-chevron-down");
+        });
+
+        $(document).on('click', '#mobile-nav-toggle', function (e) {
+            $('body').toggleClass('mobile-nav-active');
+            $('#mobile-nav-toggle i').toggleClass('fa-times fa-bars');
+            $('#mobile-body-overly').toggle();
+        });
+
+        $(document).click(function (e) {
+            var container = $("#mobile-nav, #mobile-nav-toggle");
+            if (!container.is(e.target) && container.has(e.target).length === 0) {
+                if ($('body').hasClass('mobile-nav-active')) {
+                    $('body').removeClass('mobile-nav-active');
+                    $('#mobile-nav-toggle i').toggleClass('fa-times fa-bars');
+                    $('#mobile-body-overly').fadeOut();
+                }
+            }
+        });
+    } else if ($("#mobile-nav, #mobile-nav-toggle").length) {
+        $("#mobile-nav, #mobile-nav-toggle").hide();
+    }
+
+    // Smooth scroll for the menu and links with .scrollto classes
+    $('.nav-menu a, #mobile-nav a, .scrollto').on('click', function () {
+        if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
+            var target = $(this.hash);
+            if (target.length) {
+                var top_space = 0;
+
+                if ($('#header').length) {
+                    top_space = $('#header').outerHeight();
+
+                    if (!$('#header').hasClass('header-fixed')) {
+                        top_space = top_space - 20;
+                    }
+                }
+
+                $('html, body').animate({
+                    scrollTop: target.offset().top - top_space
+                }, 1500, 'easeInOutExpo');
+
+                if ($(this).parents('.nav-menu').length) {
+                    $('.nav-menu .menu-active').removeClass('menu-active');
+                    $(this).closest('li').addClass('menu-active');
+                }
+
+                if ($('body').hasClass('mobile-nav-active')) {
+                    $('body').removeClass('mobile-nav-active');
+                    $('#mobile-nav-toggle i').toggleClass('fa-times fa-bars');
+                    $('#mobile-body-overly').fadeOut();
+                }
+                return false;
+            }
+        }
+    });
+
+    $('#nicknameUpdate').blur(function () {
+        const nickname = $('#nicknameUpdate').val();
+        $.ajax({
+            url: "/api/user/validate?nickname=" + nickname,
+            type: "GET",
+            success: function (data) {
+                if (data === "true") {
+                    $('#nicknameUpdateForm').addClass('was-validated');
+                    $('#nicknameUpdate').removeClass("is-invalid");
+                    $('#nicknameUpdate').addClass("is-valid");
+                    $('#nicknameUpdateNonVal').hide();
+                    $('#nicknameUpdateVal').show();
+                    nicknameCheck = true;
+                } else if (data === "false") {
+                    $('#nicknameUpdateForm').removeClass('was-validated');
+                    $('#nicknameUpdate').removeClass("is-valid");
+                    $('#nicknameUpdate').addClass("is-invalid");
+                    $('#nicknameUpdateVal').hide();
+                    $('#nicknameUpdateNonVal').show();
+                    nicknameCheck = false;
+                }
+
+            }, error: function (request, status, error) {
+                alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+            }
+        });
+    });
+
+    $('#emailUpdate').blur(function () {
+        const email = $('#emailUpdate').val();
+        $.ajax({
+            url: "/api/user/validate?email=" + email,
+            type: "GET",
+            success: function (data) {
+                if (data === "true") {
+                    $('#emailUpdateForm').addClass('was-validated');
+                    $('#emailUpdate').removeClass("is-invalid");
+                    $('#emailUpdate').addClass("is-valid");
+                    $('#emailUpdateNonVal').hide();
+                    $('#emailUpdateVal').show();
+                    emailCheck = true;
+                } else if (data === "false") {
+                    $('#emailUpdateForm').removeClass('was-validated');
+                    $('#emailUpdate').removeClass("is-valid");
+                    $('#emailUpdate').addClass("is-invalid");
+                    $('#emailUpdateVal').hide();
+                    $('#emailUpdateNonVal').show();
+                    emailCheck = false;
+                }
+
+            }, error: function (request, status, error) {
+                alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+            }
+        });
+    });
+
+    $('#passwordCheckUpdate').blur(function () {
+        const password = $('#passwordUpdate').val();
+        let passwordCheck = $('#passwordCheckUpdate').val();
+
+        if (password !== passwordCheck) {
+            $('#passwordCheckUpdateForm').removeClass('was-validated');
+            $('#passwordCheckUpdate').removeClass("is-valid");
+            $('#passwordCheckUpdate').addClass("is-invalid");
+            $('#passwordCheckUpdateVal').hide();
+            $('#passwordCheckUpdateNonVal').show();
+            $('#passwordUpdate').removeClass("is-valid");
+            $('#passwordUpdate').addClass("is-invalid");
+            passwordBooleanCheck = false;
+        } else {
+            $('#passwordCheckUpdateForm').addClass('was-validated');
+            $('#passwordCheckUpdate').addClass("is-valid");
+            $('#passwordCheckUpdate').removeClass("is-invalid");
+            $('#passwordUpdate').addClass("is-valid");
+            $('#passwordUpdate').removeClass("is-invalid");
+            $('#passwordCheckUpdateVal').show();
+            $('#passwordCheckUpdateNonVal').hide();
+            passwordBooleanCheck = true;
+        }
+    });
+
+    $('#passwordUpdate').blur(function () {
+        const password = $('#passwordUpdate').val();
+        const passwordCheck = $('#passwordCheckUpdate').val();
+
+        if (password !== passwordCheck) {
+            $('#passwordCheckUpdateForm').removeClass('was-validated');
+            $('#passwordCheckUpdate').removeClass("is-valid");
+            $('#passwordCheckUpdate').addClass("is-invalid");
+            $('#passwordCheckUpdateVal').hide();
+            $('#passwordCheckUpdateNonVal').show();
+            $('#passwordUpdate').removeClass("is-valid");
+            $('#passwordUpdate').addClass("is-invalid");
+            passwordBooleanCheck = false;
+        } else {
+            $('#passwordCheckUpdateForm').addClass('was-validated');
+            $('#passwordCheckUpdate').addClass("is-valid");
+            $('#passwordCheckUpdate').removeClass("is-invalid");
+            $('#passwordUpdate').addClass("is-valid");
+            $('#passwordUpdate').removeClass("is-invalid");
+            $('#passwordCheckUpdateVal').show();
+            $('#passwordCheckUpdateNonVal').hide();
+            passwordBooleanCheck = true;
+        }
+    });
+
+    function updatePassword() {
+        const password = $('#passwordUpdate').val();
+        if (!passwordBooleanCheck) {
+            alert("비밀번호가 일치하지 않습니다.");
+            return;
+        } else if (confirm("비밀번호를 변경하시겠습니까?")) {
+            $.ajax({
+                url: "/api/user/profile.df?password=" + password,
+                type: "PUT",
+                success: function (data) {
+                    alert("비밀번호가 변경되었습니다.");
+                    $('#passwordUpdate').val("");
+                    $('#passwordCheckUpdate').val("");
+                    $('#passwordCheckUpdateForm').removeClass('was-validated');
+                    $('#passwordCheckUpdate').removeClass("is-valid");
+                    passwordBooleanCheck = false;
+                }, error: function (request, status, error) {
+                    alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                }
+            });
+        }
+
+    }
+
+    function updateEmail() {
+        const email = $('#emailUpdate').val();
+        if (!emailCheck) {
+            alert("중복된 이메일입니다.");
+            return;
+        } else if (confirm("이메일을 변경하시겠습니까?")) {
+            $.ajax({
+                url: "/api/user/profile.df?email=" + email,
+                type: "PUT",
+                success: function (data) {
+                    alert("이메일이 변경되었습니다.");
+                    $('#emailUpdate').val("");
+                    $('#emailUpdateForm').removeClass('was-validated');
+                    $('#emailUpdate').removeClass("is-valid");
+                    emailCheck = false;
+                }, error: function (request, status, error) {
+                    alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                }
+            });
+        }
+
+    }
+
+    function updateNickname() {
+        const nickname = $('#nicknameUpdate').val();
+        if (!nicknameCheck) {
+            alert("중복된 닉네임입니다.");
+            return;
+        } else if (confirm("닉네임을 변경하시겠습니까?")) {
+            $.ajax({
+                url: "/api/user/profile.df?nickname=" + nickname,
+                type: "PUT",
+                success: function (data) {
+                    alert("닉네임이 변경되었습니다.");
+                    $('#nicknameUpdate').val("");
+                    $('#nicknameUpdateForm').removeClass('was-validated');
+                    $('#nicknameUpdate').removeClass("is-valid");
+                    nicknameCheck = false;
+                }, error: function (request, status, error) {
+                    alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                }
+            });
+        }
+
+    }
+
+    $('#searchModal').on('show.bs.modal', function (e) {
+        search_modal_type = $(e.relatedTarget).attr('data-type');
+    });
+
+    function getServerName(serverId) {
+        switch (serverId) {
+            case "cain":
+                return "카인";
+                break;
+            case "diregie":
+                return "디레지에";
+                break;
+            case "siroco":
+                return "시로코";
+                break;
+            case "prey":
+                return "프레이";
+                break;
+            case "casillas":
+                return "카시야스";
+                break;
+            case "hilder":
+                return "힐더";
+                break;
+            case "anton":
+                return "안톤";
+                break;
+            case "bakal":
+                return "바칼";
+                break;
+        }
+    }
+
+    function searchCharacter() {
+        const characterName = $('#characterName').val();
+        const serverId = $('#serverId').val();
+        $.ajax({
+            url: "/api/user/searchChar.df?page=0&serverId=" + serverId + "&characterName=" + characterName,
+            type: "GET",
+            success: function (data) {
+                if (data == null) {
+                    alert("캐릭터를 찾을 수 없습니다.");
+                    return;
+                } else {
+                    setSearchModalResult(data);
+                }
+            }, error: function (request, status, error) {
+            }
+        });
+    }
+
+    function setSearchModalResult(list) {
+        if (list.length > 0) {
+            var html = '<table class="table table-striped table-hover" style="text-align: center;">';
+            html += '<thead style="font-weight: bold;"><tr><td>서버</td><td>닉네임</td>';
+            if (list[0].level != undefined) {
+                html += '<td>레벨</td>';
+            }
+            html += '<td>직업</td></tr></thead>';
+            html += '<tbody>';
+            for (var i = 0; i < list.length; i++) {
+                html += ' <tr class="search-item" data-server="' + list[i].serverId + '" data-id="' + list[i].characterId + '" data-name="' + list[i].characterName + '" onclick="setCharacter( \'' + list[i].serverId + '\', \'' + list[i].characterId + '\')">';
+                html += '<td>' + getServerName(list[i].serverId) + "</td>";
+                html += '<td>' + list[i].characterName + "</td>";
+                if (list[i].level != undefined) {
+                    html += '<td>' + list[i].level + "</td>";
+                }
+                html += '<td>' + list[i].jobGrowName + "</td>";
+                html += '</tr>';
+            }
+            html += '</tbody>';
+            html += "</table>";
+            $('#searchBody').html(html);
+        } else {
+            var html = '<h3 style="text-align: center;">검색 결과가 없습니다.</h3>';
+            $('#searchBody').html(html);
+        }
+    }
+
+    function setCharacter(serverId, characterName) {
+
+        if (confirm("캐릭터를 추가하시겠습니까?")) {
+            $.ajax({
+                url: "/api/user/char.df?characterId=" + characterName + "&serverId=" + serverId + "&request=add",
+                type: "POST",
+                success: function (data) {
+                    alert("캐릭터가 추가되었습니다.");
+                    $('#searchModal').modal('hide');
+                    location.reload();
+                }, error: function (request, status, error) {
+                    alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                }
+            });
+        }
+    }
+
+
+
+    function deleteCharacter(characterName) {
+
+        if (confirm("캐릭터를 삭제하시겠습니까?")) {
+            $.ajax({
+                url: "/api/user/char.df?characterId=" + characterName + "&request=delete",
+                type: "POST",
+                success: function (data) {
+                    alert("캐릭터가 삭제되었습니다.");
+                    location.reload();
+                }, error: function (request, status, error) {
+                    alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                }
+            });
+        }
+    }
+
+    $(document).ready(function(){
+        $('#charServerId').change(function(){
+            const serverId = $(this).val();
+            $('#charServerId').val(getServerName(serverId));
+        });
+    })
+
+</script>
 </html>

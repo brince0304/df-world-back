@@ -1,10 +1,12 @@
 package com.dfoff.demo.Controller;
 
+import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
+import com.dfoff.demo.Repository.SaveFileRepository;
 import com.dfoff.demo.SecurityConfig.SecurityConfig;
 import com.dfoff.demo.SecurityConfig.SecurityService;
+import com.dfoff.demo.Service.SaveFileService;
 import com.dfoff.demo.Service.UserAccountService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,13 +17,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,21 +43,32 @@ class UserAccountControllerTest {
     @Mock
     private final SecurityService securityService;
 
+    @Mock
+    private final SaveFileService saveFileService;
 
-    UserAccountControllerTest(@Autowired ObjectMapper mapper, @Autowired MockMvc mvc, @Autowired UserAccountService userAccountService,@Autowired SecurityService securityService) {
+    @Mock
+            private final SaveFileRepository saveFileRepository;
+
+
+    UserAccountControllerTest(@Autowired ObjectMapper mapper, @Autowired MockMvc mvc, @Autowired UserAccountService userAccountService, @Autowired SecurityService securityService, @Autowired SaveFileService saveFileService,@Autowired SaveFileRepository saveFileRepository) {
         this.mapper = mapper;
         this.mvc = mvc;
         this.userAccountService = userAccountService;
         this.securityService = securityService;
+        this.saveFileService = saveFileService;
+        this.saveFileRepository = saveFileRepository;
     }
+
     @BeforeEach
     void setUp() throws Exception {
-        mvc.perform(post("/api/user").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(UserAccount.UserAccountSignUpRequest.builder()
-                .userId("test")
-                .password("test")
-                .passwordCheck("test")
-                .build())))
-                .andExpect(status().isOk());
+        saveFileService.saveFile(SaveFile.SaveFileDTO.builder()
+                .fileName("icon_char_0.png").filePath("icon_char_0.png").build());
+        userAccountService.createAccount(UserAccount.UserAccountDTO.builder()
+                .userId("test2")
+                .password("test2")
+                .nickname("test2")
+                .email("test2").profileIcon(SaveFile.SaveFileDTO.builder().fileName("test2").filePath("test2").build()).build());
+
     }
 
     @Test
@@ -63,11 +76,9 @@ class UserAccountControllerTest {
     void givenUserId_whenValidateUserId_thenGetsResult() throws Exception {
         //given
         given(userAccountService.existsByUserId(any())).willReturn(true);
-        Map<String,String> map = new HashMap<>();
-        map.put("username","test");
         //when
         //then
-        mvc.perform(post("/api/user/id").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(map)))
+        mvc.perform(get("/api/user/validate?username=test2"))
                 .andExpect(status().isOk());
     }
 
@@ -76,11 +87,9 @@ class UserAccountControllerTest {
     void givenNickname_whenValidateNickname_thenGetsResult() throws Exception {
         //given
         given(userAccountService.existsByNickname(any())).willReturn(true);
-        Map<String,String> map = new HashMap<>();
-        map.put("nickname","test");
         //when
         //then
-        mvc.perform(post("/api/user/nickname").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(map)))
+        mvc.perform(get("/api/user/validate?nickname=test"))
                 .andExpect(status().isOk());
     }
 
@@ -89,11 +98,9 @@ class UserAccountControllerTest {
     void givenEmail_whenValidateEmail_thenGetsResult() throws Exception {
         //given
         given(userAccountService.existsByEmail(any())).willReturn(true);
-        Map<String,String> map = new HashMap<>();
-        map.put("email","test");
         //when
         //then
-        mvc.perform(post("/api/user/email").contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(map)))
+        mvc.perform(get("/api/user/validate?email=test"))
                 .andExpect(status().isOk());
     }
 
@@ -109,6 +116,22 @@ class UserAccountControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @WithUserDetails ("test")
+    void givenUserDetails_whenChangeProfileIcon_thenChangeProfileIcon() throws Exception {
+        given(securityService.loadUserByUsername(any())).willReturn(UserAccount.PrincipalDto.builder()
+                .username("test2")
+                .password("test2")
+                .email("test2")
+                .nickname("test2").profileIcon(SaveFile.SaveFileDTO.builder().fileName("test2").filePath("test2").build())
+                .build());
+        given(saveFileRepository.findByFileName(any())).willReturn(SaveFile.builder()
+                        .id(1L)
+                .fileName("icon_char_0.png").filePath("icon_char_0.png").build());
+        //perform
+        mvc.perform(put("/api/user/profile.df?profileIcon=icon_char_02.png"))
+                .andExpect(status().isOk());
+    }
 
 
     @Test
@@ -116,21 +139,34 @@ class UserAccountControllerTest {
     void givenSignupDto_whenLogin_thenLogin() throws Exception {
         //given
         UserAccount.LoginDto loginDto = UserAccount.LoginDto.builder()
-                .username("test")
-                .password("test")
+                .username("test2")
+                .password("test2")
                 .build();
         given(securityService.loadUserByUsername(any())).willReturn(UserAccount.PrincipalDto.builder()
-                .username("test")
-                .password("test")
-                .email("test")
-                .nickname("test")
-                        .authorities(null)
+                .username("test2")
+                .password("test2")
+                .email("test2")
+                .nickname("test2")
+                .authorities(null)
                 .build());
 
         //when&then
         mvc.perform(post("/api/user/login").content(mapper.writeValueAsString(loginDto)).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
-
+    private UserAccount createUserAccount(){
+        UserAccount account =  UserAccount.builder().
+                userId("test2").
+                password("test2").
+                email("test").
+                nickname("test").
+                build();
+        SaveFile saveFile = SaveFile.builder().
+                fileName("test").
+                filePath("test").
+                build();
+        account.setProfileIcon(saveFile);
+        return account;
+    }
 
 }

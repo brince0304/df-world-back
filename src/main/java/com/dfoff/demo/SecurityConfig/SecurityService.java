@@ -1,6 +1,7 @@
 package com.dfoff.demo.SecurityConfig;
 
 import com.dfoff.demo.Domain.EnumType.UserAccount.SecurityRole;
+import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +39,7 @@ public class SecurityService implements UserDetailsService {
                 .password(account.getPassword())
                 .nickname(account.getNickname())
                 .email(account.getEmail())
+                .profileIcon(SaveFile.SaveFileDTO.from(account.getProfileIcon()))
                 .authorities(authorities)
                 .build();
     }
