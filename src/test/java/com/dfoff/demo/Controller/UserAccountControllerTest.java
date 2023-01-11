@@ -1,12 +1,17 @@
 package com.dfoff.demo.Controller;
 
+import com.dfoff.demo.Domain.CharacterEntity;
 import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
+import com.dfoff.demo.Repository.CharacterEntityRepository;
 import com.dfoff.demo.Repository.SaveFileRepository;
+import com.dfoff.demo.Repository.UserAccountCharacterMapperRepository;
 import com.dfoff.demo.SecurityConfig.SecurityConfig;
 import com.dfoff.demo.SecurityConfig.SecurityService;
+import com.dfoff.demo.Service.CharacterService;
 import com.dfoff.demo.Service.SaveFileService;
 import com.dfoff.demo.Service.UserAccountService;
+import com.dfoff.demo.UserAccountCharacterMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,11 +25,16 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -49,14 +59,22 @@ class UserAccountControllerTest {
     @Mock
             private final SaveFileRepository saveFileRepository;
 
+    @Mock
+            private final CharacterService characterService;
+    @Autowired
+    private CharacterEntityRepository characterEntityRepository;
+    @Autowired
+    private UserAccountCharacterMapperRepository userAccountCharacterMapperRepository;
 
-    UserAccountControllerTest(@Autowired ObjectMapper mapper, @Autowired MockMvc mvc, @Autowired UserAccountService userAccountService, @Autowired SecurityService securityService, @Autowired SaveFileService saveFileService,@Autowired SaveFileRepository saveFileRepository) {
+
+    UserAccountControllerTest(@Autowired ObjectMapper mapper, @Autowired MockMvc mvc, @Autowired UserAccountService userAccountService, @Autowired SecurityService securityService, @Autowired SaveFileService saveFileService, @Autowired SaveFileRepository saveFileRepository,@Autowired CharacterService characterService) {
         this.mapper = mapper;
         this.mvc = mvc;
         this.userAccountService = userAccountService;
         this.securityService = securityService;
         this.saveFileService = saveFileService;
         this.saveFileRepository = saveFileRepository;
+        this.characterService = characterService;
     }
 
     @BeforeEach
@@ -127,9 +145,9 @@ class UserAccountControllerTest {
                 .build());
         given(saveFileRepository.findByFileName(any())).willReturn(SaveFile.builder()
                         .id(1L)
-                .fileName("icon_char_0.png").filePath("icon_char_0.png").build());
+                .fileName("icon_char_01.png").filePath("icon_char_01.png").build());
         //perform
-        mvc.perform(put("/api/user/profile.df?profileIcon=icon_char_02.png"))
+        mvc.perform(put("/api/user/profile.df?profileIcon=icon_char_01.png"))
                 .andExpect(status().isOk());
     }
 
@@ -139,12 +157,12 @@ class UserAccountControllerTest {
     void givenSignupDto_whenLogin_thenLogin() throws Exception {
         //given
         UserAccount.LoginDto loginDto = UserAccount.LoginDto.builder()
-                .username("test2")
-                .password("test2")
+                .username("test")
+                .password("123")
                 .build();
         given(securityService.loadUserByUsername(any())).willReturn(UserAccount.PrincipalDto.builder()
-                .username("test2")
-                .password("test2")
+                .username("test")
+                .password("123")
                 .email("test2")
                 .nickname("test2")
                 .authorities(null)
@@ -154,6 +172,57 @@ class UserAccountControllerTest {
         mvc.perform(post("/api/user/login").content(mapper.writeValueAsString(loginDto)).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
+    @Test
+    @WithUserDetails ("test")
+    void  searchCharTest() throws Exception {
+        //when&then
+        mvc.perform(get("/api/user/searchChar.df?serverId=all&characterName=테스트"))
+                .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+
+    @Test
+    @WithUserDetails ("test")
+    void addCharacterTest() throws Exception {
+        //when&then
+        mvc.perform(post("/api/user/char.df?request=add&serverId=cain&characterId=77dae44a87261743386852bb3979c03a"))
+                .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
+    }
+
+    @Test
+    void addCharacterExceptionTest() throws Exception {
+        //when&then
+        mvc.perform(post("/api/user/char.df?request=add&serverId=cain&characterId=77dae44a87261743386852bb3979c03a"))
+                .andExpect(status().isBadRequest()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
+    }
+    @Test
+    @WithUserDetails ("test")
+    void deleteCharacterTest() throws Exception {
+        //when&then
+        mvc.perform(post("/api/user/char.df?request=delete&serverId=cain&characterId=77dae44a87261743386852bb3979c03a"))
+                .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
+    }
+
+
+    @Test
+    @WithUserDetails ("test")
+    void updateProfileTest() throws Exception {
+        //when&then
+        mvc.perform(put("/api/user/profile.df?nickname=테스트&email=테스트"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void updateProfileExceptionTest() throws Exception {
+        //when&then
+        mvc.perform(put("/api/user/profile.df?nickname=테스트&email=테스트"))
+                .andExpect(status().isBadRequest());
+    }
+
+
+
+
+
     private UserAccount createUserAccount(){
         UserAccount account =  UserAccount.builder().
                 userId("test2").

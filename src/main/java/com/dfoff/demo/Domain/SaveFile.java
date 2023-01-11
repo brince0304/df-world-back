@@ -60,6 +60,7 @@ public class SaveFile extends AuditingFields {
         private final String modifiedBy;
 
         public static SaveFileDTO from(SaveFile saveFile){
+            if(saveFile == null) return SaveFileDTO.builder().build();
             return SaveFileDTO.builder()
                     .id(saveFile.getId())
                     .fileName(saveFile.getFileName())
@@ -74,6 +75,7 @@ public class SaveFile extends AuditingFields {
         }
 
         public static SaveFile toEntity(SaveFileDTO saveFileDto){
+            if(saveFileDto == null) return null;
             return SaveFile.builder()
                     .id(saveFileDto.getId())
                     .fileName(saveFileDto.getFileName())
