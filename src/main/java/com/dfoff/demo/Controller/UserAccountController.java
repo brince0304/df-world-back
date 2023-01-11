@@ -1,8 +1,6 @@
 package com.dfoff.demo.Controller;
 
-import com.dfoff.demo.Domain.CharacterEntity;
 import com.dfoff.demo.Domain.CharacterEntityDto;
-import com.dfoff.demo.Domain.ForCharacter.CharacterDTO;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Service.CharacterService;
 import com.dfoff.demo.Service.SaveFileService;
@@ -10,7 +8,6 @@ import com.dfoff.demo.Service.UserAccountService;
 import com.dfoff.demo.Util.Bcrypt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -90,7 +87,7 @@ public class UserAccountController {
                 return new ResponseEntity<>("서버와 캐릭터 이름을 입력해주세요.", HttpStatus.BAD_REQUEST);
             }
             if (serverId.equals("adventure")) {
-                return new ResponseEntity<>(characterService.getCharacterByAdventureName(characterName, pageable).toList(), HttpStatus.OK);
+                return new ResponseEntity<>(characterService.getCharacterByAdventureName(characterName, pageable).map(CharacterEntityDto.CharacterEntityResponse::from).toList(), HttpStatus.OK);
             }
             List<CompletableFuture<CharacterEntityDto>> dtos = new ArrayList<>();
             List<CharacterEntityDto> dtos1 = characterService.getCharacterDTOs(serverId, characterName);
@@ -102,7 +99,7 @@ public class UserAccountController {
                 }
             }
             int size = Math.min(dtos.size(), 15);
-            return new ResponseEntity<>(dtos.stream().map(CompletableFuture::join).collect(Collectors.toList()).subList(0,size), HttpStatus.OK);
+            return new ResponseEntity<>(dtos.stream().map(CompletableFuture::join).map(CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toList()).subList(0,size), HttpStatus.OK);
             } catch(Exception e){
                 log.info("error: {}", e.getMessage());
                 return new ResponseEntity<>("캐릭터를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
@@ -158,8 +155,8 @@ public class UserAccountController {
             }
             ModelAndView mav = new ModelAndView("/mypage/mypage");
             UserAccount.UserAccountDTO userAccountDTO = userAccountService.getUserAccountById(principalDto.getUsername());
-            mav.addObject("user", UserAccount.UserAccountResponse.of(userAccountDTO));
-            mav.addObject("characters", userAccountDTO.getCharacterEntityDtos());
+            mav.addObject("user", UserAccount.UserAccountResponse.from(userAccountDTO));
+            mav.addObject("characters", userAccountDTO.getCharacterEntityDtos().stream().map(CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toSet()));
             return mav;
         }
         catch (Exception e){

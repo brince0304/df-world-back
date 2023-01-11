@@ -44,10 +44,9 @@ public class CharacterController {
         mav.addObject("serverId", serverId);
         mav.addObject("characterName", characterName);
         if (serverId.equals("adventure")) {
-            mav.addObject("characters", characterService.getCharacterByAdventureName(characterName, pageable));
+            mav.addObject("characters", characterService.getCharacterByAdventureName(characterName, pageable).map(CharacterEntityDto.CharacterEntityResponse::from));
             return mav;
         }
-
         List<CharacterEntityDto> characters = characterService.getCharacterDTOs(serverId, characterName);
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), characters.size());
@@ -60,7 +59,7 @@ public class CharacterController {
                 list.add(CompletableFuture.completedFuture(character));
             }
         }
-        mav.addObject("characters", new PageImpl<>(list.stream().map(CompletableFuture::join).collect(Collectors.toList()), pageable, characters.size()));
+        mav.addObject("characters", new PageImpl<>(list.stream().map(CompletableFuture::join).map(CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toList()), pageable, characters.size()));
         return mav;
     }
 
