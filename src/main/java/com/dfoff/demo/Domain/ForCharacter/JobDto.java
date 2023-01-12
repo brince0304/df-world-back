@@ -4,7 +4,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
 
-import javax.annotation.Generated;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,7 +21,6 @@ public class JobDto {
     private final Set<JobGrowDto> jobGrowDtoSet = new HashSet<>();
 
 
-    @Generated("jsonschema2pojo")
     public static class JobJSONDto {
 
         @SerializedName("rows")
@@ -127,7 +125,6 @@ public class JobDto {
             return ((this.rows == rhs.rows) || ((this.rows != null) && this.rows.equals(rhs.rows)));
         }
 
-        @Generated("jsonschema2pojo")
         public static class Next {
 
             @SerializedName("jobGrowId")
@@ -230,7 +227,6 @@ public class JobDto {
 
         }
 
-        @Generated("jsonschema2pojo")
         public static class Row__1 {
 
             @SerializedName("jobGrowId")
@@ -332,7 +328,6 @@ public class JobDto {
 
         }
 
-        @Generated("jsonschema2pojo")
         public static class Row {
 
             @SerializedName("jobId")
@@ -434,7 +429,6 @@ public class JobDto {
 
         }
 
-        @Generated("jsonschema2pojo")
         public static class Next__2 {
 
             @SerializedName("jobGrowId")
@@ -518,7 +512,6 @@ public class JobDto {
 
         }
 
-        @Generated("jsonschema2pojo")
         public static class Next__1 {
 
             @SerializedName("jobGrowId")

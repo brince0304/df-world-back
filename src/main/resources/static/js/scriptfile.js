@@ -19,6 +19,26 @@ $(window).scroll(function() {
 });
 
 
+function loginAjax(){
+    let username = $("#username").val();
+    let password = $("#password").val();
+    $.ajax({
+        url: "/api/user/login?username="+username+"&password="+password,
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        success: function (data) {
+            console.log(data);
+            alert("로그인 되었습니다.");
+            location.href = "/";
+        },
+        error: function (data) {
+            console.log(data);
+            shakeModal();
+        }
+    });
+    /*   Simulate error message from the server   */
+}
+
 
 
 $(document).ready(function() {
@@ -39,7 +59,7 @@ $(document).ready(function() {
 function logoutAlert(){
     $.ajax({
         url: "/api/user/logout",
-        type: "GET",
+        type: "POST",
         success: function (data) {
             console.log(data);
             alert("로그아웃 되었습니다.");

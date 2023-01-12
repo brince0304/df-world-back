@@ -6,7 +6,7 @@ import com.dfoff.demo.UserAccountCharacterMapper;
 import io.micrometer.core.lang.Nullable;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
@@ -27,7 +27,6 @@ public class CharacterEntity extends AuditingFields {
     private String characterId;
     @Column (nullable = false)
     private String serverId;
-    @Column (nullable = false)
     private String characterName;
     @Column (nullable = false)
     private Integer level;
@@ -39,9 +38,7 @@ public class CharacterEntity extends AuditingFields {
     private String jobName;
     @Column (nullable = false)
     private String jobGrowName;
-    @Column (nullable = false)
     private String adventureFame;
-    @Column (nullable = false)
     private String adventureName;
 
     @OneToMany(fetch = FetchType.LAZY)

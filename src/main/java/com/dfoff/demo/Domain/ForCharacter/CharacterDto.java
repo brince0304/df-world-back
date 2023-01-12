@@ -5,8 +5,7 @@ import com.dfoff.demo.Domain.CharacterEntity;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
-
-import javax.annotation.Generated;
+import jakarta.persistence.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +50,6 @@ public class CharacterDto {
                 .build();
     }
 
-    @Generated("jsonschema2pojo")
     public static class CharacterJSONDto {
 
 
@@ -131,7 +129,6 @@ public class CharacterDto {
             return ((this.rows == rhs.rows) || ((this.rows != null) && this.rows.equals(rhs.rows)));
         }
 
-        @Generated("jsonschema2pojo")
         public static class Row {
 
             @SerializedName("serverId")

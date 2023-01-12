@@ -3,6 +3,7 @@ package com.dfoff.demo.Controller;
 import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Service.SaveFileService;
 import com.dfoff.demo.Util.FileUtil;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -12,7 +13,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityNotFoundException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;

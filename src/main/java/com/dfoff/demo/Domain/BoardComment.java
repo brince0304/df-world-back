@@ -3,7 +3,7 @@ package com.dfoff.demo.Domain;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;

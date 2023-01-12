@@ -46,12 +46,8 @@ function loginAjax(){
     let username = $("#username").val();
     let password = $("#password").val();
     $.ajax({
-        url: "/api/user/login",
+        url: "/api/user/login?username="+username+"&password="+password,
         type: "POST",
-        data: JSON.stringify({
-            "username": username,
-            "password": password
-        }),
         contentType: "application/json; charset=utf-8",
         success: function (data) {
             console.log(data);
@@ -64,7 +60,6 @@ function loginAjax(){
         }
     });
 /*   Simulate error message from the server   */
-
 }
 
 function shakeModal(){
@@ -76,17 +71,6 @@ function shakeModal(){
     }, 1000 ); 
 }
 
-function logoutAlert(){
-    $.ajax({
-        url: "/api/user/logout",
-        type: "GET",
-        success: function (data) {
-            console.log(data);
-            alert("로그아웃 되었습니다.");
-            location.reload();
-        }
-    });
-}
 
 
 

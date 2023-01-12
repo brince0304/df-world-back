@@ -4,12 +4,13 @@ import com.dfoff.demo.Domain.EnumType.UserAccount.SecurityRole;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
 import com.dfoff.demo.UserAccountCharacterMapper;
 import io.micrometer.core.lang.Nullable;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
+
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -43,18 +44,22 @@ public class UserAccount extends AuditingFields {
 
     @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
-    @Nullable
+
     private Set<UserAccountCharacterMapper> characterEntities = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
-    @Nullable
     private Set<Board> articles = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
-    @Nullable
     private Set<BoardComment> comments = new LinkedHashSet<>();
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50)
+    @Setter
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<SecurityRole> roles =new HashSet<>(Set.of(SecurityRole.ROLE_USER));
 
     private String isDeleted = "N";
 
@@ -72,11 +77,7 @@ public class UserAccount extends AuditingFields {
         return Objects.hash(userId);
     }
 
-    @Enumerated(EnumType.STRING)
-    @Column(length = 50)
-    @Setter
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<SecurityRole> roles;
+
 
 
     @Getter
@@ -97,7 +98,7 @@ public class UserAccount extends AuditingFields {
 
         @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {
-            return null;
+            return authorities;
         }
 
         @Override
@@ -133,7 +134,7 @@ public class UserAccount extends AuditingFields {
 
     @Builder
     public record UserAccountResponse(String userId, String nickname, String email, SaveFile.SaveFileDTO profileIcon,
-                                      Set<SecurityRole> roles) {
+                                      Set<SecurityRole> roles, Set<CharacterEntity.CharacterEntityDto.CharacterEntityResponse> characterResponse) {
         public static UserAccountResponse from(UserAccountDto userAccount) {
             return UserAccountResponse.builder()
                     .userId(userAccount.userId())
@@ -141,6 +142,7 @@ public class UserAccount extends AuditingFields {
                     .email(userAccount.email())
                     .roles(userAccount.roles())
                     .profileIcon(userAccount.profileIcon())
+                    .characterResponse(userAccount.characterEntityDtos().stream().map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toSet()))
                     .build();
         }
     }
@@ -194,7 +196,7 @@ public class UserAccount extends AuditingFields {
                             this.characterEntityDtos() == null ? new LinkedHashSet<>()
                                     : this.characterEntityDtos().stream()
                                     .map(CharacterEntity.CharacterEntityDto::toEntity).map(o -> UserAccountCharacterMapper.of(this.toEntity(), o)).collect(Collectors.toSet()))
-                    .profileIcon(this.profileIcon().toEntity())
+                    .profileIcon(this.profileIcon() ==null? null : this.profileIcon().toEntity())
                     .roles(this.roles())
                     .build();
         }

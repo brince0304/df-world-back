@@ -4,7 +4,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
 
-import javax.annotation.Generated;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +16,6 @@ public class ServerDto {
     private final String serverName;
 
 
-@javax.annotation.Generated("jsonschema2pojo")
 public static class ServerJSONDto {
 
     @SerializedName("rows")
@@ -94,7 +92,6 @@ public static class ServerJSONDto {
         return ((this.rows == rhs.rows) || ((this.rows != null) && this.rows.equals(rhs.rows)));
     }
 
-    @Generated("jsonschema2pojo")
     public static class Row {
 
         @SerializedName("serverId")

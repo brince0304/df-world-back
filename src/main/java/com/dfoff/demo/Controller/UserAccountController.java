@@ -35,16 +35,7 @@ public class UserAccountController {
 
     private final Bcrypt bcrypt;
 
-    @PostMapping("/api/user/login")
-    public ResponseEntity<?> login(@RequestBody UserAccount.LoginDto dto) {
-        try {
-            log.info("login: {}", dto);
-            UserAccount.UserAccountDto accountDto = userAccountService.loginByUserId(dto);
-            return new ResponseEntity<>(accountDto.userId(), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>("잘못된 아이디나 비밀번호입니다.", HttpStatus.BAD_REQUEST);
-        }
-    }
+
 
     @GetMapping("/api/user/validate")
     public String checkExist(@RequestParam (required = false) String email,

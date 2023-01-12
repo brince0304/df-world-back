@@ -4,11 +4,8 @@ package com.dfoff.demo.Domain.ForCharacter;
 import com.dfoff.demo.Domain.CharacterEntity;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import io.hypersistence.utils.hibernate.type.json.JsonType;
 import lombok.*;
-import org.hibernate.annotations.TypeDef;
 
-import javax.annotation.Generated;
 import java.util.List;
 
 
@@ -81,7 +78,6 @@ public class CharacterAbilityDto {
         }
 
 
-    @TypeDef(name = "json", typeClass = JsonType.class, defaultForType = CharacterAbilityJSONDto.class)
     @Builder
     public static class CharacterAbilityJSONDto {
         @SerializedName("characterId")
@@ -365,7 +361,6 @@ public class CharacterAbilityDto {
 
     }
 
-    @Generated("jsonschema2pojo")
     public static class Buff {
 
         @SerializedName("name")
@@ -467,7 +462,6 @@ public class CharacterAbilityDto {
 
     }
 
-    @Generated("jsonschema2pojo")
     public static class Status__1 {
 
         @SerializedName("name")
@@ -551,7 +545,6 @@ public class CharacterAbilityDto {
 
     }
 
-    @Generated("jsonschema2pojo")
     public static class Status {
 
         @SerializedName("name")
