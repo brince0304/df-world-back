@@ -43,7 +43,7 @@ public class CharacterController {
         List<CharacterEntity.CharacterEntityDto> characters = characterService.getCharacterDTOs(serverId, characterName);
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), characters.size());
-        Page<CharacterEntity.CharacterEntityDto> characterPage = new PageImpl<>(characters.subList(start, end), pageable, characters.size());
+        Page<CharacterEntity.CharacterEntityDto> characterPage = new PageImpl<>(characters.subList(Math.min(start, end), end), pageable, characters.size());
         List<CompletableFuture<CharacterEntity.CharacterEntityDto>> list = new ArrayList<>();
         for (CharacterEntity.CharacterEntityDto character : characterPage) {
             if (character.getLevel() >= 100) {

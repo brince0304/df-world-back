@@ -195,6 +195,17 @@
                                     <div class="table-responsive">
                                         <div class="container">
                                             <div class="row charThumb ">
+                                                <div th:if="${characters.isEmpty()}">
+                                                    <div class="col-lg-12">
+                                                                <div class="row">
+                                                                    <div class="col-lg-12">
+                                                                        <div class="text-center">
+                                                                            <h3>검색 결과가 없습니다.</h3>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                    </div>
+                                                </div>
                                                 <!-- Single Advisor-->
                                                 <div th:each="char : ${characters}" class="col-12 col-sm-6 col-lg-3">
                                                     <div
@@ -233,7 +244,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <nav class="pagination-outer" aria-label="Page navigation">
+                                            <nav class="pagination-outer" th:if="${!characters.isEmpty()}"  aria-label="Page navigation">
                                                 <ul class="pagination" th:with="start=${(characters.number/5)*5 + 1},
                     last=(${start + 4 < characters.totalPages ? start + 4 : characters.totalPages})">
                                                     <li class="page-item" th:class="${characters.first} ? 'disabled'">
@@ -241,9 +252,9 @@
                                                             <span aria-hidden="true">«</span>
                                                         </a>
                                                     </li>
-                                                    <li  class="page-item" th:if="${characters.size>0}" th:each="page: ${#numbers.sequence(start , last)}" th:class="${page == characters.number + 1} ? 'active'" ><a class="page-link" th:text="${page }" th:href="@{/character/search.df(page=${page -1},characterName=${characterName},serverId=${serverId})}" >1</a></li>
-                                                    <li class="page-item">
-                                                        <a href="#" class="page-link" aria-label="Next" th:if="${characters.size>12}" th:href="@{/character/search.df(page=${characters.totalPages -1},characterName=${characterName},serverId=${serverId})}" >
+                                                    <li  class="page-item"  th:each="page: ${#numbers.sequence(start , last)}" th:class="${page == characters.number + 1} ? 'active'" ><a class="page-link" th:text="${page }" th:href="@{/character/search.df(page=${page -1},characterName=${characterName},serverId=${serverId})}" >1</a></li>
+                                                    <li class="page-item" th:class="${characters.totalPages == characters.number +1 } ? 'disabled'">
+                                                        <a href="#" class="page-link" aria-label="Next"    th:href="@{/character/search.df(page=${characters.number +1},characterName=${characterName},serverId=${serverId})}" >
                                                             <span aria-hidden="true">»</span>
                                                         </a>
                                                     </li>
