@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-@Table(indexes = @Index(name = "idx_adventureName", columnList = "adventureName", unique = true))
 public class CharacterEntity extends AuditingFields {
     @Id
     private String characterId;

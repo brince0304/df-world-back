@@ -329,3 +329,26 @@ $('.nav-menu a, #mobile-nav a, .scrollto').on('click', function() {
         }
     }
 });
+
+
+$(function () {
+    $('#loginForm').keypress(function (e) {
+        if (e.keyCode == 13) {
+            loginAjax();
+
+        }
+    });
+
+
+});
+
+$(function () {
+    $('#signupForm').keypress(function (e) {
+        if (e.keyCode == 13) {
+            registerSubmit();
+
+        }
+    });
+
+
+});

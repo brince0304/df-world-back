@@ -88,7 +88,7 @@
                             </div>
                             <div class="error"></div>
                             <div class="form loginBox">
-                                <form accept-charset="UTF-8">
+                                <form id="loginForm" accept-charset="UTF-8">
                                     <input id="username" class="form-control" type="text" placeholder="아이디"
                                            name="username">
                                     <input id="password" class="form-control" type="password" placeholder="비밀번호"
@@ -102,7 +102,7 @@
                     <div class="box">
                         <div class="content registerBox" style="display:none;">
                             <div class="form">
-                                <form html="{:multipart=>true}" data-remote="true" action="" accept-charset="UTF-8">
+                                <form html="{:multipart=>true}" id="signupForm"  data-remote="true" action="" accept-charset="UTF-8">
                                     <input id="usernameRegister" class="input-lg form-control" type="text"
                                            placeholder="아이디" name="username">
                                     <div class="row">

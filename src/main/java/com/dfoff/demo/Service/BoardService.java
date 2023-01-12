@@ -64,7 +64,7 @@ public class BoardService {
 
     public List<Board.BoardDto> getBestArticles(BoardType boardType){
         LocalDateTime end = LocalDateTime.now();
-        LocalDateTime start = LocalDateTime.of(end.getYear(),end.getMonth(),end.getDayOfMonth()-1,23,59,59);
+        LocalDateTime start = end.minusDays(1);
         if(boardType==null){
             return boardRepository.findBoardByLikeCount(start,end).stream().map(Board.BoardDto::from).toList();
         }else{
