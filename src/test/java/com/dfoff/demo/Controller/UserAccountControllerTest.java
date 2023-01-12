@@ -73,13 +73,6 @@ class UserAccountControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        saveFileService.saveFile(SaveFile.SaveFileDTO.builder()
-                .fileName("icon_char_0.png").filePath("icon_char_0.png").build());
-        userAccountService.createAccount(UserAccount.UserAccountDto.builder()
-                .userId("test2")
-                .password("test2")
-                .nickname("test2")
-                .email("test2").profileIcon(SaveFile.SaveFileDTO.builder().fileName("test2").filePath("test2").build()).build());
 
     }
 
@@ -120,7 +113,7 @@ class UserAccountControllerTest {
     @DisplayName("[view] [POST] /api/user - 회원가입 시도")
     void givenUserDetails_whenCreatingUserAccount_thenCreatesUserAccount() throws Exception {
         //given
-        given(userAccountService.createAccount(any())).willReturn(true);
+        given(userAccountService.createAccount(any(),any())).willReturn(true);
 
         //when&then
         mvc.perform(post("/api/user")

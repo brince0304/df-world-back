@@ -28,19 +28,20 @@ public class Board extends AuditingFields {
     @Column
     @Enumerated(EnumType.STRING)
     private BoardType boardType;
-
+    @Setter
     private String boardTitle;
-
+    @Setter
     private String boardContent;
 
     @ManyToOne (fetch = FetchType.LAZY , cascade = CascadeType.ALL)
     @JoinColumn (name = "user_id")
     private UserAccount userAccount;
 
+    @Setter
     private String isDeleted = "N";
-
+    @Setter
     private Integer boardViewCount = 0;
-
+    @Setter
     private Integer boardLikeCount = 0;
 
     @OneToMany (mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -84,7 +85,7 @@ public class Board extends AuditingFields {
         private final Set<SaveFile.SaveFileDTO> boardFiles;
         private final Set<BoardComment.BoardCommentDto> boardComments;
 
-        public static BoardDto from(Board board){
+        public static BoardDto from(Board board) {
             return BoardDto.builder()
                     .createdAt(board.getCreatedAt())
                     .createdBy(board.getCreatedBy())
@@ -102,6 +103,20 @@ public class Board extends AuditingFields {
                     .boardComments(board.getBoardComments().stream().map(BoardComment.BoardCommentDto::from).collect(Collectors.toSet()))
                     .build();
         }
+            public Board toEntity(){
+                return  Board.builder()
+                        .id(id)
+                        .boardType(boardType)
+                        .boardTitle(boardTitle)
+                        .boardContent(boardContent)
+                        .userAccount(userAccount.toEntity())
+                        .isDeleted(isDeleted)
+                        .boardViewCount(boardViewCount)
+                        .boardLikeCount(boardLikeCount)
+                        .boardFiles(boardFiles ==null ? new LinkedHashSet<>() : boardFiles.stream().map(SaveFile.SaveFileDTO::toEntity).collect(Collectors.toSet()))
+                        .boardComments(boardComments==null ? new LinkedHashSet<>() : boardComments.stream().map(BoardComment.BoardCommentDto::toEntity).collect(Collectors.toSet()))
+                        .build();
+            }
 
         public static BoardDto from(BoardRequest request){
             return BoardDto.builder()

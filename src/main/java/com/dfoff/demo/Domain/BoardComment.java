@@ -95,6 +95,20 @@ public class BoardComment extends AuditingFields {
                     .build();
         }
 
+        public BoardComment toEntity() {
+            return BoardComment.builder()
+                    .id(this.id)
+                    .commentContent(this.commentContent)
+                    .board(this.board.toEntity())
+                    .userAccount(this.userAccount.toEntity())
+                    .commentLikeCount(this.commentLikeCount)
+                    .isDeleted(this.isDeleted)
+                    .isParent(this.isParent)
+                    .childrenComments(this.childrenComments.stream().map(BoardComment.BoardCommentDto::toEntity).collect(Collectors.toSet()))
+                    .build();
+
+        }
+
 
     }
 
