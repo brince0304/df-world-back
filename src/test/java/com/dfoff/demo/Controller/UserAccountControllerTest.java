@@ -1,6 +1,5 @@
 package com.dfoff.demo.Controller;
 
-import com.dfoff.demo.Domain.CharacterEntity;
 import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Repository.CharacterEntityRepository;
@@ -11,7 +10,6 @@ import com.dfoff.demo.SecurityConfig.SecurityService;
 import com.dfoff.demo.Service.CharacterService;
 import com.dfoff.demo.Service.SaveFileService;
 import com.dfoff.demo.Service.UserAccountService;
-import com.dfoff.demo.UserAccountCharacterMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,12 +23,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Optional;
-
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -81,7 +75,7 @@ class UserAccountControllerTest {
     void setUp() throws Exception {
         saveFileService.saveFile(SaveFile.SaveFileDTO.builder()
                 .fileName("icon_char_0.png").filePath("icon_char_0.png").build());
-        userAccountService.createAccount(UserAccount.UserAccountDTO.builder()
+        userAccountService.createAccount(UserAccount.UserAccountDto.builder()
                 .userId("test2")
                 .password("test2")
                 .nickname("test2")

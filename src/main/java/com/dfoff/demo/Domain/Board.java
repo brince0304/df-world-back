@@ -77,7 +77,7 @@ public class Board extends AuditingFields {
         private final BoardType boardType;
         private final String boardTitle;
         private final String boardContent;
-        private final UserAccount.UserAccountDTO userAccount;
+        private final UserAccount.UserAccountDto userAccount;
         private final String isDeleted;
         private final String boardViewCount;
         private final String boardLikeCount;
@@ -94,7 +94,7 @@ public class Board extends AuditingFields {
                     .boardType(board.getBoardType())
                     .boardTitle(board.getBoardTitle())
                     .boardContent(board.getBoardContent())
-                    .userAccount(UserAccount.UserAccountDTO.from(board.getUserAccount()))
+                    .userAccount(UserAccount.UserAccountDto.from(board.getUserAccount()))
                     .isDeleted(board.getIsDeleted())
                     .boardViewCount(board.getBoardViewCount())
                     .boardLikeCount(board.getBoardLikeCount())

@@ -9,8 +9,6 @@ import lombok.*;
 import org.hibernate.annotations.TypeDef;
 
 import javax.annotation.Generated;
-import javax.persistence.ColumnResult;
-import javax.persistence.Table;
 import java.util.List;
 
 
@@ -19,7 +17,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @Builder
-public class CharacterAbilityDTO {
+public class CharacterAbilityDto {
 
 
         private String characterId;
@@ -50,8 +48,8 @@ public class CharacterAbilityDTO {
 
 
 
-        public static CharacterAbilityJSONDTO toAbilityJSONDTO(CharacterAbilityDTO dto){
-            return CharacterAbilityJSONDTO.builder()
+        public static CharacterAbilityJSONDto toAbilityJSONDTO(CharacterAbilityDto dto){
+            return CharacterAbilityJSONDto.builder()
                     .characterId(dto.getCharacterId())
                     .characterName(dto.getCharacterName())
                     .level(dto.getLevel())
@@ -67,7 +65,7 @@ public class CharacterAbilityDTO {
                     .build();
         }
 
-        public static CharacterEntity toEntity(CharacterAbilityDTO dto){
+        public static CharacterEntity toEntity(CharacterAbilityDto dto){
             return CharacterEntity.builder()
                     .characterId(dto.getCharacterId())
                     .characterName(dto.getCharacterName())
@@ -83,9 +81,9 @@ public class CharacterAbilityDTO {
         }
 
 
-    @TypeDef(name = "json", typeClass = JsonType.class, defaultForType = CharacterAbilityJSONDTO.class)
+    @TypeDef(name = "json", typeClass = JsonType.class, defaultForType = CharacterAbilityJSONDto.class)
     @Builder
-    public static class CharacterAbilityJSONDTO {
+    public static class CharacterAbilityJSONDto {
         @SerializedName("characterId")
         @Expose
         private String characterId;
@@ -126,13 +124,13 @@ public class CharacterAbilityDTO {
         /**
          * No args constructor for use in serialization
          */
-        public CharacterAbilityJSONDTO() {
+        public CharacterAbilityJSONDto() {
         }
 
 
 
-        public CharacterAbilityDTO toDTO() {
-            CharacterAbilityDTO characterAbilityDTO = CharacterAbilityDTO.builder()
+        public CharacterAbilityDto toDto() {
+            return CharacterAbilityDto.builder()
                     .characterId(characterId)
                     .characterName(characterName)
                     .level(level)
@@ -146,7 +144,6 @@ public class CharacterAbilityDTO {
                     .buff(buff)
                     .status(status)
                     .build();
-            return characterAbilityDTO;
         }
 
 
@@ -164,7 +161,7 @@ public class CharacterAbilityDTO {
          * @param guildName
          * @param status
          */
-        public CharacterAbilityJSONDTO(String characterId, String characterName, Integer level, String jobId, String jobGrowId, String jobName, String jobGrowName, String adventureName, String guildId, String guildName, List<Buff> buff, List<Status__1> status) {
+        public CharacterAbilityJSONDto(String characterId, String characterName, Integer level, String jobId, String jobGrowId, String jobName, String jobGrowName, String adventureName, String guildId, String guildName, List<Buff> buff, List<Status__1> status) {
             super();
             this.characterId = characterId;
             this.characterName = characterName;
@@ -279,7 +276,7 @@ public class CharacterAbilityDTO {
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append(CharacterAbilityJSONDTO.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+            sb.append(CharacterAbilityJSONDto.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
             sb.append("characterId");
             sb.append('=');
             sb.append(((this.characterId == null) ? "<null>" : this.characterId));
@@ -359,10 +356,10 @@ public class CharacterAbilityDTO {
             if (other == this) {
                 return true;
             }
-            if ((other instanceof CharacterAbilityJSONDTO) == false) {
+            if ((other instanceof CharacterAbilityJSONDto) == false) {
                 return false;
             }
-            CharacterAbilityJSONDTO rhs = ((CharacterAbilityJSONDTO) other);
+            CharacterAbilityJSONDto rhs = ((CharacterAbilityJSONDto) other);
             return (((((((((((((this.jobName == rhs.jobName) || ((this.jobName != null) && this.jobName.equals(rhs.jobName))) && ((this.level == rhs.level) || ((this.level != null) && this.level.equals(rhs.level)))) && ((this.adventureName == rhs.adventureName) || ((this.adventureName != null) && this.adventureName.equals(rhs.adventureName)))) && ((this.jobGrowName == rhs.jobGrowName) || ((this.jobGrowName != null) && this.jobGrowName.equals(rhs.jobGrowName)))) && ((this.guildId == rhs.guildId) || ((this.guildId != null) && this.guildId.equals(rhs.guildId)))) && ((this.guildName == rhs.guildName) || ((this.guildName != null) && this.guildName.equals(rhs.guildName)))) && ((this.jobId == rhs.jobId) || ((this.jobId != null) && this.jobId.equals(rhs.jobId)))) && ((this.jobGrowId == rhs.jobGrowId) || ((this.jobGrowId != null) && this.jobGrowId.equals(rhs.jobGrowId)))) && ((this.characterName == rhs.characterName) || ((this.characterName != null) && this.characterName.equals(rhs.characterName)))) && ((this.characterId == rhs.characterId) || ((this.characterId != null) && this.characterId.equals(rhs.characterId)))) && ((this.buff == rhs.buff) || ((this.buff != null) && this.buff.equals(rhs.buff)))) && ((this.status == rhs.status) || ((this.status != null) && this.status.equals(rhs.status))));
         }
 

@@ -26,7 +26,7 @@ public class UserAccountService {
 
 
 
-    public boolean createAccount(UserAccount.UserAccountDTO account, SaveFile.SaveFileDTO profileIcon) {
+    public boolean createAccount(UserAccount.UserAccountDto account, SaveFile.SaveFileDTO profileIcon) {
         if (userAccountRepository.existsByUserId(account.userId())) {
             throw new EntityExistsException("이미 존재하는 아이디입니다.");
         }
@@ -58,7 +58,7 @@ public class UserAccountService {
 
 
 
-    public boolean updateAccountDetails(UserAccount.UserAccountDTO request) {
+    public boolean updateAccountDetails(UserAccount.UserAccountDto request) {
         UserAccount account = userAccountRepository.findById(request.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         if (userAccountRepository.existsByEmail(request.email())) {
             log.info("이미 존재하는 이메일입니다.");
@@ -79,7 +79,7 @@ public class UserAccountService {
 
 
 
-    public boolean changeProfileIcon (UserAccount.UserAccountDTO dto, SaveFile.SaveFileDTO iconDto){
+    public boolean changeProfileIcon (UserAccount.UserAccountDto dto, SaveFile.SaveFileDTO iconDto){
         UserAccount account = userAccountRepository.findById(dto.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         account.setProfileIcon(iconDto.toEntity());
         return true;
@@ -87,9 +87,9 @@ public class UserAccountService {
 
 
     @Transactional(readOnly = true)
-    public UserAccount.UserAccountDTO getUserAccountById(String userId) {
+    public UserAccount.UserAccountDto getUserAccountById(String userId) {
         if(userAccountRepository.existsByUserId(userId)){
-            return UserAccount.UserAccountDTO.from(userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다.")));
+            return UserAccount.UserAccountDto.from(userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다.")));
         }
         return null;
     }
@@ -102,22 +102,22 @@ public class UserAccountService {
         return false;
     }
 
-    public UserAccount.UserAccountDTO loginByUserId(UserAccount.LoginDto dto) {
+    public UserAccount.UserAccountDto loginByUserId(UserAccount.LoginDto dto) {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(token);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         log.info("authentication: {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        return UserAccount.UserAccountDTO.builder().build();
+        return UserAccount.UserAccountDto.builder().build();
     }
 
 
-    public boolean chagePassword(UserAccount.UserAccountDTO accountDTO,String password) {
+    public boolean chagePassword(UserAccount.UserAccountDto accountDTO, String password) {
         UserAccount account = userAccountRepository.findById(accountDTO.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         account.setPassword(bcrypt.encode(password));
         return true;
     }
 
-    public boolean changeNickname(UserAccount.UserAccountDTO accountDTO, String nickname) {
+    public boolean changeNickname(UserAccount.UserAccountDto accountDTO, String nickname) {
         UserAccount account = userAccountRepository.findById(accountDTO.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         if(userAccountRepository.existsByNickname(nickname)){
             return false;
@@ -126,7 +126,7 @@ public class UserAccountService {
         return true;
     }
 
-    public boolean changeEmail(UserAccount.UserAccountDTO accountDTO, String email) {
+    public boolean changeEmail(UserAccount.UserAccountDto accountDTO, String email) {
         UserAccount account = userAccountRepository.findById(accountDTO.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         if(userAccountRepository.existsByEmail(email)){
             return false;

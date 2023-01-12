@@ -44,7 +44,7 @@ class UserAccountServiceTest {
                 build();
         account.setProfileIcon(saveFile);
         //when&then
-        sut.createAccount(UserAccount.UserAccountDTO.from(account));
+        sut.createAccount(UserAccount.UserAccountDto.from(account));
         then(userAccountRepository).should().save(account);
     }
 
@@ -97,7 +97,7 @@ class UserAccountServiceTest {
         account.setProfileIcon(saveFile);
         given(userAccountRepository.existsByUserId(account.getUserId())).willReturn(true);
         //when&then
-        Throwable throwable = catchThrowable(() -> sut.createAccount(UserAccount.UserAccountDTO.from(account)));
+        Throwable throwable = catchThrowable(() -> sut.createAccount(UserAccount.UserAccountDto.from(account)));
         assertThat(throwable).isInstanceOf(EntityExistsException.class);
     }
 
@@ -142,7 +142,7 @@ class UserAccountServiceTest {
         account.setProfileIcon(saveFile);
         given(userAccountRepository.existsByUserId(account.getUserId())).willReturn(false);
         //when
-        UserAccount.UserAccountDTO dto  = sut.getUserAccountById(account.getUserId());
+        UserAccount.UserAccountDto dto  = sut.getUserAccountById(account.getUserId());
 
         //then
         assertThat(dto).isNull();
@@ -226,7 +226,7 @@ class UserAccountServiceTest {
                 filePath("test").
                 build();
         //when
-        sut.changeProfileIcon(UserAccount.UserAccountDTO.from(createUserAccount()), SaveFile.SaveFileDTO.from(saveFile));
+        sut.changeProfileIcon(UserAccount.UserAccountDto.from(createUserAccount()), SaveFile.SaveFileDTO.from(saveFile));
 
         //then
         then(userAccountRepository).should().findById(any());

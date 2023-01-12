@@ -39,7 +39,7 @@ public class UserAccountController {
     public ResponseEntity<?> login(@RequestBody UserAccount.LoginDto dto) {
         try {
             log.info("login: {}", dto);
-            UserAccount.UserAccountDTO accountDto = userAccountService.loginByUserId(dto);
+            UserAccount.UserAccountDto accountDto = userAccountService.loginByUserId(dto);
             return new ResponseEntity<>(accountDto.userId(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("잘못된 아이디나 비밀번호입니다.", HttpStatus.BAD_REQUEST);
@@ -134,9 +134,9 @@ public class UserAccountController {
                 return new ResponseEntity<>("로그인이 필요합니다.", HttpStatus.BAD_REQUEST);
             }
             if(request.equals("add")){
-                characterService.addCharacter(UserAccount.UserAccountDTO.from(userAccountDTO), characterService.getCharacter(serverId,characterId));
+                characterService.addCharacter(UserAccount.UserAccountDto.from(userAccountDTO), characterService.getCharacter(serverId,characterId));
             }else if(request.equals("delete")){
-                characterService.deleteCharacter(UserAccount.UserAccountDTO.from(userAccountDTO), characterService.getCharacter(serverId,characterId));
+                characterService.deleteCharacter(UserAccount.UserAccountDto.from(userAccountDTO), characterService.getCharacter(serverId,characterId));
             }
             return new ResponseEntity<>("success", HttpStatus.OK);
         } catch (Exception e) {
@@ -152,7 +152,7 @@ public class UserAccountController {
                 return new ModelAndView("redirect:/main.df");
             }
             ModelAndView mav = new ModelAndView("/mypage/mypage");
-            UserAccount.UserAccountDTO userAccountDTO = userAccountService.getUserAccountById(principalDto.getUsername());
+            UserAccount.UserAccountDto userAccountDTO = userAccountService.getUserAccountById(principalDto.getUsername());
             mav.addObject("user", UserAccount.UserAccountResponse.from(userAccountDTO));
             mav.addObject("characters", userAccountDTO.characterEntityDtos().stream().map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toSet()));
             return mav;
@@ -175,22 +175,22 @@ public class UserAccountController {
                 return new ResponseEntity<>("로그인이 필요합니다.", HttpStatus.BAD_REQUEST);
             }
             if(password != null){
-                if(userAccountService.chagePassword(UserAccount.UserAccountDTO.from(principalDto), password)){
+                if(userAccountService.chagePassword(UserAccount.UserAccountDto.from(principalDto), password)){
                     return new ResponseEntity<>("비밀번호가 변경되었습니다.", HttpStatus.OK);
                 }
             }
             if(profileIcon != null){
-                if(userAccountService.changeProfileIcon(UserAccount.UserAccountDTO.from(principalDto),saveFileService.getFileByFileName(profileIcon))){
+                if(userAccountService.changeProfileIcon(UserAccount.UserAccountDto.from(principalDto),saveFileService.getFileByFileName(profileIcon))){
                     return new ResponseEntity<>("프로필이 변경되었습니다.", HttpStatus.OK);
                 }
             }
             if(nickname != null){
-                if(userAccountService.changeNickname(UserAccount.UserAccountDTO.from(principalDto),nickname)){
+                if(userAccountService.changeNickname(UserAccount.UserAccountDto.from(principalDto),nickname)){
                     return new ResponseEntity<>("닉네임이 변경되었습니다.", HttpStatus.OK);
                 }
             }
             if(email != null){
-                if(userAccountService.changeEmail(UserAccount.UserAccountDTO.from(principalDto),email)){
+                if(userAccountService.changeEmail(UserAccount.UserAccountDto.from(principalDto),email)){
                     return new ResponseEntity<>("이메일이 변경되었습니다.", HttpStatus.OK);
                 }
             }

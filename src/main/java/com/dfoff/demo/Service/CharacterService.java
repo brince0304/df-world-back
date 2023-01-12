@@ -50,7 +50,7 @@ public class CharacterService {
     }
 
     public CharacterEntity.CharacterEntityDto getCharacter(String serverId,String characterId) {
-        CharacterEntity characterEntity = characterEntityRepository.findById(characterId).orElseGet(()-> CharacterAbilityDto.toEntity(parseUtil(OpenAPIUtil.getCharacterAbilityUrl(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDTO()));
+        CharacterEntity characterEntity = characterEntityRepository.findById(characterId).orElseGet(()-> CharacterAbilityDto.toEntity(parseUtil(OpenAPIUtil.getCharacterAbilityUrl(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto()));
         return CharacterEntity.CharacterEntityDto.from(characterEntity);
     }
 
@@ -61,14 +61,14 @@ public class CharacterService {
     @Async
     public CompletableFuture<CharacterEntity.CharacterEntityDto> getCharacterAbilityThenSaveAsync(CharacterEntity.CharacterEntityDto dto) {
         CharacterEntity entity = characterEntityRepository.save(CharacterEntity.CharacterEntityDto.toEntity(dto));
-        CharacterAbilityDto characterDto = parseUtil(OpenAPIUtil.getCharacterAbilityUrl(dto.getServerId(), dto.getCharacterId()), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDTO();
+        CharacterAbilityDto characterDto = parseUtil(OpenAPIUtil.getCharacterAbilityUrl(dto.getServerId(), dto.getCharacterId()), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
         entity.setAdventureFame(characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().isEmpty() ? "0" : characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().get().getValue());
         entity.setAdventureName(characterDto.getAdventureName());
         entity.setServerId(dto.getServerId());
         return CompletableFuture.completedFuture(CharacterEntity.CharacterEntityDto.from(entity));
     }
 
-    public void addCharacter(UserAccount.UserAccountDTO account, CharacterEntity.CharacterEntityDto character) { //캐릭터가 존재하지 않을 이유가 없음
+    public void addCharacter(UserAccount.UserAccountDto account, CharacterEntity.CharacterEntityDto character) { //캐릭터가 존재하지 않을 이유가 없음
         if (userAccountRepository.existsByUserId(account.userId())) {
             UserAccount userAccount = userAccountRepository.findById(account.userId()).orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
             CharacterEntity characterEntity = characterEntityRepository.findById(character.getCharacterId()).orElseGet(() -> CharacterEntity.CharacterEntityDto.toEntity(character));
@@ -78,7 +78,7 @@ public class CharacterService {
     }
 
 
-    public void deleteCharacter(UserAccount.UserAccountDTO dto, CharacterEntity.CharacterEntityDto character) {
+    public void deleteCharacter(UserAccount.UserAccountDto dto, CharacterEntity.CharacterEntityDto character) {
         if (userAccountRepository.existsByUserId(dto.userId())) {
             CharacterEntity characterEntity = characterEntityRepository.findById(character.getCharacterId()).orElseGet(() -> CharacterEntity.CharacterEntityDto.toEntity(character));
             UserAccount userAccount = userAccountRepository.findById(dto.userId()).orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));

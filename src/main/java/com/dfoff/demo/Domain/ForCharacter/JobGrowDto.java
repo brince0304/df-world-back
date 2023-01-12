@@ -7,10 +7,6 @@ import lombok.*;
 @Getter
 @Builder
 @ToString
-public class JobGrowDTO {
-    private final String jobGrowId;
-    private final String jobGrowName;
-
-
+public record JobGrowDto(String jobGrowId, String jobGrowName) {
 }
 

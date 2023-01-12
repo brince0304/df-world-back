@@ -7,7 +7,6 @@ import com.google.gson.annotations.SerializedName;
 import lombok.*;
 
 import javax.annotation.Generated;
-import javax.persistence.Id;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +17,7 @@ import java.util.stream.Collectors;
 @Getter
 @ToString
 @Setter
-public class CharacterDTO {
+public class CharacterDto {
 
     private String serverId;
 
@@ -36,24 +35,24 @@ public class CharacterDTO {
 
     private String jobGrowName;
 
-    private CharacterAbilityDTO characterAbilityDTO;
+    private CharacterAbilityDto characterAbilityDTO;
 
 
-    public static CharacterEntity toEntity(CharacterDTO dto) {
+    public CharacterEntity toEntity() {
         return CharacterEntity.builder()
-                .characterId(dto.getCharacterId())
-                .characterName(dto.getCharacterName())
-                .serverId(dto.getServerId())
-                .level(dto.getLevel())
-                .jobId(dto.getJobId())
-                .jobGrowId(dto.getJobGrowId())
-                .jobName(dto.getJobName())
-                .jobGrowName(dto.getJobGrowName())
+                .characterId(this.getCharacterId())
+                .characterName(this.getCharacterName())
+                .serverId(this.getServerId())
+                .level(this.getLevel())
+                .jobId(this.getJobId())
+                .jobGrowId(this.getJobGrowId())
+                .jobName(this.getJobName())
+                .jobGrowName(this.getJobGrowName())
                 .build();
     }
 
     @Generated("jsonschema2pojo")
-    public static class CharacterJSONDTO {
+    public static class CharacterJSONDto {
 
 
         @SerializedName("rows")
@@ -63,11 +62,11 @@ public class CharacterDTO {
         /**
          * No args constructor for use in serialization
          */
-        public CharacterJSONDTO() {
+        public CharacterJSONDto() {
         }
 
-        public List<CharacterDTO> toDTO() {
-            List<CharacterDTO> characterDtoList = rows.stream().map(row -> CharacterDTO.builder()
+        public List<CharacterDto> toDto() {
+            List<CharacterDto> characterDtoList = rows.stream().map(row -> CharacterDto.builder()
                     .serverId(row.getServerId())
                     .characterId(row.getCharacterId())
                     .characterName(row.getCharacterName())
@@ -84,7 +83,7 @@ public class CharacterDTO {
         /**
          * @param rows
          */
-        public CharacterJSONDTO(List<Row> rows) {
+        public CharacterJSONDto(List<Row> rows) {
             super();
             this.rows = rows;
         }
@@ -100,7 +99,7 @@ public class CharacterDTO {
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append(CharacterJSONDTO.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+            sb.append(CharacterJSONDto.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
             sb.append("rows");
             sb.append('=');
             sb.append(((this.rows == null) ? "<null>" : this.rows));
@@ -125,10 +124,10 @@ public class CharacterDTO {
             if (other == this) {
                 return true;
             }
-            if ((other instanceof CharacterJSONDTO) == false) {
+            if ((other instanceof CharacterJSONDto) == false) {
                 return false;
             }
-            CharacterJSONDTO rhs = ((CharacterJSONDTO) other);
+            CharacterJSONDto rhs = ((CharacterJSONDto) other);
             return ((this.rows == rhs.rows) || ((this.rows != null) && this.rows.equals(rhs.rows)));
         }
 

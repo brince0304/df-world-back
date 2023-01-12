@@ -12,23 +12,23 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @ToString
-public class ServerDTO {
+public class ServerDto {
     private final String serverId;
     private final String serverName;
 
 
 @javax.annotation.Generated("jsonschema2pojo")
-public static class ServerJSONDTO {
+public static class ServerJSONDto {
 
     @SerializedName("rows")
     @Expose
     private List<Row> rows = null;
 
 
-    public List<ServerDTO> toDTO(){
-        List<ServerDTO> list = new ArrayList<>();
+    public List<ServerDto> toDTO(){
+        List<ServerDto> list = new ArrayList<>();
         for (Row row : rows) {
-            ServerDTO serverDTO = ServerDTO.builder()
+            ServerDto serverDTO = ServerDto.builder()
                     .serverId(row.getServerId())
                     .serverName(row.getServerName())
                     .build();
@@ -40,13 +40,13 @@ public static class ServerJSONDTO {
     /**
      * No args constructor for use in serialization
      */
-    public ServerJSONDTO() {
+    public ServerJSONDto() {
     }
 
     /**
      * @param rows
      */
-    public ServerJSONDTO(List<Row> rows) {
+    public ServerJSONDto(List<Row> rows) {
         super();
         this.rows = rows;
     }
@@ -62,7 +62,7 @@ public static class ServerJSONDTO {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(ServerJSONDTO.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append(ServerJSONDto.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("rows");
         sb.append('=');
         sb.append(((this.rows == null) ? "<null>" : this.rows));
@@ -87,10 +87,10 @@ public static class ServerJSONDTO {
         if (other == this) {
             return true;
         }
-        if ((other instanceof ServerJSONDTO) == false) {
+        if ((other instanceof ServerJSONDto) == false) {
             return false;
         }
-        ServerJSONDTO rhs = ((ServerJSONDTO) other);
+        ServerJSONDto rhs = ((ServerJSONDto) other);
         return ((this.rows == rhs.rows) || ((this.rows != null) && this.rows.equals(rhs.rows)));
     }
 

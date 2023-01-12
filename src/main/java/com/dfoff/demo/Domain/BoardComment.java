@@ -43,7 +43,7 @@ public class BoardComment extends AuditingFields {
         private final Long id;
         private final String commentContent;
         private final Board.BoardDto board;
-        private final UserAccount.UserAccountDTO userAccount;
+        private final UserAccount.UserAccountDto userAccount;
         private final String commentLikeCount;
         private final String isDeleted;
 
@@ -56,7 +56,7 @@ public class BoardComment extends AuditingFields {
                     .id(boardComment.getId())
                     .commentContent(boardComment.getCommentContent())
                     .board(Board.BoardDto.from(boardComment.getBoard()))
-                    .userAccount(UserAccount.UserAccountDTO.from(boardComment.getUserAccount()))
+                    .userAccount(UserAccount.UserAccountDto.from(boardComment.getUserAccount()))
                     .commentLikeCount(boardComment.getCommentLikeCount())
                     .isDeleted(boardComment.getIsDeleted())
                     .build();

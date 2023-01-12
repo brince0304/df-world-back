@@ -136,7 +136,7 @@ public class UserAccount extends AuditingFields {
     @AllArgsConstructor
     public record UserAccountResponse(String userId, String nickname, String email, SaveFile.SaveFileDTO profileIcon,
                                       Set<SecurityRole> roles) {
-        public static UserAccountResponse from(UserAccountDTO userAccount) {
+        public static UserAccountResponse from(UserAccountDto userAccount) {
             return UserAccountResponse.builder()
                     .userId(userAccount.userId())
                     .nickname(userAccount.nickname())
@@ -152,13 +152,13 @@ public class UserAccount extends AuditingFields {
     @Getter
     @ToString
     @EqualsAndHashCode(callSuper = false)
-    public record UserAccountDTO(String userId, String password, String nickname, String email,
+    public record UserAccountDto(String userId, String password, String nickname, String email,
                                  SaveFile.SaveFileDTO profileIcon,
                                  Set<CharacterEntity.CharacterEntityDto> characterEntityDtos, Set<Board> articles,
                                  Set<BoardComment> comments, Set<SecurityRole> roles, LocalDateTime createdAt,
                                  String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
-        public static UserAccountDTO from(UserAccount userAccount) {
-            return UserAccountDTO.builder()
+        public static UserAccountDto from(UserAccount userAccount) {
+            return UserAccountDto.builder()
                     .userId(userAccount.getUserId())
                     .password(userAccount.getPassword())
                     .nickname(userAccount.getNickname())
@@ -175,8 +175,8 @@ public class UserAccount extends AuditingFields {
                     .build();
         }
 
-        public static UserAccountDTO from(PrincipalDto principalDto) {
-            return UserAccountDTO.builder()
+        public static UserAccountDto from(PrincipalDto principalDto) {
+            return UserAccountDto.builder()
                     .userId(principalDto.getUsername())
                     .password(principalDto.getPassword())
                     .nickname(principalDto.getNickname())
@@ -223,8 +223,8 @@ public class UserAccount extends AuditingFields {
             this.email = email;
         }
 
-        public UserAccountDTO toDto() {
-            return UserAccountDTO.builder()
+        public UserAccountDto toDto() {
+            return UserAccountDto.builder()
                     .userId(userId)
                     .password(password)
                     .nickname(nickname)
@@ -258,8 +258,8 @@ public class UserAccount extends AuditingFields {
         private final Set<SecurityRole> roles = Set.of(SecurityRole.ROLE_USER);
 
 
-        public UserAccountDTO toDto() {
-            return UserAccountDTO.builder()
+        public UserAccountDto toDto() {
+            return UserAccountDto.builder()
                     .userId(userId)
                     .password(password)
                     .nickname(nickname)
