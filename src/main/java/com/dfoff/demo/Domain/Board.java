@@ -148,7 +148,18 @@ public class Board extends AuditingFields {
         private final Set<SaveFile.SaveFileResponse> boardFiles;
 
         private final Set<BoardComment.BoardCommentResponse> boardComments;
-
+        public String getBoardType(BoardType type){
+            if(type==null){
+                return null;
+            }
+            return switch (type) {
+                case NOTICE -> "공지";
+                case FREE -> "자유";
+                case QUESTION -> "Q&A";
+                case RECRUITMENT -> "구인";
+                case MARKET -> "거래";
+            };
+        }
         public static BoardResponse from(BoardDto dto){
             return BoardResponse.builder()
                     .createdAt(dto.getCreatedAt())

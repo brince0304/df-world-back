@@ -4,13 +4,13 @@ import com.dfoff.demo.Domain.Board;
 import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Repository.BoardRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,6 +62,7 @@ class BoardServiceTest {
         then(boardRepository).should().findBoardById(any(Long.class));
         assertThat(throwable).isInstanceOf(EntityNotFoundException.class);
     }
+
 
     @Test
     void deleteArticleByIdTest() {

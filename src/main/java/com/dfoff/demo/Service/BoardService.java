@@ -59,7 +59,7 @@ public class BoardService {
                 }
             }
         }
-        return Page.empty();
+        return boardRepository.findAll(pageable).map(Board.BoardDto::from);
     }
 
     public List<Board.BoardDto> getBestArticles(BoardType boardType){

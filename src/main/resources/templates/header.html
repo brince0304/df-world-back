@@ -38,7 +38,7 @@
                 <li><a  sec:authorize="isAuthenticated()"
                         th:href="@{/user/myPage.df}" th:text="마이페이지"></a></li>
                 <li><a href="">랭킹</a></li>
-                <li><a href="">게시판</a></li>
+                <li><a th:href="@{/board.df}">게시판</a></li>
 
                 <li class="menu-has-children"><a href="">컨텐츠</a>
                     <ul>

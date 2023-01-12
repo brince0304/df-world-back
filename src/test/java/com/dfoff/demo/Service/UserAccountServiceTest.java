@@ -4,14 +4,17 @@ import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Repository.SaveFileRepository;
 import com.dfoff.demo.Repository.UserAccountRepository;
+import com.dfoff.demo.Util.Bcrypt;
+import jakarta.persistence.EntityExistsException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCrypt;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import javax.persistence.EntityExistsException;
 
 import java.util.Optional;
 
@@ -23,16 +26,19 @@ import static org.mockito.BDDMockito.then;
 
 @ExtendWith(MockitoExtension.class)
 class UserAccountServiceTest {
-    @InjectMocks UserAccountService sut;
+    @InjectMocks
+    UserAccountService sut;
     @Mock
     UserAccountRepository userAccountRepository;
     @Mock
     SaveFileRepository saveFileRepository;
+    @Mock
+    Bcrypt bcrypt;
 
     @Test
     @DisplayName("createAccount() - 계정생성 테스트")
     void givenNothing_whenCreatingAccount_thenCreateAccount() {
-        UserAccount account =  UserAccount.builder().
+        UserAccount account = UserAccount.builder().
                 userId("test").
                 password("test").
                 email("test").
@@ -43,6 +49,7 @@ class UserAccountServiceTest {
                 filePath("test").
                 build();
         account.setProfileIcon(saveFile);
+        given(userAccountRepository.save(any())).willReturn(account);
         //when&then
         sut.createAccount(UserAccount.UserAccountDto.from(account), SaveFile.SaveFileDTO.builder().build());
         then(userAccountRepository).should().save(account);
@@ -69,6 +76,7 @@ class UserAccountServiceTest {
         //then
         assertThat(result).isTrue();
     }
+
     @Test
     void givenEmail_whenValidateUserId_thenReturnBoolean() {
         //given
@@ -84,7 +92,7 @@ class UserAccountServiceTest {
     @DisplayName("createAccount() - 계정생성 테스트 예외 - 이미 존재하는 아이디")
     void givenExistsAccountId_whenCreatingUserAccount_thenDoNotCreateAccount() {
         //given
-        UserAccount account =  UserAccount.builder().
+        UserAccount account = UserAccount.builder().
                 userId("test").
                 password("test").
                 email("test").
@@ -105,7 +113,7 @@ class UserAccountServiceTest {
     @DisplayName("getUserAccountById() - 계정조회 테스트")
     void givenUserAccountId_whenGettingUserAccount_thenGetsUserAccount() {
         //given
-        UserAccount account =  UserAccount.builder().
+        UserAccount account = UserAccount.builder().
                 userId("test").
                 password("test").
                 email("test").
@@ -129,7 +137,7 @@ class UserAccountServiceTest {
     @DisplayName("getUserAccountById() - 계정조회 테스트 예외 - 존재하지 않는 계정 조회")
     void givenUserAccountId_whenGettingUserAccountButNotExists_thenGetsNullDto() {
         //given
-        UserAccount account =  UserAccount.builder().
+        UserAccount account = UserAccount.builder().
                 userId("test2").
                 password("test2").
                 email("test").
@@ -142,7 +150,7 @@ class UserAccountServiceTest {
         account.setProfileIcon(saveFile);
         given(userAccountRepository.existsByUserId(account.getUserId())).willReturn(false);
         //when
-        UserAccount.UserAccountDto dto  = sut.getUserAccountById(account.getUserId());
+        UserAccount.UserAccountDto dto = sut.getUserAccountById(account.getUserId());
 
         //then
         assertThat(dto).isNull();
@@ -152,7 +160,7 @@ class UserAccountServiceTest {
     @Test
     @DisplayName("updateAccountDetails() - 계정 업데이트 테스트")
     void givenUserAccount_whenUpdatingUserDetails_thenUpdateUserDetail() {
-        UserAccount.UserAccountUpdateRequest account =  UserAccount.UserAccountUpdateRequest.builder().
+        UserAccount.UserAccountUpdateRequest account = UserAccount.UserAccountUpdateRequest.builder().
                 password("test2").passwordCheck("test2").
                 email("test2").
                 nickname("test2").
@@ -171,7 +179,7 @@ class UserAccountServiceTest {
     @Test
     @DisplayName("updateAccountDetails() - 계정 업데이트 테스트 예외 - 비밀번호 불일치")
     void givenUserAccount_whenUpdatingUserDetailsButValidatedFailed_thenDoNothing() {
-        UserAccount.UserAccountUpdateRequest account =  UserAccount.UserAccountUpdateRequest.builder().
+        UserAccount.UserAccountUpdateRequest account = UserAccount.UserAccountUpdateRequest.builder().
                 password("test2").passwordCheck("test1").
                 email("test2").
                 nickname("test2").
@@ -217,8 +225,9 @@ class UserAccountServiceTest {
         //then
         then(userAccountRepository).should().existsByUserId(userId);
     }
+
     @Test
-    void givenUserAccountAndProfileIcon_whenChangeProfilIcon_thenChangesProfileIcon(){
+    void givenUserAccountAndProfileIcon_whenChangeProfilIcon_thenChangesProfileIcon() {
         //given
         given(userAccountRepository.findById(any())).willReturn(Optional.of(createUserAccount()));
         SaveFile saveFile = SaveFile.builder().id(1L).
@@ -232,8 +241,8 @@ class UserAccountServiceTest {
         then(userAccountRepository).should().findById(any());
     }
 
-    private UserAccount createUserAccount(){
-        UserAccount account =  UserAccount.builder().
+    private UserAccount createUserAccount() {
+        UserAccount account = UserAccount.builder().
                 userId("test2").
                 password("test2").
                 email("test").
