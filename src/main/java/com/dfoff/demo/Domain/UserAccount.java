@@ -27,14 +27,11 @@ public class UserAccount extends AuditingFields {
     @Id
     @Column(length = 50)
     private String userId;
-
     @Setter
     private String password;
-
     @Setter
     @Column(length = 50, unique = true)
     private String nickname;
-
     @Setter
     @Column(length = 100, unique = true)
     private String email;
@@ -44,9 +41,22 @@ public class UserAccount extends AuditingFields {
     @ToString.Exclude
     private SaveFile profileIcon;
 
-    @OneToMany (mappedBy = "userAccount",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Nullable
     private Set<UserAccountCharacterMapper> characterEntities = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @Nullable
+    private Set<Board> articles = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @Nullable
+    private Set<BoardComment> comments = new LinkedHashSet<>();
+
+    private String isDeleted = "N";
 
 
     @Override
@@ -85,7 +95,6 @@ public class UserAccount extends AuditingFields {
         private final List<GrantedAuthority> authorities;
 
 
-
         @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {
             return null;
@@ -121,24 +130,19 @@ public class UserAccount extends AuditingFields {
             return true;
         }
     }
+
     @Getter
     @Builder
     @AllArgsConstructor
-    public static class UserAccountResponse{
-        private final String userId;
-        private final String nickname;
-        private final String email;
-
-        private final SaveFile.SaveFileDTO profileIcon;
-        private final Set<SecurityRole> roles;
-
-        public static UserAccountResponse from(UserAccountDTO userAccount){
+    public record UserAccountResponse(String userId, String nickname, String email, SaveFile.SaveFileDTO profileIcon,
+                                      Set<SecurityRole> roles) {
+        public static UserAccountResponse from(UserAccountDTO userAccount) {
             return UserAccountResponse.builder()
-                    .userId(userAccount.getUserId())
-                    .nickname(userAccount.getNickname())
-                    .email(userAccount.getEmail())
-                    .roles(userAccount.getRoles())
-                    .profileIcon(userAccount.getProfileIcon())
+                    .userId(userAccount.userId())
+                    .nickname(userAccount.nickname())
+                    .email(userAccount.email())
+                    .roles(userAccount.roles())
+                    .profileIcon(userAccount.profileIcon())
                     .build();
         }
     }
@@ -147,25 +151,12 @@ public class UserAccount extends AuditingFields {
     @Builder
     @Getter
     @ToString
-    @EqualsAndHashCode
-    public static class UserAccountDTO {
-        private final String userId;
-        @Setter
-        private  String password;
-        private final String nickname;
-        private final String email;
-        @Setter
-        private SaveFile.SaveFileDTO profileIcon;
-
-        private final Set<CharacterEntity.CharacterEntityDto> characterEntityDtos;
-
-        private final Set<SecurityRole> roles;
-
-        private final LocalDateTime createdAt;
-        private final String createdBy;
-        private final LocalDateTime modifiedAt;
-        private final String modifiedBy;
-
+    @EqualsAndHashCode(callSuper = false)
+    public record UserAccountDTO(String userId, String password, String nickname, String email,
+                                 SaveFile.SaveFileDTO profileIcon,
+                                 Set<CharacterEntity.CharacterEntityDto> characterEntityDtos, Set<Board> articles,
+                                 Set<BoardComment> comments, Set<SecurityRole> roles, LocalDateTime createdAt,
+                                 String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
         public static UserAccountDTO from(UserAccount userAccount) {
             return UserAccountDTO.builder()
                     .userId(userAccount.getUserId())
@@ -175,15 +166,16 @@ public class UserAccount extends AuditingFields {
                     .roles(userAccount.getRoles())
                     .profileIcon(SaveFile.SaveFileDTO.from(userAccount.getProfileIcon()))
                     .characterEntityDtos(
-                            userAccount.getCharacterEntities()==null? new LinkedHashSet<>() : userAccount.getCharacterEntities().stream()
-                                    .map(UserAccountCharacterMapper::getCharacter).map(CharacterEntity.CharacterEntityDto::toDto).collect(Collectors.toSet()))
+                            userAccount.getCharacterEntities() == null ? new LinkedHashSet<>() : userAccount.getCharacterEntities().stream()
+                                    .map(UserAccountCharacterMapper::getCharacter).map(CharacterEntity.CharacterEntityDto::from).collect(Collectors.toSet()))
                     .createdAt(userAccount.getCreatedAt())
                     .createdBy(userAccount.getCreatedBy())
                     .modifiedAt(userAccount.getModifiedAt())
                     .modifiedBy(userAccount.getModifiedBy())
                     .build();
         }
-        public static UserAccountDTO from(PrincipalDto principalDto){
+
+        public static UserAccountDTO from(PrincipalDto principalDto) {
             return UserAccountDTO.builder()
                     .userId(principalDto.getUsername())
                     .password(principalDto.getPassword())
@@ -198,18 +190,18 @@ public class UserAccount extends AuditingFields {
                     .build();
         }
 
-        public static UserAccount toEntity(UserAccountDTO userAccountDto) {
+        public UserAccount toEntity() {
             return UserAccount.builder()
-                    .userId(userAccountDto.getUserId())
-                    .password(userAccountDto.getPassword())
-                    .nickname(userAccountDto.getNickname())
-                    .email(userAccountDto.getEmail())
+                    .userId(this.userId())
+                    .password(this.password())
+                    .nickname(this.nickname())
+                    .email(this.email())
                     .characterEntities(
-                            userAccountDto.getCharacterEntityDtos()==null ? new LinkedHashSet<>()
-                                    : userAccountDto.getCharacterEntityDtos().stream()
-                                    .map(CharacterEntity.CharacterEntityDto::toEntity).map(o-> UserAccountCharacterMapper.of(UserAccountDTO.toEntity(userAccountDto),o)).collect(Collectors.toSet()))
-                    .profileIcon(SaveFile.SaveFileDTO.toEntity(userAccountDto.getProfileIcon()))
-                    .roles(userAccountDto.getRoles())
+                            this.characterEntityDtos() == null ? new LinkedHashSet<>()
+                                    : this.characterEntityDtos().stream()
+                                    .map(CharacterEntity.CharacterEntityDto::toEntity).map(o -> UserAccountCharacterMapper.of(this.toEntity(), o)).collect(Collectors.toSet()))
+                    .profileIcon(this.profileIcon().toEntity())
+                    .roles(this.roles())
                     .build();
         }
 
@@ -219,19 +211,10 @@ public class UserAccount extends AuditingFields {
     @Builder
     @Getter
     @ToString
-    @EqualsAndHashCode
-    public static class UserAccountUpdateRequest{
-        @NotEmpty
-        private final String userId;
-        @Nullable
-        private final String password;
-        @Nullable
-        private final String passwordCheck;
-        @Nullable
-        private final String nickname;
-        @Nullable
-        private final String email;
-
+    @EqualsAndHashCode(callSuper = false)
+    public record UserAccountUpdateRequest(@NotEmpty String userId, @Nullable String password,
+                                           @Nullable String passwordCheck, @Nullable String nickname,
+                                           @Nullable String email) {
         public UserAccountUpdateRequest(String userId, String password, String passwordCheck, String nickname, String email) {
             this.userId = userId;
             this.password = password;
@@ -240,7 +223,7 @@ public class UserAccount extends AuditingFields {
             this.email = email;
         }
 
-        public UserAccountDTO toDto(){
+        public UserAccountDTO toDto() {
             return UserAccountDTO.builder()
                     .userId(userId)
                     .password(password)
@@ -265,7 +248,7 @@ public class UserAccount extends AuditingFields {
     @AllArgsConstructor
     @ToString
     @EqualsAndHashCode
-    public static class UserAccountSignUpRequest{
+    public static class UserAccountSignUpRequest {
         private final String userId;
         private final String password;
         private final String passwordCheck;
@@ -275,8 +258,7 @@ public class UserAccount extends AuditingFields {
         private final Set<SecurityRole> roles = Set.of(SecurityRole.ROLE_USER);
 
 
-
-        public UserAccountDTO toDto(){
+        public UserAccountDTO toDto() {
             return UserAccountDTO.builder()
                     .userId(userId)
                     .password(password)
@@ -297,16 +279,13 @@ public class UserAccount extends AuditingFields {
                     .build();
         }
     }
+
     @Getter
     @Builder
     @AllArgsConstructor
-    public static class LoginDto{
+    public static class LoginDto {
         private String username;
         private String password;
-
-
-
-
     }
 
 

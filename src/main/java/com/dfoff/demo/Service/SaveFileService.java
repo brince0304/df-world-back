@@ -45,6 +45,6 @@ public class SaveFileService {
 
     public SaveFile.SaveFileDTO saveFile(SaveFile.SaveFileDTO saveFile) {
         log.info("saveFile() saveFile: {}", saveFile);
-        return SaveFile.SaveFileDTO.from(saveFileRepository.save(SaveFile.SaveFileDTO.toEntity(saveFile)));
+        return SaveFile.SaveFileDTO.from(saveFileRepository.save(saveFile.toEntity()));
     }
 }

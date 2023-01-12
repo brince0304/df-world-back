@@ -26,18 +26,20 @@ public class UserAccountService {
 
 
 
-    public boolean createAccount(UserAccount.UserAccountDTO account) {
-        if (userAccountRepository.existsByUserId(account.getUserId())) {
+    public boolean createAccount(UserAccount.UserAccountDTO account, SaveFile.SaveFileDTO profileIcon) {
+        if (userAccountRepository.existsByUserId(account.userId())) {
             throw new EntityExistsException("이미 존재하는 아이디입니다.");
         }
-        if (userAccountRepository.existsByEmail(account.getEmail())) {
+        if (userAccountRepository.existsByEmail(account.email())) {
             throw new EntityExistsException("이미 존재하는 이메일입니다.");
         }
-        if (userAccountRepository.existsByNickname(account.getNickname())) {
+        if (userAccountRepository.existsByNickname(account.nickname())) {
             throw new EntityExistsException("이미 존재하는 닉네임입니다.");
         }
         log.info("account: {}", account);
-        UserAccount account0 = userAccountRepository.save(UserAccount.UserAccountDTO.toEntity(account));
+        UserAccount account0 = userAccountRepository.save(account.toEntity());
+        account0.setPassword(bcrypt.encode(account0.getPassword()));
+        account0.setProfileIcon(profileIcon.toEntity());
         return true;
     }
 
@@ -57,20 +59,20 @@ public class UserAccountService {
 
 
     public boolean updateAccountDetails(UserAccount.UserAccountDTO request) {
-        UserAccount account = userAccountRepository.findById(request.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
-        if (userAccountRepository.existsByEmail(request.getEmail())) {
+        UserAccount account = userAccountRepository.findById(request.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+        if (userAccountRepository.existsByEmail(request.email())) {
             log.info("이미 존재하는 이메일입니다.");
             return false;
         }
-        if (userAccountRepository.existsByNickname(request.getNickname())) {
+        if (userAccountRepository.existsByNickname(request.nickname())) {
             log.info("이미 존재하는 닉네임입니다.");
             return false;
         }
-        if(request.getEmail() != null) {
-            account.setEmail(request.getEmail());
+        if(request.email() != null) {
+            account.setEmail(request.email());
         }
-        if(request.getNickname() != null) {
-            account.setNickname(request.getNickname());
+        if(request.nickname() != null) {
+            account.setNickname(request.nickname());
         }
         return true;
     }
@@ -78,8 +80,8 @@ public class UserAccountService {
 
 
     public boolean changeProfileIcon (UserAccount.UserAccountDTO dto, SaveFile.SaveFileDTO iconDto){
-        UserAccount account = userAccountRepository.findById(dto.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
-        account.setProfileIcon(SaveFile.SaveFileDTO.toEntity(iconDto));
+        UserAccount account = userAccountRepository.findById(dto.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+        account.setProfileIcon(iconDto.toEntity());
         return true;
     }
 
@@ -110,13 +112,13 @@ public class UserAccountService {
 
 
     public boolean chagePassword(UserAccount.UserAccountDTO accountDTO,String password) {
-        UserAccount account = userAccountRepository.findById(accountDTO.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+        UserAccount account = userAccountRepository.findById(accountDTO.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         account.setPassword(bcrypt.encode(password));
         return true;
     }
 
     public boolean changeNickname(UserAccount.UserAccountDTO accountDTO, String nickname) {
-        UserAccount account = userAccountRepository.findById(accountDTO.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+        UserAccount account = userAccountRepository.findById(accountDTO.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         if(userAccountRepository.existsByNickname(nickname)){
             return false;
         }
@@ -125,7 +127,7 @@ public class UserAccountService {
     }
 
     public boolean changeEmail(UserAccount.UserAccountDTO accountDTO, String email) {
-        UserAccount account = userAccountRepository.findById(accountDTO.getUserId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+        UserAccount account = userAccountRepository.findById(accountDTO.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         if(userAccountRepository.existsByEmail(email)){
             return false;
         }

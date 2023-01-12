@@ -38,7 +38,7 @@
         <div class="card-body ">
             <div class="row">
                 <div class="col-12 ">
-                    <h4 class="card-title "><b th:text="${user.getNickname()} +'님 환영합니다!'">Program Title</b></h4>
+                    <h4 class="card-title "><b th:text="${user.nickname()} +'님 환영합니다!'">Program Title</b></h4>
 
                 </div>
                 <div class="col">
@@ -48,7 +48,7 @@
                                  height="19" id="star"> <span class="vl mr-2 ml-0"></span>
 
                             <span class="font-weight-bold">아이디 : </span><span
-                                th:text="${user.getUserId()}+' 이메일 : '+${user.getEmail()}"></span></p>
+                                th:text="${user.userId()}+' 이메일 : '+${user.email()}"></span></p>
                     </h6>
                 </div>
             </div>
@@ -84,7 +84,7 @@
                         <li class="list-inline-item"><a data-toggle="modal"
                                                         data-target="#iconSelectModal" href="#" class="
                          btn btn-outlined btn-black text-muted"> <img
-                                th:src="@{/api/getFile.df(name=${user.getProfileIcon().getFileName()})}" src=""
+                                th:src="@{/api/getFile.df(name=${user.profileIcon().getFileName()})}" src=""
                                 alt="DP" class="  rounded-circle img-fluid " width="20" height="20"> <small>프로필 아이콘
                             변경</small> </a>
                         </li>

@@ -40,7 +40,7 @@ public class UserAccountController {
         try {
             log.info("login: {}", dto);
             UserAccount.UserAccountDTO accountDto = userAccountService.loginByUserId(dto);
-            return new ResponseEntity<>(accountDto.getUserId(), HttpStatus.OK);
+            return new ResponseEntity<>(accountDto.userId(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>("잘못된 아이디나 비밀번호입니다.", HttpStatus.BAD_REQUEST);
         }
@@ -112,10 +112,7 @@ public class UserAccountController {
         try {
             log.info("singUp: {}", request);
             if (request.getPassword().equals(request.getPasswordCheck())) {
-                UserAccount.UserAccountDTO dto = request.toDto();
-                dto.setPassword(bcrypt.encode(request.getPassword()));
-                dto.setProfileIcon(saveFileService.getFileByFileName("icon_char_0.png"));
-                if (userAccountService.createAccount(dto)) {
+                if (userAccountService.createAccount(request.toDto(),saveFileService.getFileByFileName("icon_char_0.png"))) {
                     return new ResponseEntity<>(request.getUserId(), HttpStatus.OK);
                 }
             }
@@ -157,7 +154,7 @@ public class UserAccountController {
             ModelAndView mav = new ModelAndView("/mypage/mypage");
             UserAccount.UserAccountDTO userAccountDTO = userAccountService.getUserAccountById(principalDto.getUsername());
             mav.addObject("user", UserAccount.UserAccountResponse.from(userAccountDTO));
-            mav.addObject("characters", userAccountDTO.getCharacterEntityDtos().stream().map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toSet()));
+            mav.addObject("characters", userAccountDTO.characterEntityDtos().stream().map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toSet()));
             return mav;
         }
         catch (Exception e){

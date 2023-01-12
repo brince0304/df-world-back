@@ -185,7 +185,7 @@ class UserAccountServiceTest {
         //when&then
         sut.updateAccountDetails(account.toDto());
         then(userAccountRepository).should().findById(any());
-        assertThat(userAccountRepository.findById(any()).get().getPassword()).isNotEqualTo(account.getPassword());
+        assertThat(userAccountRepository.findById(any()).get().getPassword()).isNotEqualTo(account.password());
     }
 
 
