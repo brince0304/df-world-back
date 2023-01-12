@@ -39,9 +39,9 @@ public class Board extends AuditingFields {
 
     private String isDeleted = "N";
 
-    private String boardViewCount = "0";
+    private Integer boardViewCount = 0;
 
-    private String boardLikeCount = "0";
+    private Integer boardLikeCount = 0;
 
     @OneToMany (mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<SaveFile> boardFiles = new LinkedHashSet<>();
@@ -79,8 +79,8 @@ public class Board extends AuditingFields {
         private final String boardContent;
         private final UserAccount.UserAccountDto userAccount;
         private final String isDeleted;
-        private final String boardViewCount;
-        private final String boardLikeCount;
+        private final Integer boardViewCount;
+        private final Integer boardLikeCount;
         private final Set<SaveFile.SaveFileDTO> boardFiles;
         private final Set<BoardComment.BoardCommentDto> boardComments;
 
@@ -128,8 +128,8 @@ public class Board extends AuditingFields {
         private final String boardContent;
         private final UserAccount.UserAccountResponse userAccount;
         private final String isDeleted;
-        private final String boardViewCount;
-        private final String boardLikeCount;
+        private final Integer boardViewCount;
+        private final Integer boardLikeCount;
         private final Set<SaveFile.SaveFileResponse> boardFiles;
 
         private final Set<BoardComment.BoardCommentResponse> boardComments;

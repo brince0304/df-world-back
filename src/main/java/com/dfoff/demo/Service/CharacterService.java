@@ -43,7 +43,7 @@ public class CharacterService {
         if (characterName == null || characterName.equals("")) {
             return List.of();
         }
-        List<CharacterDto> characterDtoList = parseUtil(OpenAPIUtil.getCharacterSearchUrl(serverId, characterName), CharacterDto.CharacterJSONDto.class).toDTO();
+        List<CharacterDto> characterDtoList = parseUtil(OpenAPIUtil.getCharacterSearchUrl(serverId, characterName), CharacterDto.CharacterJSONDto.class).toDto();
         List<CharacterEntity> characterEntityList = characterDtoList.stream().map(CharacterEntity.CharacterEntityDto::toEntity).collect(Collectors.toList());
         characterEntityRepository.saveAll(characterEntityList);
         return characterEntityList.stream().map(CharacterEntity.CharacterEntityDto::from).collect(Collectors.toList());

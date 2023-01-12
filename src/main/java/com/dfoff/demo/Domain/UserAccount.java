@@ -131,9 +131,7 @@ public class UserAccount extends AuditingFields {
         }
     }
 
-    @Getter
     @Builder
-    @AllArgsConstructor
     public record UserAccountResponse(String userId, String nickname, String email, SaveFile.SaveFileDTO profileIcon,
                                       Set<SecurityRole> roles) {
         public static UserAccountResponse from(UserAccountDto userAccount) {
@@ -147,11 +145,7 @@ public class UserAccount extends AuditingFields {
         }
     }
 
-    @AllArgsConstructor
     @Builder
-    @Getter
-    @ToString
-    @EqualsAndHashCode(callSuper = false)
     public record UserAccountDto(String userId, String password, String nickname, String email,
                                  SaveFile.SaveFileDTO profileIcon,
                                  Set<CharacterEntity.CharacterEntityDto> characterEntityDtos, Set<Board> articles,
@@ -209,9 +203,6 @@ public class UserAccount extends AuditingFields {
     }
 
     @Builder
-    @Getter
-    @ToString
-    @EqualsAndHashCode(callSuper = false)
     public record UserAccountUpdateRequest(@NotEmpty String userId, @Nullable String password,
                                            @Nullable String passwordCheck, @Nullable String nickname,
                                            @Nullable String email) {

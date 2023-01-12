@@ -6,6 +6,9 @@ import lombok.*;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @AllArgsConstructor (access = AccessLevel.PROTECTED)
@@ -25,9 +28,16 @@ public class BoardComment extends AuditingFields {
     @ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private UserAccount userAccount;
 
-    private String commentLikeCount = "0";
+    private Integer commentLikeCount = 0;
 
     private String isDeleted = "N";
+
+    private String isParent = "N";
+
+    @OneToMany (mappedBy = "id",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Set<BoardComment> childrenComments = new LinkedHashSet<>();
+
 
 
     /**
@@ -44,8 +54,16 @@ public class BoardComment extends AuditingFields {
         private final String commentContent;
         private final Board.BoardDto board;
         private final UserAccount.UserAccountDto userAccount;
-        private final String commentLikeCount;
+        private final Integer commentLikeCount;
         private final String isDeleted;
+
+        private final String isParent;
+
+        private final Set<BoardComment.BoardCommentDto> childrenComments;
+
+
+
+
 
         public static BoardCommentDto from(BoardComment boardComment) {
             return BoardCommentDto.builder()
@@ -59,6 +77,8 @@ public class BoardComment extends AuditingFields {
                     .userAccount(UserAccount.UserAccountDto.from(boardComment.getUserAccount()))
                     .commentLikeCount(boardComment.getCommentLikeCount())
                     .isDeleted(boardComment.getIsDeleted())
+                    .isParent(boardComment.getIsParent())
+                    .childrenComments(boardComment.getChildrenComments().stream().map(BoardComment.BoardCommentDto::from).collect(Collectors.toSet()))
                     .build();
         }
 
@@ -67,6 +87,15 @@ public class BoardComment extends AuditingFields {
                     .commentContent(boardCommentRequest.getCommentContent())
                     .build();
         }
+
+        public static BoardCommentDto from(BoardCommentChildrenRequest boardCommentChildrenRequest) {
+            return BoardCommentDto.builder()
+                    .id(boardCommentChildrenRequest.getParentId())
+                    .commentContent(boardCommentChildrenRequest.getCommentContent())
+                    .build();
+        }
+
+
     }
 
     /**
@@ -83,8 +112,12 @@ public class BoardComment extends AuditingFields {
         private final String commentContent;
         private final Board.BoardResponse board;
         private final UserAccount.UserAccountResponse userAccount;
-        private final String commentLikeCount;
+        private final Integer commentLikeCount;
         private final String isDeleted;
+
+        private final String isParent;
+
+        private final Set<BoardComment.BoardCommentResponse> childrenComments;
 
         public static BoardCommentResponse from (BoardCommentDto dto){
             return BoardCommentResponse.builder()
@@ -98,6 +131,8 @@ public class BoardComment extends AuditingFields {
                     .userAccount(UserAccount.UserAccountResponse.from(dto.getUserAccount()))
                     .commentLikeCount(dto.getCommentLikeCount())
                     .isDeleted(dto.getIsDeleted())
+                    .isParent(dto.getIsParent())
+                    .childrenComments(dto.getChildrenComments().stream().map(BoardComment.BoardCommentResponse::from).collect(Collectors.toSet()))
                     .build();
 
         }
@@ -109,6 +144,14 @@ public class BoardComment extends AuditingFields {
     @Data
     public static class BoardCommentRequest implements Serializable {
         private final Long boardId;
+        private final String commentContent;
+    }
+
+    @Data
+    public static class BoardCommentChildrenRequest implements Serializable {
+        private final Long boardId;
+
+        private final Long parentId;
         private final String commentContent;
     }
 }
