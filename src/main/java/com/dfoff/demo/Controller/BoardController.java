@@ -29,12 +29,9 @@ public class BoardController {
                                      @RequestParam (required = false) String searchType) {
         ModelAndView mav = new ModelAndView("/board/boardList");
         mav.addObject("articles",boardService.getArticlesByKeyword(boardType,keyword,searchType,pageable).map(Board.BoardResponse::from));
-        log.info("boardList : " + mav.getModel().get("articles"));
         mav.addObject("bestArticles",boardService.getBestArticles(boardType).stream().map(Board.BoardResponse::from).collect(Collectors.toList()));
-        log.info("boardList : " + mav.getModel().get("bestArticles"));
         if(boardType!=null) {
             mav.addObject("boardType", boardType.toString());
-            log.info("boardList : " + mav.getModel().get("boardType"));
         }
         mav.addObject("keyword",keyword);
         mav.addObject("searchType",searchType);

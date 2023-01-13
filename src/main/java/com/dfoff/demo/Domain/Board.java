@@ -7,10 +7,15 @@ import lombok.*;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.dfoff.demo.Domain.Board.BoardResponse.Chrono.timesAgo;
 
 @Entity
 @AllArgsConstructor (access = AccessLevel.PROTECTED)
@@ -133,9 +138,9 @@ public class Board extends AuditingFields {
     @Data
     @Builder
     public static class BoardResponse implements Serializable {
-        private final LocalDateTime createdAt;
+        private final String createdAt;
         private final String createdBy;
-        private final LocalDateTime modifiedAt;
+        private final String modifiedAt;
         private final String modifiedBy;
         private final Long id;
         private final BoardType boardType;
@@ -162,9 +167,9 @@ public class Board extends AuditingFields {
         }
         public static BoardResponse from(BoardDto dto){
             return BoardResponse.builder()
-                    .createdAt(dto.getCreatedAt())
+                    .createdAt(timesAgo(dto.createdAt))
                     .createdBy(dto.getCreatedBy())
-                    .modifiedAt(dto.getModifiedAt())
+                    .modifiedAt(timesAgo(dto.modifiedAt))
                     .modifiedBy(dto.getModifiedBy())
                     .id(dto.getId())
                     .boardType(dto.getBoardType())
@@ -177,6 +182,38 @@ public class Board extends AuditingFields {
                     .boardFiles(dto.getBoardFiles().stream().map(SaveFile.SaveFileResponse::from).collect(Collectors.toSet()))
                     .boardComments(dto.getBoardComments().stream().map(BoardComment.BoardCommentResponse::from).collect(Collectors.toSet()))
                     .build();
+        }
+
+        public static class Chrono {
+
+            public static long dPlus(LocalDateTime dayBefore) {
+                return ChronoUnit.DAYS.between(dayBefore, LocalDateTime.now());
+            }
+
+            public static long dMinus(LocalDateTime dayAfter) {
+                return ChronoUnit.DAYS.between(dayAfter, LocalDateTime.now());
+            }
+
+            public static String timesAgo(LocalDateTime dayBefore) {
+                long gap = ChronoUnit.MINUTES.between(dayBefore, LocalDateTime.now());
+                String word;
+                if (gap == 0){
+                    word = "방금 전";
+                }else if (gap < 60) {
+                    word = gap + "분 전";
+                }else if (gap < 60 * 24){
+                    word = (gap/60) + "시간 전";
+                }else if (gap < 60 * 24 * 10) {
+                    word = (gap/60/24) + "일 전";
+                } else {
+                    word = dayBefore.format(DateTimeFormatter.ofPattern("MM월 dd일"));
+                }
+                return word;
+            }
+
+            public static String customForm(LocalDateTime date) {
+                return date.format(DateTimeFormatter.ofPattern("MM월 dd일"));
+            }
         }
     }
 

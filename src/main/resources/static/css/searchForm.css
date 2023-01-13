@@ -822,7 +822,6 @@ legend {
       justify-content: center;
   -ms-flex-align: center;
       align-items: center;
-  padding: 15px;
 }
 
 .s003 form {
@@ -991,25 +990,24 @@ legend {
   }
 }
 
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 400px) {
   .s003 form .inner-form {
     -ms-flex-wrap: wrap;
         flex-wrap: wrap;
-    padding: 20px;
   }
   .s003 form .inner-form .input-field {
     margin-bottom: 20px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   }
   .s003 form .inner-form .input-field input {
-    padding: 10px 15px;
+    padding: 10px;
   }
   .s003 form .inner-form .input-field.first-wrap {
     width: 100%;
     border-right: 0;
   }
   .s003 form .inner-form .input-field.first-wrap .choices__inner {
-    padding: 10px 15px;
+    padding: 10px;
   }
   .s003 form .inner-form .input-field.first-wrap .choices[data-type*="select-one"]:after {
     right: 11.5px;

@@ -557,18 +557,21 @@ pre code {
 
 @media (min-width: 576px) {
   .container {
+    padding: 0 0
     max-width: 540px;
   }
 }
 
 @media (min-width: 768px) {
   .container {
+    padding: 0 10%
     max-width: 720px;
   }
 }
 
 @media (min-width: 992px) {
   .container {
+    padding: 0 10%
     max-width: 960px;
   }
 }
