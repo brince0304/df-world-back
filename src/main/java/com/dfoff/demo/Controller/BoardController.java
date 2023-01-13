@@ -32,7 +32,10 @@ public class BoardController {
         log.info("boardList : " + mav.getModel().get("articles"));
         mav.addObject("bestArticles",boardService.getBestArticles(boardType).stream().map(Board.BoardResponse::from).collect(Collectors.toList()));
         log.info("boardList : " + mav.getModel().get("bestArticles"));
-        mav.addObject("boardType",boardType);
+        if(boardType!=null) {
+            mav.addObject("boardType", boardType.toString());
+            log.info("boardList : " + mav.getModel().get("boardType"));
+        }
         mav.addObject("keyword",keyword);
         mav.addObject("searchType",searchType);
         return mav;

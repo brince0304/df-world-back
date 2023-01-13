@@ -17,22 +17,22 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Board findBoardById(@Param("id") Long id);
     @Query("select b from Board b where b.isDeleted='N'")
     Page<Board> findAll(Pageable pageable);
-    @Query("select b from Board b where b.boardType=:boardType and b.isDeleted='N' and b.boardTitle like %:keyword%")
+    @Query("select b from Board b where b.boardType=:boardType and b.isDeleted='N' and b.boardContent like lower (concat('%',:keyword,'%'))")
     Page<Board> findAllByTypeAndBoardContentContainingIgnoreCase(@Param("boardType") BoardType boardType, @Param("keyword") String keyword, Pageable pageable);
-    @Query("select b from Board b where b.boardContent like %:keyword% and b.isDeleted='N' and b.boardType=:boardType")
+    @Query("select b from Board b where lower(b.boardTitle) like lower (concat('%',:keyword,'%')) and b.isDeleted='N' and b.boardType=:boardType")
     Page<Board> findAllByTypeAndBoardTitleContainingIgnoreCase(@Param("boardType") BoardType boardType, @Param("keyword") String keyword, Pageable pageable);
-    @Query("select b from Board b where b.isDeleted='N' and b.boardTitle like %:keyword% or b.boardContent like %:keyword% and b.boardType=:boardType")
+    @Query("select b from Board b where b.isDeleted='N' and lower(b.boardTitle) like lower (concat('%',:keyword,'%')) or b.boardContent like lower (concat('%',:keyword,'%')) and b.boardType=:boardType")
     Page<Board> findAllByTypeAndBoardTitleContainingIgnoreCaseOrBoardContentContainingIgnoreCase(@Param("boardType") BoardType boardType, @Param("keyword") String keyword, Pageable pageable);
-    @Query("select b from Board b where b.userAccount.nickname like %:keyword% and b.isDeleted='N' and b.boardType=:boardType")
+    @Query("select b from Board b where lower(b.userAccount.nickname) like lower (concat('%',:keyword,'%')) and b.isDeleted='N' and b.boardType=:boardType")
     Page<Board> findAllByTypeAndUserAccountContainingIgnoreCase(@Param("boardType") BoardType boardType, @Param("keyword") String keyword, Pageable pageable);
 
-    @Query("select b from Board b where  b.isDeleted='N' and b.boardTitle like %:keyword%")
+    @Query("select b from Board b where  b.isDeleted='N' and lower(b.boardContent) like lower (concat('%',:keyword,'%'))")
     Page<Board> findAllByBoardContentContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
-    @Query("select b from Board b where b.boardContent like %:keyword% and b.isDeleted='N'")
+    @Query("select b from Board b where lower(b.boardTitle) like lower (concat('%',:keyword,'%')) and b.isDeleted='N'")
     Page<Board> findAllByBoardTitleContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
-    @Query("select b from Board b where b.isDeleted='N' and b.boardTitle like %:keyword% or b.boardContent like %:keyword%")
+    @Query("select b from Board b where b.isDeleted='N' and lower(b.boardTitle) like lower (concat('%',:keyword,'%')) or b.boardContent like lower (concat('%',:keyword,'%'))")
     Page<Board> findAllByBoardTitleContainingIgnoreCaseOrBoardContentContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
-    @Query("select b from Board b where b.userAccount.nickname like %:keyword% and b.isDeleted='N'")
+    @Query("select b from Board b where lower(b.userAccount.nickname) like lower (concat('%',:keyword,'%')) and b.isDeleted='N'")
     Page<Board> findAllByUserAccountContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
 
     @Query("select b from Board b where b.isDeleted='N' and b.boardType=:boardType")
