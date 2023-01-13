@@ -16,34 +16,43 @@ import java.util.stream.Collectors;
 
 @Entity
 @Getter
-@Setter
 @ToString
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor (access = AccessLevel.PROTECTED)
+@AllArgsConstructor (access = AccessLevel.PRIVATE)
 @Builder
 public class CharacterEntity extends AuditingFields {
     @Id
     private String characterId;
     @Column (nullable = false)
+    @Setter
     private String serverId;
+    @Setter
     private String characterName;
     @Column (nullable = false)
+    @Setter
     private Integer level;
     @Column (nullable = false)
+    @Setter
     private String jobId;
     @Column (nullable = false)
+    @Setter
     private String jobGrowId;
     @Column (nullable = false)
+    @Setter
     private String jobName;
     @Column (nullable = false)
+    @Setter
     private String jobGrowName;
+    @Setter
     private String adventureFame;
+
+    @Setter
     private String adventureName;
 
     @OneToMany(fetch = FetchType.LAZY)
     @ToString.Exclude
-    @Nullable
-    private Set<UserAccountCharacterMapper> userAccount = new LinkedHashSet<>();
+    private final Set<UserAccountCharacterMapper> userAccount = new LinkedHashSet<>();
+
 
     @Override
     public boolean equals(Object o) {

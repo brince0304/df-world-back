@@ -343,7 +343,7 @@
                                           style="border-radius: 50%; border: 1px solid #898989; display:inline"
                                           width="20px"
                                           height="20px"
-                                          th:src="@{/api/getFile.df(name=${best.getUserAccount().profileIcon().getFileName()})}"/>
+                                          th:src="@{/api/getFile.df(name=${best.getUserAccount().profileIcon().fileName()})}"/>
                 <span style="padding-left: 10px; padding-right: 10px; color: #4C4C4C; font-size: 14px; font-weight: 600; padding-top: 2px; display:inline"
                       th:text="${best.getUserAccount().nickname()}">전재욱4WZ1B</span> <span class="badge bg-dark "
                                                                                           style="display:inline "
@@ -374,7 +374,7 @@
                              style="border-radius: 50%; border: 1px solid #898989;"
                              width="25px"
                              height="25px"
-                             th:src="@{/api/getFile.df(name=${board.getUserAccount().profileIcon().getFileName()})}"/>
+                             th:src="@{/api/getFile.df(name=${board.getUserAccount().profileIcon().fileName()})}"/>
                         <span style="padding-left: 10px; padding-right: 10px; color: #4C4C4C; font-size: 14px; font-weight: 600; padding-top: 2px;"
                               th:text="${board.getUserAccount().nickname()}">전재욱4WZ1B</span>
 

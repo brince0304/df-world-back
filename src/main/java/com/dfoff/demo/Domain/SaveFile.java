@@ -1,10 +1,10 @@
 package com.dfoff.demo.Domain;
 
 import com.dfoff.demo.JpaAuditing.AuditingFields;
-import io.micrometer.core.lang.Nullable;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -12,8 +12,8 @@ import java.util.Objects;
 @Entity
 @Getter
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor (access = AccessLevel.PROTECTED)
+@NoArgsConstructor (access = AccessLevel.PROTECTED)
+@AllArgsConstructor (access = AccessLevel.PRIVATE)
 @Builder
 public class SaveFile extends AuditingFields {
     @Id
@@ -32,8 +32,11 @@ public class SaveFile extends AuditingFields {
     private Long fileSize;
     @ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
-    @Nullable
+    @JoinColumn (name = "board_id", nullable = true)
     private Board board;
+
+
+
 
     public void setBoard(Board board) {
         this.board = board;
@@ -53,46 +56,32 @@ public class SaveFile extends AuditingFields {
         return Objects.hash(id);
     }
 
-    @Getter
-    @Builder
-    @AllArgsConstructor
-    public static class SaveFileDTO {
-        private final Long id;
-        private final String fileName;
-        private final String filePath;
-        private final String fileType;
-        private final Long fileSize;
+        @Builder
+        public record SaveFileDTO(Long id, String fileName, String filePath, String fileType, Long fileSize,
+                                  LocalDateTime createdAt, LocalDateTime modifiedAt, String createdBy, String modifiedBy) {
+            public static SaveFileDTO from(SaveFile saveFile) {
+                return SaveFileDTO.builder()
+                        .id(saveFile.getId())
+                        .fileName(saveFile.getFileName())
+                        .filePath(saveFile.getFilePath())
+                        .fileType(saveFile.getFileType())
+                        .fileSize(saveFile.getFileSize())
+                        .createdAt(saveFile.getCreatedAt())
+                        .modifiedAt(saveFile.getModifiedAt())
+                        .createdBy(saveFile.getCreatedBy())
+                        .modifiedBy(saveFile.getModifiedBy())
+                        .build();
+            }
 
-        private final LocalDateTime createdAt;
-        private final LocalDateTime modifiedAt;
-        private final String createdBy;
-        private final String modifiedBy;
-
-        public static SaveFileDTO from(SaveFile saveFile){
-            if(saveFile == null) return SaveFileDTO.builder().build();
-            return SaveFileDTO.builder()
-                    .id(saveFile.getId())
-                    .fileName(saveFile.getFileName())
-                    .filePath(saveFile.getFilePath())
-                    .fileType(saveFile.getFileType())
-                    .fileSize(saveFile.getFileSize())
-                    .createdAt(saveFile.getCreatedAt())
-                    .modifiedAt(saveFile.getModifiedAt())
-                    .createdBy(saveFile.getCreatedBy())
-                    .modifiedBy(saveFile.getModifiedBy())
-                    .build();
-        }
-
-        public SaveFile toEntity(){
-            return SaveFile.builder()
-                    .id(this.getId())
-                    .fileName(this.getFileName())
-                    .filePath(this.getFilePath())
-                    .fileType(this.getFileType())
-                    .fileSize(this.getFileSize())
-                    .build();
-        }
-
+            public SaveFile toEntity() {
+                return SaveFile.builder()
+                        .id(id)
+                        .fileName(this.fileName())
+                        .filePath(this.filePath())
+                        .fileType(this.fileType())
+                        .fileSize(this.fileSize())
+                        .build();
+            }
 
 
     }
@@ -115,15 +104,15 @@ public class SaveFile extends AuditingFields {
 
         public static SaveFileResponse from(SaveFileDTO dto ){
             return SaveFileResponse.builder()
-                    .id(dto.getId())
-                    .fileName(dto.getFileName())
-                    .filePath(dto.getFilePath())
-                    .fileType(dto.getFileType())
-                    .fileSize(dto.getFileSize())
-                    .createdAt(dto.getCreatedAt())
-                    .modifiedAt(dto.getModifiedAt())
-                    .createdBy(dto.getCreatedBy())
-                    .modifiedBy(dto.getModifiedBy())
+                    .id(dto.id())
+                    .fileName(dto.fileName())
+                    .filePath(dto.filePath())
+                    .fileType(dto.fileType())
+                    .fileSize(dto.fileSize())
+                    .createdAt(dto.createdAt())
+                    .modifiedAt(dto.modifiedAt())
+                    .createdBy(dto.createdBy())
+                    .modifiedBy(dto.modifiedBy())
                     .build();
         }
     }

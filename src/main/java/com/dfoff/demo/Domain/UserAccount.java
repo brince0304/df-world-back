@@ -15,15 +15,16 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
+
 @Entity
+@Getter
 @ToString
+@NoArgsConstructor (access = AccessLevel.PROTECTED)
+@AllArgsConstructor (access = AccessLevel.PRIVATE)
+@Builder
 @Table(indexes =
         {@Index(columnList = "email", unique = true)
                 , @Index(columnList = "nickname", unique = true)})
-@Builder
 public class UserAccount extends AuditingFields {
     @Id
     @Column(length = 50)
@@ -39,29 +40,28 @@ public class UserAccount extends AuditingFields {
     @Setter
     @JoinColumn(name = "profile_img_id")
     @OneToOne(fetch = FetchType.EAGER)
-    @ToString.Exclude
     private SaveFile profileIcon;
 
     @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
-
-    private Set<UserAccountCharacterMapper> characterEntities = new LinkedHashSet<>();
-
-    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private Set<Board> articles = new LinkedHashSet<>();
+    private final Set<UserAccountCharacterMapper> characterEntities = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
-    private Set<BoardComment> comments = new LinkedHashSet<>();
+    private final Set<Board> articles = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private final Set<BoardComment> comments = new LinkedHashSet<>();
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
-    @Setter
     @ElementCollection(fetch = FetchType.EAGER)
-    private Set<SecurityRole> roles =new HashSet<>(Set.of(SecurityRole.ROLE_USER));
+    private final Set<SecurityRole> roles = new HashSet<>(Set.of(SecurityRole.ROLE_USER));
 
+    @Setter
     private String isDeleted = "N";
+
 
 
     @Override
@@ -76,8 +76,6 @@ public class UserAccount extends AuditingFields {
     public int hashCode() {
         return Objects.hash(userId);
     }
-
-
 
 
     @Getter
@@ -134,7 +132,8 @@ public class UserAccount extends AuditingFields {
 
     @Builder
     public record UserAccountResponse(String userId, String nickname, String email, SaveFile.SaveFileDTO profileIcon,
-                                      Set<SecurityRole> roles, Set<CharacterEntity.CharacterEntityDto.CharacterEntityResponse> characterResponse) {
+                                      Set<SecurityRole> roles,
+                                      Set<CharacterEntity.CharacterEntityDto.CharacterEntityResponse> characterResponse) {
         public static UserAccountResponse from(UserAccountDto userAccount) {
             return UserAccountResponse.builder()
                     .userId(userAccount.userId())
@@ -192,12 +191,7 @@ public class UserAccount extends AuditingFields {
                     .password(this.password())
                     .nickname(this.nickname())
                     .email(this.email())
-                    .characterEntities(
-                            this.characterEntityDtos() == null ? new LinkedHashSet<>()
-                                    : this.characterEntityDtos().stream()
-                                    .map(CharacterEntity.CharacterEntityDto::toEntity).map(o -> UserAccountCharacterMapper.of(this.toEntity(), o)).collect(Collectors.toSet()))
-                    .profileIcon(this.profileIcon() ==null? null : this.profileIcon().toEntity())
-                    .roles(this.roles())
+                    .profileIcon(this.profileIcon() == null ? null : this.profileIcon().toEntity())
                     .build();
         }
 
@@ -268,7 +262,6 @@ public class UserAccount extends AuditingFields {
                     .password(password)
                     .nickname(nickname)
                     .email(email)
-                    .roles(roles)
                     .build();
         }
     }

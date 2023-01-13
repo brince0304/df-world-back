@@ -2,6 +2,7 @@ package com.dfoff.demo.Domain;
 
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import jakarta.persistence.*;
@@ -18,44 +19,59 @@ import java.util.stream.Collectors;
 import static com.dfoff.demo.Domain.Board.BoardResponse.Chrono.timesAgo;
 
 @Entity
-@AllArgsConstructor (access = AccessLevel.PROTECTED)
-@NoArgsConstructor (access = AccessLevel.PROTECTED)
-@Builder
 @Getter
-@Table (indexes={@Index(columnList = "createdAt"),
-    @Index(columnList = "boardTitle"),
-    @Index(columnList = "boardContent")})
+@Table (indexes={@Index(columnList = "createdAt")})
 public class Board extends AuditingFields {
     @Id
-    @GeneratedValue
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
     @Enumerated(EnumType.STRING)
     private BoardType boardType;
     @Setter
+    @NotNull
     private String boardTitle;
     @Setter
+    @NotNull
     private String boardContent;
 
-    @ManyToOne (fetch = FetchType.LAZY , cascade = CascadeType.ALL)
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn (name = "user_id")
+    @Setter
+    @NotNull
     private UserAccount userAccount;
 
     @Setter
+    @Builder.Default
     private String isDeleted = "N";
     @Setter
+    @Builder.Default
     private Integer boardViewCount = 0;
     @Setter
+    @Builder.Default
     private Integer boardLikeCount = 0;
 
     @OneToMany (mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<SaveFile> boardFiles = new LinkedHashSet<>();
+    @Builder.Default
+    private final Set<SaveFile> boardFiles = new LinkedHashSet<>();
 
     @OneToMany (mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<BoardComment> boardComments = new LinkedHashSet<>();
+    @Builder.Default
+    private final Set<BoardComment> boardComments = new LinkedHashSet<>();
 
 
+
+    @Builder
+    protected Board(BoardType boardType, String boardTitle, String boardContent, UserAccount userAccount) {
+        this.boardType = boardType;
+        this.boardTitle = boardTitle;
+        this.boardContent = boardContent;
+        this.userAccount = userAccount;
+    }
+
+    protected Board() {
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -110,24 +126,18 @@ public class Board extends AuditingFields {
         }
             public Board toEntity(){
                 return  Board.builder()
-                        .id(id)
                         .boardType(boardType)
                         .boardTitle(boardTitle)
                         .boardContent(boardContent)
-                        .userAccount(userAccount.toEntity())
-                        .isDeleted(isDeleted)
-                        .boardViewCount(boardViewCount)
-                        .boardLikeCount(boardLikeCount)
-                        .boardFiles(boardFiles ==null ? new LinkedHashSet<>() : boardFiles.stream().map(SaveFile.SaveFileDTO::toEntity).collect(Collectors.toSet()))
-                        .boardComments(boardComments==null ? new LinkedHashSet<>() : boardComments.stream().map(BoardComment.BoardCommentDto::toEntity).collect(Collectors.toSet()))
-                        .build();
+                        .userAccount(userAccount.toEntity()).build();
             }
 
-        public static BoardDto from(BoardRequest request){
+        public static BoardDto from(BoardRequest request, UserAccount.UserAccountDto accountDto){
             return BoardDto.builder()
                     .boardType(request.getBoardType())
                     .boardTitle(request.getBoardTitle())
                     .boardContent(request.getBoardContent())
+                    .userAccount(accountDto)
                     .build();
         }
     }
@@ -225,5 +235,7 @@ public class Board extends AuditingFields {
         private final BoardType boardType;
         private final String boardTitle;
         private final String boardContent;
+
+        private final String boardFiles;
     }
 }

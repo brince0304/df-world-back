@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Optional;
 
@@ -50,6 +52,17 @@ class BoardServiceTest {
         then(boardRepository).should().findBoardById(any(Long.class));
     }
 
+    @Test
+    void getArticlesByKeywordTest(){
+        //given
+        given(boardRepository.findAllByBoardTitleContainingIgnoreCase(anyString(), Pageable.ofSize(10))).willReturn(Page.empty());
+
+        //when
+        sut.getArticlesByKeyword(null, anyString(),"title",Pageable.ofSize(10));
+
+        //then
+        then(boardRepository).should().findAllByBoardTitleContainingIgnoreCase(anyString(), Pageable.ofSize(10));
+    }
     @Test
     void getArticleEntityNotFoundExceptionTest() {
         //given

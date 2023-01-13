@@ -82,7 +82,7 @@
                         <li class="list-inline-item"><a data-toggle="modal"
                                                         data-target="#iconSelectModal" href="#" class="
                          btn btn-outlined btn-black text-muted"> <img
-                                th:src="@{/api/getFile.df(name=${user.profileIcon().getFileName()})}" src=""
+                                th:src="@{/api/getFile.df(name=${user.profileIcon().fileName()})}" src=""
                                 alt="DP" class="  rounded-circle img-fluid " width="20" height="20"> <small>프로필 아이콘
                             변경</small> </a>
                         </li>
@@ -91,6 +91,8 @@
             </div>
         </div>
     </div>
+    <br>
+    <br>
     <div class="row">
         <div class="col-12">
             <div class="card card-margin">
@@ -146,7 +148,7 @@
                                                         <!-- Team Details-->
                                                         <div class="single_advisor_details_info"
                                                              style="text-align: left">
-                                                            <h4 style="color: #898989;" th:text="${char.serverId}"
+                                                            <h4 style="color: #898989;" th:text="${char.getServerName(char.serverId)}"
                                                                 id="charServerId"></h4>
                                                             <h6 th:text="${char.characterName}">
                                                                 Samantha Sarah</h6>

@@ -10,33 +10,40 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Entity
-@AllArgsConstructor (access = AccessLevel.PROTECTED)
-@NoArgsConstructor (access = AccessLevel.PROTECTED)
-@Builder
-@Getter
+
 @Table (indexes=@Index(name = "idx_createdAt" , columnList = "createdAt"))
+@Entity
+@Getter
+@ToString
+@NoArgsConstructor (access = AccessLevel.PROTECTED)
+@AllArgsConstructor (access = AccessLevel.PRIVATE)
+@Builder
 public class BoardComment extends AuditingFields {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Setter
     private String commentContent;
+    @Setter
     @ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ToString.Exclude
     private Board board;
 
+    @Setter
     @ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ToString.Exclude
     private UserAccount userAccount;
-
+    @Setter
     private Integer commentLikeCount = 0;
-
+    @Setter
     private String isDeleted = "N";
-
+    @Setter
     private String isParent = "N";
 
     @OneToMany (mappedBy = "id",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
-    private Set<BoardComment> childrenComments = new LinkedHashSet<>();
+    private final Set<BoardComment> childrenComments = new LinkedHashSet<>();
+
 
 
 
@@ -97,16 +104,10 @@ public class BoardComment extends AuditingFields {
 
         public BoardComment toEntity() {
             return BoardComment.builder()
-                    .id(this.id)
-                    .commentContent(this.commentContent)
                     .board(this.board.toEntity())
+                    .commentContent(this.commentContent)
                     .userAccount(this.userAccount.toEntity())
-                    .commentLikeCount(this.commentLikeCount)
-                    .isDeleted(this.isDeleted)
-                    .isParent(this.isParent)
-                    .childrenComments(this.childrenComments.stream().map(BoardComment.BoardCommentDto::toEntity).collect(Collectors.toSet()))
                     .build();
-
         }
 
 

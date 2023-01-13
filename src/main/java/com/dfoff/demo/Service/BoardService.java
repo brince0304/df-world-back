@@ -2,6 +2,7 @@ package com.dfoff.demo.Service;
 
 import com.dfoff.demo.Domain.Board;
 import com.dfoff.demo.Domain.EnumType.BoardType;
+import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Repository.BoardRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -21,8 +22,8 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
 
-    public void createArticle(Board.BoardDto board) {
-        boardRepository.save(board.toEntity());
+    public Board.BoardDto createArticle( Board.BoardDto board) {
+        return Board.BoardDto.from(boardRepository.save(board.toEntity()));
     }
     public Board.BoardDto getArticle(Long id){
         Board board_ = boardRepository.findBoardById(id);
