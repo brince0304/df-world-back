@@ -2,6 +2,7 @@ package com.dfoff.demo.Controller;
 
 import com.dfoff.demo.Domain.Board;
 import com.dfoff.demo.Domain.EnumType.BoardType;
+import com.dfoff.demo.Domain.Hashtag;
 import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Service.BoardService;
@@ -36,6 +37,7 @@ public class BoardController {
                                      @RequestParam (required = false) String searchType) {
         ModelAndView mav = new ModelAndView("/board/boardList");
         mav.addObject("articles",boardService.getBoardsByKeyword(boardType,keyword,searchType,pageable).map(Board.BoardResponse::from));
+        log.info("articles : {}",mav.getModel().get("articles"));
         mav.addObject("bestArticles",boardService.getBestBoard(boardType).stream().map(Board.BoardResponse::from).collect(Collectors.toList()));
         if(boardType!=null) {
             mav.addObject("boardType", boardType.toString());
@@ -79,6 +81,13 @@ public class BoardController {
             Board.BoardResponse boardResponse = Board.BoardResponse.from(boardService.getBoardDetail(Long.parseLong(id)));
             mav.addObject("boardResponse", boardResponse);
             mav.addObject("requestType",request);
+            StringBuilder sb = new StringBuilder();
+            for(Hashtag.HashtagResponse hashtag : boardResponse.getHashtags()){
+                sb.append("#");
+                sb.append(hashtag.getName());
+                sb.append(" ");
+            }
+            mav.addObject("hashtag",sb);
         }
         return mav;
     }

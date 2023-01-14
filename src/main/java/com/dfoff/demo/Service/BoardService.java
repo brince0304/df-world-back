@@ -1,9 +1,13 @@
 package com.dfoff.demo.Service;
 
 import com.dfoff.demo.Domain.Board;
+import com.dfoff.demo.Domain.BoardHashtagMapper;
 import com.dfoff.demo.Domain.EnumType.BoardType;
+import com.dfoff.demo.Domain.Hashtag;
 import com.dfoff.demo.Domain.SaveFile;
+import com.dfoff.demo.Repository.BoardHashtagMapperRepository;
 import com.dfoff.demo.Repository.BoardRepository;
+import com.dfoff.demo.Repository.HashtagRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,13 +27,35 @@ import java.util.Set;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final HashtagRepository hashtagRepository;
+
+    private final BoardHashtagMapperRepository mapper;
 
     public Board.BoardDto createBoard(Board.BoardDto board, Set<SaveFile.SaveFileDTO> saveFile) {
         log.info("createArticle() board: {}", board);
         log.info("createArticle() saveFile: {}", saveFile);
-        Board board_ = boardRepository.save(board.toEntity());
+        Board board_ = boardRepository.saveAndFlush(board.toEntity());
         saveFile.stream().map(SaveFile.SaveFileDTO::toEntity).forEach(o-> board_.getBoardFiles().add(o));
+        saveHashtagAndBoard(board_,board.getHashtags());
         return Board.BoardDto.from(board_);
+    }
+
+    public void saveHashtagAndBoard(Board board , Set<Hashtag.HashtagDto> dtos){
+        for (Hashtag.HashtagDto hashtag : dtos) {
+            Hashtag hashtag_ = hashtagRepository.findById(hashtag.getName()).orElseGet(()-> hashtagRepository.save(hashtag.toEntity()));
+            mapper.save(BoardHashtagMapper.of(board,hashtag_));
+        }
+    }
+
+    public void updateHashtagAndBoard(Board board , Set<Hashtag.HashtagDto> dtos){
+        board.getHashtags().forEach(o->{
+            o.setBoard(null);
+            o.setHashtag(null);
+        });
+        for (Hashtag.HashtagDto hashtag : dtos) {
+            Hashtag hashtag_ = hashtagRepository.findById(hashtag.getName()).orElseGet(()-> hashtagRepository.save(hashtag.toEntity()));
+            mapper.save(BoardHashtagMapper.of(board,hashtag_));
+        }
     }
     public Board.BoardDto getBoardDetail(Long id){
         Board board_ = boardRepository.findBoardById(id);
@@ -50,7 +76,10 @@ public class BoardService {
             return boardRepository.findAllByBoardTitleContainingIgnoreCaseOrBoardContentContainingIgnoreCase(keyword, pageable).map(Board.BoardDto::from);
         }else if(boardType!=null&&keyword==null){
             return boardRepository.findAllByBoardType(boardType, pageable).map(Board.BoardDto::from);
-        }else if(boardType != null){
+        }else if(boardType==null&& searchType.equals("hashtag")) {
+            return mapper.findAllByHashtagName(keyword, pageable).map(BoardHashtagMapper::getBoard).map(Board.BoardDto::from);
+        }
+        else if(boardType != null){
             switch (searchType) {
                 case "title" -> {
                     return boardRepository.findAllByTypeAndBoardTitleContainingIgnoreCase(boardType, keyword, pageable).map(Board.BoardDto::from);
@@ -63,6 +92,9 @@ public class BoardService {
                 }
                 case "title_content" -> {
                     return boardRepository.findAllByTypeAndBoardTitleContainingIgnoreCaseOrBoardContentContainingIgnoreCase(boardType, keyword, pageable).map(Board.BoardDto::from);
+                }
+                case "hashtag" -> {
+                    return mapper.findAllByHashtagNameAndBoardType(keyword,boardType, pageable).map(BoardHashtagMapper::getBoard).map(Board.BoardDto::from);
                 }
             }
         }
@@ -83,6 +115,7 @@ public class BoardService {
        Board board_ =  boardRepository.findBoardById(id);
        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
        if(board != null){
+           updateHashtagAndBoard(board_,board.getHashtags());
            if(board.getBoardTitle()!=null){
                board_.setBoardTitle(board.getBoardTitle());
            }
@@ -96,6 +129,11 @@ public class BoardService {
     }
 
     public void deleteBoardById(Long id){
+        Board board_ = boardRepository.findBoardById(id);
+        for(BoardHashtagMapper mapper_ : board_.getHashtags()){
+            mapper_.setBoard(null);
+            mapper_.setHashtag(null);
+        }
         boardRepository.deleteBoardById(id);
     }
 }

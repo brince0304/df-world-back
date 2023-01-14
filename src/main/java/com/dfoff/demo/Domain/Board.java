@@ -2,8 +2,6 @@ package com.dfoff.demo.Domain;
 
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
-import com.dfoff.demo.Util.BoardUtil;
-import io.github.furstenheim.CopyDown;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -14,10 +12,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.dfoff.demo.Domain.Board.BoardResponse.Chrono.timesAgo;
@@ -70,7 +65,15 @@ public class Board extends AuditingFields {
 
     @OneToMany (mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
+    @ToString.Exclude
     private final Set<BoardComment> boardComments = new LinkedHashSet<>();
+
+
+    @OneToMany (mappedBy = "board")
+    @Builder.Default
+    @ToString.Exclude
+    private final Set<BoardHashtagMapper> hashtags = new LinkedHashSet<>();
+
 
 
 
@@ -109,6 +112,8 @@ public class Board extends AuditingFields {
         private final Set<SaveFile.SaveFileDTO> boardFiles;
         private final Set<BoardComment.BoardCommentDto> boardComments;
 
+        private final Set<Hashtag.HashtagDto> hashtags;
+
         public static BoardDto from(Board board) {
             return BoardDto.builder()
                     .createdAt(board.getCreatedAt())
@@ -125,6 +130,7 @@ public class Board extends AuditingFields {
                     .boardLikeCount(board.getBoardLikeCount())
                     .boardFiles(board.getBoardFiles().stream().map(SaveFile.SaveFileDTO::from).collect(Collectors.toSet()))
                     .boardComments(board.getBoardComments().stream().map(BoardComment.BoardCommentDto::from).collect(Collectors.toSet()))
+                    .hashtags(board.getHashtags().stream().map(BoardHashtagMapper::getHashtag).map(Hashtag.HashtagDto::from).collect(Collectors.toSet()))
                     .build();
         }
             public Board toEntity(){
@@ -136,11 +142,20 @@ public class Board extends AuditingFields {
             }
 
         public static BoardDto from(BoardRequest request, UserAccount.UserAccountDto accountDto){
+            Set<Hashtag.HashtagDto> hashtags = new HashSet<>();
+            if(!request.getHashtag().equals("")) {
+                StringTokenizer st = new StringTokenizer(request.getHashtag().replaceAll(" ",""), "#");
+                while (st.hasMoreTokens()) {
+                    hashtags.add(Hashtag.HashtagDto.builder().name(st.nextToken()).build());
+                }
+            }
+
             return BoardDto.builder()
                     .boardType(request.getBoardType())
                     .boardTitle(request.getBoardTitle())
                     .boardContent(request.getBoardContent())
                     .userAccount(accountDto)
+                    .hashtags(hashtags)
                     .build();
         }
     }
@@ -166,6 +181,9 @@ public class Board extends AuditingFields {
         private final Set<SaveFile.SaveFileResponse> boardFiles;
 
         private final Set<BoardComment.BoardCommentResponse> boardComments;
+
+        private final Set<Hashtag.HashtagResponse> hashtags;
+
 
         public String convert(String date){
             return converter.convert(date);
@@ -198,6 +216,7 @@ public class Board extends AuditingFields {
                     .boardLikeCount(dto.getBoardLikeCount())
                     .boardFiles(dto.getBoardFiles().stream().map(SaveFile.SaveFileResponse::from).collect(Collectors.toSet()))
                     .boardComments(dto.getBoardComments().stream().map(BoardComment.BoardCommentResponse::from).collect(Collectors.toSet()))
+                    .hashtags(dto.getHashtags().stream().map(Hashtag.HashtagResponse::from).collect(Collectors.toSet()))
                     .build();
         }
 
@@ -244,6 +263,7 @@ public class Board extends AuditingFields {
         private final BoardType boardType;
         private final String boardTitle;
         private final String boardContent;
+        private final String hashtag;
 
         private final String boardFiles;
     }
