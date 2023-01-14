@@ -5,6 +5,7 @@ import com.dfoff.demo.Domain.EnumType.BoardType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -44,4 +45,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("select b from Board b where b.isDeleted='N' and  b.createdAt between :startDate and :endDate and b.boardLikeCount >=10 order by b.boardLikeCount desc")
     List<Board> findBoardByLikeCount(@Param("startDate") LocalDateTime sDate , @Param("endDate") LocalDateTime eDate);
 
+
+    @Modifying
+    @Query("update Board b set b.isDeleted='Y' where b.id=:id")
+    void deleteBoardById(@Param("id") Long id);
 }

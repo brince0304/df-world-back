@@ -1,6 +1,7 @@
 package com.dfoff.demo.Controller;
 
 import com.dfoff.demo.Domain.SaveFile;
+import com.dfoff.demo.Service.BoardService;
 import com.dfoff.demo.Service.SaveFileService;
 import com.dfoff.demo.Util.FileUtil;
 import jakarta.persistence.EntityNotFoundException;
@@ -22,6 +23,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class SaveFileController {
     private final SaveFileService saveFileService;
+    private final BoardService boardService;
 
     @PostMapping("/api/upload.df")
     public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file) throws IOException {

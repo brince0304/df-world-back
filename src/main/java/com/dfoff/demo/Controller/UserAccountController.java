@@ -125,6 +125,7 @@ public class UserAccountController {
                 return new ResponseEntity<>("로그인이 필요합니다.", HttpStatus.BAD_REQUEST);
             }
             if(request.equals("add")){
+                characterService.getCharacterAbilityThenSaveAsync(characterService.getCharacter(serverId,characterId));
                 characterService.addCharacter(UserAccount.UserAccountDto.from(userAccountDTO), characterService.getCharacter(serverId,characterId));
             }else if(request.equals("delete")){
                 characterService.deleteCharacter(UserAccount.UserAccountDto.from(userAccountDTO), characterService.getCharacter(serverId,characterId));
