@@ -30,24 +30,16 @@ public class SaveFile extends AuditingFields {
     private String fileType;
     @Setter
     private Long fileSize;
-    @ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @ToString.Exclude
-    @JoinColumn (name = "board_id", nullable = true)
-    private Board board;
 
 
 
 
-    public void setBoard(Board board) {
-        this.board = board;
-    }
 
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SaveFile)) return false;
-        SaveFile saveFile = (SaveFile) o;
+        if (!(o instanceof SaveFile saveFile)) return false;
         return id.equals(saveFile.id);
     }
 
@@ -60,6 +52,7 @@ public class SaveFile extends AuditingFields {
         public record SaveFileDTO(Long id, String fileName, String filePath, String fileType, Long fileSize,
                                   LocalDateTime createdAt, LocalDateTime modifiedAt, String createdBy, String modifiedBy) {
             public static SaveFileDTO from(SaveFile saveFile) {
+                if(saveFile == null) return null;
                 return SaveFileDTO.builder()
                         .id(saveFile.getId())
                         .fileName(saveFile.getFileName())

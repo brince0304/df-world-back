@@ -2,10 +2,14 @@ package com.dfoff.demo.Domain;
 
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
+import com.dfoff.demo.Util.BoardUtil;
+import io.github.furstenheim.CopyDown;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import jakarta.persistence.*;
+import org.hibernate.validator.constraints.Length;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,10 +21,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.dfoff.demo.Domain.Board.BoardResponse.Chrono.timesAgo;
+import static com.dfoff.demo.Util.BoardUtil.converter;
 
 @Entity
 @Getter
 @Table (indexes={@Index(columnList = "createdAt")})
+@Builder
+@AllArgsConstructor (access = AccessLevel.PRIVATE)
+@NoArgsConstructor (access = AccessLevel.PROTECTED)
 public class Board extends AuditingFields {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -31,9 +39,11 @@ public class Board extends AuditingFields {
     private BoardType boardType;
     @Setter
     @NotNull
+    @Length (min = 1, max = 100)
     private String boardTitle;
     @Setter
     @NotNull
+    @Length (min = 1, max = 10000)
     private String boardContent;
 
     @ManyToOne (fetch = FetchType.LAZY)
@@ -43,6 +53,7 @@ public class Board extends AuditingFields {
     private UserAccount userAccount;
 
     @Setter
+    @Column (nullable = false)
     @Builder.Default
     private String isDeleted = "N";
     @Setter
@@ -52,8 +63,9 @@ public class Board extends AuditingFields {
     @Builder.Default
     private Integer boardLikeCount = 0;
 
-    @OneToMany (mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Builder.Default
+    @JoinColumn (name = "board_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     private final Set<SaveFile> boardFiles = new LinkedHashSet<>();
 
     @OneToMany (mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -62,16 +74,7 @@ public class Board extends AuditingFields {
 
 
 
-    @Builder
-    protected Board(BoardType boardType, String boardTitle, String boardContent, UserAccount userAccount) {
-        this.boardType = boardType;
-        this.boardTitle = boardTitle;
-        this.boardContent = boardContent;
-        this.userAccount = userAccount;
-    }
 
-    protected Board() {
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -163,6 +166,10 @@ public class Board extends AuditingFields {
         private final Set<SaveFile.SaveFileResponse> boardFiles;
 
         private final Set<BoardComment.BoardCommentResponse> boardComments;
+
+        public String convert(String date){
+            return converter.convert(date);
+        }
         public String getBoardType(BoardType type){
             if(type==null){
                 return null;
@@ -231,11 +238,15 @@ public class Board extends AuditingFields {
      * A DTO for the {@link Board} entity
      */
     @Data
+    @Builder
     public static class BoardRequest implements Serializable {
+        private final Long id;
         private final BoardType boardType;
         private final String boardTitle;
         private final String boardContent;
 
         private final String boardFiles;
     }
+
+
 }

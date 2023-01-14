@@ -17,6 +17,7 @@ import java.util.Set;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class SaveFileService {
     private final SaveFileRepository saveFileRepository;
 
@@ -40,11 +41,11 @@ public class SaveFileService {
         log.info("deleteFile() fileId: {}", fileId);
         File file = new File(saveFileRepository.getReferenceById(fileId).getFilePath());
         if (file.exists()) {
+            saveFileRepository.deleteById(fileId);
             if (file.delete()) {
                 log.info("파일삭제 성공");
             }
         }
-        saveFileRepository.deleteById(fileId);
     }
 
     public SaveFile.SaveFileDTO saveFile(SaveFile.SaveFileDTO saveFile) {
@@ -65,6 +66,7 @@ public class SaveFileService {
     }
 
     public Set<SaveFile.SaveFileDTO> getFileDtosFromRequestsFileIds(Board.BoardRequest dto) {
+        deleteUnuploadedFilesFromBoardContent(dto.getBoardContent(),dto.getBoardFiles());
         String[] fileIdArr = Objects.requireNonNull(dto.getBoardFiles()).split(",");
         Set<SaveFile.SaveFileDTO> saveFileDtos = new HashSet<>();
         for (String fileId : fileIdArr) {
@@ -72,10 +74,11 @@ public class SaveFileService {
             if (fileId.equals("")) {
                 break;
             }
-            saveFileDtos.add(saveFileRepository.findById(Long.parseLong(fileId)).map(SaveFile.SaveFileDTO::from).orElseThrow(() -> new EntityNotFoundException("파일이 없습니다 - fileId: " + fileId)));
+            saveFileRepository.findById(Long.parseLong(fileId)).ifPresent(saveFile -> saveFileDtos.add(SaveFile.SaveFileDTO.from(saveFile)));
         }
         return saveFileDtos;
     }
+
 
 
 
