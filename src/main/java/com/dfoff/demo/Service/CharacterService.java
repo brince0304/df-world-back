@@ -10,7 +10,7 @@ import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Repository.CharacterEntityRepository;
 import com.dfoff.demo.Repository.UserAccountCharacterMapperRepository;
 import com.dfoff.demo.Repository.UserAccountRepository;
-import com.dfoff.demo.UserAccountCharacterMapper;
+import com.dfoff.demo.Domain.UserAccountCharacterMapper;
 import com.dfoff.demo.Util.OpenAPIUtil;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;

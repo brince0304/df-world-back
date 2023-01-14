@@ -2,7 +2,6 @@ package com.dfoff.demo.Domain;
 
 import com.dfoff.demo.Domain.EnumType.UserAccount.SecurityRole;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
-import com.dfoff.demo.UserAccountCharacterMapper;
 import io.micrometer.core.lang.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;

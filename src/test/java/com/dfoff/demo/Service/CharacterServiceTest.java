@@ -5,7 +5,7 @@ import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Repository.CharacterEntityRepository;
 import com.dfoff.demo.Repository.UserAccountCharacterMapperRepository;
 import com.dfoff.demo.Repository.UserAccountRepository;
-import com.dfoff.demo.UserAccountCharacterMapper;
+import com.dfoff.demo.Domain.UserAccountCharacterMapper;
 import com.dfoff.demo.Util.OpenAPIUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
