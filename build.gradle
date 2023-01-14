@@ -19,6 +19,7 @@ repositories {
 }
 
 dependencies {
+	implementation('io.github.furstenheim:copy_down:1.0')
 implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
 implementation('io.hypersistence:hypersistence-utils-hibernate-60:3.1.0')
 	implementation('commons-io:commons-io:2.11.0')
