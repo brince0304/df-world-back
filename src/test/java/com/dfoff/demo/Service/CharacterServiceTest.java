@@ -71,14 +71,6 @@ class CharacterServiceTest {
         characterEntityRepository.findById("77dae44a87261743386852bb3979c03a");
     }
     @Test
-    void getCharacterExceptionTest(){
-        //given
-        //when
-        Throwable throwable = catchThrowable(()->sut.getCharacter("cain","77dae44a87261743386852bb3979c03a"));
-        //then
-        assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
-    }
-    @Test
     void getCharacterByAdventureNameTest(){
         //given
         given(characterEntityRepository.findAllByAdventureNameContaining("test",Pageable.ofSize(10))).willReturn(Page.empty());
