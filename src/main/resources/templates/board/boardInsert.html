@@ -72,12 +72,14 @@
                 <div id="editor1"></div>
             </div>
             <div class="mb-3" style="width:200px">
-                <label for="hashtag" class="form-label">태그</label>
-                <input type="text" name="hashtag" id="hashtag" class="form-control">
+                <label for="hashtag" class="form-label"  th:if="${requestType.equals('add')}"  >해시태그</label>
+                <input type="text" name="hashtag" id="hashtag" th:if="${requestType.equals('add')}"  class="form-control">
+                <label for="updateHashtag" class="form-label" th:if="${requestType.equals('update') && hashtag!=null}" >해시태그</label>
+                <input type="text" name="updateHashtag" id="updateHashtag" th:if="${requestType.equals('update') && hashtag!=null}" th:value="${hashtag}"   class="form-control">
                 <input type="hidden" name="content" id="requestId" th:if="${requestType.equals('update') }" th:value="${boardResponse.getId()}">
             </div>
-            <button type="button" onclick="uploadArticle()" class="btn btn-primary my-2" th:if="${requestType.equals('add')}">등록</button>
-            <button type="button" onclick="updateArticle()" class="btn btn-primary my-2" th:if="${requestType.equals('update')}">수정</button>
+            <button type="button" onclick="uploadArticle()" class="btn btn-outline-dark my-2" th:if="${requestType.equals('add')}">등록</button>
+            <button type="button" onclick="updateArticle()" class="btn btn-outline-dark my-2" th:if="${requestType.equals('update')}">수정</button>
 
         </form>
         </div>
@@ -138,7 +140,7 @@
         if (confirm("수정하시겠습니까?")) {
             const boardId = $('#requestId').val();
             const title = $('#titleUpdate').val();
-            const hashtag = $('#hashtag').val();
+            const hashtag = $('#updateHashtag').val();
             const boardType = $('#boardType').val();
             const data = {
                 id: boardId,
