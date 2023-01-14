@@ -41,39 +41,48 @@
 <header id="header">
   헤더
 </header>
+<input type="hidden" th:value="${requestType}" id="request">
 <div style="margin-top:92px ;" class="container">
     <div class="row" style="padding-top: 3%;">
         <form method="post" >
-            <h5 class="my-3 border-bottom pb-2">게시글 등록하기</h5>
             <div class="s003" style="float:right; display:inline-block">
-                    <div class="input-field first-wrap">
-                        <div class="input-select">
-                            <select data-trigger="" name="boardType" id="boardType">
-                                <option value="FREE">자유</option>
-                                <option value="RECRUITMENT">구인</option>
-                                <option value="MARKET">거래</option>
-                                <option value="QUESTION">질문</option>
-                            </select>
-                        </div>
+                <div class="input-field first-wrap">
+                    <div class="input-select">
+                        <select data-trigger="" name="boardType" id="boardType">
+                            <option value="FREE">자유</option>
+                            <option value="RECRUITMENT">구인</option>
+                            <option value="MARKET">거래</option>
+                            <option value="QUESTION">질문</option>
+                        </select>
                     </div>
+                </div>
             </div>
+
+            <h5 class="my-3 border-bottom pb-2">게시글 등록하기</h5>
             <div class="mb-3">
-                <label for="title" class="form-label" style="display: inline-block">제목</label>
-                <input type="text"   placeholder="제목을 입력해주세요" name="title" id="title" class="form-control">
+                <label for="titleAdd" class="form-label" style="display: inline-block">제목</label>
+                <label for="titleUpdate" class="form-label" style="display: inline-block">제목</label>
+                <input type="text"   placeholder="제목을 입력해주세요" name="title" id="titleAdd" class="form-control" th:if="${requestType.equals('add')}">
+                <input type="text"   placeholder="제목을 입력해주세요" name="title" th:value="${boardResponse.boardTitle}" id="titleUpdate" class="form-control" th:if="${requestType.equals('update')}">
             </div>
             <div class="field-error"></div>
             <div class="mb-3">
                 <label class="form-label">내용</label>
+                <input type="hidden" name="content" id="updateContent" th:if="${requestType.equals('update') }" th:value="${boardResponse.convert(boardResponse.boardContent)}">
                 <div id="editor1"></div>
             </div>
             <div class="mb-3" style="width:200px">
                 <label for="hashtag" class="form-label">태그</label>
                 <input type="text" name="hashtag" id="hashtag" class="form-control">
+                <input type="hidden" name="content" id="requestId" th:if="${requestType.equals('update') }" th:value="${boardResponse.getId()}">
             </div>
-            <button type="button" onclick="uploadArticle()" class="btn btn-primary my-2">등록</button>
+            <button type="button" onclick="uploadArticle()" class="btn btn-primary my-2" th:if="${requestType.equals('add')}">등록</button>
+            <button type="button" onclick="updateArticle()" class="btn btn-primary my-2" th:if="${requestType.equals('update')}">수정</button>
+
         </form>
         </div>
             </div>
+
 
 
 <footer id="footer">
@@ -93,11 +102,13 @@
 <script>
     $(document).ready(function(){
         fileIds ="";
+        request ="";
     });
     var fileIds = "";
-    function uploadArticle(){
+    var request = document.getElementById("request").value;
 
-        const title = $('#title').val();
+    function uploadArticle(){
+        const title = $('#titleAdd').val();
         const hashtag = $('#hashtag').val();
         const boardType = $('#boardType').val();
         const data = {
@@ -115,7 +126,7 @@
             dataType: "json",
             success: function (response) {
                 alert("등록되었습니다.")
-                location.href= "/boardList/"+response;
+                location.href= "/board/"+response+".df";
             },
             error: function (request, status, error) {
                 alert(request.responseText);
@@ -123,56 +134,88 @@
         });
     }
 
-
-    const editor = new toastui.Editor({
-        el: document.querySelector('#editor1'),
-        initialEditType: 'markdown',
-        previewStyle: 'vertical',
-        height: '500px',
-        initialValue: '',
-        events: {
-            change: function () {
-                console.log(editor.getMarkdown());
+    function updateArticle() {
+        if (confirm("수정하시겠습니까?")) {
+            const boardId = $('#requestId').val();
+            const title = $('#titleUpdate').val();
+            const hashtag = $('#hashtag').val();
+            const boardType = $('#boardType').val();
+            const data = {
+                id: boardId,
+                boardTitle: title,
+                boardContent: editor.getHTML(),
+                hashtag: hashtag,
+                boardFiles: fileIds,
+                boardType: boardType
             }
-        },
-        hooks: {
-            addImageBlobHook: (blob, callback) => {
-                // blob : Java Script 파일 객체
-                //console.log(blob);
-
-                const formData = new FormData();
-                formData.append('file', blob);
-
-                let url = '/api/getFile.df?name=';
-                $.ajax({
-                    type: 'POST',
-                    enctype: 'multipart/form-data',
-                    url: '/api/upload.df',
-                    data: formData,
-                    dataType: 'json',
-                    processData: false,
-                    contentType: false,
-                    cache: false,
-                    timeout: 600000,
-                    success: function(data) {
-                        //console.log('ajax 이미지 업로드 성공');
-                        url += data.fileName;
-                        fileIds += data.id + ",";
-                        // callback : 에디터(마크다운 편집기)에 표시할 텍스트, 뷰어에는 imageUrl 주소에 저장된 사진으로 나옴
-                        // 형식 : ![대체 텍스트](주소)
-                        callback(url, '사진 대체 텍스트 입력');
-                    },
-                    error: function(e) {
-                        //console.log('ajax 이미지 업로드 실패');
-                        //console.log(e.abort([statusText]));
-
-                        callback('image_load_fail', '사진 대체 텍스트 입력');
-                    }
-                });
-            }
+            $.ajax({
+                type: "PUT",
+                url: "/api/board.df",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    alert("수정되었습니다.")
+                    location.href = "/board/" + response + ".df";
+                },
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
         }
-    });
+    }
 
+
+
+
+        const editor = new toastui.Editor({
+            el: document.querySelector('#editor1'),
+            initialEditType: 'markdown',
+            previewStyle: 'vertical',
+            height: '500px',
+            initialValue: $('#updateContent').val(),
+            events: {
+                change: function () {
+                    console.log(editor.getMarkdown());
+                }
+            },
+            hooks: {
+                addImageBlobHook: (blob, callback) => {
+                    // blob : Java Script 파일 객체
+                    //console.log(blob);
+
+                    const formData = new FormData();
+                    formData.append('file', blob);
+
+                    let url = '/api/getFile.df?name=';
+                    $.ajax({
+                        type: 'POST',
+                        enctype: 'multipart/form-data',
+                        url: '/api/upload.df',
+                        data: formData,
+                        dataType: 'json',
+                        processData: false,
+                        contentType: false,
+                        cache: false,
+                        timeout: 600000,
+                        success: function (data) {
+                            //console.log('ajax 이미지 업로드 성공');
+                            url += data.fileName;
+                            fileIds += data.id + ",";
+                            // callback : 에디터(마크다운 편집기)에 표시할 텍스트, 뷰어에는 imageUrl 주소에 저장된 사진으로 나옴
+                            // 형식 : ![대체 텍스트](주소)
+                            callback(url, '사진 대체 텍스트 입력');
+                        },
+                        error: function (e) {
+                            //console.log('ajax 이미지 업로드 실패');
+                            //console.log(e.abort([statusText]));
+
+                            callback('image_load_fail', '사진 대체 텍스트 입력');
+                        }
+                    });
+                }
+            }
+        });
     const choices = new Choices('[data-trigger]',
         {
             searchEnabled: false,

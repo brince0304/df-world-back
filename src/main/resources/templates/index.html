@@ -248,7 +248,7 @@
 
         <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 div_right">
             <div class="contentBox">
-                <header class="sectionHeader" style="cursor:pointer;" onclick="location.href='board_list.df'">
+                <header class="sectionHeader" style="cursor:pointer;" onclick="location.href='board.df'">
                     <b>통합게시판</b>
                     <span style="float:right;font-size: 14px;padding: 6px;"><i
                             class="fas fa-angle-right"></i></span>
@@ -268,7 +268,7 @@
                                  ">
                         <div style="padding: .75rem; margin-left: 3px;" th:each="article :${articles}">
                             <div style="line-height: 20px; font-size: 16px; word-break: break-all; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                <a style="color:black; font-weight: 400;" data-id="" th:text="${article.boardTitle}">회랑3단</a>
+                                <a style="color:black; font-weight: 400; text-decoration-line: none" data-id="" th:text="${article.boardTitle}" th:href="@{'/board/'+${article.id}+'.df'}">회랑3단</a>
                             </div>
 
                             <div style="margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
@@ -278,7 +278,8 @@
                                             src=""
                                             width="16px" height="16px" style="border-radius: 10px;"><span
                                             style="padding-left: 5px;" th:text="${article.getUserAccount().nickname()}">shehdj</span></li>
-                                    <li class="board_item_tag2" th:text="${article.getBoardType(article.boardType)}">자유</li>
+                                    <a th:href="@{/board.df(boardType=${article.boardType})}">
+                                    <li class="board_item_tag2" th:text="${article.getBoardType(article.boardType)}">자유</li></a>
 
                                     <li class="board_item_tag2">
                                         <time class="timeago" datetime="2023-01-13 0:31:35" th:text="${article.createdAt}"></time>
