@@ -38,28 +38,33 @@ public class UserAccount extends AuditingFields {
     @Column(length = 100, unique = true)
     private String email;
     @Setter
-    @JoinColumn(name = "profile_img_id")
+    @JoinColumn(name="profile_icon", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     @OneToOne(fetch = FetchType.EAGER)
-    private SaveFile profileIcon;
+    private SaveFile profileIcon ;
 
     @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Builder.Default
     private final Set<UserAccountCharacterMapper> characterEntities = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Builder.Default
     private final Set<Board> articles = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Builder.Default
     private final Set<BoardComment> comments = new LinkedHashSet<>();
 
     @Enumerated(EnumType.STRING)
     @Column(length = 50)
     @ElementCollection(fetch = FetchType.EAGER)
+    @Builder.Default
     private final Set<SecurityRole> roles = new HashSet<>(Set.of(SecurityRole.ROLE_USER));
 
     @Setter
+    @Builder.Default
     private String isDeleted = "N";
 
 

@@ -51,6 +51,7 @@ public class CharacterEntity extends AuditingFields {
 
     @OneToMany(fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Builder.Default
     private final Set<UserAccountCharacterMapper> userAccount = new LinkedHashSet<>();
 
 

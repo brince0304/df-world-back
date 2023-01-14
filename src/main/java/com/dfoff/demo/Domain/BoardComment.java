@@ -4,6 +4,8 @@ import com.dfoff.demo.JpaAuditing.AuditingFields;
 import lombok.*;
 
 import jakarta.persistence.*;
+import org.hibernate.validator.constraints.Length;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
@@ -23,6 +25,7 @@ public class BoardComment extends AuditingFields {
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
     @Setter
+    @Length (min = 1, max = 1000)
     private String commentContent;
     @Setter
     @ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -34,14 +37,18 @@ public class BoardComment extends AuditingFields {
     @ToString.Exclude
     private UserAccount userAccount;
     @Setter
+    @Builder.Default
     private Integer commentLikeCount = 0;
     @Setter
+    @Builder.Default
     private String isDeleted = "N";
     @Setter
+    @Builder.Default
     private String isParent = "N";
 
     @OneToMany (mappedBy = "id",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @Builder.Default
     private final Set<BoardComment> childrenComments = new LinkedHashSet<>();
 
 
