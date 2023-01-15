@@ -5,9 +5,11 @@ public enum BoardType {
     ,FREE ("자유")
     ,MARKET ("거래")
     ,QUESTION ("질답")
-    ,RECRUITMENT ("모집");
+    ,RECRUITMENT ("모집")
+    ,REPORT("사건/사고");
 
 
     BoardType(String value) {
     }
+
 }

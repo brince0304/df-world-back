@@ -1,9 +1,7 @@
 package com.dfoff.demo.Service;
 
-import com.dfoff.demo.Domain.Board;
+import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.EnumType.BoardType;
-import com.dfoff.demo.Domain.SaveFile;
-import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Repository.BoardRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
@@ -12,9 +10,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -39,10 +39,11 @@ class BoardServiceTest {
                 .boardContent("content")
                 .boardType(BoardType.FREE)
                 .userAccount(UserAccount.builder().build())
+                .hashtags(new HashSet<>())
                 .build();
         given(boardRepository.save(any(Board.class))).willReturn(board);
         //when
-        sut.createBoard(createBoardDto(), createSaveFileDto());
+        sut.createBoard(createBoardDto(), createSaveFileDto(),createCharacterEntityDto());
 
         //then
         then(boardRepository).should().save(any(Board.class));
@@ -67,13 +68,14 @@ class BoardServiceTest {
     @Test
     void getArticlesByKeywordTest(){
         //given
-        given(boardRepository.findAllByBoardTitleContainingIgnoreCase(eq("te"), Pageable.ofSize(10))).willReturn(Page.empty());
+given(boardRepository.findAllByCharacterName(any(String.class),any(Pageable.class))).willReturn(createBoardPage());
 
         //when
-        sut.getBoardsByKeyword(null, eq("te"),eq("title"),Pageable.ofSize(10));
+        sut.getBoardsByKeyword(null,any(String.class),any(String.class),any(Pageable.class));
 
         //then
-        then(boardRepository).should().findAllByBoardTitleContainingIgnoreCase(eq("te"), Pageable.ofSize(10));
+        then(boardRepository).should().findAllByCharacterName(any(String.class),any(Pageable.class));
+
     }
     @Test
     void getArticleEntityNotFoundExceptionTest() {
@@ -93,14 +95,14 @@ class BoardServiceTest {
     void deleteArticleByIdTest() {
         //given
         Board board = createBoardDto().toEntity();
-        given(boardRepository.findById(any(Long.class))).willReturn(Optional.of(board));
+        given(boardRepository.findBoardById(any(Long.class))).willReturn(board);
 
         //when
         sut.deleteBoardById(any(Long.class));
 
         //then
-        then(boardRepository).should().findById(any(Long.class));
-        assertThat(board.getIsDeleted()).isEqualTo("Y");
+        then(boardRepository).should().findBoardById(any(Long.class));
+        then(boardRepository).should().deleteBoardById(any(Long.class));
     }
 
     @Test
@@ -111,7 +113,7 @@ class BoardServiceTest {
         given(boardRepository.findBoardById(any(Long.class))).willReturn(board);
 
         //when
-        sut.updateBoard(any(Long.class),createBoardDto(),createSaveFileDto());
+        sut.updateBoard(any(Long.class),createBoardDto(),createSaveFileDto(),null);
 
         //then
         then(boardRepository).should().findBoardById(any(Long.class));
@@ -124,11 +126,52 @@ class BoardServiceTest {
         given(boardRepository.findBoardById(any(Long.class))).willReturn(null);
 
         //when
-        Throwable throwable = catchThrowable(()->sut.updateBoard(any(Long.class),createBoardDto(),createSaveFileDto()));
-
+        Throwable throwable = catchThrowable(()->sut.updateBoard(any(Long.class),createBoardDto(),createSaveFileDto(),createCharacterEntityDto()));
         //then
         then(boardRepository).should().findBoardById(any(Long.class));
         assertThat(throwable).isInstanceOf(EntityNotFoundException.class);
+    }
+    @Test
+    void increaseViewCountTest(){
+        //given
+        Board board = createBoardDto().toEntity();
+        given(boardRepository.findBoardById(any(Long.class))).willReturn(board);
+
+        //when
+        sut.increaseViewCount(any(Long.class));
+
+        //then
+        then(boardRepository).should().findBoardById(any(Long.class));
+        assertThat(board.getBoardViewCount()).isEqualTo(1);
+    }
+
+    @Test
+    void increaseLikeCountTest(){
+        //given
+        Board board = createBoardDto().toEntity();
+        given(boardRepository.findBoardById(any(Long.class))).willReturn(board);
+
+        //when
+        sut.increaseLikeCount(any(Long.class));
+
+        //then
+        then(boardRepository).should().findBoardById(any(Long.class));
+        assertThat(board.getBoardLikeCount()).isEqualTo(1);
+    }
+
+
+    @Test
+    void decreaseLikeCountTest(){
+        //given
+        Board board = createBoardDto().toEntity();
+        given(boardRepository.findBoardById(any(Long.class))).willReturn(board);
+
+        //when
+        sut.decreaseLikeCount(any(Long.class));
+
+        //then
+        then(boardRepository).should().findBoardById(any(Long.class));
+        assertThat(board.getBoardLikeCount()).isEqualTo(-1);
     }
 
 
@@ -139,7 +182,9 @@ class BoardServiceTest {
         return Board.BoardDto.builder()
                 .boardTitle("test")
                 .boardContent("test")
+                .hashtags(createHashtagDto())
                 .userAccount(UserAccount.UserAccountDto.from(createUserAccount()))
+                .hashtags(new HashSet<>())
                 .build();
     }
     private UserAccount createUserAccount(){
@@ -155,6 +200,22 @@ class BoardServiceTest {
                 build();
         account.setProfileIcon(saveFile);
         return account;
+    }
+    private CharacterEntity.CharacterEntityDto createCharacterEntityDto(){
+        return CharacterEntity.CharacterEntityDto.builder()
+                .characterName("test")
+                .serverId("cain")
+                .level(1)
+                .build();
+
+    }
+
+    private Set<Hashtag.HashtagDto> createHashtagDto(){
+        return new HashSet<>(Set.of(Hashtag.HashtagDto.builder().name("test").build()));
+    }
+
+    private Page<Board> createBoardPage(){
+        return new PageImpl<>(List.of(createBoardDto().toEntity()));
     }
 
 

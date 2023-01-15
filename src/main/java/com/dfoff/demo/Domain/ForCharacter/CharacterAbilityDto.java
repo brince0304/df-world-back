@@ -62,7 +62,7 @@ public class CharacterAbilityDto {
                     .build();
         }
 
-        public static CharacterEntity toEntity(CharacterAbilityDto dto){
+        public static CharacterEntity toEntity(CharacterAbilityDto dto,String ServerId){
             return CharacterEntity.builder()
                     .characterId(dto.getCharacterId())
                     .characterName(dto.getCharacterName())
@@ -74,6 +74,7 @@ public class CharacterAbilityDto {
                     .adventureName(dto.getAdventureName())
                     .adventureFame(dto.getAdventureFame())
                     .adventureName(dto.getAdventureName())
+                    .serverId(ServerId)
                     .build();
         }
 

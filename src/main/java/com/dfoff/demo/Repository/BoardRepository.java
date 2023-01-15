@@ -40,10 +40,13 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("select b from Board b where b.isDeleted='N' and b.boardType=:boardType")
     Page<Board> findAllByBoardType(@Param("boardType") BoardType boardType, Pageable pageable);
 
-    @Query("select b from Board b where b.isDeleted='N' and b.boardType=:boardType and b.createdAt between  :startDate and :endDate and b.boardLikeCount >=10 order by b.boardLikeCount desc")
+    @Query("select b from Board b where b.isDeleted='N' and lower(b.character.characterName) like (concat('%',:characterName,'%'))")
+    Page<Board> findAllByCharacterName(@Param("characterName") String characterName, Pageable pageable);
+
+    @Query("select b from Board b where b.isDeleted='N' and b.boardType=:boardType and b.createdAt between  :startDate and :endDate and b.boardLikeCount >=10 order by b.boardLikeCount desc limit 3")
     List<Board> findBoardByLikeCountAndBoardType(@Param("boardType") BoardType boardType,@Param("startDate") LocalDateTime sDate ,@Param("endDate") LocalDateTime eDate);
 
-    @Query("select b from Board b where b.isDeleted='N' and  b.createdAt between :startDate and :endDate and b.boardLikeCount >=10 order by b.boardLikeCount desc")
+    @Query("select b from Board b where b.isDeleted='N' and  b.createdAt between :startDate and :endDate and b.boardLikeCount >=10 order by b.boardLikeCount desc limit 3")
     List<Board> findBoardByLikeCount(@Param("startDate") LocalDateTime sDate , @Param("endDate") LocalDateTime eDate);
 
     @Modifying
