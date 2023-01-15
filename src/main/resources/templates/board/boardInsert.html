@@ -70,6 +70,9 @@
                 <label class="form-label">내용</label>
                 <input type="hidden" name="content" id="updateContent" th:if="${requestType.equals('update') }" th:value="${boardResponse.convert(boardResponse.boardContent)}">
                 <div id="editor1"></div>
+                <br>
+                <span style="float:right; display: inline-block" class="badge bg-secondary" id="characterStatus">캐릭터 등록 안됨</span>
+                <a style="text-decoration-line: none" onclick="characterDelete()" href="#"><span style="float:right; display: inline-block; margin-right:2px;" class="badge bg-danger" id="characterDelete"  >X</span></a>
             </div>
             <div class="mb-3" style="width:200px">
                 <label for="hashtag" class="form-label"  th:if="${requestType.equals('add')}"  >해시태그</label>
@@ -78,12 +81,55 @@
                 <input type="text" name="updateHashtag" id="updateHashtag" th:if="${requestType.equals('update') && hashtag!=null}" th:value="${hashtag}"   class="form-control">
                 <input type="hidden" name="content" id="requestId" th:if="${requestType.equals('update') }" th:value="${boardResponse.getId()}">
             </div>
+            <button type="button" class="btn btn-outline-dark" style="display: inline-block; float: right"  data-toggle="modal"
+                    data-target="#charSearchModal">캐릭터 등록</button>
+            <input type="hidden" name="characterId" id="characterIdInput"  >
+            <input type="hidden" name="characterId" id="serverIdInput"  >
+
+
             <button type="button" onclick="uploadArticle()" class="btn btn-outline-dark my-2" th:if="${requestType.equals('add')}">등록</button>
             <button type="button" onclick="updateArticle()" class="btn btn-outline-dark my-2" th:if="${requestType.equals('update')}">수정</button>
-
         </form>
         </div>
+
             </div>
+
+<div class="modal fade" id="charSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"
+     aria-hidden="true">
+    <div class="modal-dialog" style="max-width:500px" role="document">
+        <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
+            <div class="modal-header" style="padding: 5px;">
+                <div class="input-group" style="z-index: 1;">
+                    <div class="input-group">
+                        <select name="serverId" id="serverId">
+                            <option value="all">전체</option>
+                            <option value="adventure">모험단</option>
+                            <option value="cain">카인</option>
+                            <option value="diregie">디레지에</option>
+                            <option value="siroco">시로코</option>
+                            <option value="prey">프레이</option>
+                            <option value="casillas">카시야스</option>
+                            <option value="hilder">힐더</option>
+                            <option value="anton">안톤</option>
+                            <option value="bakal">바칼</option>
+                        </select>
+                        <input type="text" placeholder="입력" class="form-control" id="characterName"
+                               name="characterName">
+                        <button type="button" class="btn btn-info" style="height:39px;" id="btn-search" href="#"
+                                onclick="searchCharacter()">검색
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="boardSearchBody" class="modal-body" style="min-height: 300px; max-height: 500px; overflow: auto;">
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 
@@ -103,6 +149,7 @@
 </body>
 <script>
     $(document).ready(function(){
+        $('#characterDelete').hide()
         fileIds ="";
         request ="";
     });
@@ -113,12 +160,16 @@
         const title = $('#titleAdd').val();
         const hashtag = $('#hashtag').val();
         const boardType = $('#boardType').val();
+        const characterId = $('#characterIdInput').val();
+        const serverId = $('#serverIdInput').val();
         const data = {
             boardTitle: title,
             boardContent: editor.getHTML(),
             hashtag: hashtag,
             boardFiles : fileIds,
-            boardType: boardType
+            boardType: boardType,
+            characterId: characterId,
+            serverId : serverId,
         }
         $.ajax({
             type: "POST",
@@ -142,13 +193,17 @@
             const title = $('#titleUpdate').val();
             const hashtag = $('#updateHashtag').val();
             const boardType = $('#boardType').val();
+            const characterId= $('#characterIdInput').val();
+            const serverId = $('#serverIdInput').val();
             const data = {
                 id: boardId,
                 boardTitle: title,
                 boardContent: editor.getHTML(),
                 hashtag: hashtag,
                 boardFiles: fileIds,
-                boardType: boardType
+                boardType: boardType,
+                characterId: characterId,
+                serverId : serverId,
             }
             $.ajax({
                 type: "PUT",
@@ -224,5 +279,106 @@
             itemSelectText: '',
         });
 
+    function searchCharacter() {
+        const characterName = $('#characterName').val();
+        const serverId = $('#serverId').val();
+        $.ajax({
+            url: "/api/user/searchChar.df?page=0&serverId=" + serverId + "&characterName=" + characterName,
+            type: "GET",
+            success: function (data) {
+                if (data == null) {
+                    alert("캐릭터를 찾을 수 없습니다.");
+
+                } else {
+                    setSearchModalResult(data);
+                }
+            }, error: function (request, status, error) {
+            }
+        });
+    }
+
+    function getServerName(serverId) {
+        switch (serverId) {
+            case "cain":
+                return "카인";
+                break;
+            case "diregie":
+                return "디레지에";
+                break;
+            case "siroco":
+                return "시로코";
+                break;
+            case "prey":
+                return "프레이";
+                break;
+            case "casillas":
+                return "카시야스";
+                break;
+            case "hilder":
+                return "힐더";
+                break;
+            case "anton":
+                return "안톤";
+                break;
+            case "bakal":
+                return "바칼";
+                break;
+        }
+    }
+
+    function setSearchModalResult(list) {
+        if (list.length > 0) {
+            var html = '<table class="table table-striped table-hover" style="text-align: center;">';
+            html += '<thead style="font-weight: bold;"><tr><td>서버</td><td>닉네임</td>';
+            if (list[0].level != undefined) {
+                html += '<td>레벨</td>';
+            }
+            html += '<td>직업</td></tr></thead>';
+            html += '<tbody>';
+            for (var i = 0; i < list.length; i++) {
+                html += ' <tr class="search-item" data-server="' + list[i].serverId + '" data-id="' + list[i].characterId + '" data-name="' + list[i].characterName + '" onclick="setBoardCharacter(\'' + list[i].serverId + '\',\'' + list[i].characterId + '\',\'' + list[i].characterName+ '\')">';
+                html += '<td>' + getServerName(list[i].serverId) + "</td>";
+                html += '<td>' + list[i].characterName + "</td>";
+                if (list[i].level != undefined) {
+                    html += '<td>' + list[i].level + "</td>";
+                }
+                html += '<td>' + list[i].jobGrowName + "</td>";
+                html += '</tr>';
+            }
+            html += '</tbody>';
+            html += "</table>";
+            $('#boardSearchBody').html(html);
+        } else {
+            var html = '<h3 style="text-align: center;">검색 결과가 없습니다.</h3>';
+            $('#boardSearchBody').html(html);
+        }
+    }
+    function setBoardCharacter(serverId,characterId,characterName) {
+        if(confirm(characterName+"(으)로 설정하시겠습니까?")){
+            $('#charSearchModal').modal('hide');
+            $('#characterDelete').show();
+            $('#characterIdInput').val(characterId);
+             $('#serverIdInput').val(serverId);
+            $('#characterStatus').text('캐릭터: '+characterName);
+        }
+    }
+
+    function characterDelete(){
+        $('#serverIdInput').val("");
+        $('#characterIdInput').val('');
+        $('#characterDelete').hide();
+        $('#characterStatus').text('캐릭터 등록 안됨');
+    }
+
+    $(function () {
+        $('#characterName').keypress(function (e) {
+            if (e.keyCode == 13) {
+                searchCharacter();
+
+            }
+        });
+
+
+    });
 </script>
 </html>

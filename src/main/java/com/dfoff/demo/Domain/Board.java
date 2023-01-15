@@ -74,7 +74,7 @@ public class Board extends AuditingFields {
     @ToString.Exclude
     private final Set<BoardHashtagMapper> hashtags = new LinkedHashSet<>();
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn (name = "character_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     @Setter
     private CharacterEntity character;
