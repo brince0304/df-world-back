@@ -53,6 +53,7 @@
                             <option value="RECRUITMENT">구인</option>
                             <option value="MARKET">거래</option>
                             <option value="QUESTION">질문</option>
+                            <option value="REPORT">사건/사고</option>
                         </select>
                     </div>
                 </div>
@@ -71,8 +72,10 @@
                 <input type="hidden" name="content" id="updateContent" th:if="${requestType.equals('update') }" th:value="${boardResponse.convert(boardResponse.boardContent)}">
                 <div id="editor1"></div>
                 <br>
-                <span style="float:right; display: inline-block" class="badge bg-secondary" id="characterStatus">캐릭터 등록 안됨</span>
+                <span style="float:right; display: inline-block" class="badge bg-secondary" id="characterStatus" >캐릭터 등록 안됨</span>
                 <a style="text-decoration-line: none" onclick="characterDelete()" href="#"><span style="float:right; display: inline-block; margin-right:2px;" class="badge bg-danger" id="characterDelete"  >X</span></a>
+
+
             </div>
             <div class="mb-3" style="width:200px">
                 <label for="hashtag" class="form-label"  th:if="${requestType.equals('add')}"  >해시태그</label>
@@ -85,6 +88,10 @@
                     data-target="#charSearchModal">캐릭터 등록</button>
             <input type="hidden" name="characterId" id="characterIdInput"  >
             <input type="hidden" name="characterId" id="serverIdInput"  >
+            <input type="hidden" id="characterExist" th:value="${characterExist}" >
+            <input type="hidden" id="characterIdResponse" th:value="${characterId}" >
+            <input type="hidden" id="serverIdResponse" th:value="${serverId}" >
+            <input type="hidden" id="characterNameResponse" th:value="${characterName}" >
 
 
             <button type="button" onclick="uploadArticle()" class="btn btn-outline-dark my-2" th:if="${requestType.equals('add')}">등록</button>
@@ -149,7 +156,17 @@
 </body>
 <script>
     $(document).ready(function(){
-        $('#characterDelete').hide()
+        if($('#characterExist').val() === 'true'){
+            $('#characterStatus').text('캐릭터 : '+$('#characterNameResponse').val());
+            $('#characterStatus').removeClass('bg-secondary');
+            $('#characterStatus').addClass('bg-success');
+            $('#characterDelete').show();
+            $('#characterIdInput').val($('#characterIdResponse').val());
+            $('#serverIdInput').val($('#serverIdResponse').val());
+        }else {
+            $('#characterDelete').hide()
+        }
+
         fileIds ="";
         request ="";
     });
@@ -358,6 +375,8 @@
             $('#charSearchModal').modal('hide');
             $('#characterDelete').show();
             $('#characterIdInput').val(characterId);
+            $('#characterStatus').removeClass('bg-secondary');
+            $('#characterStatus').addClass('bg-success');
              $('#serverIdInput').val(serverId);
             $('#characterStatus').text('캐릭터: '+characterName);
         }
@@ -368,13 +387,16 @@
         $('#characterIdInput').val('');
         $('#characterDelete').hide();
         $('#characterStatus').text('캐릭터 등록 안됨');
+        $('#characterStatus').addClass('bg-secondary');
+        $('#characterStatus').removeClass('bg-success');
     }
+
+
 
     $(function () {
         $('#characterName').keypress(function (e) {
             if (e.keyCode == 13) {
                 searchCharacter();
-
             }
         });
 

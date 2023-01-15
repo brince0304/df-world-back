@@ -20,7 +20,7 @@ public interface BoardCommentRepository extends JpaRepository<BoardComment, Long
     @Query ("select b from BoardComment b where b.isDeleted='N' and b.board.id=:boardId and b.id=:parentCommentId")
     List<BoardComment> findBoardCommentByParentCommentId(Long boardId, Long parentCommentId);
 
-    @Query ("select '*' from BoardComment b where b.board.id=:boardId and b.commentLikeCount >= 10 order by b.commentLikeCount desc")
+    @Query ("select b from BoardComment b where b.board.id=:boardId and b.commentLikeCount >= 10 order by b.commentLikeCount desc limit 3")
     List<BoardComment> findBoardCommentByLikeCount(@Param("boardId") Long boardId);
 }
 

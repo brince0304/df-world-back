@@ -151,6 +151,14 @@
                                                             class="fa fa-question-circle-o"></span> 질문
                                 <span class="arrow icon-keyboard_arrow_down"></span>
                             </a>
+                            <a href="#" data-toggle="dropdown"
+                               class="align-items-center dropdown-link " aria-haspopup="true"
+                               aria-expanded="false" th:if="${boardType!=null && boardType.equals('REPORT')}"
+                               data-offset="-70, 20" style="text-decoration-line: none ;color: black;">
+                                                    <span
+                                                            class="fa fa-hand-fist"></span> 사건/사고
+                                <span class="arrow icon-keyboard_arrow_down"></span>
+                            </a>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="z-index: 1000">
                                 <a class="dropdown-item" th:href="@{'/board.df?boardType=NOTICE'}"> <span
                                         class="fa fa-bell-o"></span> 공지사항</a>
@@ -162,6 +170,8 @@
                                         class="fa fa-money"></span> 거래게시판</a>
                                 <a class="dropdown-item" th:href="@{'/board.df?boardType=QUESTION'}"><span
                                         class="fa fa-question-circle-o"></span> 질문 답변</a>
+                                <a class="dropdown-item" th:href="@{'/board.df?boardType=REPORT'}"><span
+                                        class="fa fa-hand-fist"></span> 사건/사고</a>
                             </div>
                         </div>
                     </div>
@@ -178,18 +188,25 @@
                     <i class="far fa-thumbs-up" style="margin-left:5px; margin-right: 6px; color: #999999;"></i><span
                         style="font-size: 12px; color: grey; font-weight: 500; display: inline"
                         th:text="${best.boardLikeCount}">0</span>
-                    <div style="float:right"><img class="boardIcon" src=""
-                                                  style="border-radius: 50%; border: 1px solid #898989; display:inline"
-                                                  width="20px"
-                                                  height="20px"
-                                                  th:src="@{/api/getFile.df(name=${best.getUserAccount().profileIcon().fileName()})}"/>
+                    <div style="float:right; display:inline-block; margin-top:-6px;"><img class="boardIcon" src=""
+                                                                                          style="border-radius: 50%; border: 1px solid #898989; display:inline"
+                                                                                          width="20px"
+                                                                                          height="20px"
+                                                                                          th:src="@{/api/getFile.df(name=${best.getUserAccount().profileIcon().fileName()})}"/>
                         <span style="padding-left: 10px; padding-right: 10px; color: #4C4C4C; font-size: 14px; font-weight: 600; padding-top: 2px; display:inline"
-                              th:text="${best.getUserAccount().nickname()}">테스트</span> <span class="badge bg-dark "
-                                                                                             style="display:inline "
-                                                                                             th:text="${best.getBoardType(best.getBoardType())}"> </span>
-
-                    </div>
-                </a>
+                              th:text="${best.getUserAccount().nickname()}">테스트</span>  <span class="badge bg-secondary text-black-50"
+                                                                                              th:text="${best.getBoardType(best.getBoardType())}" th:if="${best.boardType.name().equals('FREE')}" style="margin-top: 10px; margin-left:10px">자유게시판</span>
+                        <span class="badge bg-warning text-black-50"
+                              th:text="${best.getBoardType(best.getBoardType())}" th:if="${best.boardType.name().equals('NOTICE')}" style="margin-top: 10px;">자유게시판</span>
+                        <span class="badge bg-success text-white-50"
+                              th:text="${best.getBoardType(best.getBoardType())}" th:if="${best.boardType.name().equals('MARKET')}" style="margin-top: 10px; ">자유게시판</span>
+                        <span class="badge bg-dark text-white-50"
+                              th:text="${best.getBoardType(best.getBoardType())}" th:if="${best.boardType.name().equals('RECRUITMENT')}" style="margin-top: 10px; ">자유게시판</span>
+                        <span class="badge bg-light text-black-50"
+                              th:text="${best.getBoardType(best.getBoardType())}" th:if="${best.boardType.name().equals('QUESTION')}" style="margin-top: 10px; ">자유게시판</span>
+                        <span class="badge bg-danger text-black-50"
+                              th:text="${best.getBoardType(best.getBoardType())}" th:if="${best.boardType.name().equals('REPORT')}" style="margin-top: 10px; ">자유게시판</span>
+                    </div></a>
                 <div class="bar"
                      style="width: 108%; height: 2px; background-color: #e6e6e6; margin-top:5px; margin-left:-15px"></div>
             </div>
@@ -199,15 +216,30 @@
 
 
                     <div style="padding: 10px 20px 0px;">
-                        <a style="text-decoration-line: none" href="#" th:href="@{/board.df(boardType=${boardType})}">
-                            <span class="badge bg-dark text-white"
-                                  th:text="${article.getBoardType(boardType)}">자유게시판</span></a>
+                        <a style="text-decoration-line: none" th:href="@{/board.df(boardType=${article.boardType})}">
+                                                    <span class="badge bg-secondary text-black-50"
+                                                          th:text="${article.getBoardType(article.getBoardType())}" th:if="${article.boardType.name().equals('FREE')}" >자유게시판</span>
+                            <span class="badge bg-warning text-black-50"
+                                  th:text="${article.getBoardType(article.getBoardType())}" th:if="${article.boardType.name().equals('NOTICE')}" >자유게시판</span>
+                            <span class="badge bg-success text-white-50"
+                                  th:text="${article.getBoardType(article.getBoardType())}" th:if="${article.boardType.name().equals('MARKET')}" >자유게시판</span>
+                            <span class="badge bg-dark text-white-50"
+                                  th:text="${article.getBoardType(article.getBoardType())}" th:if="${article.boardType.name().equals('RECRUITMENT')}" >자유게시판</span>
+                            <span class="badge bg-light text-black-50"
+                                  th:text="${article.getBoardType(article.getBoardType())}" th:if="${article.boardType.name().equals('QUESTION')}" >자유게시판</span>
+                            <span class="badge bg-danger text-black-50"
+                                  th:text="${article.getBoardType(article.getBoardType())}" th:if="${article.boardType.name().equals('REPORT')}" >자유게시판</span></a>
                         <div th:each="hashtag : ${article.hashtags}" style="display: inline-block">
                             <a style="text-decoration-line: none" href="#"
                                th:href="@{/board.df(searchType=hashtag,keyword=${hashtag.name})}">
-                                <span class="badge bg-primary text-white"
+                                <span class="badge bg-info text-black"
                                       th:text="'#'+${hashtag.name}">#해시태그1</span></a>
                         </div>
+                        <a style="text-decoration-line: none" href="#"
+                           th:href="@{/board.df(searchType='characterName',keyword=${article.character.characterName})}" th:if="${article.character!=null}">
+                            <i class="fa fa-plug" style="color: black; margin-left:2px" th:if="${article.character!=null}"></i>
+                            <span class="badge bg-transparent text-black" th:if="${article.character!=null}"
+                                  th:text="${article.character.characterName}" style="margin-left: -9px"> 캐릭터</span></a>
                         <div class="board-character" th:if="${article.character!=null}" style="margin-right: 10px; margin-top:10px" >
                             <img  th:src="@{'https://img-api.neople.co.kr/df/servers/'+${article.character.serverId}+'/characters/'+${article.character.characterId}+'?zoom=1'}" src=""
                             >
@@ -237,12 +269,20 @@
                         <div class="row"
                              style=" height: 2px; background: #e8e8e8; margin-top: 10px; margin-bottom: 10px;"></div>
                         <div style="padding-bottom:30px;">
-                            <i class="far fa-thumbs-up" style="margin-right: 6px; color: #999999;"></i><span
+                            <div style="display: inline-block" id="likeLogFalse">
+                                <a style="text-decoration-line: none" onclick="likeBoard()" href="#">
+                                <i class="far fa-thumbs-up" style="margin-right: 6px; color: #999999;"></i><span
+                                style="font-size: 12px; color: #999999; font-weight: 500; display: inline ;margin-right:6px"
+                                th:text="${article.boardLikeCount}" id="likeCountFalse">0</span></a></div>
+                            <div style="display: inline-block" id="likeLogTrue">
+                                <a style="text-decoration-line: none" onclick="likeBoard()"  href="#">
+                                <i class="far fa-thumbs-up" style="margin-right: 6px; color: black;"></i><span
                                 style="font-size: 12px; color: black; font-weight: 500; display: inline ;margin-right:6px"
-                                th:text="${article.boardLikeCount}">0</span>
+                                th:text="${article.boardLikeCount}" id="likeCountTrue">0</span></a></div>
                             <i class="far fa-eye" style="margin-right: 6px; color: black;"></i><span
                                 style="font-size: 12px; color: black; font-weight: 500; display: inline"
-                                th:text="${article.boardViewCount}">0</span>
+                                th:text="${article.boardViewCount}" >0</span>
+                            <input id="likeLog" th:value="${likeLog}" type="hidden">
                             <a style="text-decoration-line: none"
                                th:href="@{/board/insert.df(request='update',id=${article.id})}"><span
                                     class="badge bg-secondary" style="float:right; display: inline-block"
@@ -300,8 +340,16 @@
                 height: "500px",
                 initialValue: document.getElementById("content").value,
             });
+            if($("#likeLog").val() === "true"){
+                $("#likeLogTrue").show();
+                $("#likeLogFalse").hide();
+        }else{
+                $("#likeLogTrue").hide();
+                $("#likeLogFalse").show();
+            }
         }
     );
+
 
     function deleteArticle() {
         if (confirm("삭제하시겠습니까?")) {
@@ -320,6 +368,27 @@
                 }
             });
         }
+    }
+
+    function likeBoard(){
+        const boardId = $("#boardId").val();
+        $.ajax({
+            url: "/api/like.df",
+            type: "POST",
+            data: {
+                boardId: boardId
+            },
+            success: function (data) {
+                $("#likeLogTrue").toggle();
+                $("#likeLogFalse").toggle();
+                $("#likeLog").val("true");
+                $("#likeCountTrue").text(data);
+                $("#likeCountFalse").text(data);
+            },
+            error: function (request, status, error) {
+                alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+            }
+        });
     }
 </script>
 </html>
