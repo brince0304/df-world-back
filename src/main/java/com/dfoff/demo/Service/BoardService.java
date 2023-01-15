@@ -31,7 +31,7 @@ public class BoardService {
     public Board.BoardDto createBoard(Board.BoardDto board, Set<SaveFile.SaveFileDTO> saveFile, CharacterEntity.CharacterEntityDto character) {
         log.info("createArticle() board: {}", board);
         log.info("createArticle() saveFile: {}", saveFile);
-        Board board_ = boardRepository.saveAndFlush(board.toEntity());
+        Board board_ = boardRepository.save(board.toEntity());
         saveFile.stream().map(SaveFile.SaveFileDTO::toEntity).forEach(o-> board_.getBoardFiles().add(o));
         saveHashtagAndBoard(board_,board.getHashtags());
         if(character!=null){
@@ -63,6 +63,28 @@ public class BoardService {
         return Board.BoardDto.from(board_);
     }
 
+    public void increaseViewCount(Long Id){
+        Board board_ = boardRepository.findBoardById(Id);
+        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+        board_.setBoardViewCount(board_.getBoardViewCount()+1);
+    }
+
+    public int increaseLikeCount(Long Id){
+        Board board_ = boardRepository.findBoardById(Id);
+        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+        board_.setBoardLikeCount(board_.getBoardLikeCount()+1);
+        return board_.getBoardLikeCount();
+    }
+
+    public int decreaseLikeCount(Long Id){
+        Board board_ = boardRepository.findBoardById(Id);
+        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+        board_.setBoardLikeCount(board_.getBoardLikeCount()-1);
+        return board_.getBoardLikeCount();
+    }
+
+
+
     public Page<Board.BoardDto> getBoardsByKeyword(BoardType boardType, String keyword, String searchType, Pageable pageable) {
         if (boardType==null&&keyword == null) {
             return boardRepository.findAll(pageable).map(Board.BoardDto::from);
@@ -78,6 +100,8 @@ public class BoardService {
             return boardRepository.findAllByBoardType(boardType, pageable).map(Board.BoardDto::from);
         }else if(boardType==null&& searchType.equals("hashtag")) {
             return mapper.findAllByHashtagName(keyword, pageable).map(BoardHashtagMapper::getBoard).map(Board.BoardDto::from);
+        }else if(boardType==null&& searchType.equals("characterName")) {
+            return boardRepository.findAllByCharacterName(keyword, pageable).map(Board.BoardDto::from);
         }
         else if(boardType != null){
             switch (searchType) {
@@ -111,7 +135,7 @@ public class BoardService {
         }
     }
 
-    public Board.BoardDto updateBoard(Long id, Board.BoardDto board , Set<SaveFile.SaveFileDTO> fileDtos) {
+    public Board.BoardDto updateBoard(Long id, Board.BoardDto board , Set<SaveFile.SaveFileDTO> fileDtos, CharacterEntity.CharacterEntityDto character) {
        Board board_ =  boardRepository.findBoardById(id);
        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
        if(board != null){
@@ -122,6 +146,12 @@ public class BoardService {
               if(board.getBoardContent()!=null){
                 board_.setBoardContent(board.getBoardContent());
               }
+              if(character!=null){
+                    board_.setCharacter(CharacterEntity.CharacterEntityDto.toEntity(character));
+              }else{
+                    board_.setCharacter(null);
+              }
+              board_.setBoardType(board.getBoardType());
        }
        fileDtos.stream().map(SaveFile.SaveFileDTO::toEntity).forEach(o-> board_.getBoardFiles().add(o));
        return Board.BoardDto.from(board_);
@@ -134,6 +164,7 @@ public class BoardService {
             mapper_.setBoard(null);
             mapper_.setHashtag(null);
         }
+        board_.setCharacter(null);
         boardRepository.deleteBoardById(id);
     }
 }

@@ -31,6 +31,7 @@ public class Board extends AuditingFields {
 
     @Column
     @Enumerated(EnumType.STRING)
+    @Setter
     private BoardType boardType;
     @Setter
     @NotNull
@@ -208,6 +209,7 @@ public class Board extends AuditingFields {
                 case QUESTION -> "Q&A";
                 case RECRUITMENT -> "구인";
                 case MARKET -> "거래";
+                case REPORT -> "사건/사고";
             };
         }
         public static BoardResponse from(BoardDto dto){

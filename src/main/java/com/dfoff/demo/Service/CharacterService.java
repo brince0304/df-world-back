@@ -50,7 +50,10 @@ public class CharacterService {
     }
 
     public CharacterEntity.CharacterEntityDto getCharacter(String serverId,String characterId) {
-        CharacterEntity characterEntity = characterEntityRepository.findById(characterId).orElseGet(()-> CharacterAbilityDto.toEntity(parseUtil(OpenAPIUtil.getCharacterAbilityUrl(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto()));
+        if(characterId==null || characterId.equals("")){
+            return null;
+        }
+        CharacterEntity characterEntity = characterEntityRepository.findById(characterId).orElseGet(()-> characterEntityRepository.save(CharacterAbilityDto.toEntity(parseUtil(OpenAPIUtil.getCharacterAbilityUrl(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto(),serverId)));
         return CharacterEntity.CharacterEntityDto.from(characterEntity);
     }
 

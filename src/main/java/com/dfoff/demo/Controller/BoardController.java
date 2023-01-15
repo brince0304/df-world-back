@@ -4,8 +4,10 @@ import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.Service.BoardService;
 import com.dfoff.demo.Service.CharacterService;
+import com.dfoff.demo.Service.RedisService;
 import com.dfoff.demo.Service.SaveFileService;
 import io.github.furstenheim.CopyDown;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.support.HttpRequestHandlerServlet;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Set;
@@ -30,6 +33,8 @@ public class BoardController {
     private final SaveFileService saveFileService;
 
     private final CharacterService characterService;
+
+    private final RedisService redisService;
     @GetMapping("/board.df")
     public ModelAndView getBoardList(@RequestParam (required = false) BoardType boardType,
                                      @RequestParam (required = false) String keyword,
@@ -46,15 +51,33 @@ public class BoardController {
         mav.addObject("searchType",searchType);
         return mav;
     }
+    @PostMapping ("/api/like.df")
+    public ResponseEntity<?> likeBoard(@RequestParam Long boardId, HttpServletRequest req) {
+        if(redisService.checkLikeLog(req.getRemoteAddr(),boardId)) {
+            redisService.deleteLikeLog(req.getRemoteAddr(),boardId);
+            return new ResponseEntity<>(boardService.decreaseLikeCount(boardId),HttpStatus.OK);
+
+        }else{
+            redisService.saveLikeLog(req.getRemoteAddr(),boardId);
+            return new ResponseEntity<>(boardService.increaseLikeCount(boardId),HttpStatus.OK);
+        }
+    }
+
 
     @GetMapping("/board/{boardId}.df")
-    public ModelAndView getBoardDetails(@PathVariable Long boardId) {
+    public ModelAndView getBoardDetails(@PathVariable Long boardId,
+                                        HttpServletRequest req) {
         try {
             ModelAndView mav = new ModelAndView("/board/boardDetails");
+            if(!redisService.checkViewLog(req.getRemoteAddr(),boardId)){
+                redisService.saveViewLog(req.getRemoteAddr(),boardId);
+                boardService.increaseViewCount(boardId);
+            }
             Board.BoardResponse boardResponse = Board.BoardResponse.from(boardService.getBoardDetail(boardId));
             mav.addObject("article", boardResponse);
             mav.addObject("boardType", boardResponse.getBoardType().toString());
             mav.addObject("bestArticles", boardService.getBestBoard(null).stream().map(Board.BoardResponse::from).collect(Collectors.toList()));
+            mav.addObject("likeLog",redisService.checkLikeLog(req.getRemoteAddr(),boardId));
             return mav;
         }
         catch (Exception e){
@@ -88,6 +111,12 @@ public class BoardController {
                 sb.append(" ");
             }
             mav.addObject("hashtag",sb);
+            mav.addObject("characterExist",boardResponse.getCharacter()!=null);
+            if(boardResponse.getCharacter()!=null){
+                mav.addObject("characterName",boardResponse.getCharacter().getCharacterName());
+                mav.addObject("characterId",boardResponse.getCharacter().getCharacterId());
+                mav.addObject("serverId",boardResponse.getCharacter().getServerId());
+            }
         }
         return mav;
     }
@@ -132,7 +161,8 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
             return new ResponseEntity<>("로그인이 필요하거나 권한이 없습니다.", HttpStatus.UNAUTHORIZED);
         }
         Set<SaveFile.SaveFileDTO> set = saveFileService.getFileDtosFromRequestsFileIds(updateRequest);
-        return new ResponseEntity<>(boardService.updateBoard(updateRequest.getId(),Board.BoardDto.from(updateRequest, UserAccount.UserAccountDto.from(principalDto)),set).getId(),HttpStatus.OK);
+            CharacterEntity.CharacterEntityDto character = characterService.getCharacter(updateRequest.getServerId(),updateRequest.getCharacterId());
+            return new ResponseEntity<>(boardService.updateBoard(updateRequest.getId(),Board.BoardDto.from(updateRequest, UserAccount.UserAccountDto.from(principalDto)),set,character).getId(),HttpStatus.OK);
     }catch (Exception e){
             log.error("error : {}",e);
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
