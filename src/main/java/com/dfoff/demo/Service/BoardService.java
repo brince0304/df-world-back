@@ -1,10 +1,7 @@
 package com.dfoff.demo.Service;
 
-import com.dfoff.demo.Domain.Board;
-import com.dfoff.demo.Domain.BoardHashtagMapper;
+import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.EnumType.BoardType;
-import com.dfoff.demo.Domain.Hashtag;
-import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Repository.BoardHashtagMapperRepository;
 import com.dfoff.demo.Repository.BoardRepository;
 import com.dfoff.demo.Repository.HashtagRepository;
@@ -31,12 +28,15 @@ public class BoardService {
 
     private final BoardHashtagMapperRepository mapper;
 
-    public Board.BoardDto createBoard(Board.BoardDto board, Set<SaveFile.SaveFileDTO> saveFile) {
+    public Board.BoardDto createBoard(Board.BoardDto board, Set<SaveFile.SaveFileDTO> saveFile, CharacterEntity.CharacterEntityDto character) {
         log.info("createArticle() board: {}", board);
         log.info("createArticle() saveFile: {}", saveFile);
         Board board_ = boardRepository.saveAndFlush(board.toEntity());
         saveFile.stream().map(SaveFile.SaveFileDTO::toEntity).forEach(o-> board_.getBoardFiles().add(o));
         saveHashtagAndBoard(board_,board.getHashtags());
+        if(character!=null){
+            board_.setCharacter(CharacterEntity.CharacterEntityDto.toEntity(character));
+        }
         return Board.BoardDto.from(board_);
     }
 

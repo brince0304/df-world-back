@@ -1,11 +1,9 @@
 package com.dfoff.demo.Controller;
 
-import com.dfoff.demo.Domain.Board;
+import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.EnumType.BoardType;
-import com.dfoff.demo.Domain.Hashtag;
-import com.dfoff.demo.Domain.SaveFile;
-import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Service.BoardService;
+import com.dfoff.demo.Service.CharacterService;
 import com.dfoff.demo.Service.SaveFileService;
 import io.github.furstenheim.CopyDown;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +28,8 @@ public class BoardController {
     private final BoardService boardService;
 
     private final SaveFileService saveFileService;
+
+    private final CharacterService characterService;
     @GetMapping("/board.df")
     public ModelAndView getBoardList(@RequestParam (required = false) BoardType boardType,
                                      @RequestParam (required = false) String keyword,
@@ -117,7 +117,11 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
             return new ResponseEntity<>("로그인이 필요합니다.", HttpStatus.UNAUTHORIZED);
         }
         Set<SaveFile.SaveFileDTO> set = saveFileService.getFileDtosFromRequestsFileIds(boardRequest);
-        return new ResponseEntity<>(boardService.createBoard(Board.BoardDto.from(boardRequest, UserAccount.UserAccountDto.from(principalDto)),set).getId(),HttpStatus.OK);
+        if(boardRequest.getServerId().equals("")){
+            return new ResponseEntity<>(boardService.createBoard(Board.BoardDto.from(boardRequest, UserAccount.UserAccountDto.from(principalDto)),set,null).getId(),HttpStatus.OK);
+        }
+        CharacterEntity.CharacterEntityDto character = characterService.getCharacter(boardRequest.getServerId(),boardRequest.getCharacterId());
+        return new ResponseEntity<>(boardService.createBoard(Board.BoardDto.from(boardRequest, UserAccount.UserAccountDto.from(principalDto)),set,character).getId(),HttpStatus.OK);
     }
 
     @PutMapping("/api/board.df")

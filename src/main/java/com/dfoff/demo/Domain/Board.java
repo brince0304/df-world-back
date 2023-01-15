@@ -74,6 +74,11 @@ public class Board extends AuditingFields {
     @ToString.Exclude
     private final Set<BoardHashtagMapper> hashtags = new LinkedHashSet<>();
 
+    @OneToOne
+    @JoinColumn (name = "character_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
+    @Setter
+    private CharacterEntity character;
+
 
 
 
@@ -114,6 +119,8 @@ public class Board extends AuditingFields {
 
         private final Set<Hashtag.HashtagDto> hashtags;
 
+        private final CharacterEntity.CharacterEntityDto character;
+
         public static BoardDto from(Board board) {
             return BoardDto.builder()
                     .createdAt(board.getCreatedAt())
@@ -131,6 +138,7 @@ public class Board extends AuditingFields {
                     .boardFiles(board.getBoardFiles().stream().map(SaveFile.SaveFileDTO::from).collect(Collectors.toSet()))
                     .boardComments(board.getBoardComments().stream().map(BoardComment.BoardCommentDto::from).collect(Collectors.toSet()))
                     .hashtags(board.getHashtags().stream().map(BoardHashtagMapper::getHashtag).map(Hashtag.HashtagDto::from).collect(Collectors.toSet()))
+                    .character(board.getCharacter()!=null ? CharacterEntity.CharacterEntityDto.from(board.getCharacter()) : null)
                     .build();
         }
             public Board toEntity(){
@@ -184,6 +192,8 @@ public class Board extends AuditingFields {
 
         private final Set<Hashtag.HashtagResponse> hashtags;
 
+        private final CharacterEntity.CharacterEntityDto.CharacterEntityResponse character;
+
 
         public String convert(String date){
             return converter.convert(date);
@@ -217,6 +227,7 @@ public class Board extends AuditingFields {
                     .boardFiles(dto.getBoardFiles().stream().map(SaveFile.SaveFileResponse::from).collect(Collectors.toSet()))
                     .boardComments(dto.getBoardComments().stream().map(BoardComment.BoardCommentResponse::from).collect(Collectors.toSet()))
                     .hashtags(dto.getHashtags().stream().map(Hashtag.HashtagResponse::from).collect(Collectors.toSet()))
+                    .character(dto.getCharacter()!=null? CharacterEntity.CharacterEntityDto.CharacterEntityResponse.from(dto.getCharacter()):null)
                     .build();
         }
 
@@ -266,6 +277,9 @@ public class Board extends AuditingFields {
         private final String hashtag;
 
         private final String boardFiles;
+        private final String characterId;
+
+        private final String serverId;
     }
 
 
