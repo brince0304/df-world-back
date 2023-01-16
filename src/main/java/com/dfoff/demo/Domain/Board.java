@@ -64,7 +64,7 @@ public class Board extends AuditingFields {
     @JoinColumn (name = "board_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     private final Set<SaveFile> boardFiles = new LinkedHashSet<>();
 
-    @OneToMany (mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany (mappedBy = "board",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     @ToString.Exclude
     private final Set<BoardComment> boardComments = new LinkedHashSet<>();
@@ -144,6 +144,7 @@ public class Board extends AuditingFields {
         }
             public Board toEntity(){
                 return  Board.builder()
+                        .id(id)
                         .boardType(boardType)
                         .boardTitle(boardTitle)
                         .boardContent(boardContent)

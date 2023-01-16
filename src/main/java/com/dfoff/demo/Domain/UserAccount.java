@@ -46,12 +46,12 @@ public class UserAccount extends AuditingFields {
     @Builder.Default
     private final Set<UserAccountCharacterMapper> characterEntities = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy="userAccount",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     @Builder.Default
     private final Set<Board> articles = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy ="userAccount",fetch=  FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     @Builder.Default
     private final Set<BoardComment> comments = new LinkedHashSet<>();

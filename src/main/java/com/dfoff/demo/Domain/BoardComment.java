@@ -12,6 +12,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.dfoff.demo.Domain.Board.BoardResponse.Chrono.timesAgo;
+
 
 @Table (indexes=@Index(name = "idx_createdAt" , columnList = "createdAt"))
 @Entity
@@ -27,13 +29,11 @@ public class BoardComment extends AuditingFields {
     @Setter
     @Length (min = 1, max = 1000)
     private String commentContent;
-    @Setter
-    @ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne (fetch = FetchType.LAZY)
     @ToString.Exclude
     private Board board;
 
-    @Setter
-    @ManyToOne (fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne (fetch = FetchType.LAZY)
     @ToString.Exclude
     private UserAccount userAccount;
     @Setter
@@ -44,12 +44,19 @@ public class BoardComment extends AuditingFields {
     private String isDeleted = "N";
     @Setter
     @Builder.Default
-    private String isParent = "N";
+    private String isParent = "Y";
 
-    @OneToMany (mappedBy = "id",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany (mappedBy = "parentComment",fetch = FetchType.LAZY)
     @ToString.Exclude
     @Builder.Default
     private final Set<BoardComment> childrenComments = new LinkedHashSet<>();
+
+    @ManyToOne (fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @JoinColumn (name = "parent_id")
+    @Setter
+    private BoardComment parentComment;
+
 
 
 
@@ -87,7 +94,6 @@ public class BoardComment extends AuditingFields {
                     .modifiedBy(boardComment.getModifiedBy())
                     .id(boardComment.getId())
                     .commentContent(boardComment.getCommentContent())
-                    .board(Board.BoardDto.from(boardComment.getBoard()))
                     .userAccount(UserAccount.UserAccountDto.from(boardComment.getUserAccount()))
                     .commentLikeCount(boardComment.getCommentLikeCount())
                     .isDeleted(boardComment.getIsDeleted())
@@ -96,9 +102,11 @@ public class BoardComment extends AuditingFields {
                     .build();
         }
 
-        public static BoardCommentDto from(BoardCommentRequest boardCommentRequest) {
+        public static BoardCommentDto from(BoardCommentRequest boardCommentRequest, UserAccount.UserAccountDto userAccountDto, Board.BoardDto boardDto) {
             return BoardCommentDto.builder()
                     .commentContent(boardCommentRequest.getCommentContent())
+                    .userAccount(userAccountDto)
+                    .board(boardDto)
                     .build();
         }
 
@@ -111,9 +119,10 @@ public class BoardComment extends AuditingFields {
 
         public BoardComment toEntity() {
             return BoardComment.builder()
-                    .board(this.board.toEntity())
+                    .id(id)
+                    .board(board.toEntity())
                     .commentContent(this.commentContent)
-                    .userAccount(this.userAccount.toEntity())
+                    .userAccount(userAccount.toEntity())
                     .build();
         }
 
@@ -126,9 +135,9 @@ public class BoardComment extends AuditingFields {
     @Data
     @Builder
     public static class BoardCommentResponse implements Serializable {
-        private final LocalDateTime createdAt;
+        private final String createdAt;
         private final String createdBy;
-        private final LocalDateTime modifiedAt;
+        private final String modifiedAt;
         private final String modifiedBy;
         private final Long id;
         private final String commentContent;
@@ -136,20 +145,17 @@ public class BoardComment extends AuditingFields {
         private final UserAccount.UserAccountResponse userAccount;
         private final Integer commentLikeCount;
         private final String isDeleted;
-
         private final String isParent;
-
         private final Set<BoardComment.BoardCommentResponse> childrenComments;
 
         public static BoardCommentResponse from (BoardCommentDto dto){
             return BoardCommentResponse.builder()
-                    .createdAt(dto.getCreatedAt())
+                    .createdAt(timesAgo(dto.getCreatedAt()))
                     .createdBy(dto.getCreatedBy())
-                    .modifiedAt(dto.getModifiedAt())
+                    .modifiedAt(timesAgo(dto.getModifiedAt()))
                     .modifiedBy(dto.getModifiedBy())
                     .id(dto.getId())
                     .commentContent(dto.getCommentContent())
-                    .board(Board.BoardResponse.from(dto.getBoard()))
                     .userAccount(UserAccount.UserAccountResponse.from(dto.getUserAccount()))
                     .commentLikeCount(dto.getCommentLikeCount())
                     .isDeleted(dto.getIsDeleted())
@@ -166,6 +172,7 @@ public class BoardComment extends AuditingFields {
     @Data
     public static class BoardCommentRequest implements Serializable {
         private final Long boardId;
+        private final Long commentId;
         private final String commentContent;
     }
 
