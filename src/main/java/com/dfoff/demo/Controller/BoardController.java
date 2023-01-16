@@ -2,10 +2,7 @@ package com.dfoff.demo.Controller;
 
 import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.EnumType.BoardType;
-import com.dfoff.demo.Service.BoardService;
-import com.dfoff.demo.Service.CharacterService;
-import com.dfoff.demo.Service.RedisService;
-import com.dfoff.demo.Service.SaveFileService;
+import com.dfoff.demo.Service.*;
 import io.github.furstenheim.CopyDown;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.support.HttpRequestHandlerServlet;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,6 +28,7 @@ public class BoardController {
 
     private final BoardService boardService;
 
+    private final BoardCommentService commentService;
     private final SaveFileService saveFileService;
 
     private final CharacterService characterService;
@@ -60,6 +59,61 @@ public class BoardController {
         }else{
             redisService.saveLikeLog(req.getRemoteAddr(),boardId);
             return new ResponseEntity<>(boardService.increaseLikeCount(boardId),HttpStatus.OK);
+        }
+    }
+    @GetMapping("/api/comment.df")
+    public ResponseEntity<?> getBoardComments(@RequestParam (required = false) Long boardId,
+                                              @RequestParam (required = false) Long commentId){
+        if(commentId==null) {
+            return new ResponseEntity<>(commentService.findBoardCommentByBoardId(boardId).stream().map(BoardComment.BoardCommentResponse::from),HttpStatus.OK);
+        }
+        else{
+            List<BoardComment.BoardCommentDto> dtos =commentService.findBoardCommentsByParentId(boardId,commentId);
+            log.info("dtos : {}",dtos);
+            return new ResponseEntity<>(dtos.stream().map(BoardComment.BoardCommentResponse::from),HttpStatus.OK);
+        }
+    }
+
+    @PostMapping("/api/comment.df")
+    public ResponseEntity<?> createBoardComment(@RequestBody BoardComment.BoardCommentRequest request, @AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
+                                                @RequestParam (required = false) String mode){
+        try {
+            Board.BoardDto boardDto = boardService.getBoardDetail(request.getBoardId());
+            if(mode!=null&&mode.equals("children")) {
+                BoardComment.BoardCommentDto parent = commentService.findBoardCommentById(request.getCommentId());
+                commentService.createChildrenComment(request.getCommentId(),BoardComment.BoardCommentDto.from(request, UserAccount.UserAccountDto.from(principalDto),boardDto));
+                return new ResponseEntity<>(HttpStatus.OK);
+            }else {
+                commentService.createBoardComment(BoardComment.BoardCommentDto.from(request, UserAccount.UserAccountDto.from(principalDto), boardDto));
+                return new ResponseEntity<>("success", HttpStatus.OK);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>("failed",HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/api/comment.df")
+    public ResponseEntity<?> deleteBoardComment(@RequestParam Long commentId){
+        try {
+            commentService.deleteBoardComment(commentId);
+            return new ResponseEntity<>("success",HttpStatus.OK);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<>("failed",HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PutMapping("/api/comment.df")
+    public ResponseEntity<?> updateBoardComment(@RequestBody BoardComment.BoardCommentRequest request, @AuthenticationPrincipal UserAccount.PrincipalDto principalDto){
+        try {
+            if(principalDto==null){
+                return new ResponseEntity<>("failed",HttpStatus.UNAUTHORIZED);
+            }
+            commentService.updateBoardComment(request.getCommentId(),request,principalDto.getUsername());
+            return new ResponseEntity<>("success",HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
     }
 
