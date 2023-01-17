@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -33,6 +35,9 @@ public class BoardService {
         log.info("createArticle() saveFile: {}", saveFile);
         Board board_ = boardRepository.save(board.toEntity());
         saveFile.stream().map(SaveFile.SaveFileDTO::toEntity).forEach(o-> board_.getBoardFiles().add(o));
+        if(board.getHashtags().size()>5){
+            throw new IllegalArgumentException("해시태그는 5개까지만 등록 가능합니다.");
+        }
         saveHashtagAndBoard(board_,board.getHashtags());
         if(character!=null){
             board_.setCharacter(CharacterEntity.CharacterEntityDto.toEntity(character));
@@ -40,8 +45,13 @@ public class BoardService {
         return Board.BoardDto.from(board_);
     }
 
+
+
     public void saveHashtagAndBoard(Board board , Set<Hashtag.HashtagDto> dtos){
         for (Hashtag.HashtagDto hashtag : dtos) {
+            if(hashtag.getName().length()>7) {
+                throw new IllegalArgumentException("해시태그는 7자 이하로 등록 가능합니다.");
+            }
             Hashtag hashtag_ = hashtagRepository.findById(hashtag.getName()).orElseGet(()-> hashtagRepository.save(hashtag.toEntity()));
             mapper.save(BoardHashtagMapper.of(board,hashtag_));
         }
@@ -52,6 +62,7 @@ public class BoardService {
             o.setBoard(null);
             o.setHashtag(null);
         });
+
         for (Hashtag.HashtagDto hashtag : dtos) {
             Hashtag hashtag_ = hashtagRepository.findById(hashtag.getName()).orElseGet(()-> hashtagRepository.save(hashtag.toEntity()));
             mapper.save(BoardHashtagMapper.of(board,hashtag_));
@@ -139,6 +150,7 @@ public class BoardService {
        Board board_ =  boardRepository.findBoardById(id);
        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
        if(board != null){
+           if(board.getHashtags().size()>3){throw new IllegalArgumentException("해시태그는 3개까지만 등록 가능합니다.");}
            updateHashtagAndBoard(board_,board.getHashtags());
            if(board.getBoardTitle()!=null){
                board_.setBoardTitle(board.getBoardTitle());

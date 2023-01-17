@@ -3,6 +3,7 @@ package com.dfoff.demo.Domain;
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import jakarta.persistence.*;
@@ -156,10 +157,13 @@ public class Board extends AuditingFields {
             if(!request.getHashtag().equals("")) {
                 StringTokenizer st = new StringTokenizer(request.getHashtag().replaceAll(" ",""), "#");
                 while (st.hasMoreTokens()) {
-                    hashtags.add(Hashtag.HashtagDto.builder().name(st.nextToken()).build());
+                    String token = st.nextToken();
+                    if(token.length()>7){
+                        throw new IllegalArgumentException("해시태그는 7자 이하로 입력해주세요.");
+                    }
+                    hashtags.add(Hashtag.HashtagDto.builder().name(token).build());
                 }
             }
-
             return BoardDto.builder()
                     .boardType(request.getBoardType())
                     .boardTitle(request.getBoardTitle())
@@ -275,7 +279,9 @@ public class Board extends AuditingFields {
     public static class BoardRequest implements Serializable {
         private final Long id;
         private final BoardType boardType;
+        @Size(min = 2, max = 50,message = "제목은 2자 이상 50자 이하로 입력해주세요.")
         private final String boardTitle;
+        @Size(min = 12, max = 5000,message = "내용은 5자 이상 5000자 이하로 입력해주세요.")
         private final String boardContent;
         private final String hashtag;
 
