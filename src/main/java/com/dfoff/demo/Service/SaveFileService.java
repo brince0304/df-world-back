@@ -30,7 +30,11 @@ public class SaveFileService {
     @Transactional(readOnly = true)
     public SaveFile.SaveFileDTO getFileByFileName(String fileName) {
         log.info("getFileByFileName() fileId: {}", fileName);
-        return SaveFile.SaveFileDTO.from(saveFileRepository.findByFileName(fileName));
+        if(Objects.isNull(fileName)) {
+            throw new IllegalArgumentException("파일 이름이 없습니다");
+        }
+
+        return SaveFile.SaveFileDTO.from(saveFileRepository.findByFileName(fileName).orElseThrow(()-> new IllegalArgumentException("파일이 없습니다 - fileName: " + fileName)));
     }
 
 
@@ -49,6 +53,7 @@ public class SaveFileService {
     }
 
     public SaveFile.SaveFileDTO saveFile(SaveFile.SaveFileDTO saveFile) {
+        if(saveFile == null){throw new IllegalArgumentException("파일이 없습니다");}
         log.info("saveFile() saveFile: {}", saveFile);
         return SaveFile.SaveFileDTO.from(saveFileRepository.save(saveFile.toEntity()));
     }

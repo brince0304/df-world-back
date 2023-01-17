@@ -20,6 +20,7 @@ import java.util.List;
 public class BoardCommentService {
     private final BoardCommentRepository commentRepository;
 
+
     public BoardComment.BoardCommentDto findBoardCommentById(Long id){
         return BoardComment.BoardCommentDto.from(commentRepository.findBoardCommentById(id));
     }
@@ -29,6 +30,9 @@ public class BoardCommentService {
     }
 
     public BoardComment.BoardCommentDto createBoardComment(BoardComment.BoardCommentDto boardComment){
+        if(boardComment.getCommentContent() == null || boardComment.getCommentContent().equals("")){
+            throw new IllegalArgumentException("댓글 내용을 입력해주세요.");
+        }
         BoardComment boardComment_ = commentRepository.save(boardComment.toEntity());
         return BoardComment.BoardCommentDto.from(boardComment_);
     }

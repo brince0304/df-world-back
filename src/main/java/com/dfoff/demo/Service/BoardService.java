@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -150,7 +148,7 @@ public class BoardService {
        Board board_ =  boardRepository.findBoardById(id);
        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
        if(board != null){
-           if(board.getHashtags().size()>3){throw new IllegalArgumentException("해시태그는 3개까지만 등록 가능합니다.");}
+           if(board.getHashtags().size()>5){throw new IllegalArgumentException("해시태그는 5개까지만 등록 가능합니다.");}
            updateHashtagAndBoard(board_,board.getHashtags());
            if(board.getBoardTitle()!=null){
                board_.setBoardTitle(board.getBoardTitle());
