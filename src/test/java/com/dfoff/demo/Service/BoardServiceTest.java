@@ -68,13 +68,13 @@ class BoardServiceTest {
     @Test
     void getArticlesByKeywordTest(){
         //given
-given(boardRepository.findAllByCharacterName(any(String.class),any(Pageable.class))).willReturn(createBoardPage());
+given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(List.of()));
 
         //when
-        sut.getBoardsByKeyword(null,any(String.class),any(String.class),any(Pageable.class));
+        sut.getBoardsByKeyword(null,null,null,Pageable.ofSize(10));
 
         //then
-        then(boardRepository).should().findAllByCharacterName(any(String.class),any(Pageable.class));
+        then(boardRepository).should().findAll(any(Pageable.class));
 
     }
     @Test

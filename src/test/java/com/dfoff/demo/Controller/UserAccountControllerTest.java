@@ -124,15 +124,6 @@ class UserAccountControllerTest {
     @Test
     @WithUserDetails ("test")
     void givenUserDetails_whenChangeProfileIcon_thenChangeProfileIcon() throws Exception {
-        given(securityService.loadUserByUsername(any())).willReturn(UserAccount.PrincipalDto.builder()
-                .username("test2")
-                .password("test2")
-                .email("test2")
-                .nickname("test2").profileIcon(SaveFile.SaveFileDTO.builder().fileName("test2").filePath("test2").build())
-                .build());
-        given(saveFileRepository.findByFileName(any())).willReturn(SaveFile.builder()
-                        .id(1L)
-                .fileName("icon_char_01.png").filePath("icon_char_01.png").build());
         //perform
         mvc.perform(put("/api/user/profile.df?profileIcon=icon_char_01.png"))
                 .andExpect(status().isOk());
@@ -147,13 +138,6 @@ class UserAccountControllerTest {
                 .username("test")
                 .password("123")
                 .build();
-        given(securityService.loadUserByUsername(any())).willReturn(UserAccount.PrincipalDto.builder()
-                .username("test")
-                .password("123")
-                .email("test2")
-                .nickname("test2")
-                .authorities(null)
-                .build());
 
         //when&then
         mvc.perform(post("/api/user/login").content(mapper.writeValueAsString(loginDto)).contentType(MediaType.APPLICATION_JSON))

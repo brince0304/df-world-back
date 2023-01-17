@@ -1,10 +1,12 @@
 package com.dfoff.demo.Controller;
 
 import com.dfoff.demo.Domain.Board;
+import com.dfoff.demo.Domain.BoardComment;
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.SecurityConfig.SecurityConfig;
 import com.dfoff.demo.Service.BoardService;
 import com.dfoff.demo.Service.RedisService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.junit.jupiter.api.DisplayName;
@@ -43,8 +45,7 @@ class BoardControllerTest {
     private final ObjectMapper objectMapper;
 
 
-
-    BoardControllerTest(@Autowired MockMvc mvc , @Autowired ObjectMapper objectMapper) {
+    BoardControllerTest(@Autowired MockMvc mvc, @Autowired ObjectMapper objectMapper) {
         this.mvc = mvc;
 
         this.objectMapper = objectMapper;
@@ -91,7 +92,7 @@ class BoardControllerTest {
         Board.BoardRequest boardRequest = Board.BoardRequest.builder()
                 .id(2L)
                 .boardTitle("test")
-                .boardContent("test")
+                .boardContent("test4214124214214121212412")
                 .boardType(BoardType.NOTICE)
                 .serverId("bakal")
                 .hashtag("#test")
@@ -105,13 +106,14 @@ class BoardControllerTest {
                 .andExpect(status().isOk());
     }
 
+
     @Test
     @WithUserDetails("test")
     void createBoardTest() throws Exception {
         //given
         Board.BoardRequest boardRequest = Board.BoardRequest.builder()
                 .boardTitle("test")
-                .boardContent("test")
+                .boardContent("test4124124214212114212")
                 .boardType(BoardType.NOTICE)
                 .serverId("bakal")
                 .hashtag("#test")
@@ -145,13 +147,14 @@ class BoardControllerTest {
     @Test
     void increaseViewCountTest() throws Exception {
         //when&then
-        mvc.perform(get("/board/1.df")).andExpect(status().isOk());
+        mvc.perform(get("/board/2.df")).andExpect(status().isOk());
 
     }
+
     @Test
     void increaseLikeCountTest() throws Exception {
         //when&then
-        mvc.perform(post("/api/like.df?boardId=1")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        mvc.perform(post("/api/like.df?boardId=2")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
     @Test
@@ -172,6 +175,95 @@ class BoardControllerTest {
     }
 
 
+    @Test
+    void getBoardComments() throws Exception {
+        mvc.perform(get("/api/comment.df").param("boardId", "5")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
 
+    @Test
+    void likeComment() throws Exception {
+        mvc.perform(post("/api/likeComment.df").param("commentId", "1").param("boardId", "958")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
 
+    @Test
+    @WithUserDetails("test")
+    void createBoardComment() throws Exception {
+        BoardComment.BoardCommentRequest boardCommentRequest = BoardComment.BoardCommentRequest.builder()
+                .boardId(1L)
+                .commentContent("test")
+                .build();
+        mvc.perform(post("/api/comment.df").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardCommentRequest)))
+                .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
+    }
+
+    @Test
+    @WithUserDetails("test")
+    void deleteBoardComment() throws Exception {
+        mvc.perform(delete("/api/comment.df").param("commentId", "1")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
+
+    }
+
+    @Test
+    @WithUserDetails("test")
+    void updateBoardComment() throws Exception {
+        BoardComment.BoardCommentRequest boardCommentRequest = BoardComment.BoardCommentRequest.builder()
+                .boardId(958L)
+                .commentId(2L)
+                .commentContent("test22")
+                .build();
+        mvc.perform(put("/api/comment.df").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardCommentRequest))).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
+    }
+
+    @Test
+    void createBoardCommentUnauthorized() throws Exception {
+        BoardComment.BoardCommentRequest boardCommentRequest = BoardComment.BoardCommentRequest.builder()
+                .boardId(1L)
+                .commentContent("test")
+                .build();
+        mvc.perform(post("/api/comment.df").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardCommentRequest)))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithUserDetails("test")
+    void deleteBoardCommentNotFound() throws Exception {
+        mvc.perform(delete("/api/comment.df").param("commentId", "5918")).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithUserDetails("test")
+    void updateBoardCommentNotFound() throws Exception {
+        BoardComment.BoardCommentRequest boardCommentRequest = BoardComment.BoardCommentRequest.builder()
+                .boardId(958L)
+                .commentId(42141L)
+                .commentContent("test22")
+                .build();
+        mvc.perform(put("/api/comment.df").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardCommentRequest))).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithUserDetails("test")
+    void createBoardCommentNotFound() throws Exception {
+        BoardComment.BoardCommentRequest boardCommentRequest = BoardComment.BoardCommentRequest.builder()
+                .boardId(41241L)
+                .commentContent("test")
+                .build();
+        mvc.perform(post("/api/comment.df").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardCommentRequest)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void deleteBoardCommentUnauthorized() throws Exception {
+        mvc.perform(delete("/api/comment.df").param("commentId", "1")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void updateBoardCommentUnauthorized() throws Exception {
+        BoardComment.BoardCommentRequest boardCommentRequest = BoardComment.BoardCommentRequest.builder()
+                .boardId(958L)
+                .commentId(1L)
+                .commentContent("test22")
+                .build();
+        mvc.perform(put("/api/comment.df").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardCommentRequest))).andExpect(status().isUnauthorized());
+    }
 }
