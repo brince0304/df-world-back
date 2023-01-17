@@ -16,12 +16,12 @@
     <link href="/Login/assets/css/login-register.css" rel="stylesheet"/>
     <link href="/Login/assets/css/main.css" rel="stylesheet"/>
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
-    <link rel="stylesheet" href="/css/owl.carousel.min.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="/css/util.css">
+
 
     <link rel="stylesheet" href="/header/fonts/icomoon/style.css">
 
-    <link rel="stylesheet" href="/header/css/owl.carousel.min.css">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/header/css/bootstrap.min.css">
@@ -275,8 +275,8 @@
                            th:if="${article.character!=null}">
                             <i class="fa fa-plug" style="color: black; margin-left:2px"
                                th:if="${article.character!=null}"></i>
-                            <span class="badge bg-transparent text-black" th:if="${article.character!=null}"
-                                  th:text="${article.character.characterName}" style="margin-left: -9px"> 캐릭터</span></a>
+                            <span class="badge bg-transparent" th:if="${article.character!=null}"
+                                  th:text="${article.character.characterName}" style="margin-left: -9px; color:black"> 캐릭터</span></a>
                         <div class="board-character" th:if="${article.character!=null}"
                              >
                             <img th:src="@{'https://img-api.neople.co.kr/df/servers/'+${article.character.serverId}+'/characters/'+${article.character.characterId}+'?zoom=1'}"
@@ -381,7 +381,7 @@
 
                 </div>
                 <div id="bestComments"></div>
-                    <div class="row" style="" id="commentList">
+                    <div style="" id="commentList">
                     </div>
                     <input hidden th:if="${#authentication!=null}" th:value="${#authentication.getName()}"
                            id="principalId">
@@ -434,6 +434,7 @@
     }
 
     function commentReplyFormBest(id) {
+        replyCommentCancel(id);
         $('#'+id+'-replyFormBtnBest').hide();
         $('#'+id+'-refreshBtnBest').show();
         $("#"+id+"-replyCommentFormBest").empty();
@@ -471,7 +472,7 @@
                         html += "</div>";
                         html += "<div style='margin-left:3%; margin-top:1%'>";
                         html += "<div style='display:flex;'>";
-                        html += "<span style='padding:10px;border-radius:20px;background-color: whitesmoke; margin-left:1% ; white-space: pre-wrap; display: flex' id='" + this.id + "-contentBestReply'>" + this.commentContent + "</span>";
+                        html += "<span style='padding:10px;border-radius:20px;background-color: lightsteelblue; margin-left:1% ; white-space: pre-wrap; display: flex' id='" + this.id + "-contentBestReply'>" + this.commentContent + "</span>";
                         html += "<textarea class='updateInput'   style='padding:10px;border-radius:20px;background-color: transparent; margin-left:1%; width:90%' id='" + this.id + "-contentInputBestReply'></textarea>";
                         html += "</div>";
                         html += "<div style='display:flex;' >";
@@ -806,7 +807,8 @@
                 html2 +=   " </div>";
                 $('#bestCommentsStatus').html(html2);
                 $(data.bestComments).each(function(){
-                    html3 += "<div style='padding:10px; width:100%; background-color:antiquewhite'>";
+
+                    html3 += "<div style='padding:10px; width:100%; background-color:#F2F2F2'>";
                     html3 += "<div style='margin-left:4%;'>";
                     html3 += "<a style='color:#898989'><img class='boardIcon' style='border:1px solid #BDBDBD;border-radius:20px;' width='30px' height='30px' src='/api/getFile.df?name=" + this.userAccount.profileIcon.fileName + "'/>";
                     html3 += "<span style='margin-left:2%' class='text-black-50' data-id='" + this.id + "'>" + this.userAccount.nickname + "</span>";
@@ -822,7 +824,7 @@
                     html3 += "</div>";
                     html3 += "<div style='margin-left:3%; margin-top:1%'>";
                     html3 += "<div style='display:flex;'>";
-                    html3 += "<span style='padding:10px;border-radius:20px;background-color: lightgrey; margin-left:1% ; white-space: pre-wrap; display: flex' id='" + this.id + "-contentBest'>" + this.commentContent + "</span>";
+                    html3 += "<span style='padding:10px;border-radius:20px;background-color: lightsteelblue; margin-left:1% ; white-space: pre-wrap; display: flex' id='" + this.id + "-contentBest'>" + this.commentContent + "</span>";
                     html3 += "<textarea class='updateInput'   style='padding:10px;border-radius:20px;background-color: transparent; margin-left:1%; width:90%' id='" + this.id + "-contentInputBest'></textarea>";
                     html3 += "</div>";
                     html3 += "<div style='display:flex;' >";
@@ -931,6 +933,7 @@
     }
 
     function commentReplyForm(id) {
+        replyCommentCancelBest(id);
         $('#'+id+'-replyFormBtn').hide();
         $('#'+id+'-refreshBtn').show();
         $("#"+id+"-replyCommentForm").empty();

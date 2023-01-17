@@ -13,13 +13,13 @@
     <script src="https://kit.fontawesome.com/1d4d31d2f3.js" crossorigin="anonymous"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="/Login/assets/css/login-register.css" rel="stylesheet"/>
-    <link href="/Login/assets/css/main.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="/css/owl.carousel.min.css">
+    <link href="/Login/assets/css/main.css" rel="stylesheet"/>    <link rel="stylesheet" href="/css/util.css">
+
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
 
     <link rel="stylesheet" href="/header/fonts/icomoon/style.css">
 
-    <link rel="stylesheet" href="/header/css/owl.carousel.min.css">
+
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="/header/css/bootstrap.min.css">
@@ -49,7 +49,7 @@
             border-radius: 50%;
             border: 1.5px solid #898989;
             margin-top:10px;
-            margin-right:15px;
+            margin-right:25px;
 
         }
 
@@ -574,7 +574,7 @@
                                    th:href="@{/board.df(searchType='characterName',keyword=${board.character.characterName})}" th:if="${board.character!=null}">
                                     <i class="fa fa-plug" style="color: black; margin-left:2px" th:if="${board.character!=null}"></i>
                                     <span class="badge bg-transparent text-black" th:if="${board.character!=null}"
-                                          th:text="${board.character.characterName}" style="margin-left: -9px"> 캐릭터</span></a>
+                                          th:text="${board.character.characterName}" style="margin-left: -9px; color:black"> 캐릭터</span></a>
                                 <div class="board-character" th:if="${board.character!=null}" th:switch="${board.character.jobName}">
                                     <img class="m-fighter" th:case="'격투가(남)'" th:src="@{'https://img-api.neople.co.kr/df/servers/'+${board.character.serverId}+'/characters/'+${board.character.characterId}+'?zoom=1'}"
                                          src=""
