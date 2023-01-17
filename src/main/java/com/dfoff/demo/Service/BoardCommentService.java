@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -51,15 +52,18 @@ public class BoardCommentService {
         boardComment_.setCommentContent(request.getCommentContent());
     }
 
-    public void updateBoardCommentLike(Long id){
+    public Integer updateBoardCommentLike(Long id){
         BoardComment boardComment_ = commentRepository.findBoardCommentById(id);
         boardComment_.setCommentLikeCount(boardComment_.getCommentLikeCount()+1);
+        return boardComment_.getCommentLikeCount();
     }
 
-    public void updateBoardCommentDisLike(Long id){
+    public Integer updateBoardCommentDisLike(Long id){
         BoardComment boardComment_ = commentRepository.findBoardCommentById(id);
         boardComment_.setCommentLikeCount(boardComment_.getCommentLikeCount()-1);
+        return boardComment_.getCommentLikeCount();
     }
+
 
 
     public void createChildrenComment(Long parentId,BoardComment.BoardCommentDto dto) {
@@ -71,5 +75,9 @@ public class BoardCommentService {
         children.setIsParent("N");
         children.setParentComment(boardComment_);
         commentRepository.save(children);
+    }
+
+    public List<BoardComment.BoardCommentDto> findBestBoardCommentByBoardId(Long boardId) {
+        return commentRepository.findBoardCommentByLikeCount(boardId).stream().map(BoardComment.BoardCommentDto::from).toList();
     }
 }
