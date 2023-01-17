@@ -715,7 +715,6 @@ legend {
 
 @media (min-width: 640px) {
   .choices__list--dropdown .choices__item--selectable {
-    padding-right: 100px;
   }
   .choices__list--dropdown .choices__item--selectable:after {
     content: attr(data-select-text);

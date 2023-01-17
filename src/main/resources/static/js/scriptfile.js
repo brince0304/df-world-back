@@ -1,7 +1,6 @@
 $(window).scroll(function() {
     if ($(document).scrollTop() > 50) {
         $('.nav').addClass('affix');
-        console.log("OK");
     } else {
         $('.nav').removeClass('affix');
     }
@@ -12,7 +11,6 @@ $(window).scroll(function() {
 $(window).scroll(function() {
     if ($(document).scrollTop() > 50) {
         $('.nav').addClass('affix');
-        console.log("OK");
     } else {
         $('.nav').removeClass('affix');
     }
@@ -27,15 +25,6 @@ $(document).ready(function() {
     var s = $("#navbar");
     var pos = s.position();
 
-    $(window).scroll(function() {
-        var windowpos = $(window).scrollTop();
-
-        if (windowpos >= pos.top) {
-            s.addClass("stick");
-        } else {
-            s.removeClass("stick");
-        }
-    });
 
 });
 function logoutAlert(){

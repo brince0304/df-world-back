@@ -36,6 +36,36 @@
     <!-- TOAST UI Editor CDN(CSS) -->
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
     <title>던파모아 온오프</title>
+    <style>
+        .board-character {
+            background-image: url("/images/icon_char/bg_char.jpeg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+
+            width: 80px;
+            height: 80px;
+            overflow: hidden;
+            position: relative;
+            float: right;
+            display: inline-block;
+            border-radius: 40%;
+            border: 1.5px solid #898989;
+
+
+        }
+
+        .board-character img {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -1000%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+    </style>
 </head>
 <body>
 <header id="header">
@@ -69,22 +99,39 @@
             <div class="field-error"></div>
             <div class="mb-3">
                 <label class="form-label">내용</label>
+
                 <input type="hidden" name="content" id="updateContent" th:if="${requestType.equals('update') }" th:value="${boardResponse.convert(boardResponse.boardContent)}">
                 <div id="editor1"></div>
+                <span style="font-size: 12px; color: #999999; margin-left: 10px" id="contentWarning">5자이상 입력해주세요.</span>
+                <div class="board-character" th:if="${ requestType.equals('update') && boardResponse.getCharacter()==null}" style="margin-right: 20px; margin-top:20px; float:right">
+                    <img id="charThumb" src="" >
+                    <div style="font-size: 20px; font-weight: 500; color: #999999; margin-left:22px"></div>
+                </div>
+                <div class="board-character" th:if="${ requestType.equals('update') && boardResponse.getCharacter()!=null}" style="margin-right: 20px; margin-top:20px; float:right">
+
+                    <img id="charThumb" th:src="@{'https://img-api.neople.co.kr/df/servers/'+${boardResponse.character.serverId}+'/characters/'+${boardResponse.character.characterId}+'?zoom=1'}" >
+                    <div style="font-size: 20px; font-weight: 500; color: #999999; margin-left:22px"></div>
+                </div>
+
+                <div class="board-character" th:if="${ requestType.equals('add')}"
+                     style="margin-right: 20px; margin-top:20px; float:right">
+                    <img id="charThumb" src="" >
+                    <div style="font-size: 20px; font-weight: 500; color: #999999; margin-left:22px"></div>
+                </div>
                 <br>
-                <span style="float:right; display: inline-block" class="badge bg-secondary" id="characterStatus" >캐릭터 등록 안됨</span>
-                <a style="text-decoration-line: none" onclick="characterDelete()" href="#"><span style="float:right; display: inline-block; margin-right:2px;" class="badge bg-danger" id="characterDelete"  >X</span></a>
+                <a style="text-decoration-line: none;cursor:pointer" onclick="characterDelete()" ><span style="float:right; display: inline-block; margin-right:10px; margin-top:-5px" class="badge bg-danger" id="characterDelete"  >X</span></a>
 
 
             </div>
-            <div class="mb-3" style="width:200px">
+            <div class="mb-3" style="width:200px; margin-top:-20px">
                 <label for="hashtag" class="form-label"  th:if="${requestType.equals('add')}"  >해시태그</label>
                 <input type="text" name="hashtag" id="hashtag" th:if="${requestType.equals('add')}"  class="form-control">
                 <label for="updateHashtag" class="form-label" th:if="${requestType.equals('update') && hashtag!=null}" >해시태그</label>
                 <input type="text" name="updateHashtag" id="updateHashtag" th:if="${requestType.equals('update') && hashtag!=null}" th:value="${hashtag}"   class="form-control">
+                <span style="font-size: 12px; color: #999999; margin-left: 10px" id="hashtagWarning">해시태그는 #로 구분해주세요</span>
                 <input type="hidden" name="content" id="requestId" th:if="${requestType.equals('update') }" th:value="${boardResponse.getId()}">
             </div>
-            <button type="button" class="btn btn-outline-dark" style="display: inline-block; float: right"  data-toggle="modal"
+            <button type="button" id="characterStatus" class="btn btn-outline-dark" style="display: inline-block; float: right; margin-right:10px"  data-toggle="modal"
                     data-target="#charSearchModal">캐릭터 등록</button>
             <input type="hidden" name="characterId" id="characterIdInput"  >
             <input type="hidden" name="characterId" id="serverIdInput"  >
@@ -101,7 +148,7 @@
 
             </div>
 
-<div class="modal fade" id="charSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"
+<div class="modal fade" id="charSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" style="margin-left:2%"
      aria-hidden="true">
     <div class="modal-dialog" style="max-width:500px" role="document">
         <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
@@ -250,8 +297,18 @@
             initialValue: $('#updateContent').val(),
             events: {
                 change: function () {
-                    console.log(editor.getMarkdown());
-                }
+                    const content = editor.getMarkdown();
+                    if(content.length > 10000){
+                        $('#contentWarning').text("글자수가 10000자를 초과하였습니다.");
+                        $('#contentWarning').css("color","red");
+                        editor.setMarkdown(content.substring(0,10000));
+                    }else if (content.length < 5 ){
+                        $('#contentWarning').text("5자 이상 입력해주세요.");
+                        $('#contentWarning').css("color","red");
+                }else{
+                        $('#contentWarning').text("글자수 : "+content.length);
+                        $('#contentWarning').css("color","black");
+                    }}
             },
             hooks: {
                 addImageBlobHook: (blob, callback) => {
@@ -375,10 +432,11 @@
             $('#charSearchModal').modal('hide');
             $('#characterDelete').show();
             $('#characterIdInput').val(characterId);
-            $('#characterStatus').removeClass('bg-secondary');
-            $('#characterStatus').addClass('bg-success');
+            $('#characterStatus').removeClass('btn-outline-dark');
+            $('#characterStatus').addClass('btn-success');
              $('#serverIdInput').val(serverId);
             $('#characterStatus').text('캐릭터: '+characterName);
+            $('#charThumb').attr('src','https://img-api.neople.co.kr/df/servers/'+serverId+'/characters/'+characterId+'?zoom=1');
         }
     }
 
@@ -386,9 +444,9 @@
         $('#serverIdInput').val("");
         $('#characterIdInput').val('');
         $('#characterDelete').hide();
-        $('#characterStatus').text('캐릭터 등록 안됨');
-        $('#characterStatus').addClass('bg-secondary');
+        $('#characterStatus').text('캐릭터 등록');
         $('#characterStatus').removeClass('bg-success');
+        $('#charThumb').attr('src','');
     }
 
 
@@ -401,6 +459,54 @@
         });
 
 
+    });
+
+    $('#hashtag').keyup(function (e) {
+
+        if($('#hashtag').val().split('#').length>4){
+            $('#hashtagWarning').text('해시태그는 5개까지 입력 가능합니다.');
+            $('#hashtagWarning').css('color','red');
+
+        }else{
+            $('#hashtagWarning').text('해시태그는 #로 구분합니다.');
+            $('#hashtagWarning').css('color','silver');
+        }
+    });
+
+    $('#hashtag').blur(function (e) {
+        $('#hashtag').val().split('#').forEach(function (item) {
+            if (item.length > 10) {
+                $('#hashtagWarning').text('태그당 8자 이내로 입력해주세요.');
+                $('#hashtagWarning').css('color','red');
+            }
+            if (item.indexOf(' ') > -1) {
+                $('#hashtagWarning').text('공백은 포함하지 않습니다.');
+                $('#hashtagWarning').css('color','red');
+            }
+        });
+    });
+    $('#updateHashtag').blur(function (e) {
+        $('#updateHashtag').val().split('#').forEach(function (item) {
+            if (item.length > 10) {
+                $('#hashtagWarning').text('태그당 8자 이내로 입력해주세요.');
+                $('#hashtagWarning').css('color','red');
+            }
+            if (item.indexOf(' ') > -1) {
+                $('#hashtagWarning').text('공백은 포함하지 않습니다.');
+                $('#hashtagWarning').css('color','red');
+            }
+        });
+    });
+
+    $('#updateHashtag').keyup(function (e) {
+        if($('#updateHashtag').val().split('#').length>4){
+            $('#hashtagWarning').text('해시태그는 5개까지 입력 가능합니다.');
+            $('#hashtagWarning').css('color','red');
+
+        }else{
+            $('#hashtagWarning').text('해시태그는 #로 구분합니다.');
+            $('#hashtagWarning').css('color','silver');
+        }
     });
 </script>
 </html>

@@ -17,11 +17,8 @@
     <link rel="stylesheet" href="/header/css/bootstrap.min.css">
     <!-- Style -->
     <link rel="stylesheet" href="/header/css/style.css">
-    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
 
     <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css'>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <title>Title</title>
     <style>
 
@@ -105,44 +102,39 @@
                         <div class="col-lg-12">
                             <div class="search-result">
                                 <div class="result-body">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive" style="border:none;">
+                                        <div th:if="${characters.isEmpty()}">
+                                            <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+                                                <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
+                                                <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">캐릭터가 존재하지 않습니다.</div>
+                                            </div>
+                                        </div>
                                         <div class="container">
-                                            <div class="row charThumb">
-                                                <div th:if="${characters.isEmpty()}">
-                                                    <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
-                                                        <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
-                                                        <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">캐릭터가 존재하지 않습니다.</div>
-                                                    </div>
-                                                </div>
+                                            <div class="row charThumb" style="margin-left:-20px">
                                                 <!-- Single Advisor-->
                                                 <div th:each="char : ${characters}" class="col-12 col-sm-6 col-lg-3">
                                                     <div class="single_advisor_profile wow fadeInUp characterCard"
                                                          data-wow-delay="0.2s"
                                                          style="background-image: url('/images/icon_char/bg_char.jpeg') ;   background-repeat: no-repeat;   background-position: center;
                                                             background-size: cover;">
-
+                                                        <div style="">
                                                         <!-- Team Thumb-->
-                                                        <span class="badge bg-light text-dark">
+                                                        <span class="badge bg-light text-dark" style="float:left">
                                                             <img class="icon-fame"
                                                                  th:src="@{/images/icon_char/icon_status_fame.png}"
                                                                  src="" alt="fame"
-                                                                 style="float : left; float : top ; display:inline"> <small
+                                                                 style=""> <small
                                                                 style=" display:inline; color: #d39e00"
                                                                 th:text="${char.adventureFame}"></small> </span>
                                                         <span class="badge bg-light text-dark" type="button"
                                                               th:data-id="${char.characterId}"
                                                               th:data-server="${char.serverId}"
                                                               th:onclick="deleteCharacter(this.getAttribute('data-server') , this.getAttribute('data-id'))"
-                                                              style="display:inline ; float:right; float: top">삭제</span>
+                                                              style="display:inline ; float:right; ">삭제</span></div>
                                                         <div class="advisor_thumb">
                                                             <img th:src="@{'https://img-api.neople.co.kr/df/servers/'+${char.serverId}+'/characters/' + ${char.characterId} + '?zoom=2'}"
-                                                                 src="" alt="">
+                                                                 src="" style="scale:1.7" alt="">
                                                             <!-- Social Info-->
-                                                            <div class="social-info"><a href="#"><i
-                                                                    class="fa fa-facebook"></i> 데미지 데미지</a><a
-                                                                    href="#"><i
-                                                                    class="fa fa-twitter"></i></a><a href="#"><i
-                                                                    class="fa fa-linkedin"></i></a></div>
                                                         </div>
                                                         <!-- Team Details-->
                                                         <div class="single_advisor_details_info"
@@ -174,7 +166,7 @@
     </div>
 
 
-    <div class="modal fade" id="charSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"
+    <div class="modal fade" id="charSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" style="margin-left:2%"
          aria-hidden="true">
         <div class="modal-dialog" style="max-width:500px" role="document">
             <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
