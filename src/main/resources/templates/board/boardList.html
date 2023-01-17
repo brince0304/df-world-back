@@ -428,13 +428,13 @@
                         <div class="dropdown custom-dropdown" style="display: inline;   float: right;">
                             <a th:href="@{/board/insert.df(request=add)}"
                                data-offset="-70, 20"
-                               style="text-decoration-line: none ;color: black;" sec:authorize="isAuthenticated()">
+                               style="text-decoration-line: none ;color: black; margin-right:10px" sec:authorize="isAuthenticated()">
                                 <span class="fa fa-pencil-square-o" aria-hidden="true"></span> 글쓰기
                             </a>
                             <a data-toggle="modal"
                                data-target="#loginModal" href="#"
                                data-offset="-70, 20"
-                               style="text-decoration-line: none ;color: silver;" sec:authorize="!isAuthenticated()">
+                               style="text-decoration-line: none ;color: silver; margin-right:10px" sec:authorize="!isAuthenticated()">
                                 <span class="fa fa-user-secret" aria-hidden="true"></span> 로그인
                             </a>
                             <a href="#" data-toggle="dropdown"

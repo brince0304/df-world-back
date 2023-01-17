@@ -115,13 +115,13 @@
                         <div class="dropdown custom-dropdown" style="display: inline;   float: right;">
                             <a th:href="@{/board/insert.df(request=add)}"
                                data-offset="-70, 20"
-                               style="text-decoration-line: none ;color: black;" sec:authorize="isAuthenticated()">
+                               style="text-decoration-line: none ;color: black; margin-right:10px" sec:authorize="isAuthenticated()">
                                 <span class="fa fa-pencil-square-o" aria-hidden="true"></span> 글쓰기
                             </a>
                             <a data-toggle="modal"
                                data-target="#loginModal" href="#"
                                data-offset="-70, 20"
-                               style="text-decoration-line: none ;color: silver;" sec:authorize="!isAuthenticated()">
+                               style="text-decoration-line: none ;color: silver; margin-right:10px" sec:authorize="!isAuthenticated()">
                                 <span class="fa fa-user-secret" aria-hidden="true"></span> 로그인
                             </a>
                             <a href="#" data-toggle="dropdown"
@@ -319,7 +319,7 @@
                                         th:text="${article.boardLikeCount}" id="likeCountTrue"> 0</span></div>
                             <div style="display: inline-block; cursor: pointer; scale:1.2"   >
                                 <i class="far fa-eye" style="margin-left: -6px; color: black; "></i><span
-                                style="font-size: 13px; color: black; font-weight: 500; display: inline; margin-left:-10%" class="badge bg-transparent text-black"
+                                style="font-size: 13px; color: black; font-weight: 500; display: inline; " class="badge bg-transparent text-black"
                                 th:text="${article.boardViewCount}"> 0</span> </div>
                             <input id="likeLog" th:value="${likeLog}" type="hidden">
                             <a style="text-decoration-line: none" th:href="@{/board/insert.df(request=update,id=${boardId})}" href="#">
@@ -472,7 +472,7 @@
                         html += "</div>";
                         html += "<div style='margin-left:3%; margin-top:1%'>";
                         html += "<div style='display:flex;'>";
-                        html += "<span style='padding:10px;border-radius:20px;background-color: lightsteelblue; margin-left:1% ; white-space: pre-wrap; display: flex' id='" + this.id + "-contentBestReply'>" + this.commentContent + "</span>";
+                        html += "<span style='padding:10px;border-radius:20px;background-color: white; margin-left:1% ; white-space: pre-wrap; display: flex' id='" + this.id + "-contentBestReply'>" + this.commentContent + "</span>";
                         html += "<textarea class='updateInput'   style='padding:10px;border-radius:20px;background-color: transparent; margin-left:1%; width:90%' id='" + this.id + "-contentInputBestReply'></textarea>";
                         html += "</div>";
                         html += "<div style='display:flex;' >";
@@ -483,14 +483,14 @@
                         html += "</a>";
                         html += "</span>";
                         html += "<div style='margin-top:2px; display:inline-block; cursor:pointer' id='"+this.id+"-like-disable-Best' class='replyCommentLike' onclick='commentLikeBestReply("+this.id+")'>";
-                        html += "<i class='fa fa-heart-o' style='margin-right: 5px; margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
-                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount0-Best' style='cursor: pointer; margin-top:7px ; margin-left:-10px; scale:1.1'>";
+                        html += "<i class='fa fa-heart-o' style=' margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
+                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount0-Best' style='cursor: pointer; margin-top:7px ;  scale:1.1'>";
                         html += this.commentLikeCount;
                         html += "</span>";
                         html+= "</div>"
                         html += "<div style='margin-top:2px ;display:inline-block; cursor:pointer' id='"+this.id+"-like-Best' class='replyCommentLike' onclick='commentDislikeBestReply("+this.id+")'>";
-                        html += "<i class='fa fa-heart' style='margin-right: 5px; margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
-                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount1-Best' style='cursor: pointer; margin-top:7px ; margin-left:-10px; scale:1.1'>";
+                        html += "<i class='fa fa-heart' style='margin-left: 5px;  scale:0.8 '  aria-hidden='true' ></i>"
+                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount1-Best' style='cursor: pointer; margin-top:7px ;scale:1.1'>";
                         html += this.commentLikeCount;
                         html += "</span>";
                         html+= "</div>"
@@ -759,7 +759,7 @@
                         html += "</div>";
                         html += "<div style='margin-left:3%; margin-top:1%'>";
                         html += "<div style='display:flex;'>";
-                        html += "<span style='padding:10px;border-radius:20px;background-color: lightgrey; margin-left:1% ; white-space: pre-wrap; display: flex' id='" + this.id + "-content'>" + this.commentContent + "</span>";
+                        html += "<span style='padding:10px;border-radius:20px;background-color: lightsteelblue; margin-left:1% ; white-space: pre-wrap; display: flex' id='" + this.id + "-content'>" + this.commentContent + "</span>";
                         html += "<textarea class='updateInput'   style='padding:10px;border-radius:20px;background-color: transparent; margin-left:1%; width:90%' id='" + this.id + "-contentInput'></textarea>";
                         html += "</div>";
                         html += "<div style='display:flex;' >";
@@ -778,14 +778,14 @@
                         html += "새로고침";
                         html += "</span>";
                         html += "<div style='margin-top:2px; display:inline-block;cursor:pointer' id='"+this.id+"-like-disable' class='commentLike' onclick='commentLike("+this.id+")'>";
-                        html += "<i class='fa fa-heart-o' style='margin-right: 5px; margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
-                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount0' style='cursor: pointer; margin-top:7px ; margin-left:-10px; scale:1.1'>";
+                        html += "<i class='fa fa-heart-o' style='margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
+                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount0' style='cursor: pointer; margin-top:7px ;  scale:1.1'>";
                         html += this.commentLikeCount;
                         html += "</span>";
                         html+= "</div>"
                         html += "<div style='margin-top:2px ; display:inline-block;cursor:pointer' id='"+this.id+"-like' class='commentLike' onclick='commentDislike("+this.id+")'>";
-                        html += "<i class='fa fa-heart' style='margin-right: 5px; margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
-                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount1' style='cursor: pointer; margin-top:7px ; margin-left:-10px; scale:1.1'>";
+                        html += "<i class='fa fa-heart' style=' margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
+                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount1' style='cursor: pointer; margin-top:7px ; scale:1.1'>";
                         html += this.commentLikeCount;
                         html += "</span>";
                         html+= "</div>"
@@ -801,8 +801,8 @@
                 html2 +=   " <i class='fa fa-certificate' aria-hidden='true' style='margin-left:2% ; margin-right:2px'></i>";
                 html2 +=   "     <span style='font-size: 16px; color: #4C4C4C; font-weight: 500;  padding-top: 10px;  display: inline-block;' id='bestCommentCount'>베댓 : "+data.bestComments.length+" 개</span>";
                 html2 +=   "       <i class='fa fa-list' aria-hidden='true' style='margin-left: 10px; margin-right:2px'></i>";
-                html2 +=   "       <span class='bestCommentBtn' style='font-size: 16px; color: #4C4C4C; font-weight: 500;  padding-top: 10px;  display: inline-block;' onclick='getBestComments()'>펼치기</span>";
-                html2 +=   "       <span class='bestCommentBtn-disable' style='font-size: 16px; color: #4C4C4C; font-weight: 500;  padding-top: 10px;  display: inline-block;' onclick='hideBestComments()'>접기</span>";
+                html2 +=   "       <span class='bestCommentBtn' style='font-size: 16px; color: #4C4C4C; font-weight: 500;  padding-top: 10px;  display: inline-block; cursor:pointer' onclick='getBestComments()'>펼치기</span>";
+                html2 +=   "       <span class='bestCommentBtn-disable' style='font-size: 16px; color: #4C4C4C; font-weight: 500;  padding-top: 10px;  display: inline-block; cursor:pointer' onclick='hideBestComments()'>접기</span>";
                 html2 +=   "     </div>";
                 html2 +=   " </div>";
                 $('#bestCommentsStatus').html(html2);
@@ -845,20 +845,20 @@
                     html3 += "새로고침";
                     html3 += "</span>";
                     html3 += "<div style='margin-top:2px; display:inline-block;cursor:pointer' id='"+this.id+"-like-disableBest' class='commentLike' onclick='commentLikeBest("+this.id+")'>";
-                    html3 += "<i class='fa fa-heart-o' style='margin-right: 5px; margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
-                    html3 += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount0Best' style='cursor: pointer; margin-top:7px ; margin-left:-10px; scale:1.1'>";
+                    html3 += "<i class='fa fa-heart-o' style=' margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
+                    html3 += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount0Best' style='cursor: pointer; margin-top:7px ; scale:1.1'>";
                     html3 += this.commentLikeCount;
                     html3+= "</span>";
                     html3+= "</div>"
                     html3 += "<div style='margin-top:2px ; display:inline-block;cursor:pointer' id='"+this.id+"-likeBest' class='commentLike' onclick='commentDislikeBest("+this.id+")'>";
-                    html3 += "<i class='fa fa-heart' style='margin-right: 5px; margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
-                    html3 += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount1Best' style='cursor: pointer; margin-top:7px ; margin-left:-10px; scale:1.1'>";
+                    html3 += "<i class='fa fa-heart' style=' margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
+                    html3 += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount1Best' style='cursor: pointer; margin-top:7px ; scale:1.1'>";
                     html3 += this.commentLikeCount;
                     html3 += "</span>";
                     html3+= "</div>"
                     html3 += "</div>";
                     html3 += "</div>";
-                    html3 += "<div id='"+this.id+"-replyCommentFormBest' style=' background-color: antiquewhite' class='replyForm'>";
+                    html3 += "<div id='"+this.id+"-replyCommentFormBest' style=' background-color: #F2F2F2;' class='replyForm'>";
                     html3 += "</div>";
                 })
                 $('#bestComments').empty();
@@ -982,14 +982,14 @@
                         html += "</a>";
                         html += "</span>";
                         html += "<div style='margin-top:2px; display:inline-block; cursor:pointer' id='"+this.id+"-like-disable' class='replyCommentLike' onclick='commentLike("+this.id+")'>";
-                        html += "<i class='fa fa-heart-o' style='margin-right: 5px; margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
-                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount0' style='cursor: pointer; margin-top:7px ; margin-left:-10px; scale:1.1'>";
+                        html += "<i class='fa fa-heart-o' style=' margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
+                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount0' style='cursor: pointer; margin-top:7px ;  scale:1.1'>";
                         html += this.commentLikeCount;
                         html += "</span>";
                         html+= "</div>"
                         html += "<div style='margin-top:2px ;display:inline-block; cursor:pointer' id='"+this.id+"-like' class='replyCommentLike' onclick='commentDislike("+this.id+")'>";
-                        html += "<i class='fa fa-heart' style='margin-right: 5px; margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
-                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount1' style='cursor: pointer; margin-top:7px ; margin-left:-10px; scale:1.1'>";
+                        html += "<i class='fa fa-heart' style=' margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
+                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount1' style='cursor: pointer; margin-top:7px ;  scale:1.1'>";
                         html += this.commentLikeCount;
                         html += "</span>";
                         html+= "</div>"
