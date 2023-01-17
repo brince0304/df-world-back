@@ -1,8 +1,6 @@
 package com.dfoff.demo.Service;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -23,23 +21,33 @@ public class RedisService {
 
     private final Long REDIS_KEY_EXPIRE_TIME = 60*60*24L*7L;
 
-    public void saveLikeLog(String ipAddress,Long boardId){
+    public void saveBoardLikeLog(String ipAddress, Long boardId){
         redisTemplate.opsForValue().set( REDIS_KEY_BOARD+boardId+REDIS_KEY_LIKE_LOG+ipAddress,ipAddress,REDIS_KEY_EXPIRE_TIME,TimeUnit.SECONDS);
     }
 
-    public void deleteLikeLog(String ipAddress,Long boardId){
+    public void saveBoardCommentLikeLog(String ipAddress, Long boardId,Long commentId){
+        redisTemplate.opsForValue().set( REDIS_KEY_BOARD+boardId+REDIS_KEY_BOARD_COMMENT+commentId+REDIS_KEY_LIKE_LOG+ipAddress,ipAddress,REDIS_KEY_EXPIRE_TIME,TimeUnit.SECONDS);
+    }
+    public void deleteBoardLikeLog(String ipAddress, Long boardId){
         redisTemplate.delete(REDIS_KEY_BOARD+boardId+REDIS_KEY_LIKE_LOG+ipAddress);
     }
+    public void deleteBoardCommentLikeLog(String ipAddress,Long boardId, Long commentId){
+        redisTemplate.delete(REDIS_KEY_BOARD+boardId+REDIS_KEY_BOARD_COMMENT+commentId+REDIS_KEY_LIKE_LOG+ipAddress);
+    }
 
-    public void saveViewLog(String ipAddress,Long boardId){
+    public void saveBoardViewLog(String ipAddress, Long boardId){
         redisTemplate.opsForValue().set( REDIS_KEY_BOARD+boardId+REDIS_KEY_VIEW_LOG+ipAddress,ipAddress,REDIS_KEY_EXPIRE_TIME,TimeUnit.SECONDS);
     }
 
-    public boolean checkLikeLog(String ipAddress,Long boardId){
+    public boolean checkBoardLikeLog(String ipAddress, Long boardId){
         return Boolean.TRUE.equals(redisTemplate.hasKey(REDIS_KEY_BOARD + boardId + REDIS_KEY_LIKE_LOG + ipAddress));
     }
 
-    public boolean checkViewLog(String ipAddress,Long boardId){
+    public boolean checkBoardCommentLikeLog(String ipAddress, Long boardId,Long commentId){
+        return Boolean.TRUE.equals(redisTemplate.hasKey(REDIS_KEY_BOARD + boardId +REDIS_KEY_BOARD_COMMENT+commentId+ REDIS_KEY_LIKE_LOG + ipAddress));
+    }
+
+    public boolean checkBoardViewLog(String ipAddress, Long boardId){
         return Boolean.TRUE.equals(redisTemplate.hasKey(REDIS_KEY_BOARD + boardId + REDIS_KEY_VIEW_LOG + ipAddress));
     }
 
