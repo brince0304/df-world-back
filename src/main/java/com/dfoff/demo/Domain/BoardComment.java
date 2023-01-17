@@ -1,6 +1,7 @@
 package com.dfoff.demo.Domain;
 
 import com.dfoff.demo.JpaAuditing.AuditingFields;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import jakarta.persistence.*;
@@ -173,6 +174,7 @@ public class BoardComment extends AuditingFields {
     public static class BoardCommentRequest implements Serializable {
         private final Long boardId;
         private final Long commentId;
+        @Size (min = 1, max = 1000, message = "댓글은 1자 이상 1000자 이하로 작성해주세요.")
         private final String commentContent;
     }
 

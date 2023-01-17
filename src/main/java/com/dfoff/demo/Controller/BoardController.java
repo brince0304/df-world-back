@@ -3,8 +3,8 @@ package com.dfoff.demo.Controller;
 import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.Service.*;
-import io.github.furstenheim.CopyDown;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
@@ -13,11 +13,14 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.context.support.HttpRequestHandlerServlet;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -52,35 +55,62 @@ public class BoardController {
     }
     @PostMapping ("/api/like.df")
     public ResponseEntity<?> likeBoard(@RequestParam Long boardId, HttpServletRequest req) {
-        if(redisService.checkLikeLog(req.getRemoteAddr(),boardId)) {
-            redisService.deleteLikeLog(req.getRemoteAddr(),boardId);
+        if(redisService.checkBoardLikeLog(req.getRemoteAddr(),boardId)) {
+            redisService.deleteBoardLikeLog(req.getRemoteAddr(),boardId);
             return new ResponseEntity<>(boardService.decreaseLikeCount(boardId),HttpStatus.OK);
 
         }else{
-            redisService.saveLikeLog(req.getRemoteAddr(),boardId);
+            redisService.saveBoardLikeLog(req.getRemoteAddr(),boardId);
             return new ResponseEntity<>(boardService.increaseLikeCount(boardId),HttpStatus.OK);
         }
     }
     @GetMapping("/api/comment.df")
-    public ResponseEntity<?> getBoardComments(@RequestParam (required = false) Long boardId,
+    public ResponseEntity<?> getBoardComments(HttpServletRequest req,
+            @RequestParam (required = false) Long boardId,
                                               @RequestParam (required = false) Long commentId){
+        Map<String,Object> map = new HashMap<>();
+        Map<String,Boolean> likeMap = new HashMap<>();
+        map.put("bestComments",commentService.findBestBoardCommentByBoardId(boardId).stream().map(BoardComment.BoardCommentResponse::from).collect(Collectors.toList()));
         if(commentId==null) {
-            return new ResponseEntity<>(commentService.findBoardCommentByBoardId(boardId).stream().map(BoardComment.BoardCommentResponse::from),HttpStatus.OK);
+            map.put("comments",commentService.findBoardCommentByBoardId(boardId).stream().map(BoardComment.BoardCommentResponse::from).collect(Collectors.toList()));
+            boardService.getBoardDetail(boardId).getBoardComments().forEach(o->{
+                likeMap.put(String.valueOf(o.getId()), redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, o.getId()));
+            });
+            map.put("likeMap",likeMap);
+            return new ResponseEntity<>(map,HttpStatus.OK);
         }
         else{
-            List<BoardComment.BoardCommentDto> dtos =commentService.findBoardCommentsByParentId(boardId,commentId);
-            log.info("dtos : {}",dtos);
-            return new ResponseEntity<>(dtos.stream().map(BoardComment.BoardCommentResponse::from),HttpStatus.OK);
+            map.put("comments",commentService.findBoardCommentsByParentId(boardId,commentId).stream().map(BoardComment.BoardCommentResponse::from).collect(Collectors.toList()));
+            boardService.getBoardDetail(boardId).getBoardComments().forEach(o->{
+                likeMap.put(String.valueOf(o.getId()), redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, o.getId()));
+            });
+            map.put("likeMap",likeMap);
+            return new ResponseEntity<>(map,HttpStatus.OK);
+        }
+    }
+
+    @PostMapping("/api/likeComment.df")
+    public ResponseEntity<?> likeComment(@RequestParam Long commentId,@RequestParam Long boardId, HttpServletRequest req) {
+        if(redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId,commentId)) {
+            redisService.deleteBoardCommentLikeLog(req.getRemoteAddr(),boardId,commentId);
+            return new ResponseEntity<>(commentService.updateBoardCommentDisLike(commentId),HttpStatus.OK);
+
+        }else{
+            redisService.saveBoardCommentLikeLog(req.getRemoteAddr(),boardId,commentId);
+            return new ResponseEntity<>(commentService.updateBoardCommentLike(commentId),HttpStatus.OK);
         }
     }
 
     @PostMapping("/api/comment.df")
-    public ResponseEntity<?> createBoardComment(@RequestBody BoardComment.BoardCommentRequest request, @AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
+    public ResponseEntity<?> createBoardComment(@RequestBody @Valid BoardComment.BoardCommentRequest request,BindingResult bindingResult, @AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
                                                 @RequestParam (required = false) String mode){
         try {
+            if(principalDto==null){return new ResponseEntity<>("로그인이 필요합니다.",HttpStatus.UNAUTHORIZED);}
+            if(bindingResult.hasErrors()){
+                return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
+            }
             Board.BoardDto boardDto = boardService.getBoardDetail(request.getBoardId());
             if(mode!=null&&mode.equals("children")) {
-                BoardComment.BoardCommentDto parent = commentService.findBoardCommentById(request.getCommentId());
                 commentService.createChildrenComment(request.getCommentId(),BoardComment.BoardCommentDto.from(request, UserAccount.UserAccountDto.from(principalDto),boardDto));
                 return new ResponseEntity<>(HttpStatus.OK);
             }else {
@@ -89,7 +119,7 @@ public class BoardController {
             }
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>("failed",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("실패했습니다.",HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -100,20 +130,22 @@ public class BoardController {
             return new ResponseEntity<>("success",HttpStatus.OK);
         }catch (Exception e){
             e.printStackTrace();
-            return new ResponseEntity<>("failed",HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("실패했습니다.",HttpStatus.BAD_REQUEST);
         }
     }
 
     @PutMapping("/api/comment.df")
-    public ResponseEntity<?> updateBoardComment(@RequestBody BoardComment.BoardCommentRequest request, @AuthenticationPrincipal UserAccount.PrincipalDto principalDto){
+    public ResponseEntity<?> updateBoardComment(@RequestBody @Valid BoardComment.BoardCommentRequest request,BindingResult bindingResult, @AuthenticationPrincipal UserAccount.PrincipalDto principalDto){
         try {
             if(principalDto==null){
-                return new ResponseEntity<>("failed",HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>("로그인이 필요합니다.",HttpStatus.UNAUTHORIZED);
+            }if(bindingResult.hasErrors()){
+                return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
             }
             commentService.updateBoardComment(request.getCommentId(),request,principalDto.getUsername());
             return new ResponseEntity<>("success",HttpStatus.OK);
         }catch (Exception e){
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("실패했습니다.",HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -123,15 +155,15 @@ public class BoardController {
                                         HttpServletRequest req) {
         try {
             ModelAndView mav = new ModelAndView("/board/boardDetails");
-            if(!redisService.checkViewLog(req.getRemoteAddr(),boardId)){
-                redisService.saveViewLog(req.getRemoteAddr(),boardId);
+            if(!redisService.checkBoardViewLog(req.getRemoteAddr(),boardId)){
+                redisService.saveBoardViewLog(req.getRemoteAddr(),boardId);
                 boardService.increaseViewCount(boardId);
             }
             Board.BoardResponse boardResponse = Board.BoardResponse.from(boardService.getBoardDetail(boardId));
             mav.addObject("article", boardResponse);
             mav.addObject("boardType", boardResponse.getBoardType().toString());
             mav.addObject("bestArticles", boardService.getBestBoard(null).stream().map(Board.BoardResponse::from).collect(Collectors.toList()));
-            mav.addObject("likeLog",redisService.checkLikeLog(req.getRemoteAddr(),boardId));
+            mav.addObject("likeLog",redisService.checkBoardLikeLog(req.getRemoteAddr(),boardId));
             return mav;
         }
         catch (Exception e){
@@ -160,9 +192,7 @@ public class BoardController {
             mav.addObject("requestType",request);
             StringBuilder sb = new StringBuilder();
             for(Hashtag.HashtagResponse hashtag : boardResponse.getHashtags()){
-                sb.append("#");
-                sb.append(hashtag.getName());
-                sb.append(" ");
+                sb.append("#").append(hashtag.getName());
             }
             mav.addObject("hashtag",sb);
             mav.addObject("characterExist",boardResponse.getCharacter()!=null);
@@ -181,7 +211,7 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
         try {
             Board.BoardDto boardDto = boardService.getBoardDetail(id);
             if (principalDto == null || !boardDto.getUserAccount().userId().equals(principalDto.getUsername())) {
-                return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>("로그인이 필요합니다.",HttpStatus.UNAUTHORIZED);
             }
             boardDto.getBoardFiles().forEach(saveFile -> {
                 log.info("saveFile : {}", saveFile);
@@ -195,31 +225,41 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
     }
 
     @PostMapping("/api/board.df")
-    public ResponseEntity<?> saveBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody Board.BoardRequest boardRequest) {
+    public ResponseEntity<?> saveBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody @Valid Board.BoardRequest boardRequest, BindingResult bindingResult) {
+        try{
         if(principalDto==null){
             return new ResponseEntity<>("로그인이 필요합니다.", HttpStatus.UNAUTHORIZED);
+        }
+        if(bindingResult.hasErrors()){
+            return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
         }
         Set<SaveFile.SaveFileDTO> set = saveFileService.getFileDtosFromRequestsFileIds(boardRequest);
         if(boardRequest.getServerId().equals("")){
             return new ResponseEntity<>(boardService.createBoard(Board.BoardDto.from(boardRequest, UserAccount.UserAccountDto.from(principalDto)),set,null).getId(),HttpStatus.OK);
         }
         CharacterEntity.CharacterEntityDto character = characterService.getCharacter(boardRequest.getServerId(),boardRequest.getCharacterId());
-        return new ResponseEntity<>(boardService.createBoard(Board.BoardDto.from(boardRequest, UserAccount.UserAccountDto.from(principalDto)),set,character).getId(),HttpStatus.OK);
+        return new ResponseEntity<>(boardService.createBoard(Board.BoardDto.from(boardRequest, UserAccount.UserAccountDto.from(principalDto)),set,character).getId(),HttpStatus.OK);}
+        catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/api/board.df")
-    public ResponseEntity<?> updateBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody Board.BoardRequest updateRequest) {
+    public ResponseEntity<?> updateBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody @Valid Board.BoardRequest updateRequest,BindingResult bindingResult) {
         try{
         Board.BoardDto dto_ = boardService.getBoardDetail(updateRequest.getId());
         if(principalDto==null || !dto_.getUserAccount().userId().equals(principalDto.getUsername())){
             return new ResponseEntity<>("로그인이 필요하거나 권한이 없습니다.", HttpStatus.UNAUTHORIZED);
+        }
+        if(bindingResult.hasErrors()){
+            return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
         }
         Set<SaveFile.SaveFileDTO> set = saveFileService.getFileDtosFromRequestsFileIds(updateRequest);
             CharacterEntity.CharacterEntityDto character = characterService.getCharacter(updateRequest.getServerId(),updateRequest.getCharacterId());
             return new ResponseEntity<>(boardService.updateBoard(updateRequest.getId(),Board.BoardDto.from(updateRequest, UserAccount.UserAccountDto.from(principalDto)),set,character).getId(),HttpStatus.OK);
     }catch (Exception e){
             log.error("error : {}",e);
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
     }
     }
 }
