@@ -27,25 +27,15 @@ public class SaveFileController {
 
     @PostMapping("/api/upload.df")
     public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file) throws IOException {
-        try{
             SaveFile.SaveFileDTO fileDto = saveFileService.saveFile(FileUtil.getFileDtoFromMultiPartFile(file));
             return new ResponseEntity<>(fileDto, HttpStatus.OK);
-        }catch (Exception e){
-            log.error("uploadFile() error: {}", e.getMessage());
-            return new ResponseEntity<>("error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
 
     @GetMapping("/api/getFile.df")
     public ResponseEntity<?> getFileImg(@RequestParam String name) throws IOException {
-        try{
-            File file = FileUtil.getFileFromSaveFile(saveFileService.getFileByFileName(name));
-            byte[] imgArray = IOUtils.toByteArray(new FileInputStream(file));
-            return new ResponseEntity<>(imgArray,HttpStatus.OK);
-        }
-        catch (EntityNotFoundException e){
-            return new ResponseEntity<>("error",HttpStatus.NOT_FOUND);
-        }
+        File file = FileUtil.getFileFromSaveFile(saveFileService.getFileByFileName(name));
+        byte[] imgArray = IOUtils.toByteArray(new FileInputStream(file));
+        return new ResponseEntity<>(imgArray, HttpStatus.OK);
     }
 
 }

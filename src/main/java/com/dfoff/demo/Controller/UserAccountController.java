@@ -6,6 +6,7 @@ import com.dfoff.demo.Service.CharacterService;
 import com.dfoff.demo.Service.SaveFileService;
 import com.dfoff.demo.Service.UserAccountService;
 import com.dfoff.demo.Util.Bcrypt;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.web.PageableDefault;
@@ -32,50 +33,48 @@ public class UserAccountController {
     private final CharacterService characterService;
 
 
-
     private final Bcrypt bcrypt;
 
 
-
     @GetMapping("/api/user/validate")
-    public String checkExist(@RequestParam (required = false) String email,
-                             @RequestParam (required = false) String nickname,
-                             @RequestParam (required = false) String username) {
-       if(email != null){
-           log.info("email: {}", email);
-           boolean result = userAccountService.existsByEmail(email);
-           if(result){
-               return "false";
-           }
-           return "true";
-         }else if(nickname != null){
-              log.info("nickname: {}", nickname);
-              boolean result = userAccountService.existsByNickname(nickname);
-              if(result){
+    public String checkExist(@RequestParam(required = false) String email,
+                             @RequestParam(required = false) String nickname,
+                             @RequestParam(required = false) String username) {
+        if (email != null) {
+            log.info("email: {}", email);
+            boolean result = userAccountService.existsByEmail(email);
+            if (result) {
                 return "false";
-              }
-              return "true";
-       }else if(username != null){
-           log.info("username: {}", username);
-              boolean result = userAccountService.existsByUserId(username);
-                if(result){
-                    return "false";
-                }
-       }return "true";
+            }
+            return "true";
+        } else if (nickname != null) {
+            log.info("nickname: {}", nickname);
+            boolean result = userAccountService.existsByNickname(nickname);
+            if (result) {
+                return "false";
+            }
+            return "true";
+        } else if (username != null) {
+            log.info("username: {}", username);
+            boolean result = userAccountService.existsByUserId(username);
+            if (result) {
+                return "false";
+            }
+        }
+        return "true";
     }
 
 
     @GetMapping("/api/user/searchChar.df")
     public ResponseEntity<?> searchChar(@RequestParam(required = false) String serverId,
                                         @RequestParam(required = false) String characterName,
-                                        @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable ,
+                                        @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable,
                                         @AuthenticationPrincipal UserAccount.PrincipalDto userAccountDTO) {
-        try {
             if (userAccountDTO == null) {
-                return new ResponseEntity<>("로그인이 필요합니다.", HttpStatus.BAD_REQUEST);
+                throw new SecurityException("로그인이 필요합니다.");
             }
             if (serverId == null || characterName == null) {
-                return new ResponseEntity<>("서버와 캐릭터 이름을 입력해주세요.", HttpStatus.BAD_REQUEST);
+                throw new IllegalArgumentException("서버 아이디, 캐릭터 아이디는 필수입니다.");
             }
             if (serverId.equals("adventure")) {
                 return new ResponseEntity<>(characterService.getCharacterByAdventureName(characterName, pageable).map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).toList(), HttpStatus.OK);
@@ -83,117 +82,88 @@ public class UserAccountController {
             List<CompletableFuture<CharacterEntity.CharacterEntityDto>> dtos = new ArrayList<>();
             List<CharacterEntity.CharacterEntityDto> dtos1 = characterService.getCharacterDTOs(serverId, characterName);
             for (CharacterEntity.CharacterEntityDto dto : dtos1.subList(0, Math.min(dtos1.size(), 15))) {
-                if(dto.getLevel()>=100) {
+                if (dto.getLevel() >= 100) {
                     dtos.add(characterService.getCharacterAbilityThenSaveAsync(dto));
-                }else{
+                } else {
                     dtos.add(CompletableFuture.completedFuture(dto));
                 }
             }
             int size = Math.min(dtos.size(), 15);
-            return new ResponseEntity<>(dtos.stream().map(CompletableFuture::join).map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toList()).subList(0,size), HttpStatus.OK);
-            } catch(Exception e){
-                log.info("error: {}", e.getMessage());
-                return new ResponseEntity<>("캐릭터를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
-            }
-        }
+            return new ResponseEntity<>(dtos.stream().map(CompletableFuture::join).map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toList()).subList(0, size), HttpStatus.OK);
+    }
 
 
     @PostMapping("/api/user")
-    public ResponseEntity<?> createAccount(@RequestBody UserAccount.UserAccountSignUpRequest request){
-        try {
-            log.info("singUp: {}", request);
-            if (request.getPassword().equals(request.getPasswordCheck())) {
-                if (userAccountService.createAccount(request.toDto(),saveFileService.getFileByFileName("icon_char_0.png"))) {
-                    return new ResponseEntity<>(request.getUserId(), HttpStatus.OK);
-                }
-            }
-            return new ResponseEntity<>("비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> createAccount(@RequestBody UserAccount.UserAccountSignUpRequest request) {
+        if (!request.getPassword().equals(request.getPasswordCheck())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        catch (Exception e){
-            e.printStackTrace();
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
+        userAccountService.createAccount(request.toDto(), saveFileService.getFileByFileName("icon_char_0.png"));
+            return new ResponseEntity<>(request.getUserId(), HttpStatus.OK);
     }
 
     @PostMapping("/api/user/char.df")
-    public ResponseEntity<?> addCharacter(@RequestParam (required = false) String request,
-                                          @RequestParam (required = false) String serverId,
-                                          @RequestParam (required = false) String characterId,
+    public ResponseEntity<?> addCharacter(@RequestParam(required = false) String request,
+                                          @RequestParam(required = false) String serverId,
+                                          @RequestParam(required = false) String characterId,
                                           @AuthenticationPrincipal UserAccount.PrincipalDto userAccountDTO) {
-        try {
-            if(userAccountDTO == null){
-                return new ResponseEntity<>("로그인이 필요합니다.", HttpStatus.BAD_REQUEST);
-            }
-            if(request.equals("add")){
-                characterService.getCharacterAbilityThenSaveAsync(characterService.getCharacter(serverId,characterId));
-                characterService.addCharacter(UserAccount.UserAccountDto.from(userAccountDTO), characterService.getCharacter(serverId,characterId));
-            }else if(request.equals("delete")){
-                characterService.deleteCharacter(UserAccount.UserAccountDto.from(userAccountDTO), characterService.getCharacter(serverId,characterId));
-            }
-            return new ResponseEntity<>("success", HttpStatus.OK);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>("fail", HttpStatus.BAD_REQUEST);
+        if (userAccountDTO == null) {
+            throw new SecurityException("로그인이 필요합니다.");
         }
+        if (request.equals("add")) {
+            characterService.getCharacterAbilityThenSaveAsync(characterService.getCharacter(serverId, characterId));
+            characterService.addCharacter(UserAccount.UserAccountDto.from(userAccountDTO), characterService.getCharacter(serverId, characterId));
+        } else if (request.equals("delete")) {
+            characterService.deleteCharacter(UserAccount.UserAccountDto.from(userAccountDTO), characterService.getCharacter(serverId, characterId));
+        }
+        return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
     @GetMapping("/user/myPage.df")
-    public ModelAndView getMyPage(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto){
-        try {
-            if (principalDto == null) {
-                return new ModelAndView("redirect:/main.df");
-            }
-            ModelAndView mav = new ModelAndView("/mypage/mypage");
-            UserAccount.UserAccountDto userAccountDTO = userAccountService.getUserAccountById(principalDto.getUsername());
-            mav.addObject("user", UserAccount.UserAccountResponse.from(userAccountDTO));
-            mav.addObject("characters", userAccountDTO.characterEntityDtos().stream().map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toSet()));
-            return mav;
+    public ModelAndView getMyPage(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto) {
+        if (principalDto == null) {
+            throw new SecurityException("로그인이 필요합니다.");
         }
-        catch (Exception e){
-            e.printStackTrace();
-            return new ModelAndView("redirect:/main.df");
-        }
+        ModelAndView mav = new ModelAndView("/mypage/mypage");
+        UserAccount.UserAccountDto userAccountDTO = userAccountService.getUserAccountById(principalDto.getUsername());
+        mav.addObject("user", UserAccount.UserAccountResponse.from(userAccountDTO));
+        mav.addObject("characters", userAccountDTO.characterEntityDtos().stream().map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toSet()));
+        return mav;
     }
 
     @PutMapping("/api/user/profile.df")
     public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
-                                           @RequestParam (required = false) String nickname,
-                                           @RequestParam (required = false) String email,
-                                           @RequestParam (required = false) String password,
-                                             @RequestParam (required = false) String profileIcon){
+                                           @RequestParam(required = false) String nickname,
+                                           @RequestParam(required = false) String email,
+                                           @RequestParam(required = false) String password,
+                                           @RequestParam(required = false) String profileIcon) {
+        if (principalDto == null) {
+            throw new SecurityException("로그인이 필요합니다.");
+        }
+        if (password != null) {
+            if (userAccountService.chagePassword(UserAccount.UserAccountDto.from(principalDto), password)) {
+                return new ResponseEntity<>("비밀번호가 변경되었습니다.", HttpStatus.OK);
+            }
+        }
+        if (profileIcon != null) {
+            if (userAccountService.changeProfileIcon(UserAccount.UserAccountDto.from(principalDto), saveFileService.getFileByFileName(profileIcon))) {
+                return new ResponseEntity<>("프로필이 변경되었습니다.", HttpStatus.OK);
+            }
+        }
+        if (nickname != null) {
+            if (userAccountService.changeNickname(UserAccount.UserAccountDto.from(principalDto), nickname)) {
+                return new ResponseEntity<>("닉네임이 변경되었습니다.", HttpStatus.OK);
+            }
+        }
+        if (email != null) {
+            if (userAccountService.changeEmail(UserAccount.UserAccountDto.from(principalDto), email)) {
+                return new ResponseEntity<>("이메일이 변경되었습니다.", HttpStatus.OK);
+            }
+        }
+        return new ResponseEntity<>("success", HttpStatus.OK);
+    }
 
-        try {
-            if(principalDto == null){
-                return new ResponseEntity<>("로그인이 필요합니다.", HttpStatus.BAD_REQUEST);
-            }
-            if(password != null){
-                if(userAccountService.chagePassword(UserAccount.UserAccountDto.from(principalDto), password)){
-                    return new ResponseEntity<>("비밀번호가 변경되었습니다.", HttpStatus.OK);
-                }
-            }
-            if(profileIcon != null){
-                if(userAccountService.changeProfileIcon(UserAccount.UserAccountDto.from(principalDto),saveFileService.getFileByFileName(profileIcon))){
-                    return new ResponseEntity<>("프로필이 변경되었습니다.", HttpStatus.OK);
-                }
-            }
-            if(nickname != null){
-                if(userAccountService.changeNickname(UserAccount.UserAccountDto.from(principalDto),nickname)){
-                    return new ResponseEntity<>("닉네임이 변경되었습니다.", HttpStatus.OK);
-                }
-            }
-            if(email != null){
-                if(userAccountService.changeEmail(UserAccount.UserAccountDto.from(principalDto),email)){
-                    return new ResponseEntity<>("이메일이 변경되었습니다.", HttpStatus.OK);
-                }
-            }
-            return new ResponseEntity<>("success", HttpStatus.OK);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-        }
-    }
-    }
+}
 
 
 

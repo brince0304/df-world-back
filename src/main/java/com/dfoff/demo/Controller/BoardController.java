@@ -3,6 +3,7 @@ package com.dfoff.demo.Controller;
 import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.Service.*;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +19,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -37,6 +35,10 @@ public class BoardController {
     private final CharacterService characterService;
 
     private final RedisService redisService;
+
+
+
+
     @GetMapping("/board.df")
     public ModelAndView getBoardList(@RequestParam (required = false) BoardType boardType,
                                      @RequestParam (required = false) String keyword,
@@ -104,8 +106,7 @@ public class BoardController {
     @PostMapping("/api/comment.df")
     public ResponseEntity<?> createBoardComment(@RequestBody @Valid BoardComment.BoardCommentRequest request,BindingResult bindingResult, @AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
                                                 @RequestParam (required = false) String mode){
-        try {
-            if(principalDto==null){return new ResponseEntity<>("로그인이 필요합니다.",HttpStatus.UNAUTHORIZED);}
+            if(principalDto==null){throw new SecurityException("로그인이 필요합니다.");}
             if(bindingResult.hasErrors()){
                 return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
             }
@@ -117,43 +118,37 @@ public class BoardController {
                 commentService.createBoardComment(BoardComment.BoardCommentDto.from(request, UserAccount.UserAccountDto.from(principalDto), boardDto));
                 return new ResponseEntity<>("success", HttpStatus.OK);
             }
-        }catch (Exception e){
-            e.printStackTrace();
-            return new ResponseEntity<>("실패했습니다.",HttpStatus.BAD_REQUEST);
         }
-    }
+
 
     @DeleteMapping("/api/comment.df")
-    public ResponseEntity<?> deleteBoardComment(@RequestParam Long commentId){
-        try {
+    public ResponseEntity<?> deleteBoardComment(@AuthenticationPrincipal UserAccount.PrincipalDto dto , @RequestParam Long commentId){
+
+            if(dto==null || !Objects.equals(commentService.findBoardCommentById(commentId).getUserAccount().userId(), dto.getUsername())){
+                return new ResponseEntity<>("권한이 없습니다.",HttpStatus.UNAUTHORIZED);
+            }
             commentService.deleteBoardComment(commentId);
             return new ResponseEntity<>("success",HttpStatus.OK);
-        }catch (Exception e){
-            e.printStackTrace();
-            return new ResponseEntity<>("실패했습니다.",HttpStatus.BAD_REQUEST);
         }
-    }
+
 
     @PutMapping("/api/comment.df")
     public ResponseEntity<?> updateBoardComment(@RequestBody @Valid BoardComment.BoardCommentRequest request,BindingResult bindingResult, @AuthenticationPrincipal UserAccount.PrincipalDto principalDto){
-        try {
+
             if(principalDto==null){
-                return new ResponseEntity<>("로그인이 필요합니다.",HttpStatus.UNAUTHORIZED);
+                throw new SecurityException("로그인이 필요합니다.");
             }if(bindingResult.hasErrors()){
                 return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
             }
             commentService.updateBoardComment(request.getCommentId(),request,principalDto.getUsername());
             return new ResponseEntity<>("success",HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>("실패했습니다.",HttpStatus.BAD_REQUEST);
         }
-    }
+
 
 
     @GetMapping("/board/{boardId}.df")
     public ModelAndView getBoardDetails(@PathVariable Long boardId,
                                         HttpServletRequest req) {
-        try {
             ModelAndView mav = new ModelAndView("/board/boardDetails");
             if(!redisService.checkBoardViewLog(req.getRemoteAddr(),boardId)){
                 redisService.saveBoardViewLog(req.getRemoteAddr(),boardId);
@@ -166,10 +161,7 @@ public class BoardController {
             mav.addObject("likeLog",redisService.checkBoardLikeLog(req.getRemoteAddr(),boardId));
             return mav;
         }
-        catch (Exception e){
-            return new ModelAndView("redirect:/board.df");
-        }
-    }
+
 
 
     @GetMapping("/board/insert.df")
@@ -178,9 +170,9 @@ public class BoardController {
                                        @RequestParam (required = false) String id,
                                        Board.BoardRequest boardRequest) {
         if(principalDto==null){
-            return new ModelAndView("redirect:/board.df");
+            throw new EntityNotFoundException("로그인이 필요합니다.");
         }else if(request==null){
-            return new ModelAndView("redirect:/board.df");
+            throw new IllegalArgumentException("잘못된 접근입니다.");
         }
         ModelAndView mav = new ModelAndView("/board/boardInsert");
         if(request.equals("add")){
@@ -208,10 +200,10 @@ public class BoardController {
     @DeleteMapping("/api/board.df")
 public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
                                       @RequestParam (required = true) Long id) {
-        try {
+
             Board.BoardDto boardDto = boardService.getBoardDetail(id);
             if (principalDto == null || !boardDto.getUserAccount().userId().equals(principalDto.getUsername())) {
-                return new ResponseEntity<>("로그인이 필요합니다.",HttpStatus.UNAUTHORIZED);
+                throw new SecurityException("권한이 없습니다.");
             }
             boardDto.getBoardFiles().forEach(saveFile -> {
                 log.info("saveFile : {}", saveFile);
@@ -219,16 +211,14 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
             });
             boardService.deleteBoardById(id);
             return new ResponseEntity<>(HttpStatus.OK);
-        }catch (Exception e){
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
+
 
     @PostMapping("/api/board.df")
     public ResponseEntity<?> saveBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody @Valid Board.BoardRequest boardRequest, BindingResult bindingResult) {
-        try{
+
         if(principalDto==null){
-            return new ResponseEntity<>("로그인이 필요합니다.", HttpStatus.UNAUTHORIZED);
+           throw new SecurityException("권한이 없습니다.");
         }
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
@@ -239,17 +229,14 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
         }
         CharacterEntity.CharacterEntityDto character = characterService.getCharacter(boardRequest.getServerId(),boardRequest.getCharacterId());
         return new ResponseEntity<>(boardService.createBoard(Board.BoardDto.from(boardRequest, UserAccount.UserAccountDto.from(principalDto)),set,character).getId(),HttpStatus.OK);}
-        catch (Exception e){
-            return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
-        }
-    }
+
 
     @PutMapping("/api/board.df")
     public ResponseEntity<?> updateBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody @Valid Board.BoardRequest updateRequest,BindingResult bindingResult) {
-        try{
+
         Board.BoardDto dto_ = boardService.getBoardDetail(updateRequest.getId());
         if(principalDto==null || !dto_.getUserAccount().userId().equals(principalDto.getUsername())){
-            return new ResponseEntity<>("로그인이 필요하거나 권한이 없습니다.", HttpStatus.UNAUTHORIZED);
+           throw new SecurityException("권한이 없습니다.");
         }
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
@@ -257,9 +244,5 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
         Set<SaveFile.SaveFileDTO> set = saveFileService.getFileDtosFromRequestsFileIds(updateRequest);
             CharacterEntity.CharacterEntityDto character = characterService.getCharacter(updateRequest.getServerId(),updateRequest.getCharacterId());
             return new ResponseEntity<>(boardService.updateBoard(updateRequest.getId(),Board.BoardDto.from(updateRequest, UserAccount.UserAccountDto.from(principalDto)),set,character).getId(),HttpStatus.OK);
-    }catch (Exception e){
-            log.error("error : {}",e);
-        return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-    }
     }
 }
