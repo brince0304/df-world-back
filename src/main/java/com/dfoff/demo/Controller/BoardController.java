@@ -76,9 +76,9 @@ public class BoardController {
                 redisService.saveBoardViewLog(req.getRemoteAddr(),boardId);
                 boardService.increaseViewCount(boardId);
             }
-            Board.BoardDetailResponse boardListResponse = boardService.getBoardDetail(boardId);
-            mav.addObject("article", boardListResponse);
-            mav.addObject("boardType", boardListResponse.getBoardType().toString());
+            Board.BoardDetailResponse boardResponse = boardService.getBoardDetail(boardId);
+            mav.addObject("article", boardResponse);
+            mav.addObject("boardType", boardResponse.getBoardType().toString());
             mav.addObject("bestArticles", boardService.getBestBoard(null));
             mav.addObject("likeLog",redisService.checkBoardLikeLog(req.getRemoteAddr(),boardId));
             return mav;
@@ -109,11 +109,11 @@ public class BoardController {
                 sb.append("#").append(hashtag);
             }
             mav.addObject("hashtag",sb);
-            mav.addObject("characterExist", boardResponse.getCharacters().size()>0);
-            if(boardResponse.getCharacters().size()>0){
-                mav.addObject("characterName", boardResponse.getCharacters().stream().findFirst().get().getCharacterName());
-                mav.addObject("characterId", boardResponse.getCharacters().stream().findFirst().get().getCharacterId());
-                mav.addObject("serverId", boardResponse.getCharacters().stream().findFirst().get().getServerId());
+            mav.addObject("characterExist", boardResponse.getCharacter()!=null);
+            if(boardResponse.getCharacter()!=null){
+                mav.addObject("characterName", boardResponse.getCharacter().getCharacterName());
+                mav.addObject("characterId", boardResponse.getCharacter().getCharacterId());
+                mav.addObject("serverId", boardResponse.getCharacter().getServerId());
             }
         }
         return mav;

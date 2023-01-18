@@ -18,6 +18,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.dfoff.demo.Domain.Board.BoardListResponse.Chrono.timesAgo;
 import static com.dfoff.demo.Util.BoardUtil.converter;
 
 @Entity
@@ -186,7 +187,7 @@ public class Board extends AuditingFields {
                     .jobName(characterEntity.getJobName())
                     .adventureName(characterEntity.getAdventureName() == null ? "갱신필요" : characterEntity.getAdventureName())
                     .adventureFame(characterEntity.getAdventureFame() == null ? "0" : characterEntity.getAdventureFame())
-                    .characterImageUrl(OpenAPIUtil.getCharacterImgUrl(characterEntity.getCharacterId(), characterEntity.getServerId(),"1"))
+                    .characterImageUrl(OpenAPIUtil.getCharacterImgUrl(characterEntity.getServerId(),characterEntity.getCharacterId() ,"1"))
                     .build();
         }
     }
@@ -214,7 +215,11 @@ public class Board extends AuditingFields {
 
         private final String userNickname;
 
-        private final Set<CharacterBoardResponse> characters;
+        private final String userProfileImgUrl;
+
+        private final CharacterBoardResponse character;
+
+        private final Set<String> hashtags;
 
 
         public String convert(String date){
@@ -235,9 +240,9 @@ public class Board extends AuditingFields {
         }
         public static BoardListResponse from(Board board){
             return BoardListResponse.builder()
-                    .createdAt(board.getCreatedAt().toString())
+                    .createdAt(timesAgo(board.getCreatedAt()))
                     .createdBy(board.getCreatedBy())
-                    .modifiedAt(board.getModifiedAt().toString())
+                    .modifiedAt(timesAgo(board.getModifiedAt()))
                     .modifiedBy(board.getModifiedBy())
                     .id(board.getId())
                     .boardType(board.getBoardType())
@@ -249,7 +254,9 @@ public class Board extends AuditingFields {
                     .commentCount(String.valueOf(board.getBoardComments().size()))
                     .userId(board.getUserAccount().getUserId())
                     .userNickname(board.getUserAccount().getNickname())
-                    .characters(board.getCharacter()==null  ? new HashSet<>() : Set.of(CharacterBoardResponse.from(board.getCharacter())))
+                    .character(board.getCharacter()==null ? null : CharacterBoardResponse.from(board.getCharacter()))
+                    .userProfileImgUrl(FileUtil.getProfileIconPath(board.getUserAccount().getProfileIcon().getFileName()))
+                    .hashtags(board.getHashtags().stream().map(BoardHashtagMapper::getHashtag).map(Hashtag::getName).collect(Collectors.toSet()))
                     .build();
         }
 
@@ -323,9 +330,9 @@ public class Board extends AuditingFields {
     @Data
     @Builder
     public static class BoardDetailResponse implements Serializable {
-        private final LocalDateTime createdAt;
+        private final String createdAt;
         private final String createdBy;
-        private final LocalDateTime modifiedAt;
+        private final String modifiedAt;
         private final String modifiedBy;
         private final Long id;
         private final BoardType boardType;
@@ -339,7 +346,7 @@ public class Board extends AuditingFields {
         private final Integer boardViewCount;
         private final Integer boardLikeCount;
 
-        private final Set<CharacterBoardResponse> characters;
+        private final CharacterBoardResponse character;
 
         private final String userId;
 
@@ -351,11 +358,28 @@ public class Board extends AuditingFields {
 
         private final List<String> hashtags;
 
+        public String convert(String date){
+            return converter.convert(date);
+        }
+
+        public String getBoardType(BoardType type){
+            if(type==null){
+                return null;
+            }
+            return switch (type) {
+                case NOTICE -> "공지";
+                case FREE -> "자유";
+                case QUESTION -> "Q&A";
+                case RECRUITMENT -> "구인";
+                case MARKET -> "거래";
+                case REPORT -> "사건/사고";
+            };
+        }
         public static BoardDetailResponse from (Board board){
             return BoardDetailResponse.builder()
-                    .createdAt(board.getCreatedAt())
+                    .createdAt(timesAgo(board.getCreatedAt()))
                     .createdBy(board.getCreatedBy())
-                    .modifiedAt(board.getModifiedAt())
+                    .modifiedAt(timesAgo(board.getModifiedAt()))
                     .modifiedBy(board.getModifiedBy())
                     .id(board.getId())
                     .boardType(board.getBoardType())
@@ -364,7 +388,7 @@ public class Board extends AuditingFields {
                     .isDeleted(board.getIsDeleted())
                     .boardViewCount(board.getBoardViewCount())
                     .boardLikeCount(board.getBoardLikeCount())
-                    .characters(board.getCharacter()==null  ? new HashSet<>() : Set.of(CharacterBoardResponse.from(board.getCharacter())))
+                    .character(board.getCharacter()==null  ? null : CharacterBoardResponse.from(board.getCharacter()))
                     .userId(board.getUserAccount().getUserId())
                     .userNickname(board.getUserAccount().getNickname())
                     .userProfileIconPath(FileUtil.getProfileIconPath(board.getUserAccount().getProfileIcon().getFileName()))

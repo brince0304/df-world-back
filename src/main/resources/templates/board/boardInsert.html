@@ -97,13 +97,13 @@
                 <input type="hidden" name="content" id="updateContent" th:if="${requestType.equals('update') }" th:value="${boardResponse.convert(boardResponse.boardContent)}">
                 <div id="editor1"></div>
                 <span style="font-size: 12px; color: #999999; margin-left: 10px" id="contentWarning">5자이상 입력해주세요.</span>
-                <div class="board-character" th:if="${ requestType.equals('update') && boardResponse.getCharacter()==null}" style="margin-right: 20px; margin-top:20px; float:right">
+                <div class="board-character" th:if="${ requestType.equals('update') && boardResponse.character==null}" style="margin-right: 20px; margin-top:20px; float:right">
                     <img id="charThumb" src="" >
                     <div style="font-size: 20px; font-weight: 500; color: #999999; margin-left:22px"></div>
                 </div>
-                <div class="board-character" th:if="${ requestType.equals('update') && boardResponse.getCharacter()!=null}" style="margin-right: 20px; margin-top:20px; float:right">
+                <div class="board-character" th:if="${ requestType.equals('update') && boardResponse.character!=null}" style="margin-right: 20px; margin-top:20px; float:right">
 
-                    <img id="charThumb" th:src="@{'https://img-api.neople.co.kr/df/servers/'+${boardResponse.character.serverId}+'/characters/'+${boardResponse.character.characterId}+'?zoom=1'}" >
+                    <img id="charThumb" th:src="${boardResponse.character.characterImageUrl}" >
                     <div style="font-size: 20px; font-weight: 500; color: #999999; margin-left:22px"></div>
                 </div>
 

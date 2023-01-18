@@ -523,9 +523,9 @@
                                               style="border-radius: 50%; border: 1px solid #898989; display:inline"
                                               width="20px"
                                               height="20px"
-                                              th:src="@{/api/getFile.df(name=${best.getUserAccount().profileIcon().fileName()})}"/>
+                                              th:src="${best.getUserProfileImgUrl()}"/>
                     <span style="padding-left: 10px; padding-right: 10px; color: #4C4C4C; font-size: 14px; font-weight: 600; padding-top: 2px; display:inline"
-                          th:text="${best.getUserAccount().nickname()}">테스트</span>  <span class="badge bg-secondary text-black-50"
+                          th:text="${best.userNickname}">테스트</span>  <span class="badge bg-secondary text-black-50"
                                                           th:text="${best.getBoardType(best.getBoardType())}" th:if="${best.boardType.name().equals('FREE')}" style="margin-top: 10px;">자유게시판</span>
                         <span class="badge bg-warning text-black-50"
                               th:text="${best.getBoardType(best.getBoardType())}" th:if="${best.boardType.name().equals('NOTICE')}" style="margin-top: 10px;">자유게시판</span>
@@ -546,7 +546,7 @@
                 <div th:if="${articles.isEmpty()}">
                     <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
                         <i class="fa fa-file" style="font-size: 60px"></i>
-                        <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">게시글이 없습니다.</div>
+                        <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px; margin-bottom: 20px">게시글이 없습니다.</div>
                     </div>
                 </div>
                 <div th:each="board : ${articles}">
@@ -567,52 +567,52 @@
                                 <span class="badge bg-danger text-black-50"
                                       th:text="${board.getBoardType(board.getBoardType())}" th:if="${board.boardType.name().equals('REPORT')}" style="margin-top: 10px; margin-left:10px">자유게시판</span></a>
                                 <div th:each="hashtag : ${board.hashtags}" style="display: inline-block">
-                                    <a style="text-decoration-line: none" href="#" th:href="@{/board.df(searchType=hashtag,keyword=${hashtag.name})}">
-                                        <span class="badge bg-info text-black" th:text="'#'+${hashtag.name}">#해시태그1</span></a>
+                                    <a style="text-decoration-line: none" href="#" th:href="@{/board.df(searchType=hashtag,keyword=${hashtag})}">
+                                        <span class="badge bg-info text-black" th:text="'#'+${hashtag}">#해시태그1</span></a>
                                 </div>
                                 <a style="text-decoration-line: none" href="#"
-                                   th:href="@{/board.df(searchType='characterName',keyword=${board.character.characterName})}" th:if="${board.character!=null}">
+                                   th:href="${board.character.characterImageUrl}" th:if="${board.character!=null}">
                                     <i class="fa fa-plug" style="color: black; margin-left:2px" th:if="${board.character!=null}"></i>
                                     <span class="badge bg-transparent text-black" th:if="${board.character!=null}"
                                           th:text="${board.character.characterName}" style="margin-left: -9px; color:black"> 캐릭터</span></a>
                                 <div class="board-character" th:if="${board.character!=null}" th:switch="${board.character.jobName}">
-                                    <img class="m-fighter" th:case="'격투가(남)'" th:src="@{'https://img-api.neople.co.kr/df/servers/'+${board.character.serverId}+'/characters/'+${board.character.characterId}+'?zoom=1'}"
+                                    <img class="m-fighter" th:case="'격투가(남)'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
-                                    <img class="m-gunner" th:case="'거너(남)'" th:src="@{'https://img-api.neople.co.kr/df/servers/'+${board.character.serverId}+'/characters/'+${board.character.characterId}+'?zoom=1'}"
+                                    <img class="m-gunner" th:case="'거너(남)'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
-                                    <img class="f-gunner" th:case="'거너(여)'" th:src="@{'https://img-api.neople.co.kr/df/servers/'+${board.character.serverId}+'/characters/'+${board.character.characterId}+'?zoom=1'}"
+                                    <img class="f-gunner" th:case="'거너(여)'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
-                                    <img class="m-prist" th:case="'프리스트(남)'" th:src="@{'https://img-api.neople.co.kr/df/servers/'+${board.character.serverId}+'/characters/'+${board.character.characterId}+'?zoom=1'}"
+                                    <img class="m-prist" th:case="'프리스트(남)'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
-                                    <img class="f-prist" th:case="'프리스트(여)'" th:src="@{'https://img-api.neople.co.kr/df/servers/'+${board.character.serverId}+'/characters/'+${board.character.characterId}+'?zoom=1'}"
+                                    <img class="f-prist" th:case="'프리스트(여)'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
-                                    <img class="m-gunwarrior" th:case="'총검사'" th:src="@{'https://img-api.neople.co.kr/df/servers/'+${board.character.serverId}+'/characters/'+${board.character.characterId}+'?zoom=1'}"
+                                    <img class="m-gunwarrior" th:case="'총검사'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
-                                    <img class="m-lancer" th:case="'마창사'" th:src="@{'https://img-api.neople.co.kr/df/servers/'+${board.character.serverId}+'/characters/'+${board.character.characterId}+'?zoom=1'}"
+                                    <img class="m-lancer" th:case="'마창사'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
-                                    <img class="f-magition" th:case="'마법사(여)'" th:src="@{'https://img-api.neople.co.kr/df/servers/'+${board.character.serverId}+'/characters/'+${board.character.characterId}+'?zoom=1'}"
+                                    <img class="f-magition" th:case="'마법사(여)'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
-                                    <img class="f-thief" th:case="'도적'" th:src="@{'https://img-api.neople.co.kr/df/servers/'+${board.character.serverId}+'/characters/'+${board.character.characterId}+'?zoom=1'}"
+                                    <img class="f-thief" th:case="'도적'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
-                                    <img class="m-warrior" th:case="'귀검사(남)'" th:src="@{'https://img-api.neople.co.kr/df/servers/'+${board.character.serverId}+'/characters/'+${board.character.characterId}+'?zoom=1'}"
+                                    <img class="m-warrior" th:case="'귀검사(남)'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
-                                    <img class="f-warrior" th:case="'귀검사(여)'" th:src="@{'https://img-api.neople.co.kr/df/servers/'+${board.character.serverId}+'/characters/'+${board.character.characterId}+'?zoom=1'}"
+                                    <img class="f-warrior" th:case="'귀검사(여)'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
-                                    <img class="f-fighter" th:case="'격투가(여)'" th:src="@{'https://img-api.neople.co.kr/df/servers/'+${board.character.serverId}+'/characters/'+${board.character.characterId}+'?zoom=1'}"
+                                    <img class="f-fighter" th:case="'격투가(여)'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
-                                    <img th:case="*" class="default" th:src="@{'https://img-api.neople.co.kr/df/servers/'+${board.character.serverId}+'/characters/'+${board.character.characterId}+'?zoom=1'}"
+                                    <img th:case="*" class="default" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
                                 </div>
@@ -633,9 +633,9 @@
                                  style="border-radius: 50%; border: 1px solid #898989;"
                                  width="25px"
                                  height="25px"
-                                 th:src="@{/api/getFile.df(name=${board.getUserAccount().profileIcon().fileName()})}"/>
+                                 th:src="${board.getUserProfileImgUrl()}"/>
                             <span style="padding-left: 5px; padding-right: 10px; color: #4C4C4C; font-size: 14px; font-weight: 600; padding-top: 2px;"
-                                  th:text="${board.getUserAccount().nickname()}">전재욱4WZ1B</span>
+                                  th:text="${board.userNickname}">전재욱4WZ1B</span>
 
                         </div>
 
@@ -647,11 +647,11 @@
                             <a><i class="far fa-comment-alt"
                                   style="margin-left:5px; margin-right: 5px; color: #999999;"></i><span
                                     style="font-size: 16px; color:#4C4C4C; font-weight: 500;"
-                                    th:text="${board.getBoardComments().size()}">0</span></a>
+                                    th:text="${board.commentCount}">0</span></a>
                             <i class="far fa-eye"
                                style="margin-left:5px; margin-right: 5px; color: #999999;"></i><span
                                 style="font-size: 16px; color:#4C4C4C; font-weight: 500;"
-                                th:text="${board.getBoardViewCount()}">0</span>
+                                th:text="${board.boardViewCount}">0</span>
 
                             <time class="timeago"
                                   style="float: right; color: #4C4C4C; font-size: 16px; display:inline; padding-right:20px"

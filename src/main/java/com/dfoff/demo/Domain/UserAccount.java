@@ -1,7 +1,10 @@
 package com.dfoff.demo.Domain;
 
+import ch.qos.logback.core.testUtil.FileTestUtil;
 import com.dfoff.demo.Domain.EnumType.UserAccount.SecurityRole;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
+import com.dfoff.demo.Util.FileUtil;
+import com.dfoff.demo.Util.OpenAPIUtil;
 import io.micrometer.core.lang.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -273,6 +276,30 @@ public class UserAccount extends AuditingFields {
         private final String adventureFame;
         private final String adventureName;
 
+        private final String characterImageUrl;
+
+        public String getServerName(String serverId) {
+            if (serverId.equals("bakal")) {
+                return "바칼";
+            } else if (serverId.equals("cain")) {
+                return "카인";
+            } else if (serverId.equals("diregie")) {
+                return "디레지에";
+            } else if (serverId.equals("hilder")) {
+                return "힐더";
+            } else if (serverId.equals("prey")) {
+                return "프레이";
+            } else if (serverId.equals("siroco")) {
+                return "시로코";
+            } else if (serverId.equals("casillas")) {
+                return "카시야스";
+            } else if (serverId.equals("anton")) {
+                return "안톤";
+            } else {
+                return serverId;
+            }
+        }
+
         public static CharacterUserAccountResponse from(CharacterEntity characterEntity) {
             return CharacterUserAccountResponse.builder()
                     .characterId(characterEntity.getCharacterId())
@@ -282,6 +309,7 @@ public class UserAccount extends AuditingFields {
                     .jobGrowName(characterEntity.getJobGrowName())
                     .adventureFame(characterEntity.getAdventureFame())
                     .adventureName(characterEntity.getAdventureName())
+                    .characterImageUrl(OpenAPIUtil.getCharacterImgUrl(characterEntity.getServerId(),characterEntity.getCharacterId(),"2"))
                     .build();
         }
 
@@ -304,13 +332,15 @@ public class UserAccount extends AuditingFields {
         private final LocalDateTime modifiedAt;
         private final String modifiedBy;
 
+
+
         public static UserAccountMyPageResponse from(UserAccount userAccount) {
             return UserAccountMyPageResponse.builder()
                     .userId(userAccount.getUserId())
                     .nickname(userAccount.getNickname())
                     .email(userAccount.getEmail())
                     .characters(CharacterUserAccountResponse.from(userAccount.getCharacterEntities()))
-                    .profileIconPath(userAccount.getProfileIcon() == null ? null : userAccount.getProfileIcon().getFilePath())
+                    .profileIconPath(userAccount.getProfileIcon() == null ? null : FileUtil.getProfileIconPath(userAccount.getProfileIcon().getFileName()))
                     .createdAt(userAccount.getCreatedAt())
                     .createdBy(userAccount.getCreatedBy())
                     .modifiedAt(userAccount.getModifiedAt())

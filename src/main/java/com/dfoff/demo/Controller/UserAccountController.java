@@ -127,6 +127,8 @@ public class UserAccountController {
         ModelAndView mav = new ModelAndView("/mypage/mypage");
         UserAccount.UserAccountMyPageResponse response = userAccountService.getUserAccountById(principal.getUsername());
         mav.addObject("user", response);
+        mav.addObject("boards", userAccountService.getBoardsByUserAccount(principal.getUsername()));
+        mav.addObject("comments", userAccountService.getCommentsByUserId(principal.getUsername()));
         return mav;
     }
 

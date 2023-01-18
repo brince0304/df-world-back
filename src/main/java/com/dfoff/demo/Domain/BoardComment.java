@@ -1,6 +1,8 @@
 package com.dfoff.demo.Domain;
 
+import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
+import com.dfoff.demo.Util.FileUtil;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
@@ -78,7 +80,25 @@ public class BoardComment extends AuditingFields {
         private final Integer commentLikeCount;
         private final String isDeleted;
         private final String isParent;
+
+        private final String userProfileImgUrl;
         private final Set<BoardCommentResponse> childrenComments;
+
+        private final BoardType boardType;
+
+        public String getBoardType(BoardType type){
+            if(type==null){
+                return null;
+            }
+            return switch (type) {
+                case NOTICE -> "공지";
+                case FREE -> "자유";
+                case QUESTION -> "Q&A";
+                case RECRUITMENT -> "구인";
+                case MARKET -> "거래";
+                case REPORT -> "사건/사고";
+            };
+        }
 
         public static BoardCommentResponse from (BoardComment boardComment) {
             return BoardCommentResponse.builder()
@@ -94,7 +114,9 @@ public class BoardComment extends AuditingFields {
                     .commentLikeCount(boardComment.getCommentLikeCount())
                     .isDeleted(boardComment.getIsDeleted())
                     .isParent(boardComment.getIsParent())
-                    .childrenComments(boardComment.getChildrenComments().stream().map(BoardComment.BoardCommentResponse::from).collect(Collectors.toSet()))
+                    .childrenComments(boardComment.getChildrenComments().stream().map(BoardCommentResponse::from).collect(Collectors.toSet()))
+                    .userProfileImgUrl(FileUtil.getProfileIconPath(boardComment.getUserAccount().getProfileIcon().getFileName()))
+                    .boardType(boardComment.getBoard().getBoardType())
                     .build();
 
         }
@@ -105,7 +127,6 @@ public class BoardComment extends AuditingFields {
      */
     @Data
     @Builder
-    @AllArgsConstructor
     public static class BoardCommentRequest implements Serializable {
         private final Long boardId;
         private final Long commentId;
@@ -114,7 +135,6 @@ public class BoardComment extends AuditingFields {
 
         public BoardComment toEntity(UserAccount.UserAccountDto dto, Board.BoardDto boardDto) {
             return BoardComment.builder()
-                    .id(commentId)
                     .commentContent(this.commentContent)
                     .userAccount(dto.toEntity())
                     .board(boardDto.toEntity())

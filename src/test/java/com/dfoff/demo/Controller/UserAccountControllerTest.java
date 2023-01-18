@@ -125,7 +125,7 @@ class UserAccountControllerTest {
     @WithUserDetails ("test")
     void givenUserDetails_whenChangeProfileIcon_thenChangeProfileIcon() throws Exception {
         //perform
-        mvc.perform(put("/api/user/profile.df?profileIcon=icon_char_01.png"))
+        mvc.perform(put("/api/user/profile.df?profileIcon=icon_char_0.png"))
                 .andExpect(status().isOk());
     }
 
@@ -164,7 +164,7 @@ class UserAccountControllerTest {
     void addCharacterExceptionTest() throws Exception {
         //when&then
         mvc.perform(post("/api/user/char.df?request=add&serverId=cain&characterId=77dae44a87261743386852bb3979c03a"))
-                .andExpect(status().isBadRequest()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
+                .andExpect(status().isForbidden()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
     }
     @Test
     @WithUserDetails ("test")
@@ -187,7 +187,7 @@ class UserAccountControllerTest {
     void updateProfileExceptionTest() throws Exception {
         //when&then
         mvc.perform(put("/api/user/profile.df?nickname=테스트&email=테스트"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isForbidden());
     }
 
 

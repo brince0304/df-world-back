@@ -38,7 +38,8 @@ public class BoardCommentController {
                                               @RequestParam (required = false) Long commentId){
         Map<String,Object> map = new HashMap<>();
         Map<String,Boolean> likeMap = new HashMap<>();
-        map.put("bestComments",commentService.findBestBoardCommentByBoardId(boardId));
+        List<BoardComment.BoardCommentResponse > bestComments = commentService.findBestBoardCommentByBoardId(boardId);
+        map.put("bestComments",bestComments);
         List<BoardComment.BoardCommentResponse> comments;
         if(commentId==null) {
             comments = commentService.findBoardCommentByBoardId(boardId);
@@ -46,12 +47,16 @@ public class BoardCommentController {
         else{
             comments = commentService.findBoardCommentsByParentId(boardId, commentId);
         }
-        return getResponseEntity(req, boardId, map, likeMap, comments);
+        return getResponseEntity(req, boardId, map, likeMap, comments,bestComments);
     }
 
-    private ResponseEntity<?> getResponseEntity(HttpServletRequest req, @RequestParam(required = false) Long boardId, Map<String, Object> map, Map<String, Boolean> likeMap, List<BoardComment.BoardCommentResponse> comments) {
+    private ResponseEntity<?> getResponseEntity(HttpServletRequest req, @RequestParam(required = false) Long boardId, Map<String, Object> map, Map<String, Boolean> likeMap, List<BoardComment.BoardCommentResponse> comments
+    , List<BoardComment.BoardCommentResponse> bestComments) {
         map.put("comments",comments);
         comments.forEach(o->{
+            likeMap.put(String.valueOf(o.getId()), redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, o.getId()));
+        });
+        bestComments.forEach(o->{
             likeMap.put(String.valueOf(o.getId()), redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, o.getId()));
         });
         map.put("likeMap",likeMap);

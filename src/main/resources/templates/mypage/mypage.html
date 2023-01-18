@@ -43,7 +43,7 @@
         <div class="card-body ">
             <div class="row">
                 <div class="col-12 ">
-                    <h4 class="card-title "><b th:text="${user.nickname()} +'님 환영합니다!'">Program Title</b></h4>
+                    <h4 class="card-title "><b th:text="${user.nickname} +' 님 환영합니다!'">Program Title</b></h4>
 
                 </div>
                 <div class="col">
@@ -53,7 +53,7 @@
                                  height="19" id="star"> <span class="vl mr-2 ml-0"></span>
 
                             <span class="font-weight-bold">아이디 : </span><span
-                                th:text="${user.userId()}+' 이메일 : '+${user.email()}"></span></p>
+                                th:text="${user.userId}+' 이메일 : '+${user.email}"></span></p>
                     </h6>
                 </div>
             </div>
@@ -89,7 +89,7 @@
                         <li class="list-inline-item"><a data-toggle="modal"
                                                         data-target="#iconSelectModal" href="#" class="
                          btn btn-outlined btn-black text-muted"> <img
-                                th:src="@{/api/getFile.df(name=${user.profileIcon().fileName()})}" src=""
+                                th:src="${user.profileIconPath}" src=""
                                 alt="DP" class="  rounded-circle img-fluid " width="20" height="20"> <small>프로필 아이콘
                             변경</small> </a>
                         </li>
@@ -113,7 +113,7 @@
                             <div class="search-result">
                                 <div class="result-body">
                                     <div class="table-responsive" style="border:none;">
-                                        <div th:if="${characters.isEmpty()}">
+                                        <div th:if="${user.characters.isEmpty()}">
                                             <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
                                                 <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
                                                 <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">캐릭터가 존재하지 않습니다.</div>
@@ -122,7 +122,7 @@
                                         <div class="container">
                                             <div class="row charThumb" >
                                                 <!-- Single Advisor-->
-                                                <div th:each="char : ${characters}" class="col-12 col-sm-6 col-lg-3">
+                                                <div th:each="char : ${user.characters}" class="col-12 col-sm-6 col-lg-3">
                                                     <div class="single_advisor_profile wow fadeInUp characterCard"
                                                          data-wow-delay="0.2s"
                                                          style="background-image: url('/images/icon_char/bg_char.jpeg') ;   background-repeat: no-repeat;   background-position: center;
@@ -142,7 +142,7 @@
                                                               th:onclick="deleteCharacter(this.getAttribute('data-server') , this.getAttribute('data-id'))"
                                                               style="display:inline ; float:right; ">삭제</span></div>
                                                         <div class="advisor_thumb">
-                                                            <img th:src="@{'https://img-api.neople.co.kr/df/servers/'+${char.serverId}+'/characters/' + ${char.characterId} + '?zoom=2'}"
+                                                            <img th:src="${char.characterImageUrl}"
                                                                  src="" style="scale:1.7" alt="">
                                                             <!-- Social Info-->
                                                         </div>
@@ -237,8 +237,8 @@
                                      style="border-radius: 50%; border: 1px solid #898989; display:inline"
                                      width="20px"
                                      height="20px"
-                                     th:src="@{/api/getFile.df(name=${board.getUserAccount().profileIcon().fileName()})}"/>
-                                <span class="badge bg-transparent text-dark" style="display:inline; margin-right:-10px" th:text="${board.userAccount.nickname()}">닉네임</span>
+                                     th:src="${board.getUserProfileImgUrl()}"/>
+                                <span class="badge bg-transparent text-dark" style="display:inline; margin-right:-10px" th:text="${board.userNickname}">닉네임</span>
                                 <span class="boardTitle" style="font-size: 12px; font-weight: 400; color: #202020; line-height: 1; display:inline;margin-left:4px"
                                       th:text="${board.boardTitle}"> 게시글 내용
                 </span>
@@ -246,7 +246,7 @@
                                     <i class="fa fa-thumbs-up" style="margin-right:5px"> </i>
                                     <span class="badge bg-transparent text-black" th:text="${board.boardLikeCount}"></span>
                                     <i class="fa fa-comment" style="margin-right:5px"> </i>
-                                    <span class="badge bg-transparent text-black" th:text="${board.boardComments.size()}"></span>
+                                    <span class="badge bg-transparent text-black" th:text="${board.commentCount}"></span>
 
                                       <span class="badge bg-secondary text-black-50"
                                                                                                           th:text="${board.getBoardType(board.getBoardType())}" th:if="${board.boardType.name().equals('FREE')}" style="margin-top: 10px;">자유게시판</span>
@@ -272,8 +272,8 @@
                                              style="border-radius: 50%; border: 1px solid #898989; display:inline"
                                              width="20px"
                                              height="20px"
-                                             th:src="@{/api/getFile.df(name=${comment.getUserAccount().profileIcon().fileName()})}"/>
-                                        <span class="badge bg-transparent text-dark" style="display:inline; margin-right:-10px" th:text="${comment.userAccount.nickname()}">닉네임</span>
+                                             th:src="${comment.userProfileImgUrl}"/>
+                                        <span class="badge bg-transparent text-dark" style="display:inline; margin-right:-10px" th:text="${comment.userNickname}">닉네임</span>
                                         <span class="boardTitle" style="font-size: 12px; font-weight: 400; color: #202020; line-height: 1; display:inline;margin-left:4px"
                                               th:text="${comment.commentContent}"> 게시글 내용
                 </span>
@@ -281,17 +281,17 @@
                                             <i class="fa fa-thumbs-up" style="margin-right:5px"> </i>
                                             <span class="badge bg-transparent text-black" th:text="${comment.commentLikeCount}"></span>
                                             <span class="badge bg-secondary text-black-50"
-                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.name().equals('FREE')}" style="margin-top: 10px;">자유게시판</span>
+                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.equals('FREE')}" style="margin-top: 10px;">자유게시판</span>
                                             <span class="badge bg-warning text-black-50"
-                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.name().equals('NOTICE')}" style="margin-top: 10px;">자유게시판</span>
+                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.equals('NOTICE')}" style="margin-top: 10px;">자유게시판</span>
                                             <span class="badge bg-success text-white-50"
-                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.name().equals('MARKET')}" style="margin-top: 10px; ">자유게시판</span>
+                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.equals('MARKET')}" style="margin-top: 10px; ">자유게시판</span>
                                             <span class="badge bg-dark text-white-50"
-                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.name().equals('RECRUITMENT')}" style="margin-top: 10px; ">자유게시판</span>
+                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.equals('RECRUITMENT')}" style="margin-top: 10px; ">자유게시판</span>
                                             <span class="badge bg-light text-black-50"
-                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.name().equals('QUESTION')}" style="margin-top: 10px; ">자유게시판</span>
+                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.equals('QUESTION')}" style="margin-top: 10px; ">자유게시판</span>
                                             <span class="badge bg-danger text-black-50"
-                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.name().equals('REPORT')}" style="margin-top: 10px; ">자유게시판</span>
+                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.equals('REPORT')}" style="margin-top: 10px; ">자유게시판</span>
                                         </div></a>
                                     <div class="bar"
                                          style="width: 100%; height: 2px; background-color: #e6e6e6; margin-top:5px;"></div>

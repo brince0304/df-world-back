@@ -149,14 +149,14 @@ public class BoardService {
 
     public List<Board.BoardListResponse> getBestBoard(BoardType boardType){
         LocalDateTime end = LocalDateTime.now();
-        LocalDateTime start = end.minusDays(2);
+        LocalDateTime start = end.minusDays(10);
         if(boardType==null){
             return boardRepository.findBoardByLikeCount(start,end).stream().map(Board.BoardListResponse::from).toList();
         }else{
             return boardRepository.findBoardByLikeCountAndBoardType(boardType,start,end).stream().map(Board.BoardListResponse::from).toList();
         }
     }
-
+    @Transactional (readOnly = true)
     public Board.BoardDto getBoardDto(Long id){
         Board board_ = boardRepository.findBoardById(id);
         if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
@@ -196,7 +196,7 @@ public class BoardService {
         board_.setCharacter(null);
         boardRepository.deleteBoardById(id);
     }
-
+    @Transactional (readOnly = true)
     public Set<SaveFile.SaveFileDTO> getBoardSaveFile(Long id){
         Board board_ = boardRepository.findBoardById(id);
         if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
