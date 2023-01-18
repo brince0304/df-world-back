@@ -28,6 +28,12 @@ public interface BoardCommentRepository extends JpaRepository<BoardComment, Long
     @Query("update BoardComment b set b.isDeleted='Y' where b.id=:id")
     void deleteBoardCommentById(Long id);
 
+    @Modifying
+    @Query("update BoardComment b set b.isDeleted='Y' where b.isParent='N' and b.parentComment.id=:parentId")
+    void deleteChildrenCommentById(Long id);
+
+
+
 
 }
 

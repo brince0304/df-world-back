@@ -30,7 +30,9 @@ public class BoardService {
 
     private final BoardHashtagMapperRepository mapper;
 
-    public Board.BoardDto createBoard(Board.BoardRequest request, Set<SaveFile.SaveFileDTO> saveFile, UserAccount.UserAccountDto dto, CharacterEntity.CharacterEntityDto character) {
+
+
+    public Long createBoard(Board.BoardRequest request, Set<SaveFile.SaveFileDTO> saveFile, UserAccount.UserAccountDto dto, CharacterEntity.CharacterEntityDto character) {
         Board board_ = boardRepository.save(request.toEntity(dto.toEntity()));
         saveFile.stream().map(SaveFile.SaveFileDTO::toEntity).forEach(o-> board_.getBoardFiles().add(o));
         if(createHashtag(request.getHashtag()).size()>5){
@@ -40,7 +42,7 @@ public class BoardService {
         if(character!=null){
             board_.setCharacter(CharacterEntity.CharacterEntityDto.toEntity(character));
         }
-        return Board.BoardDto.from(board_);
+        return board_.getId();
     }
 
     public List<String> createHashtag(String hashtag){
@@ -154,7 +156,13 @@ public class BoardService {
         }
     }
 
-    public Board.BoardDto updateBoard(Long id, Board.BoardRequest request, Set<SaveFile.SaveFileDTO> fileDtos, CharacterEntity.CharacterEntityDto character) {
+    public Board.BoardDto getBoardDto(Long id){
+        Board board_ = boardRepository.findBoardById(id);
+        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+        return Board.BoardDto.from(board_);
+    }
+
+    public Long updateBoard(Long id, Board.BoardRequest request, Set<SaveFile.SaveFileDTO> fileDtos, CharacterEntity.CharacterEntityDto character) {
        Board board_ =  boardRepository.findBoardById(id);
        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
        if(request != null){
@@ -174,7 +182,7 @@ public class BoardService {
               board_.setBoardType(request.getBoardType());
        }
        fileDtos.stream().map(SaveFile.SaveFileDTO::toEntity).forEach(o-> board_.getBoardFiles().add(o));
-       return Board.BoardDto.from(board_);
+       return board_.getId();
 
     }
 

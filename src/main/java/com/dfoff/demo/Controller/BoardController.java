@@ -28,7 +28,7 @@ public class BoardController {
 
     private final BoardService boardService;
 
-    private final BoardCommentService commentService;
+
     private final SaveFileService saveFileService;
 
     private final CharacterService characterService;
@@ -65,83 +65,6 @@ public class BoardController {
             return new ResponseEntity<>(boardService.increaseLikeCount(boardId),HttpStatus.OK);
         }
     }
-    @GetMapping("/api/comment.df")
-    public ResponseEntity<?> getBoardComments(HttpServletRequest req,
-            @RequestParam (required = false) Long boardId,
-                                              @RequestParam (required = false) Long commentId){
-        Map<String,Object> map = new HashMap<>();
-        Map<String,Boolean> likeMap = new HashMap<>();
-        map.put("bestComments",commentService.findBestBoardCommentByBoardId(boardId).stream().map(BoardComment.BoardCommentResponse::from).collect(Collectors.toList()));
-        if(commentId==null) {
-            map.put("comments",commentService.findBoardCommentByBoardId(boardId).stream().map(BoardComment.BoardCommentResponse::from).collect(Collectors.toList()));
-            boardService.getBoardDetail(boardId).getBoardComments().forEach(o->{
-                likeMap.put(String.valueOf(o.getId()), redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, o.getId()));
-            });
-            map.put("likeMap",likeMap);
-            return new ResponseEntity<>(map,HttpStatus.OK);
-        }
-        else{
-            map.put("comments",commentService.findBoardCommentsByParentId(boardId,commentId).stream().map(BoardComment.BoardCommentResponse::from).collect(Collectors.toList()));
-            boardService.getBoardDetail(boardId).getBoardComments().forEach(o->{
-                likeMap.put(String.valueOf(o.getId()), redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, o.getId()));
-            });
-            map.put("likeMap",likeMap);
-            return new ResponseEntity<>(map,HttpStatus.OK);
-        }
-    }
-
-    @PostMapping("/api/likeComment.df")
-    public ResponseEntity<?> likeComment(@RequestParam Long commentId,@RequestParam Long boardId, HttpServletRequest req) {
-        if(redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId,commentId)) {
-            redisService.deleteBoardCommentLikeLog(req.getRemoteAddr(),boardId,commentId);
-            return new ResponseEntity<>(commentService.updateBoardCommentDisLike(commentId),HttpStatus.OK);
-
-        }else{
-            redisService.saveBoardCommentLikeLog(req.getRemoteAddr(),boardId,commentId);
-            return new ResponseEntity<>(commentService.updateBoardCommentLike(commentId),HttpStatus.OK);
-        }
-    }
-
-    @PostMapping("/api/comment.df")
-    public ResponseEntity<?> createBoardComment(@RequestBody @Valid BoardComment.BoardCommentRequest request,BindingResult bindingResult, @AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
-                                                @RequestParam (required = false) String mode){
-            if(principalDto==null){throw new SecurityException("로그인이 필요합니다.");}
-            if(bindingResult.hasErrors()){
-                return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
-            }
-            Board.BoardDto boardDto = boardService.getBoardDetail(request.getBoardId());
-            if(mode!=null&&mode.equals("children")) {
-                commentService.createChildrenComment(request.getCommentId(),BoardComment.BoardCommentDto.from(request, UserAccount.UserAccountDto.from(principalDto),boardDto));
-                return new ResponseEntity<>(HttpStatus.OK);
-            }else {
-                commentService.createBoardComment(BoardComment.BoardCommentDto.from(request, UserAccount.UserAccountDto.from(principalDto), boardDto));
-                return new ResponseEntity<>("success", HttpStatus.OK);
-            }
-        }
-
-
-    @DeleteMapping("/api/comment.df")
-    public ResponseEntity<?> deleteBoardComment(@AuthenticationPrincipal UserAccount.PrincipalDto dto , @RequestParam Long commentId){
-
-            if(dto==null || !Objects.equals(commentService.findBoardCommentById(commentId).getUserAccount().userId(), dto.getUsername())){
-                return new ResponseEntity<>("권한이 없습니다.",HttpStatus.UNAUTHORIZED);
-            }
-            commentService.deleteBoardComment(commentId);
-            return new ResponseEntity<>("success",HttpStatus.OK);
-        }
-
-
-    @PutMapping("/api/comment.df")
-    public ResponseEntity<?> updateBoardComment(@RequestBody @Valid BoardComment.BoardCommentRequest request,BindingResult bindingResult, @AuthenticationPrincipal UserAccount.PrincipalDto principalDto){
-
-            if(principalDto==null){
-                throw new SecurityException("로그인이 필요합니다.");
-            }if(bindingResult.hasErrors()){
-                return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
-            }
-            commentService.updateBoardComment(request.getCommentId(),request,principalDto.getUsername());
-            return new ResponseEntity<>("success",HttpStatus.OK);
-        }
 
 
 
@@ -227,7 +150,7 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
             return new ResponseEntity<>(boardService.createBoard(boardRequest,set,UserAccount.UserAccountDto.from(principalDto),null),HttpStatus.OK);
         }
         CharacterEntity.CharacterEntityDto character = characterService.getCharacter(boardRequest.getServerId(),boardRequest.getCharacterId());
-        return new ResponseEntity<>(boardService.createBoard(boardRequest,set ,UserAccount.UserAccountDto.from(principalDto),character).getId(),HttpStatus.OK);}
+        return new ResponseEntity<>(boardService.createBoard(boardRequest,set ,UserAccount.UserAccountDto.from(principalDto),character),HttpStatus.OK);}
 
 
     @PutMapping("/api/board.df")
@@ -242,6 +165,6 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
         }
         Set<SaveFile.SaveFileDTO> set = saveFileService.getFileDtosFromRequestsFileIds(updateRequest);
             CharacterEntity.CharacterEntityDto character = characterService.getCharacter(updateRequest.getServerId(),updateRequest.getCharacterId());
-            return new ResponseEntity<>(boardService.updateBoard(updateRequest.getId(),updateRequest,set,character).getId(),HttpStatus.OK);
+            return new ResponseEntity<>(boardService.updateBoard(updateRequest.getId(),updateRequest,set,character),HttpStatus.OK);
     }
 }

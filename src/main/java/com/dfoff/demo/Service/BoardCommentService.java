@@ -21,33 +21,34 @@ public class BoardCommentService {
     private final BoardCommentRepository commentRepository;
 
 
-    public BoardComment.BoardCommentDto findBoardCommentById(Long id){
+    public BoardComment.BoardCommentResponse findBoardCommentById(Long id){
         if(!commentRepository.existsById(id)){
             throw new EntityNotFoundException("존재하지 않는 댓글입니다.");
         }
-        return BoardComment.BoardCommentDto.from(commentRepository.findBoardCommentById(id));
+        return BoardComment.BoardCommentResponse.from(commentRepository.findBoardCommentById(id));
     }
 
 
 
-    public List<BoardComment.BoardCommentDto> findBoardCommentByBoardId(Long id){
-        return commentRepository.findBoardCommentByBoardId(id).stream().map(BoardComment.BoardCommentDto::from).toList();
+    public List<BoardComment.BoardCommentResponse> findBoardCommentByBoardId(Long id){
+        return commentRepository.findBoardCommentByBoardId(id).stream().map(BoardComment.BoardCommentResponse::from).toList();
     }
 
-    public BoardComment.BoardCommentDto createBoardComment(BoardComment.BoardCommentDto boardComment){
-        if(boardComment.getCommentContent() == null || boardComment.getCommentContent().equals("")){
+    public void createBoardComment(BoardComment.BoardCommentRequest request, UserAccount.UserAccountDto account, Board.BoardDto board){
+        if(request.getCommentContent() == null || request.getCommentContent().equals("")){
             throw new IllegalArgumentException("댓글 내용을 입력해주세요.");
         }
-        BoardComment boardComment_ = commentRepository.save(boardComment.toEntity());
-        return BoardComment.BoardCommentDto.from(boardComment_);
+        commentRepository.save(request.toEntity(account, board));
     }
 
-    public List<BoardComment.BoardCommentDto> findBoardCommentsByParentId(Long boardId,Long parentId){
-        return commentRepository.findBoardCommentByParentCommentId(boardId,parentId).stream().map(BoardComment.BoardCommentDto::from).toList();
+    public List<BoardComment.BoardCommentResponse> findBoardCommentsByParentId(Long boardId, Long parentId){
+        return commentRepository.findBoardCommentByParentCommentId(boardId,parentId).stream().map(BoardComment.BoardCommentResponse::from).toList();
     }
 
     public void deleteBoardComment(Long id){
+        commentRepository.deleteChildrenCommentById(id);
         commentRepository.deleteBoardCommentById(id);
+
     }
 
     public void updateBoardComment(Long id, BoardComment.BoardCommentRequest request,String username){
@@ -75,18 +76,26 @@ public class BoardCommentService {
 
 
 
-    public void createChildrenComment(Long parentId,BoardComment.BoardCommentDto dto) {
+    public void createChildrenComment(Long parentId, BoardComment.BoardCommentRequest request, UserAccount.UserAccountDto account, Board.BoardDto board) {
         BoardComment boardComment_ = commentRepository.findBoardCommentById(parentId);
         if(boardComment_== null){
             throw new EntityNotFoundException("해당 댓글이 존재하지 않습니다.");
         }
-        BoardComment children = dto.toEntity();
+        BoardComment children = request.toEntity(account,board);
         children.setIsParent("N");
         children.setParentComment(boardComment_);
         commentRepository.save(children);
     }
 
-    public List<BoardComment.BoardCommentDto> findBestBoardCommentByBoardId(Long boardId) {
-        return commentRepository.findBoardCommentByLikeCount(boardId).stream().map(BoardComment.BoardCommentDto::from).toList();
+    public List<BoardComment.BoardCommentResponse> findBestBoardCommentByBoardId(Long boardId) {
+        return commentRepository.findBoardCommentByLikeCount(boardId).stream().map(BoardComment.BoardCommentResponse::from).toList();
+    }
+
+    public String getCommentAuthor(Long id) {
+        BoardComment boardComment_ = commentRepository.findBoardCommentById(id);
+        if(boardComment_== null){
+            throw new EntityNotFoundException("해당 댓글이 존재하지 않습니다.");
+        }
+        return boardComment_.getUserAccount().getUserId();
     }
 }
