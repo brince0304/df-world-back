@@ -20,7 +20,7 @@ public class MainController {
     @GetMapping("/main.df")
     public ModelAndView main(@PageableDefault(size=5,sort = "createdAt",direction = Sort.Direction.DESC) Pageable pageable) throws ParseException {
         ModelAndView mav = new ModelAndView("index");
-        mav.addObject("articles",boardService.getBoardsByKeyword(null,null,null,pageable).map(Board.BoardResponse::from));
+        mav.addObject("articles",boardService.getBoardsByKeyword(null,null,null,pageable));
         return mav;
     }
 

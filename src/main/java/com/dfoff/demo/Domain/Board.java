@@ -2,6 +2,8 @@ package com.dfoff.demo.Domain;
 
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
+import com.dfoff.demo.Util.FileUtil;
+import com.dfoff.demo.Util.OpenAPIUtil;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -16,7 +18,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.dfoff.demo.Domain.Board.BoardResponse.Chrono.timesAgo;
 import static com.dfoff.demo.Util.BoardUtil.converter;
 
 @Entity
@@ -116,12 +117,9 @@ public class Board extends AuditingFields {
         private final String isDeleted;
         private final Integer boardViewCount;
         private final Integer boardLikeCount;
-        private final Set<SaveFile.SaveFileDTO> boardFiles;
-        private final Set<BoardComment.BoardCommentDto> boardComments;
 
-        private final Set<Hashtag.HashtagDto> hashtags;
 
-        private final CharacterEntity.CharacterEntityDto character;
+
 
         public static BoardDto from(Board board) {
             return BoardDto.builder()
@@ -137,11 +135,10 @@ public class Board extends AuditingFields {
                     .isDeleted(board.getIsDeleted())
                     .boardViewCount(board.getBoardViewCount())
                     .boardLikeCount(board.getBoardLikeCount())
-                    .boardFiles(board.getBoardFiles().stream().map(SaveFile.SaveFileDTO::from).collect(Collectors.toSet()))
-                    .boardComments(board.getBoardComments().stream().map(BoardComment.BoardCommentDto::from).collect(Collectors.toSet()))
-                    .hashtags(board.getHashtags().stream().map(BoardHashtagMapper::getHashtag).map(Hashtag.HashtagDto::from).collect(Collectors.toSet()))
-                    .character(board.getCharacter()!=null ? CharacterEntity.CharacterEntityDto.from(board.getCharacter()) : null)
                     .build();
+
+
+
         }
             public Board toEntity(){
                 return  Board.builder()
@@ -152,24 +149,44 @@ public class Board extends AuditingFields {
                         .userAccount(userAccount.toEntity()).build();
             }
 
-        public static BoardDto from(BoardRequest request, UserAccount.UserAccountDto accountDto){
-            Set<Hashtag.HashtagDto> hashtags = new HashSet<>();
-            if(!request.getHashtag().equals("")) {
-                StringTokenizer st = new StringTokenizer(request.getHashtag().replaceAll(" ",""), "#");
-                while (st.hasMoreTokens()) {
-                    String token = st.nextToken();
-                    if(token.length()>7){
-                        throw new IllegalArgumentException("해시태그는 7자 이하로 입력해주세요.");
-                    }
-                    hashtags.add(Hashtag.HashtagDto.builder().name(token).build());
-                }
+            public Board toEntity(UserAccount userAccount){
+                return  Board.builder()
+                        .id(id)
+                        .boardType(boardType)
+                        .boardTitle(boardTitle)
+                        .boardContent(boardContent)
+                        .userAccount(userAccount).build();
             }
-            return BoardDto.builder()
-                    .boardType(request.getBoardType())
-                    .boardTitle(request.getBoardTitle())
-                    .boardContent(request.getBoardContent())
-                    .userAccount(accountDto)
-                    .hashtags(hashtags)
+
+
+
+
+    }
+
+    @Data
+    @Builder
+    public static class CharacterBoardResponse implements Serializable{
+        private final String characterId;
+        private final String characterName;
+        private final String serverId;
+
+        private final String characterImageUrl ;
+
+        private final String jobName;
+
+        private final String adventureName;
+
+        private final String adventureFame;
+
+        public static CharacterBoardResponse from(CharacterEntity characterEntity){
+            return CharacterBoardResponse.builder()
+                    .characterId(String.valueOf(characterEntity.getCharacterId()))
+                    .characterName(characterEntity.getCharacterName())
+                    .serverId(characterEntity.getServerId())
+                    .jobName(characterEntity.getJobName())
+                    .adventureName(characterEntity.getAdventureName() == null ? "갱신필요" : characterEntity.getAdventureName())
+                    .adventureFame(characterEntity.getAdventureFame() == null ? "0" : characterEntity.getAdventureFame())
+                    .characterImageUrl(OpenAPIUtil.getCharacterImgUrl(characterEntity.getCharacterId(), characterEntity.getServerId(),"1"))
                     .build();
         }
     }
@@ -179,7 +196,7 @@ public class Board extends AuditingFields {
      */
     @Data
     @Builder
-    public static class BoardResponse implements Serializable {
+    public static class BoardListResponse implements Serializable {
         private final String createdAt;
         private final String createdBy;
         private final String modifiedAt;
@@ -188,17 +205,16 @@ public class Board extends AuditingFields {
         private final BoardType boardType;
         private final String boardTitle;
         private final String boardContent;
-        private final UserAccount.UserAccountResponse userAccount;
         private final String isDeleted;
         private final Integer boardViewCount;
         private final Integer boardLikeCount;
-        private final Set<SaveFile.SaveFileResponse> boardFiles;
+        private final String commentCount;
 
-        private final Set<BoardComment.BoardCommentResponse> boardComments;
+        private final String userId;
 
-        private final Set<Hashtag.HashtagResponse> hashtags;
+        private final String userNickname;
 
-        private final CharacterEntity.CharacterEntityDto.CharacterEntityResponse character;
+        private final Set<CharacterBoardResponse> characters;
 
 
         public String convert(String date){
@@ -217,24 +233,23 @@ public class Board extends AuditingFields {
                 case REPORT -> "사건/사고";
             };
         }
-        public static BoardResponse from(BoardDto dto){
-            return BoardResponse.builder()
-                    .createdAt(timesAgo(dto.createdAt))
-                    .createdBy(dto.getCreatedBy())
-                    .modifiedAt(timesAgo(dto.modifiedAt))
-                    .modifiedBy(dto.getModifiedBy())
-                    .id(dto.getId())
-                    .boardType(dto.getBoardType())
-                    .boardTitle(dto.getBoardTitle())
-                    .boardContent(dto.getBoardContent())
-                    .userAccount(UserAccount.UserAccountResponse.from(dto.getUserAccount()))
-                    .isDeleted(dto.getIsDeleted())
-                    .boardViewCount(dto.getBoardViewCount())
-                    .boardLikeCount(dto.getBoardLikeCount())
-                    .boardFiles(dto.getBoardFiles().stream().map(SaveFile.SaveFileResponse::from).collect(Collectors.toSet()))
-                    .boardComments(dto.getBoardComments().stream().map(BoardComment.BoardCommentResponse::from).collect(Collectors.toSet()))
-                    .hashtags(dto.getHashtags().stream().map(Hashtag.HashtagResponse::from).collect(Collectors.toSet()))
-                    .character(dto.getCharacter()!=null? CharacterEntity.CharacterEntityDto.CharacterEntityResponse.from(dto.getCharacter()):null)
+        public static BoardListResponse from(Board board){
+            return BoardListResponse.builder()
+                    .createdAt(board.getCreatedAt().toString())
+                    .createdBy(board.getCreatedBy())
+                    .modifiedAt(board.getModifiedAt().toString())
+                    .modifiedBy(board.getModifiedBy())
+                    .id(board.getId())
+                    .boardType(board.getBoardType())
+                    .boardTitle(board.getBoardTitle())
+                    .boardContent(board.getBoardContent())
+                    .isDeleted(board.getIsDeleted())
+                    .boardViewCount(board.getBoardViewCount())
+                    .boardLikeCount(board.getBoardLikeCount())
+                    .commentCount(String.valueOf(board.getBoardComments().size()))
+                    .userId(board.getUserAccount().getUserId())
+                    .userNickname(board.getUserAccount().getNickname())
+                    .characters(board.getCharacter()==null  ? new HashSet<>() : Set.of(CharacterBoardResponse.from(board.getCharacter())))
                     .build();
         }
 
@@ -289,7 +304,73 @@ public class Board extends AuditingFields {
         private final String characterId;
 
         private final String serverId;
+
+        public Board toEntity(UserAccount userAccount){
+            return Board.builder()
+                    .id(this.id)
+                    .boardType(this.boardType)
+                    .boardTitle(this.boardTitle)
+                    .boardContent(this.boardContent)
+                    .userAccount(userAccount)
+                    .build();
+        }
     }
 
 
+    /**
+     * A DTO for the {@link Board} entity
+     */
+    @Data
+    @Builder
+    public static class BoardDetailResponse implements Serializable {
+        private final LocalDateTime createdAt;
+        private final String createdBy;
+        private final LocalDateTime modifiedAt;
+        private final String modifiedBy;
+        private final Long id;
+        private final BoardType boardType;
+        @NotNull
+        @Length(min = 1, max = 100)
+        private final String boardTitle;
+        @NotNull
+        @Length(min = 1, max = 10000)
+        private final String boardContent;
+        private final String isDeleted;
+        private final Integer boardViewCount;
+        private final Integer boardLikeCount;
+
+        private final Set<CharacterBoardResponse> characters;
+
+        private final String userId;
+
+        private final String userNickname;
+
+        private final String userProfileIconPath;
+
+        private final String commentCount;
+
+        private final List<String> hashtags;
+
+        public static BoardDetailResponse from (Board board){
+            return BoardDetailResponse.builder()
+                    .createdAt(board.getCreatedAt())
+                    .createdBy(board.getCreatedBy())
+                    .modifiedAt(board.getModifiedAt())
+                    .modifiedBy(board.getModifiedBy())
+                    .id(board.getId())
+                    .boardType(board.getBoardType())
+                    .boardTitle(board.getBoardTitle())
+                    .boardContent(board.getBoardContent())
+                    .isDeleted(board.getIsDeleted())
+                    .boardViewCount(board.getBoardViewCount())
+                    .boardLikeCount(board.getBoardLikeCount())
+                    .characters(board.getCharacter()==null  ? new HashSet<>() : Set.of(CharacterBoardResponse.from(board.getCharacter())))
+                    .userId(board.getUserAccount().getUserId())
+                    .userNickname(board.getUserAccount().getNickname())
+                    .userProfileIconPath(FileUtil.getProfileIconPath(board.getUserAccount().getProfileIcon().getFileName()))
+                    .commentCount(String.valueOf(board.getBoardComments().size()))
+                    .hashtags(board.getHashtags().stream().map(BoardHashtagMapper::getHashtag).map(Hashtag::getName).collect(Collectors.toList()))
+                    .build();
+        }
+    }
 }

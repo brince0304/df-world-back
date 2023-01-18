@@ -13,6 +13,8 @@ public class FileUtil {
     }
     public static String uploadPath ="/Users/brinc/Desktop/brincestudy/JAVA/df-toy-project/src/main/resources/static/images/imgSaveFolder/";
 
+    public static String getFilePath = "/api/getFile.df?name=";
+
 
     public  static String getExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
@@ -29,6 +31,10 @@ public class FileUtil {
 
     public static File getFileFromSaveFile(SaveFile.SaveFileDTO saveFileDto) {
         return new File(saveFileDto.filePath());
+    }
+
+    public static String getProfileIconPath(String profileIcon) {
+        return getFilePath + profileIcon;
     }
 
 
