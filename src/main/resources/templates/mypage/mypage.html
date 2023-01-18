@@ -23,6 +23,14 @@
     <title>던파모아온오프</title>
     <style>
 
+        .boardIcon {
+            width: 25px;
+            aspect-ratio: auto 25 / 25;
+            height: 25px;
+            overflow-clip-margin: content-box;
+            overflow: clip;
+            vertical-align: middle;
+        }
 
     </style>
 </head>
@@ -70,9 +78,10 @@
                         <small>캐릭터 등록</small> </a>
 
 
-                    <a href="#" class="btn btn-outlined btn-black text-muted "><img
+                    <a style="cursor:pointer" class="btn btn-outlined btn-black text-muted " data-toggle="modal"
+                       data-target="#userLogModal"><img
                             src="https://img.icons8.com/metro/26/000000/more.png" width="20" height="20"
-                            class="mr-2 more"><small> 활동 내역</small></a>
+                            class="mr-2 more" ><small> 활동 내역</small></a>
                 </div>
 
                 <div class="col-md-auto ">
@@ -204,6 +213,100 @@
         </div>
     </div>
 
+
+    <div class="modal fade userLog" id="userLogModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" style="margin-left:2%"
+         aria-hidden="true">
+        <div class="modal-dialog" style="max-width:500px" role="document">
+            <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
+                <div class="modal-header" style="padding: 5px;">
+                    <div class="row" style="margin-left:0; margin-right:0;">
+                        <div class="col-md-12">
+                            <nav>
+                                <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                                    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Project Tab 1</a>
+                                    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Project Tab 2</a>
+                                    <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Project Tab 3</a>
+                                </div>
+                            </nav>
+                </div>
+                        <div class="tab-content" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+                            <div th:each=" board : ${boards}">
+                            <a style="text-decoration-line: none; color: sandybrown" th:href="@{'/board/'+${board.id}+'.df'}">
+                                <img class="boardIcon" src=""
+                                     style="border-radius: 50%; border: 1px solid #898989; display:inline"
+                                     width="20px"
+                                     height="20px"
+                                     th:src="@{/api/getFile.df(name=${board.getUserAccount().profileIcon().fileName()})}"/>
+                                <span class="badge bg-transparent text-dark" style="display:inline; margin-right:-10px" th:text="${board.userAccount.nickname()}">닉네임</span>
+                                <span class="boardTitle" style="font-size: 12px; font-weight: 400; color: #202020; line-height: 1; display:inline;margin-left:4px"
+                                      th:text="${board.boardTitle}"> 게시글 내용
+                </span>
+                                <div style="float:right; display:inline-block; margin-top:-6px;">
+                                    <i class="fa fa-thumbs-up" style="margin-right:5px"> </i>
+                                    <span class="badge bg-transparent text-black" th:text="${board.boardLikeCount}"></span>
+                                    <i class="fa fa-comment" style="margin-right:5px"> </i>
+                                    <span class="badge bg-transparent text-black" th:text="${board.boardComments.size()}"></span>
+
+                                      <span class="badge bg-secondary text-black-50"
+                                                                                                          th:text="${board.getBoardType(board.getBoardType())}" th:if="${board.boardType.name().equals('FREE')}" style="margin-top: 10px;">자유게시판</span>
+                                    <span class="badge bg-warning text-black-50"
+                                          th:text="${board.getBoardType(board.getBoardType())}" th:if="${board.boardType.name().equals('NOTICE')}" style="margin-top: 10px;">자유게시판</span>
+                                    <span class="badge bg-success text-white-50"
+                                          th:text="${board.getBoardType(board.getBoardType())}" th:if="${board.boardType.name().equals('MARKET')}" style="margin-top: 10px; ">자유게시판</span>
+                                    <span class="badge bg-dark text-white-50"
+                                          th:text="${board.getBoardType(board.getBoardType())}" th:if="${board.boardType.name().equals('RECRUITMENT')}" style="margin-top: 10px; ">자유게시판</span>
+                                    <span class="badge bg-light text-black-50"
+                                          th:text="${board.getBoardType(board.getBoardType())}" th:if="${board.boardType.name().equals('QUESTION')}" style="margin-top: 10px; ">자유게시판</span>
+                                    <span class="badge bg-danger text-black-50"
+                                          th:text="${board.getBoardType(board.getBoardType())}" th:if="${board.boardType.name().equals('REPORT')}" style="margin-top: 10px; ">자유게시판</span>
+                                </div></a>
+                            <div class="bar"
+                                 style="width: 100%; height: 2px; background-color: #e6e6e6; margin-top:5px;"></div>
+                        </div>
+                        </div>
+                            <div class="tab-pane fade show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-home-tab">
+                                <div th:each=" comment : ${comments}">
+                                    <a style="text-decoration-line: none; color: sandybrown" th:href="@{'/board/'+${comment.boardId}+'.df'}">
+                                        <img class="boardIcon" src=""
+                                             style="border-radius: 50%; border: 1px solid #898989; display:inline"
+                                             width="20px"
+                                             height="20px"
+                                             th:src="@{/api/getFile.df(name=${comment.getUserAccount().profileIcon().fileName()})}"/>
+                                        <span class="badge bg-transparent text-dark" style="display:inline; margin-right:-10px" th:text="${comment.userAccount.nickname()}">닉네임</span>
+                                        <span class="boardTitle" style="font-size: 12px; font-weight: 400; color: #202020; line-height: 1; display:inline;margin-left:4px"
+                                              th:text="${comment.commentContent}"> 게시글 내용
+                </span>
+                                        <div style="float:right; display:inline-block; margin-top:-6px;">
+                                            <i class="fa fa-thumbs-up" style="margin-right:5px"> </i>
+                                            <span class="badge bg-transparent text-black" th:text="${comment.commentLikeCount}"></span>
+                                            <span class="badge bg-secondary text-black-50"
+                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.name().equals('FREE')}" style="margin-top: 10px;">자유게시판</span>
+                                            <span class="badge bg-warning text-black-50"
+                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.name().equals('NOTICE')}" style="margin-top: 10px;">자유게시판</span>
+                                            <span class="badge bg-success text-white-50"
+                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.name().equals('MARKET')}" style="margin-top: 10px; ">자유게시판</span>
+                                            <span class="badge bg-dark text-white-50"
+                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.name().equals('RECRUITMENT')}" style="margin-top: 10px; ">자유게시판</span>
+                                            <span class="badge bg-light text-black-50"
+                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.name().equals('QUESTION')}" style="margin-top: 10px; ">자유게시판</span>
+                                            <span class="badge bg-danger text-black-50"
+                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.name().equals('REPORT')}" style="margin-top: 10px; ">자유게시판</span>
+                                        </div></a>
+                                    <div class="bar"
+                                         style="width: 100%; height: 2px; background-color: #e6e6e6; margin-top:5px;"></div>
+                                </div>
+                            </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+            </div>
+        </div>
+    </div>
 
     <div class="modal fade" id="detailModifyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="margin-left:2%"
          aria-hidden="true">
@@ -381,6 +484,7 @@
     </div>
 
 </div>
+
 <footer id="footer">
     푸터
 </footer>

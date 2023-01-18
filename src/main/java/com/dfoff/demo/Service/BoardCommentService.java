@@ -22,8 +22,13 @@ public class BoardCommentService {
 
 
     public BoardComment.BoardCommentDto findBoardCommentById(Long id){
+        if(!commentRepository.existsById(id)){
+            throw new EntityNotFoundException("존재하지 않는 댓글입니다.");
+        }
         return BoardComment.BoardCommentDto.from(commentRepository.findBoardCommentById(id));
     }
+
+
 
     public List<BoardComment.BoardCommentDto> findBoardCommentByBoardId(Long id){
         return commentRepository.findBoardCommentByBoardId(id).stream().map(BoardComment.BoardCommentDto::from).toList();

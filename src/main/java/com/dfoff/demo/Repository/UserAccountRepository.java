@@ -2,7 +2,7 @@ package com.dfoff.demo.Repository;
 
 import com.dfoff.demo.Domain.UserAccount;
 import org.springframework.data.jpa.repository.JpaRepository;
-
+import org.springframework.data.jpa.repository.Query;
 
 
 public interface UserAccountRepository  extends JpaRepository<UserAccount, String> {
@@ -12,4 +12,6 @@ public interface UserAccountRepository  extends JpaRepository<UserAccount, Strin
     boolean existsByEmail(String email);
 
     boolean existsByNickname(String nickname);
+
+
 }

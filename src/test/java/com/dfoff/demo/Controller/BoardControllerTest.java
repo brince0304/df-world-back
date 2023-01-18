@@ -76,13 +76,13 @@ class BoardControllerTest {
     @Test
     void deleteBoardExceptionTest() throws Exception {
         //when&then
-        mvc.perform(delete("/api/board.df").param("id", "2")).andExpect(status().isUnauthorized());
+        mvc.perform(delete("/api/board.df").param("id", "2")).andExpect(status().isForbidden());
     }
 
     @Test
     void deleteBoardNotFoundExceptionTest() throws Exception {
         //when&then
-        mvc.perform(delete("/api/board.df").param("id", "1")).andExpect(status().isInternalServerError());
+        mvc.perform(delete("/api/board.df").param("id", "1")).andExpect(status().isNotFound());
     }
 
     @Test
@@ -141,7 +141,7 @@ class BoardControllerTest {
 
         //when&then
         mvc.perform(post("/api/board.df").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardRequest)))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -171,7 +171,7 @@ class BoardControllerTest {
                 .build();
         //when&then
         mvc.perform(put("/api/board.df").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardRequest)))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isForbidden());
     }
 
 
@@ -221,13 +221,13 @@ class BoardControllerTest {
                 .commentContent("test")
                 .build();
         mvc.perform(post("/api/comment.df").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardCommentRequest)))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isForbidden());
     }
 
     @Test
     @WithUserDetails("test")
     void deleteBoardCommentNotFound() throws Exception {
-        mvc.perform(delete("/api/comment.df").param("commentId", "5918")).andExpect(status().isBadRequest());
+        mvc.perform(delete("/api/comment.df").param("commentId", "5918")).andExpect(status().isNotFound());
     }
 
     @Test
@@ -238,7 +238,7 @@ class BoardControllerTest {
                 .commentId(42141L)
                 .commentContent("test22")
                 .build();
-        mvc.perform(put("/api/comment.df").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardCommentRequest))).andExpect(status().isBadRequest());
+        mvc.perform(put("/api/comment.df").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardCommentRequest))).andExpect(status().isNotFound());
     }
 
     @Test
@@ -249,7 +249,7 @@ class BoardControllerTest {
                 .commentContent("test")
                 .build();
         mvc.perform(post("/api/comment.df").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardCommentRequest)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -264,6 +264,6 @@ class BoardControllerTest {
                 .commentId(1L)
                 .commentContent("test22")
                 .build();
-        mvc.perform(put("/api/comment.df").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardCommentRequest))).andExpect(status().isUnauthorized());
+        mvc.perform(put("/api/comment.df").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardCommentRequest))).andExpect(status().isForbidden());
     }
 }

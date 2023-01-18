@@ -1,5 +1,7 @@
 package com.dfoff.demo.Service;
 
+import com.dfoff.demo.Domain.Board;
+import com.dfoff.demo.Domain.BoardComment;
 import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Repository.UserAccountRepository;
@@ -14,6 +16,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.*;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -90,6 +95,21 @@ public class UserAccountService {
     public UserAccount.UserAccountDto getUserAccountById(String userId) {
         if(userAccountRepository.existsByUserId(userId)){
             return UserAccount.UserAccountDto.from(userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다.")));
+        }
+        return null;
+    }
+    @Transactional(readOnly = true)
+    public Set<BoardComment.BoardCommentDto> getCommentsByUserId(String userId) {
+        if(userAccountRepository.existsByUserId(userId)){
+            return userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다.")).getComments().stream().map(BoardComment.BoardCommentDto::from).collect(Collectors.toSet());
+        }
+        return null;
+    }
+
+    @Transactional(readOnly = true)
+    public Set<Board.BoardDto> getBoardsByUserAccount(String userId) {
+        if(userAccountRepository.existsByUserId(userId)){
+            return userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다.")).getArticles().stream().map(Board.BoardDto::from).collect(Collectors.toSet());
         }
         return null;
     }
