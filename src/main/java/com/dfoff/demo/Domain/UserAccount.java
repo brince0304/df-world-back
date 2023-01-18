@@ -10,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -134,27 +135,14 @@ public class UserAccount extends AuditingFields {
         }
     }
 
-    @Builder
-    public record UserAccountResponse(String userId, String nickname, String email, SaveFile.SaveFileDTO profileIcon,
-                                      Set<SecurityRole> roles,
-                                      Set<CharacterEntity.CharacterEntityDto.CharacterEntityResponse> characterResponse) {
-        public static UserAccountResponse from(UserAccountDto userAccount) {
-            return UserAccountResponse.builder()
-                    .userId(userAccount.userId())
-                    .nickname(userAccount.nickname())
-                    .email(userAccount.email())
-                    .roles(userAccount.roles())
-                    .profileIcon(userAccount.profileIcon())
-                    .characterResponse(userAccount.characterEntityDtos().stream().map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toSet()))
-                    .build();
-        }
-    }
+
+
+
 
     @Builder
     public record UserAccountDto(String userId, String password, String nickname, String email,
                                  SaveFile.SaveFileDTO profileIcon,
-                                 Set<CharacterEntity.CharacterEntityDto> characterEntityDtos, Set<Board> articles,
-                                 Set<BoardComment> comments, Set<SecurityRole> roles, LocalDateTime createdAt,
+                                  Set<SecurityRole> roles, LocalDateTime createdAt,
                                  String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
         public static UserAccountDto from(UserAccount userAccount) {
             return UserAccountDto.builder()
@@ -164,9 +152,6 @@ public class UserAccount extends AuditingFields {
                     .email(userAccount.getEmail())
                     .roles(userAccount.getRoles())
                     .profileIcon(SaveFile.SaveFileDTO.from(userAccount.getProfileIcon()))
-                    .characterEntityDtos(
-                            userAccount.getCharacterEntities() == null ? new LinkedHashSet<>() : userAccount.getCharacterEntities().stream()
-                                    .map(UserAccountCharacterMapper::getCharacter).map(CharacterEntity.CharacterEntityDto::from).collect(Collectors.toSet()))
                     .createdAt(userAccount.getCreatedAt())
                     .createdBy(userAccount.getCreatedBy())
                     .modifiedAt(userAccount.getModifiedAt())
@@ -181,11 +166,6 @@ public class UserAccount extends AuditingFields {
                     .nickname(principalDto.getNickname())
                     .email(principalDto.getEmail())
                     .profileIcon(principalDto.getProfileIcon())
-                    .roles(null)
-                    .createdAt(null)
-                    .createdBy(null)
-                    .modifiedAt(null)
-                    .modifiedBy(null)
                     .build();
         }
 
@@ -279,4 +259,66 @@ public class UserAccount extends AuditingFields {
     }
 
 
+    /**
+     * A DTO for the {@link CharacterEntity} entity
+     */
+    @Data
+    @Builder
+    public static class CharacterUserAccountResponse implements Serializable {
+        private final String characterId;
+        private final String serverId;
+        private final String characterName;
+        private final Integer level;
+        private final String jobGrowName;
+        private final String adventureFame;
+        private final String adventureName;
+
+        public static CharacterUserAccountResponse from(CharacterEntity characterEntity) {
+            return CharacterUserAccountResponse.builder()
+                    .characterId(characterEntity.getCharacterId())
+                    .serverId(characterEntity.getServerId())
+                    .characterName(characterEntity.getCharacterName())
+                    .level(characterEntity.getLevel())
+                    .jobGrowName(characterEntity.getJobGrowName())
+                    .adventureFame(characterEntity.getAdventureFame())
+                    .adventureName(characterEntity.getAdventureName())
+                    .build();
+        }
+
+        public static Set<CharacterUserAccountResponse> from(Set<UserAccountCharacterMapper> mapper){
+            return mapper.stream().map(UserAccountCharacterMapper::getCharacter).map(CharacterUserAccountResponse::from).collect(Collectors.toSet());
+
+        }
+    }
+
+    @Builder
+    @Data
+    public static class UserAccountMyPageResponse {
+        private final String userId;
+        private final String nickname;
+        private final String email;
+        private final Set<CharacterUserAccountResponse> characters;
+        private final String profileIconPath;
+        private final LocalDateTime createdAt;
+        private final String createdBy;
+        private final LocalDateTime modifiedAt;
+        private final String modifiedBy;
+
+        public static UserAccountMyPageResponse from(UserAccount userAccount) {
+            return UserAccountMyPageResponse.builder()
+                    .userId(userAccount.getUserId())
+                    .nickname(userAccount.getNickname())
+                    .email(userAccount.getEmail())
+                    .characters(CharacterUserAccountResponse.from(userAccount.getCharacterEntities()))
+                    .profileIconPath(userAccount.getProfileIcon() == null ? null : userAccount.getProfileIcon().getFilePath())
+                    .createdAt(userAccount.getCreatedAt())
+                    .createdBy(userAccount.getCreatedBy())
+                    .modifiedAt(userAccount.getModifiedAt())
+                    .modifiedBy(userAccount.getModifiedBy())
+                    .build();
+        }
+
+
+
+    }
 }

@@ -35,6 +35,9 @@ public class BoardCommentService {
     }
 
     public void createBoardComment(BoardComment.BoardCommentRequest request, UserAccount.UserAccountDto account, Board.BoardDto board){
+        if(account ==null || board ==null){
+            throw new IllegalArgumentException("로그인이 필요합니다.");
+        }
         if(request.getCommentContent() == null || request.getCommentContent().equals("")){
             throw new IllegalArgumentException("댓글 내용을 입력해주세요.");
         }

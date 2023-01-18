@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -46,7 +47,7 @@ public class BoardService {
     }
 
     public List<String> createHashtag(String hashtag){
-        return Arrays.stream(hashtag.replaceAll(" ","").split("#")).filter(o->!o.equals("")).collect(Collectors.toList());
+        return  hashtag!=null ? Arrays.stream(hashtag.replaceAll(" ","").split("#")).filter(o->!o.equals("")).collect(Collectors.toList()) : new ArrayList<>()  ;
     }
 
 

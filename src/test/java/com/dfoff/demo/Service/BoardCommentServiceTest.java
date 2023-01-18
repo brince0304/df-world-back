@@ -1,9 +1,7 @@
 package com.dfoff.demo.Service;
 
-import com.dfoff.demo.Domain.Board;
-import com.dfoff.demo.Domain.BoardComment;
-import com.dfoff.demo.Domain.SaveFile;
-import com.dfoff.demo.Domain.UserAccount;
+import com.dfoff.demo.Domain.*;
+import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.Repository.BoardCommentRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,10 +30,12 @@ class BoardCommentServiceTest {
     @Test
     void findBoardCommentById() {
         //given
-        given(boardCommentRepository.findBoardCommentById(any(Long.class))).willReturn(createBoardCommentDto().toEntity());
+
+        given(boardCommentRepository.existsById(anyLong())).willReturn(true);
+        given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(createBoardComment0());
 
         //when
-        BoardComment.BoardCommentDto dto = sut.findBoardCommentById(1L);
+        BoardComment.BoardCommentResponse dto = sut.findBoardCommentById(1L);
 
         //then
         then(boardCommentRepository).should().findBoardCommentById(any(Long.class));
@@ -56,10 +56,10 @@ class BoardCommentServiceTest {
     @Test
     void createBoardComment() {
         //given
-        given(boardCommentRepository.save(any(BoardComment.class))).willReturn(createBoardCommentDto().toEntity());
+        given(boardCommentRepository.save(any(BoardComment.class))).willReturn(any());
 
         //when
-        sut.createBoardComment(createBoardCommentDto());
+        sut.createBoardComment(createBoardCommentRequestDto(), UserAccount.UserAccountDto.from(createUserAccount()),createBoardDto());
 
         //then
         then(boardCommentRepository).should().save(any(BoardComment.class));
@@ -70,7 +70,7 @@ class BoardCommentServiceTest {
         //given
 
         //when
-        Throwable throwable = catchThrowable(()-> sut.createBoardComment(createBoardCommentContentExceptionDto()));
+        Throwable throwable = catchThrowable(()-> sut.createBoardComment(createBoardCommentRequestExceptionDto(), UserAccount.UserAccountDto.from(createUserAccount()),null));
 
         //then
         assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
@@ -81,7 +81,7 @@ class BoardCommentServiceTest {
         //given
 
         //when
-        Throwable throwable = catchThrowable(()-> sut.createBoardComment(createBoardCommentAccountOrBoardExceptionDto()));
+        Throwable throwable = catchThrowable(()-> sut.createBoardComment(createBoardCommentRequestDto(),null,createBoardDto()));
 
         //then
         assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
@@ -115,9 +115,9 @@ class BoardCommentServiceTest {
     @Test
     void updateBoardCommentException() {
         //given
-        given(boardCommentRepository.findBoardCommentById(any(Long.class))).willReturn(createBoardCommentDto().toEntity());
+        given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(createBoardComment0());
         //when
-        Throwable throwable=catchThrowable(()->sut.updateBoardComment(1L, BoardComment.BoardCommentRequest.builder().build(), eq(createBoardCommentDto().getUserAccount().userId())));
+        Throwable throwable=catchThrowable(()->sut.updateBoardComment(anyLong(),createBoardCommentRequestDto(),null ));
 
         //then
         assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
@@ -127,36 +127,35 @@ class BoardCommentServiceTest {
     @Test
     void updateBoardCommentLike() {
         //given
-        given(boardCommentRepository.findBoardCommentById(any(Long.class))).willReturn(createBoardCommentDto().toEntity());
+        given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(createBoardComment0());
 
         //when
         sut.updateBoardCommentLike(eq(1L) );
 
         //then
-        then(boardCommentRepository).should().findBoardCommentById(any(Long.class));
+        then(boardCommentRepository).should().findBoardCommentById(anyLong());
     }
 
     @Test
     void updateBoardCommentDisLike() {
-
         //given
-        given(boardCommentRepository.findBoardCommentById(any(Long.class))).willReturn(createBoardCommentDto().toEntity());
+        given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(createBoardComment0());
 
         //when
         sut.updateBoardCommentDisLike(eq(1L) );
 
         //then
-        then(boardCommentRepository).should().findBoardCommentById(any(Long.class));
+        then(boardCommentRepository).should().findBoardCommentById(anyLong());
     }
 
     @Test
     void createChildrenComment() {
         //given
-        given(boardCommentRepository.findBoardCommentById(any(Long.class))).willReturn(createBoardCommentDto().toEntity());
-        given(boardCommentRepository.save(any(BoardComment.class))).willReturn(createBoardCommentDto().toEntity());
+        given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(createBoardComment0());
+        given(boardCommentRepository.save(any(BoardComment.class))).willReturn(createBoardComment0());
 
         //when
-        sut.createChildrenComment(eq(1L), createBoardCommentDto());
+        sut.createChildrenComment(eq(1L), createBoardCommentChildrenRequestDto(), UserAccount.UserAccountDto.from(createUserAccount()),createBoardDto());
 
         //then
         then(boardCommentRepository).should().save(any(BoardComment.class));
@@ -174,42 +173,30 @@ class BoardCommentServiceTest {
         then(boardCommentRepository).should().findBoardCommentByLikeCount(any(Long.class));
     }
 
-    private BoardComment.BoardCommentDto createBoardCommentDto() {
-        return BoardComment.BoardCommentDto.builder()
-                .id(1L)
+
+
+
+
+
+    private BoardComment.BoardCommentRequest createBoardCommentRequestDto(){
+        return BoardComment.BoardCommentRequest.builder()
                 .commentContent("content")
-                .userAccount(UserAccount.UserAccountDto.from(createUserAccount()))
-                .board(createBoardDto())
                 .build();
     }
 
-    private BoardComment.BoardCommentDto createBoardCommentContentExceptionDto() {
-        return BoardComment.BoardCommentDto.builder()
-                .id(1L)
+    private BoardComment.BoardCommentRequest createBoardCommentChildrenRequestDto(){
+        return BoardComment.BoardCommentRequest.builder()
+                .commentId(1L)
+                .commentContent("content")
+                .build();
+    }
+
+    private BoardComment.BoardCommentRequest createBoardCommentRequestExceptionDto(){
+        return BoardComment.BoardCommentRequest.builder()
                 .commentContent("")
-                .userAccount(UserAccount.UserAccountDto.from(createUserAccount()))
-                .board(createBoardDto())
                 .build();
     }
 
-    private BoardComment.BoardCommentDto createBoardCommentAccountOrBoardExceptionDto() {
-        return BoardComment.BoardCommentDto.builder()
-                .id(1L)
-                .commentContent("")
-                .userAccount(null)
-                .board(createBoardDto())
-                .build();
-    }
-
-
-    private Board.BoardDto createBoardDto() {
-        return Board.BoardDto.builder()
-                .boardTitle("test")
-                .boardContent("test")
-                .userAccount(UserAccount.UserAccountDto.from(createUserAccount()))
-                .hashtags(new HashSet<>())
-                .build();
-    }
     private UserAccount createUserAccount(){
         UserAccount account =  UserAccount.builder().
                 userId("test2").
@@ -223,5 +210,63 @@ class BoardCommentServiceTest {
                 build();
         account.setProfileIcon(saveFile);
         return account;
+    }
+
+
+    private BoardComment.BoardCommentRequest boardCommentRequest() {
+        return BoardComment.BoardCommentRequest.builder()
+                .commentContent("test")
+                .build();
+    }
+
+    private Board.BoardDto createBoardDto() {
+        return Board.BoardDto.builder()
+                .boardTitle("test")
+                .boardContent("test")
+                .boardType(BoardType.FREE)
+                .userAccount(UserAccount.UserAccountDto.from(createUserAccount()))
+                .build();
+    }
+
+    private CharacterEntity.CharacterEntityDto createCharacterEntityDto(){
+        return CharacterEntity.CharacterEntityDto.builder()
+                .characterName("test")
+                .serverId("cain")
+                .level(1)
+                .build();
+
+    }
+
+    private Board.BoardRequest createBoardRequestDto(){
+        return Board.BoardRequest.builder()
+                .boardTitle("test2")
+                .boardContent("tes2321331312231212")
+                .boardType(BoardType.FREE)
+                .build();
+    }
+
+    private Board.BoardRequest createBoardRequestDto2(){
+        return Board.BoardRequest.builder()
+                .boardTitle("test2")
+                .boardContent("test222222222222")
+                .boardType(BoardType.FREE)
+                .build();
+    }
+
+    private BoardComment createBoardComment0(){
+        return BoardComment.builder()
+                .userAccount(createUserAccount())
+                .board(createBoard())
+                .commentContent("test")
+                .build();
+    }
+
+    private Board createBoard(){
+        return Board.builder()
+                .boardTitle("test")
+                .boardContent("test")
+                .boardType(BoardType.FREE)
+                .userAccount(createUserAccount())
+                .build();
     }
 }

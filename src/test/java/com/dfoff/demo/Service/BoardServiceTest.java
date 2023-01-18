@@ -43,10 +43,16 @@ class BoardServiceTest {
                 .build();
         given(boardRepository.save(any(Board.class))).willReturn(board);
         //when
-        sut.createBoard(createBoardDto(), createSaveFileDto(),createCharacterEntityDto());
+        sut.createBoard(createBoardRequestDto(),createSaveFileDto(),createUserAccountDto(),null);
 
         //then
         then(boardRepository).should().save(any(Board.class));
+    }
+
+    private UserAccount.UserAccountDto createUserAccountDto() {
+        return UserAccount.UserAccountDto.from(createUserAccount());
+
+
     }
 
     private Set<SaveFile.SaveFileDTO> createSaveFileDto() {
@@ -113,24 +119,25 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
         given(boardRepository.findBoardById(any(Long.class))).willReturn(board);
 
         //when
-        sut.updateBoard(any(Long.class),createBoardDto(),createSaveFileDto(),null);
+        sut.updateBoard(eq(1L),createBoardRequestDto2(),createSaveFileDto(),null);
 
         //then
         then(boardRepository).should().findBoardById(any(Long.class));
-        assertThat(board.getBoardTitle()).isEqualTo("test");
+        assertThat(board.getBoardTitle()).isEqualTo("test2");
     }
 
     @Test
     void updateArticleEntityNotFoundExceptionTest() {
         //given
-        given(boardRepository.findBoardById(any(Long.class))).willReturn(null);
+        given(boardRepository.findBoardById(anyLong())).willReturn(null);
 
         //when
-        Throwable throwable = catchThrowable(()->sut.updateBoard(any(Long.class),createBoardDto(),createSaveFileDto(),createCharacterEntityDto()));
+        Throwable throwable = catchThrowable(()->sut.updateBoard(anyLong(),createBoardRequestDto2(),createSaveFileDto(),createCharacterEntityDto()));
         //then
-        then(boardRepository).should().findBoardById(any(Long.class));
         assertThat(throwable).isInstanceOf(EntityNotFoundException.class);
+
     }
+
     @Test
     void increaseViewCountTest(){
         //given
@@ -182,9 +189,8 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
         return Board.BoardDto.builder()
                 .boardTitle("test")
                 .boardContent("test")
-                .hashtags(createHashtagDto())
+                .boardType(BoardType.FREE)
                 .userAccount(UserAccount.UserAccountDto.from(createUserAccount()))
-                .hashtags(new HashSet<>())
                 .build();
     }
     private UserAccount createUserAccount(){
@@ -210,13 +216,20 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
 
     }
 
-    private Set<Hashtag.HashtagDto> createHashtagDto(){
-        return new HashSet<>(Set.of(Hashtag.HashtagDto.builder().name("test").build()));
+    private Board.BoardRequest createBoardRequestDto(){
+        return Board.BoardRequest.builder()
+                .boardTitle("test2")
+                .boardContent("tes2321331312231212")
+                .boardType(BoardType.FREE)
+                .build();
     }
 
-    private Page<Board> createBoardPage(){
-        return new PageImpl<>(List.of(createBoardDto().toEntity()));
+    private Board.BoardRequest createBoardRequestDto2(){
+        return Board.BoardRequest.builder()
+                .boardTitle("test2")
+                .boardContent("test222222222222")
+                .boardType(BoardType.FREE)
+                .build();
     }
-
 
 }

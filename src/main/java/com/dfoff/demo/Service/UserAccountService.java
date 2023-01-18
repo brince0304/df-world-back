@@ -31,14 +31,14 @@ public class UserAccountService {
 
 
 
-    public boolean createAccount(UserAccount.UserAccountDto account, SaveFile.SaveFileDTO profileIcon) {
-        if (userAccountRepository.existsByUserId(account.userId())) {
+    public boolean createAccount(UserAccount.UserAccountSignUpRequest account, SaveFile.SaveFileDTO profileIcon) {
+        if (userAccountRepository.existsByUserId(account.getUserId())) {
             throw new EntityExistsException("이미 존재하는 아이디입니다.");
         }
-        if (userAccountRepository.existsByEmail(account.email())) {
+        if (userAccountRepository.existsByEmail(account.getEmail())) {
             throw new EntityExistsException("이미 존재하는 이메일입니다.");
         }
-        if (userAccountRepository.existsByNickname(account.nickname())) {
+        if (userAccountRepository.existsByNickname(account.getNickname())) {
             throw new EntityExistsException("이미 존재하는 닉네임입니다.");
         }
         log.info("account: {}", account);
@@ -63,15 +63,15 @@ public class UserAccountService {
 
 
 
-    public boolean updateAccountDetails(UserAccount.UserAccountDto request) {
+    public void updateAccountDetails(UserAccount.UserAccountDto request) {
         UserAccount account = userAccountRepository.findById(request.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         if (userAccountRepository.existsByEmail(request.email())) {
             log.info("이미 존재하는 이메일입니다.");
-            return false;
+            return;
         }
         if (userAccountRepository.existsByNickname(request.nickname())) {
             log.info("이미 존재하는 닉네임입니다.");
-            return false;
+            return;
         }
         if(request.email() != null) {
             account.setEmail(request.email());
@@ -79,7 +79,6 @@ public class UserAccountService {
         if(request.nickname() != null) {
             account.setNickname(request.nickname());
         }
-        return true;
     }
 
 
@@ -92,34 +91,34 @@ public class UserAccountService {
 
 
     @Transactional(readOnly = true)
-    public UserAccount.UserAccountDto getUserAccountById(String userId) {
+    public UserAccount.UserAccountMyPageResponse getUserAccountById(String userId) {
         if(userAccountRepository.existsByUserId(userId)){
-            return UserAccount.UserAccountDto.from(userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다.")));
+            return UserAccount.UserAccountMyPageResponse.from(userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다.")));
         }
         return null;
     }
     @Transactional(readOnly = true)
-    public Set<BoardComment.BoardCommentDto> getCommentsByUserId(String userId) {
+    public Set<BoardComment.BoardCommentResponse> getCommentsByUserId(String userId) {
         if(userAccountRepository.existsByUserId(userId)){
-            return userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다.")).getComments().stream().map(BoardComment.BoardCommentDto::from).collect(Collectors.toSet());
+            return userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다.")).getComments().stream().map(BoardComment.BoardCommentResponse::from).collect(Collectors.toSet());
         }
         return null;
     }
 
     @Transactional(readOnly = true)
-    public Set<Board.BoardDto> getBoardsByUserAccount(String userId) {
+    public Set<Board.BoardListResponse> getBoardsByUserAccount(String userId) {
         if(userAccountRepository.existsByUserId(userId)){
-            return userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다.")).getArticles().stream().map(Board.BoardDto::from).collect(Collectors.toSet());
+            return userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다.")).getArticles().stream().map(Board.BoardListResponse::from).collect(Collectors.toSet());
         }
         return null;
     }
 
-    public boolean deleteUserAccountById(String userId) {
+    public void deleteUserAccountById(String userId) {
         if(userAccountRepository.existsByUserId(userId)){
+            userAccountRepository.deleteBoardByUserAccountId(userId);
+            userAccountRepository.deleteBoardCommentByUserAccountId(userId);
             userAccountRepository.deleteById(userId);
-            return true;
         }
-        return false;
     }
 
     public UserAccount.UserAccountDto loginByUserId(UserAccount.LoginDto dto) {

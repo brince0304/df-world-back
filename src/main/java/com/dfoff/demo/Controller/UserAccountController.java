@@ -69,8 +69,8 @@ public class UserAccountController {
     public ResponseEntity<?> searchChar(@RequestParam(required = false) String serverId,
                                         @RequestParam(required = false) String characterName,
                                         @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable,
-                                        @AuthenticationPrincipal UserAccount.PrincipalDto userAccountDTO) {
-            if (userAccountDTO == null) {
+                                        @AuthenticationPrincipal UserAccount.PrincipalDto principal) {
+            if (principal == null) {
                 throw new SecurityException("로그인이 필요합니다.");
             }
             if (serverId == null || characterName == null) {
@@ -98,7 +98,7 @@ public class UserAccountController {
         if (!request.getPassword().equals(request.getPasswordCheck())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        userAccountService.createAccount(request.toDto(), saveFileService.getFileByFileName("icon_char_0.png"));
+        userAccountService.createAccount(request, saveFileService.getFileByFileName("icon_char_0.png"));
             return new ResponseEntity<>(request.getUserId(), HttpStatus.OK);
     }
 
@@ -106,28 +106,27 @@ public class UserAccountController {
     public ResponseEntity<?> addCharacter(@RequestParam(required = false) String request,
                                           @RequestParam(required = false) String serverId,
                                           @RequestParam(required = false) String characterId,
-                                          @AuthenticationPrincipal UserAccount.PrincipalDto userAccountDTO) {
-        if (userAccountDTO == null) {
+                                          @AuthenticationPrincipal UserAccount.PrincipalDto principal) {
+        if (principal == null) {
             throw new SecurityException("로그인이 필요합니다.");
         }
         if (request.equals("add")) {
             characterService.getCharacterAbilityThenSaveAsync(characterService.getCharacter(serverId, characterId));
-            characterService.addCharacter(UserAccount.UserAccountDto.from(userAccountDTO), characterService.getCharacter(serverId, characterId));
+            characterService.addCharacter(UserAccount.UserAccountDto.from(principal), characterService.getCharacter(serverId, characterId));
         } else if (request.equals("delete")) {
-            characterService.deleteCharacter(UserAccount.UserAccountDto.from(userAccountDTO), characterService.getCharacter(serverId, characterId));
+            characterService.deleteCharacter(UserAccount.UserAccountDto.from(principal), characterService.getCharacter(serverId, characterId));
         }
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
     @GetMapping("/user/myPage.df")
-    public ModelAndView getMyPage(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto) {
-        if (principalDto == null) {
+    public ModelAndView getMyPage(@AuthenticationPrincipal UserAccount.PrincipalDto principal) {
+        if (principal == null) {
             throw new SecurityException("로그인이 필요합니다.");
         }
         ModelAndView mav = new ModelAndView("/mypage/mypage");
-        UserAccount.UserAccountDto userAccountDTO = userAccountService.getUserAccountById(principalDto.getUsername());
-        mav.addObject("user", UserAccount.UserAccountResponse.from(userAccountDTO));
-        mav.addObject("characters", userAccountDTO.characterEntityDtos().stream().map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toSet()));
+        UserAccount.UserAccountMyPageResponse response = userAccountService.getUserAccountById(principal.getUsername());
+        mav.addObject("user", response);
         return mav;
     }
 

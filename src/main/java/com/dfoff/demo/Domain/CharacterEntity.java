@@ -93,7 +93,6 @@ public class CharacterEntity extends AuditingFields {
         private final String adventureFame;
         private final String adventureName;
 
-        private final Set<UserAccount.UserAccountDto> userAccounts;
 
         public static CharacterEntity toEntity(CharacterEntityDto dto) {
             return CharacterEntity.builder()

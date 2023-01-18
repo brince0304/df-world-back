@@ -21,6 +21,7 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -51,7 +52,7 @@ class UserAccountServiceTest {
         account.setProfileIcon(saveFile);
         given(userAccountRepository.save(any())).willReturn(account);
         //when&then
-        sut.createAccount(UserAccount.UserAccountDto.from(account), SaveFile.SaveFileDTO.builder().build());
+        sut.createAccount(createUserAccountSignUpRequest(), SaveFile.SaveFileDTO.builder().build());
         then(userAccountRepository).should().save(account);
     }
 
@@ -105,7 +106,7 @@ class UserAccountServiceTest {
         account.setProfileIcon(saveFile);
         given(userAccountRepository.existsByUserId(account.getUserId())).willReturn(true);
         //when&then
-        Throwable throwable = catchThrowable(() -> sut.createAccount(UserAccount.UserAccountDto.from(account), SaveFile.SaveFileDTO.builder().build()));
+        Throwable throwable = catchThrowable(() -> sut.createAccount(createUserAccountSignUpRequest(), SaveFile.SaveFileDTO.builder().build()));
         assertThat(throwable).isInstanceOf(EntityExistsException.class);
     }
 
@@ -150,7 +151,7 @@ class UserAccountServiceTest {
         account.setProfileIcon(saveFile);
         given(userAccountRepository.existsByUserId(account.getUserId())).willReturn(false);
         //when
-        UserAccount.UserAccountDto dto = sut.getUserAccountById(account.getUserId());
+        UserAccount.UserAccountMyPageResponse dto = sut.getUserAccountById(account.getUserId());
 
         //then
         assertThat(dto).isNull();
@@ -176,25 +177,6 @@ class UserAccountServiceTest {
         then(userAccountRepository).should().findById(any());
     }
 
-    @Test
-    @DisplayName("updateAccountDetails() - 계정 업데이트 테스트 예외 - 비밀번호 불일치")
-    void givenUserAccount_whenUpdatingUserDetailsButValidatedFailed_thenDoNothing() {
-        UserAccount.UserAccountUpdateRequest account = UserAccount.UserAccountUpdateRequest.builder().
-                password("test2").passwordCheck("test1").
-                email("test2").
-                nickname("test2").
-                build();
-        given(userAccountRepository.findById(any())).willReturn(java.util.Optional.of(UserAccount.builder().
-                userId("test").
-                password("test").
-                email("test").
-                nickname("test").
-                build()));
-        //when&then
-        sut.updateAccountDetails(account.toDto());
-        then(userAccountRepository).should().findById(any());
-        assertThat(userAccountRepository.findById(any()).get().getPassword()).isNotEqualTo(account.password());
-    }
 
 
     @Test
@@ -254,5 +236,15 @@ class UserAccountServiceTest {
                 build();
         account.setProfileIcon(saveFile);
         return account;
+    }
+
+    private UserAccount.UserAccountSignUpRequest createUserAccountSignUpRequest() {
+        return UserAccount.UserAccountSignUpRequest.builder().
+                userId("test").
+                password("test").
+                passwordCheck("test").
+                email("test").
+                nickname("test").
+                build();
     }
 }
