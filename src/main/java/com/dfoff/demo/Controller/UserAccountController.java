@@ -9,6 +9,7 @@ import com.dfoff.demo.Util.Bcrypt;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -127,11 +128,22 @@ public class UserAccountController {
         ModelAndView mav = new ModelAndView("/mypage/mypage");
         UserAccount.UserAccountMyPageResponse response = userAccountService.getUserAccountById(principal.getUsername());
         mav.addObject("user", response);
-        mav.addObject("boards", userAccountService.getBoardsByUserAccount(principal.getUsername()));
-        mav.addObject("comments", userAccountService.getCommentsByUserId(principal.getUsername()));
         return mav;
     }
 
+    @GetMapping("/api/user/userLogs.df")
+    public ResponseEntity<?> getLog(@AuthenticationPrincipal UserAccount.PrincipalDto principal,
+                                    @RequestParam (required = true) String type,
+                                    @PageableDefault(size = 15,sort = "createdAt",direction = Sort.Direction.DESC) org.springframework.data.domain.Pageable pageable) {
+        if (principal == null) {
+            throw new SecurityException("로그인이 필요합니다.");
+        } if(type == null){
+            throw new IllegalArgumentException("타입을 입력해주세요.");
+        } else if(type.equals("board")){
+            return new ResponseEntity<>(userAccountService.getBoardsByUserAccount(principal.getUsername(),pageable), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(userAccountService.getCommentsByUserId(principal.getUsername(),pageable), HttpStatus.OK);
+    }
     @PutMapping("/api/user/profile.df")
     public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
                                            @RequestParam(required = false) String nickname,

@@ -4,10 +4,13 @@ import com.dfoff.demo.Domain.Board;
 import com.dfoff.demo.Domain.BoardComment;
 import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
+import com.dfoff.demo.Repository.BoardCommentRepository;
 import com.dfoff.demo.Repository.UserAccountRepository;
 import com.dfoff.demo.Util.Bcrypt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.*;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -98,17 +102,18 @@ public class UserAccountService {
         return null;
     }
     @Transactional(readOnly = true)
-    public Set<BoardComment.BoardCommentResponse> getCommentsByUserId(String userId) {
+    public Page<BoardComment.BoardCommentMyPageResponse> getCommentsByUserId(String userId, Pageable pageable) {
         if(userAccountRepository.existsByUserId(userId)){
-            return userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다.")).getComments().stream().map(BoardComment.BoardCommentResponse::from).collect(Collectors.toSet());
+            Page<BoardComment.BoardCommentMyPageResponse> responses= userAccountRepository.findBoardCommentsByUserId(userId, pageable).map(BoardComment.BoardCommentMyPageResponse::from);
+            return responses;
         }
         return null;
     }
 
     @Transactional(readOnly = true)
-    public Set<Board.BoardListResponse> getBoardsByUserAccount(String userId) {
+    public Page<Board.BoardListMyPageResponse> getBoardsByUserAccount(String userId,Pageable pageable) {
         if(userAccountRepository.existsByUserId(userId)){
-            return userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다.")).getArticles().stream().map(Board.BoardListResponse::from).collect(Collectors.toSet());
+            return userAccountRepository.findBoardsByUserId(userId, pageable).map(Board.BoardListMyPageResponse::from);
         }
         return null;
     }
