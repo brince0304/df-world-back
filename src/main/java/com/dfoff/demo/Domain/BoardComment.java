@@ -15,7 +15,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.dfoff.demo.Domain.Board.BoardListResponse.Chrono.timesAgo;
+import static com.dfoff.demo.Domain.Board.Chrono.timesAgo;
+import static com.dfoff.demo.Domain.Board.Chrono.timesAgo;
 
 
 @Table (indexes=@Index(name = "idx_createdAt" , columnList = "createdAt"))
@@ -116,6 +117,60 @@ public class BoardComment extends AuditingFields {
                     .isParent(boardComment.getIsParent())
                     .childrenComments(boardComment.getChildrenComments().stream().map(BoardCommentResponse::from).collect(Collectors.toSet()))
                     .userProfileImgUrl(FileUtil.getProfileIconPath(boardComment.getUserAccount().getProfileIcon().getFileName()))
+                    .boardType(boardComment.getBoard().getBoardType())
+                    .build();
+
+        }
+    }
+
+    @Data
+    @Builder
+    public static class BoardCommentMyPageResponse implements Serializable {
+        private final String createdAt;
+        private final String createdBy;
+        private final String modifiedAt;
+        private final String modifiedBy;
+        private final Long id;
+        private final String commentContent;
+        private final String boardId;
+
+
+        private final Integer commentLikeCount;
+        private final String isDeleted;
+        private final String isParent;
+
+
+        private final String childrenCommentsSize;
+
+        private final BoardType boardType;
+
+        public String getBoardType(BoardType type){
+            if(type==null){
+                return null;
+            }
+            return switch (type) {
+                case NOTICE -> "공지";
+                case FREE -> "자유";
+                case QUESTION -> "Q&A";
+                case RECRUITMENT -> "구인";
+                case MARKET -> "거래";
+                case REPORT -> "사건/사고";
+            };
+        }
+
+        public static BoardCommentMyPageResponse from (BoardComment boardComment) {
+            return BoardCommentMyPageResponse.builder()
+                    .createdAt(timesAgo(boardComment.getCreatedAt()))
+                    .createdBy(boardComment.getCreatedBy())
+                    .modifiedAt(timesAgo(boardComment.getModifiedAt()))
+                    .modifiedBy(boardComment.getModifiedBy())
+                    .id(boardComment.getId())
+                    .commentContent(boardComment.getCommentContent())
+                    .boardId(boardComment.getBoard().getId().toString())
+                    .commentLikeCount(boardComment.getCommentLikeCount())
+                    .isDeleted(boardComment.getIsDeleted())
+                    .isParent(boardComment.getIsParent())
+                    .childrenCommentsSize(boardComment.getChildrenComments().size()+"")
                     .boardType(boardComment.getBoard().getBoardType())
                     .build();
 

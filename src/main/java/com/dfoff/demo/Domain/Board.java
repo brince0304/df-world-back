@@ -18,7 +18,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.dfoff.demo.Domain.Board.BoardListResponse.Chrono.timesAgo;
+import static com.dfoff.demo.Domain.Board.Chrono.timesAgo;
+import static com.dfoff.demo.Domain.Board.Chrono.timesAgo;
 import static com.dfoff.demo.Util.BoardUtil.converter;
 
 @Entity
@@ -29,7 +30,7 @@ import static com.dfoff.demo.Util.BoardUtil.converter;
 @NoArgsConstructor (access = AccessLevel.PROTECTED)
 public class Board extends AuditingFields {
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column
@@ -38,21 +39,21 @@ public class Board extends AuditingFields {
     private BoardType boardType;
     @Setter
     @NotNull
-    @Length (min = 1, max = 100)
+    @Length(min = 1, max = 100)
     private String boardTitle;
     @Setter
     @NotNull
-    @Length (min = 1, max = 10000)
+    @Length(min = 1, max = 10000)
     private String boardContent;
 
-    @ManyToOne (fetch = FetchType.LAZY)
-    @JoinColumn (name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     @Setter
     @NotNull
     private UserAccount userAccount;
 
     @Setter
-    @Column (nullable = false)
+    @Column(nullable = false)
     @Builder.Default
     private String isDeleted = "N";
     @Setter
@@ -62,30 +63,26 @@ public class Board extends AuditingFields {
     @Builder.Default
     private Integer boardLikeCount = 0;
 
-    @OneToMany (fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @Builder.Default
-    @JoinColumn (name = "board_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
+    @JoinColumn(name = "board_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     private final Set<SaveFile> boardFiles = new LinkedHashSet<>();
 
-    @OneToMany (mappedBy = "board",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     @ToString.Exclude
     private final Set<BoardComment> boardComments = new LinkedHashSet<>();
 
 
-    @OneToMany (mappedBy = "board")
+    @OneToMany(mappedBy = "board")
     @Builder.Default
     @ToString.Exclude
     private final Set<BoardHashtagMapper> hashtags = new LinkedHashSet<>();
 
     @ManyToOne
-    @JoinColumn (name = "character_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
+    @JoinColumn(name = "character_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     @Setter
     private CharacterEntity character;
-
-
-
-
 
 
     @Override
@@ -120,8 +117,6 @@ public class Board extends AuditingFields {
         private final Integer boardLikeCount;
 
 
-
-
         public static BoardDto from(Board board) {
             return BoardDto.builder()
                     .createdAt(board.getCreatedAt())
@@ -139,39 +134,39 @@ public class Board extends AuditingFields {
                     .build();
 
 
-
         }
-            public Board toEntity(){
-                return  Board.builder()
-                        .id(id)
-                        .boardType(boardType)
-                        .boardTitle(boardTitle)
-                        .boardContent(boardContent)
-                        .userAccount(userAccount.toEntity()).build();
-            }
 
-            public Board toEntity(UserAccount userAccount){
-                return  Board.builder()
-                        .id(id)
-                        .boardType(boardType)
-                        .boardTitle(boardTitle)
-                        .boardContent(boardContent)
-                        .userAccount(userAccount).build();
-            }
+        public Board toEntity() {
+            return Board.builder()
+                    .id(id)
+                    .boardType(boardType)
+                    .boardTitle(boardTitle)
+                    .boardContent(boardContent)
+                    .userAccount(userAccount.toEntity()).build();
+        }
 
-
+        public Board toEntity(UserAccount userAccount) {
+            return Board.builder()
+                    .id(id)
+                    .boardType(boardType)
+                    .boardTitle(boardTitle)
+                    .boardContent(boardContent)
+                    .userAccount(userAccount).build();
+        }
 
 
     }
 
     @Data
     @Builder
-    public static class CharacterBoardResponse implements Serializable{
+    public static class CharacterBoardResponse implements Serializable {
         private final String characterId;
         private final String characterName;
         private final String serverId;
 
-        private final String characterImageUrl ;
+        private final String characterImageUrl;
+
+        private final String imgStyleClassName;
 
         private final String jobName;
 
@@ -179,7 +174,24 @@ public class Board extends AuditingFields {
 
         private final String adventureFame;
 
-        public static CharacterBoardResponse from(CharacterEntity characterEntity){
+        public static String getStyleClassName(String jobName){
+            return switch (jobName) {
+                case "격투가(남)" -> "m-fighter";
+                case "격투가(여)" -> "f-fighter";
+                case "마법사(여)" -> "f-mage";
+                case "거너(남)" -> "m-gunner";
+                case "거너(여)" -> "f-gunner";
+                case "마창사" -> "m-lancer";
+                case "귀검사(남)" -> "m-warrior";
+                case "귀검사(여)" -> "f-warrior";
+                case "총검사" -> "m-gunwarrior";
+                case "프리스트(남)" -> "m-priest";
+                case "프리스트(여)" -> "f-priest";
+                default -> "default";
+            };
+        }
+
+        public static CharacterBoardResponse from(CharacterEntity characterEntity) {
             return CharacterBoardResponse.builder()
                     .characterId(String.valueOf(characterEntity.getCharacterId()))
                     .characterName(characterEntity.getCharacterName())
@@ -187,7 +199,8 @@ public class Board extends AuditingFields {
                     .jobName(characterEntity.getJobName())
                     .adventureName(characterEntity.getAdventureName() == null ? "갱신필요" : characterEntity.getAdventureName())
                     .adventureFame(characterEntity.getAdventureFame() == null ? "0" : characterEntity.getAdventureFame())
-                    .characterImageUrl(OpenAPIUtil.getCharacterImgUrl(characterEntity.getServerId(),characterEntity.getCharacterId() ,"1"))
+                    .characterImageUrl(OpenAPIUtil.getCharacterImgUrl(characterEntity.getServerId(), characterEntity.getCharacterId(), "1"))
+                    .imgStyleClassName(getStyleClassName(characterEntity.getJobName()))
                     .build();
         }
     }
@@ -222,11 +235,12 @@ public class Board extends AuditingFields {
         private final Set<String> hashtags;
 
 
-        public String convert(String date){
+        public String convert(String date) {
             return converter.convert(date);
         }
-        public String getBoardType(BoardType type){
-            if(type==null){
+
+        public String getBoardType(BoardType type) {
+            if (type == null) {
                 return null;
             }
             return switch (type) {
@@ -238,7 +252,8 @@ public class Board extends AuditingFields {
                 case REPORT -> "사건/사고";
             };
         }
-        public static BoardListResponse from(Board board){
+
+        public static BoardListResponse from(Board board) {
             return BoardListResponse.builder()
                     .createdAt(timesAgo(board.getCreatedAt()))
                     .createdBy(board.getCreatedBy())
@@ -254,44 +269,107 @@ public class Board extends AuditingFields {
                     .commentCount(String.valueOf(board.getBoardComments().size()))
                     .userId(board.getUserAccount().getUserId())
                     .userNickname(board.getUserAccount().getNickname())
-                    .character(board.getCharacter()==null ? null : CharacterBoardResponse.from(board.getCharacter()))
+                    .character(board.getCharacter() == null ? null : CharacterBoardResponse.from(board.getCharacter()))
                     .userProfileImgUrl(FileUtil.getProfileIconPath(board.getUserAccount().getProfileIcon().getFileName()))
                     .hashtags(board.getHashtags().stream().map(BoardHashtagMapper::getHashtag).map(Hashtag::getName).collect(Collectors.toSet()))
                     .build();
         }
+    }
 
-        public static class Chrono {
 
-            public static long dPlus(LocalDateTime dayBefore) {
-                return ChronoUnit.DAYS.between(dayBefore, LocalDateTime.now());
+    public static class Chrono {
+
+        public static long dPlus(LocalDateTime dayBefore) {
+            return ChronoUnit.DAYS.between(dayBefore, LocalDateTime.now());
+        }
+
+        public static long dMinus(LocalDateTime dayAfter) {
+            return ChronoUnit.DAYS.between(dayAfter, LocalDateTime.now());
+        }
+
+        public static String timesAgo(LocalDateTime dayBefore) {
+            long gap = ChronoUnit.MINUTES.between(dayBefore, LocalDateTime.now());
+            String word;
+            if (gap == 0) {
+                word = "방금 전";
+            } else if (gap < 60) {
+                word = gap + "분 전";
+            } else if (gap < 60 * 24) {
+                word = (gap / 60) + "시간 전";
+            } else if (gap < 60 * 24 * 10) {
+                word = (gap / 60 / 24) + "일 전";
+            } else {
+                word = dayBefore.format(DateTimeFormatter.ofPattern("MM월 dd일"));
             }
+            return word;
+        }
 
-            public static long dMinus(LocalDateTime dayAfter) {
-                return ChronoUnit.DAYS.between(dayAfter, LocalDateTime.now());
-            }
-
-            public static String timesAgo(LocalDateTime dayBefore) {
-                long gap = ChronoUnit.MINUTES.between(dayBefore, LocalDateTime.now());
-                String word;
-                if (gap == 0){
-                    word = "방금 전";
-                }else if (gap < 60) {
-                    word = gap + "분 전";
-                }else if (gap < 60 * 24){
-                    word = (gap/60) + "시간 전";
-                }else if (gap < 60 * 24 * 10) {
-                    word = (gap/60/24) + "일 전";
-                } else {
-                    word = dayBefore.format(DateTimeFormatter.ofPattern("MM월 dd일"));
-                }
-                return word;
-            }
-
-            public static String customForm(LocalDateTime date) {
-                return date.format(DateTimeFormatter.ofPattern("MM월 dd일"));
-            }
+        public static String customForm(LocalDateTime date) {
+            return date.format(DateTimeFormatter.ofPattern("MM월 dd일"));
         }
     }
+
+    @Data
+    @Builder
+    public static class BoardListMyPageResponse implements Serializable {
+        private final String createdAt;
+        private final String createdBy;
+        private final String modifiedAt;
+        private final String modifiedBy;
+        private final Long id;
+        private final BoardType boardType;
+        private final String boardTitle;
+        private final String boardContent;
+        private final String isDeleted;
+        private final Integer boardViewCount;
+        private final Integer boardLikeCount;
+        private final String commentCount;
+
+
+        private final CharacterBoardResponse character;
+
+        private final boolean hashtagExists;
+
+
+        public String convert(String date) {
+            return converter.convert(date);
+        }
+
+        public String getBoardType(BoardType type) {
+            if (type == null) {
+                return null;
+            }
+            return switch (type) {
+                case NOTICE -> "공지";
+                case FREE -> "자유";
+                case QUESTION -> "Q&A";
+                case RECRUITMENT -> "구인";
+                case MARKET -> "거래";
+                case REPORT -> "사건/사고";
+            };
+        }
+
+        public static BoardListMyPageResponse from(Board board) {
+            return BoardListMyPageResponse.builder()
+                    .boardContent(board.getBoardContent())
+                    .boardLikeCount(board.getBoardLikeCount())
+                    .boardTitle(board.getBoardTitle())
+                    .boardType(board.getBoardType())
+                    .boardViewCount(board.getBoardViewCount())
+                    .commentCount(String.valueOf(board.getBoardComments().size()))
+                    .createdAt(timesAgo(board.getCreatedAt()))
+                    .createdBy(board.getCreatedBy())
+                    .id(board.getId())
+                    .isDeleted(board.getIsDeleted())
+                    .modifiedAt(timesAgo(board.getModifiedAt()))
+                    .modifiedBy(board.getModifiedBy())
+                    .character(board.getCharacter() == null ? null : CharacterBoardResponse.from(board.getCharacter()))
+                    .hashtagExists(board.getHashtags().size() > 0)
+                    .build();
+
+        }
+    }
+
 
     /**
      * A DTO for the {@link Board} entity
@@ -301,9 +379,9 @@ public class Board extends AuditingFields {
     public static class BoardRequest implements Serializable {
         private final Long id;
         private final BoardType boardType;
-        @Size(min = 2, max = 50,message = "제목은 2자 이상 50자 이하로 입력해주세요.")
+        @Size(min = 2, max = 50, message = "제목은 2자 이상 50자 이하로 입력해주세요.")
         private final String boardTitle;
-        @Size(min = 12, max = 5000,message = "내용은 5자 이상 5000자 이하로 입력해주세요.")
+        @Size(min = 12, max = 5000, message = "내용은 5자 이상 5000자 이하로 입력해주세요.")
         private final String boardContent;
         private final String hashtag;
 
@@ -312,7 +390,7 @@ public class Board extends AuditingFields {
 
         private final String serverId;
 
-        public Board toEntity(UserAccount userAccount){
+        public Board toEntity(UserAccount userAccount) {
             return Board.builder()
                     .id(this.id)
                     .boardType(this.boardType)
@@ -358,12 +436,12 @@ public class Board extends AuditingFields {
 
         private final List<String> hashtags;
 
-        public String convert(String date){
+        public String convert(String date) {
             return converter.convert(date);
         }
 
-        public String getBoardType(BoardType type){
-            if(type==null){
+        public String getBoardType(BoardType type) {
+            if (type == null) {
                 return null;
             }
             return switch (type) {
@@ -375,7 +453,8 @@ public class Board extends AuditingFields {
                 case REPORT -> "사건/사고";
             };
         }
-        public static BoardDetailResponse from (Board board){
+
+        public static BoardDetailResponse from(Board board) {
             return BoardDetailResponse.builder()
                     .createdAt(timesAgo(board.getCreatedAt()))
                     .createdBy(board.getCreatedBy())
@@ -388,7 +467,7 @@ public class Board extends AuditingFields {
                     .isDeleted(board.getIsDeleted())
                     .boardViewCount(board.getBoardViewCount())
                     .boardLikeCount(board.getBoardLikeCount())
-                    .character(board.getCharacter()==null  ? null : CharacterBoardResponse.from(board.getCharacter()))
+                    .character(board.getCharacter() == null ? null : CharacterBoardResponse.from(board.getCharacter()))
                     .userId(board.getUserAccount().getUserId())
                     .userNickname(board.getUserAccount().getNickname())
                     .userProfileIconPath(FileUtil.getProfileIconPath(board.getUserAccount().getProfileIcon().getFileName()))
@@ -398,3 +477,4 @@ public class Board extends AuditingFields {
         }
     }
 }
+
