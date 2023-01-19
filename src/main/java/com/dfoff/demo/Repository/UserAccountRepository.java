@@ -28,9 +28,20 @@ public interface UserAccountRepository  extends JpaRepository<UserAccount, Strin
     void deleteBoardCommentByUserAccountId(@Param("id") String id);
 
 
-    @Query("select b from UserAccount c join Board b on b.userAccount.userId = c.userId where c.userId=:id ")
+    @Query("select b from UserAccount c join Board b on b.userAccount.userId = c.userId where c.userId=:id order by b.createdAt desc")
     Page<Board> findBoardsByUserId(@Param("id") String id, Pageable pageable);
-    @Query("select b from UserAccount c join BoardComment b on b.userAccount.userId = c.userId where c.userId=:id ")
+
+    @Query("select b from UserAccount c join Board b on b.userAccount.userId = c.userId where c.userId=:id order by b.boardLikeCount desc")
+    Page<Board> findBoardsByUserIdOrderByLikeCount(@Param("id") String id, Pageable pageable);
+
+    @Query("select b from UserAccount c join Board b on b.userAccount.userId = c.userId where c.userId=:id order by b.boardViewCount desc")
+    Page<Board> findBoardsByUserIdOrderByViewCount(@Param("id") String id, Pageable pageable);
+
+    @Query("select  b from UserAccount c join Board b on b.userAccount.userId = c.userId  join  BoardComment bc on bc.board.id= b.id where c.userId=:id group by bc.id  order by count(bc.id) desc")
+    Page<Board> findBoardsByUserIdOrderByCommentCount(@Param("id") String id, Pageable pageable);
+    @Query("select b from UserAccount c join BoardComment b on b.userAccount.userId = c.userId where c.userId=:id order by b.createdAt desc")
     Page<BoardComment> findBoardCommentsByUserId(@Param("id") String id, Pageable pageable);
+    @Query("select b from UserAccount c join BoardComment b on b.userAccount.userId = c.userId where c.userId=:id order by b.commentLikeCount desc")
+    Page<BoardComment> findBoardCommentsByUserIdOrderByLikeCount(@Param("id") String id, Pageable pageable);
 
 }

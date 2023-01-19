@@ -50,7 +50,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     List<Board> findBoardByLikeCount(@Param("startDate") LocalDateTime sDate , @Param("endDate") LocalDateTime eDate);
 
     @Modifying
-    @Query("update Board b set b.isDeleted='Y' where b.id=:id")
+    @Query("update Board b set b.isDeleted='Y'  where b.id=:id")
     void deleteBoardById(@Param("id") Long id);
 
     @Query("select b from Board b inner join b.boardComments c where b.isDeleted='N' and c.userAccount.nickname=:userId or c.userAccount.userId=:userId")

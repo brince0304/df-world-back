@@ -4,7 +4,6 @@ import com.dfoff.demo.Domain.Board;
 import com.dfoff.demo.Domain.BoardComment;
 import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
-import com.dfoff.demo.Repository.BoardCommentRepository;
 import com.dfoff.demo.Repository.UserAccountRepository;
 import com.dfoff.demo.Util.Bcrypt;
 import lombok.RequiredArgsConstructor;
@@ -19,10 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.*;
-
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -94,6 +89,7 @@ public class UserAccountService {
     }
 
 
+
     @Transactional(readOnly = true)
     public UserAccount.UserAccountMyPageResponse getUserAccountById(String userId) {
         if(userAccountRepository.existsByUserId(userId)){
@@ -101,13 +97,24 @@ public class UserAccountService {
         }
         return null;
     }
+
+
     @Transactional(readOnly = true)
     public Page<BoardComment.BoardCommentMyPageResponse> getCommentsByUserId(String userId, Pageable pageable) {
         if(userAccountRepository.existsByUserId(userId)){
             Page<BoardComment.BoardCommentMyPageResponse> responses= userAccountRepository.findBoardCommentsByUserId(userId, pageable).map(BoardComment.BoardCommentMyPageResponse::from);
             return responses;
         }
-        return null;
+        return Page.empty();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<BoardComment.BoardCommentMyPageResponse> getCommentsByUserIdOrderByLikeCount(String userId, Pageable pageable) {
+        if(userAccountRepository.existsByUserId(userId)){
+            Page<BoardComment.BoardCommentMyPageResponse> responses= userAccountRepository.findBoardCommentsByUserIdOrderByLikeCount(userId, pageable).map(BoardComment.BoardCommentMyPageResponse::from);
+            return responses;
+        }
+        return Page.empty();
     }
 
     @Transactional(readOnly = true)
@@ -115,8 +122,34 @@ public class UserAccountService {
         if(userAccountRepository.existsByUserId(userId)){
             return userAccountRepository.findBoardsByUserId(userId, pageable).map(Board.BoardListMyPageResponse::from);
         }
-        return null;
+        return Page.empty();
     }
+
+    @Transactional(readOnly = true)
+    public Page<Board.BoardListMyPageResponse> getBoardsByUserAccountOrderByLikeCount(String userId,Pageable pageable) {
+        if(userAccountRepository.existsByUserId(userId)){
+            return userAccountRepository.findBoardsByUserIdOrderByLikeCount(userId, pageable).map(Board.BoardListMyPageResponse::from);
+        }
+        return Page.empty();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Board.BoardListMyPageResponse> getBoardsByUserAccountOrderByViewCount(String userId,Pageable pageable) {
+        if(userAccountRepository.existsByUserId(userId)){
+            log.info("userId: {}", userId);
+            return userAccountRepository.findBoardsByUserIdOrderByViewCount(userId, pageable).map(Board.BoardListMyPageResponse::from);
+        }
+        return Page.empty();
+    }
+
+    @Transactional(readOnly = true)
+    public Page<Board.BoardListMyPageResponse> getBoardsByUserAccountOrderByComentCount(String userId,Pageable pageable) {
+        if(userAccountRepository.existsByUserId(userId)){
+            return userAccountRepository.findBoardsByUserIdOrderByCommentCount(userId, pageable).map(Board.BoardListMyPageResponse::from);
+        }
+        return Page.empty();
+    }
+
 
     public void deleteUserAccountById(String userId) {
         if(userAccountRepository.existsByUserId(userId)){

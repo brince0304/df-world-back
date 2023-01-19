@@ -133,17 +133,34 @@ public class UserAccountController {
 
     @GetMapping("/api/user/userLogs.df")
     public ResponseEntity<?> getLog(@AuthenticationPrincipal UserAccount.PrincipalDto principal,
-                                    @RequestParam (required = true) String type,
-                                    @PageableDefault(size = 15,sort = "createdAt",direction = Sort.Direction.DESC) org.springframework.data.domain.Pageable pageable) {
+                                    @RequestParam String type,
+                                    @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable,
+                                    @RequestParam (required = false) String sortBy) {
         if (principal == null) {
             throw new SecurityException("로그인이 필요합니다.");
-        } if(type == null){
-            throw new IllegalArgumentException("타입을 입력해주세요.");
-        } else if(type.equals("board")){
-            return new ResponseEntity<>(userAccountService.getBoardsByUserAccount(principal.getUsername(),pageable), HttpStatus.OK);
         }
-        return new ResponseEntity<>(userAccountService.getCommentsByUserId(principal.getUsername(),pageable), HttpStatus.OK);
+        if (type.equals("board")) {
+            return switch (sortBy) {
+                case "like" ->
+                        new ResponseEntity<>(userAccountService.getBoardsByUserAccountOrderByLikeCount(principal.getUsername(), pageable), HttpStatus.OK);
+                case "commentCount" ->
+                        new ResponseEntity<>(userAccountService.getBoardsByUserAccountOrderByComentCount(principal.getUsername(), pageable), HttpStatus.OK);
+                case "view" ->
+                        new ResponseEntity<>(userAccountService.getBoardsByUserAccountOrderByViewCount(principal.getUsername(), pageable), HttpStatus.OK);
+                default ->
+                        new ResponseEntity<>(userAccountService.getBoardsByUserAccount(principal.getUsername(), pageable), HttpStatus.OK);
+            };
+        } if (type.equals("comments")) {
+            if(sortBy.equals("like")) {
+                return new ResponseEntity<>(userAccountService.getCommentsByUserIdOrderByLikeCount(principal.getUsername(), pageable), HttpStatus.OK);
+            }
+            return new ResponseEntity<>(userAccountService.getCommentsByUserId(principal.getUsername(), pageable), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
+
+
+
     @PutMapping("/api/user/profile.df")
     public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
                                            @RequestParam(required = false) String nickname,

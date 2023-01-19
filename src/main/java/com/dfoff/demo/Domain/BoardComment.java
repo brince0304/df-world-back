@@ -182,6 +182,7 @@ public class BoardComment extends AuditingFields {
      */
     @Data
     @Builder
+    @AllArgsConstructor
     public static class BoardCommentRequest implements Serializable {
         private final Long boardId;
         private final Long commentId;

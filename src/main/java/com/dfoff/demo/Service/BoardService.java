@@ -193,6 +193,7 @@ public class BoardService {
             mapper_.setBoard(null);
             mapper_.setHashtag(null);
         }
+        board_.getBoardComments().forEach(o-> o.setIsDeleted("Y"));
         board_.setCharacter(null);
         boardRepository.deleteBoardById(id);
     }
