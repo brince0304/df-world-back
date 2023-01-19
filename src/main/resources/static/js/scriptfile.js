@@ -206,7 +206,7 @@ function registerSubmit(){
         return;
     }
     $.ajax({
-        url: '/api/user/',
+        url: '/api/user',
         type: 'POST',
         data: JSON.stringify({
             "userId": username,

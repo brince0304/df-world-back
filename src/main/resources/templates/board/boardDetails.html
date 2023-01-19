@@ -87,6 +87,8 @@
         }
 
 
+
+
     </style>
 </head>
 <body>
@@ -203,7 +205,10 @@
                 <a style="text-decoration-line: none; color: sandybrown" th:href="@{'/board/'+${best.id}+'.df'}">
                     <i class="fa fa-trophy" aria-hidden="true" style="margin-right:-5px; margin-left:-2px"></i>
                     <span class="badge bg-transparent text-dark" style="display:inline; margin-right:-10px">베스트</span>
-                    <span style="font-size: 12px; font-weight: 400; color: #202020; line-height: 1; display:inline;margin-left:4px"
+                    <span th:if="${best.boardTitle.length()<25}"  style="font-size: 12px; font-weight: 400; color: #202020; line-height: 1; display:inline;margin-left:4px"
+                          th:text="${best.boardTitle}">공지사항 바로가기
+                </span>
+                    <span th:if="${best.boardTitle.length()>25}" class="boardTitleOverflow"
                           th:text="${best.boardTitle}">공지사항 바로가기
                 </span>
                     <div style="float:right; display:inline-block; margin-top:-6px;"><img class="boardIcon" src=""

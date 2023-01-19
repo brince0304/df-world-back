@@ -53,7 +53,24 @@
 
         }
 
-        .board-character .f-magition  {
+        .myPage-character {
+            background-image: url("/images/icon_char/bg_char.jpeg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+
+            width: 30px;
+            height: 30px;
+            overflow: hidden;
+            position: relative;
+            float: right;
+            display: inline-block;
+            border-radius: 50%;
+            border: 1.5px solid #898989;
+            margin-left:5px;
+        }
+
+        .board-character .f-mage  {
             position: absolute;
             left: -980%;
             right: -1010%;
@@ -154,7 +171,7 @@
             min-width: 100%;
         }
 
-        .board-character .f-prist {
+        .board-character .f-priest {
             position: absolute;
             left: -1000%;
             right: -1010%;
@@ -164,7 +181,7 @@
             min-height: 100%;
             min-width: 100%;
         }
-        .board-character .m-prist {
+        .board-character .m-priest {
             position: absolute;
             left: -1000%;
             right: -1010%;
@@ -516,7 +533,10 @@
                 <a style="text-decoration-line: none; color: sandybrown" th:href="@{'/board/'+${best.id}+'.df'}">
                     <i class="fa fa-trophy" aria-hidden="true" style="margin-right:-5px; margin-left:-2px"></i>
                     <span class="badge bg-transparent text-dark" style="display:inline; margin-right:-10px">베스트</span>
-                    <span style="font-size: 12px; font-weight: 400; color: #202020; line-height: 1; display:inline;margin-left:4px"
+                    <span th:if="${best.boardTitle.length()<25}" style="font-size: 12px; font-weight: 400; color: #202020; line-height: 1; display:inline;margin-left:4px"
+                          th:text="${best.boardTitle}">공지사항 바로가기
+                </span>
+                    <span th:if="${best.boardTitle.length()>25}" class="boardTitleOverflow"
                           th:text="${best.boardTitle}">공지사항 바로가기
                 </span>
                 <div style="float:right; display:inline-block; margin-top:-6px;"><img class="boardIcon" src=""
@@ -585,10 +605,10 @@
                                     <img class="f-gunner" th:case="'거너(여)'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
-                                    <img class="m-prist" th:case="'프리스트(남)'" th:src="${board.character.characterImageUrl}"
+                                    <img class="m-priest" th:case="'프리스트(남)'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
-                                    <img class="f-prist" th:case="'프리스트(여)'" th:src="${board.character.characterImageUrl}"
+                                    <img class="f-priest" th:case="'프리스트(여)'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
                                     <img class="m-gunwarrior" th:case="'총검사'" th:src="${board.character.characterImageUrl}"
@@ -597,7 +617,7 @@
                                     <img class="m-lancer" th:case="'마창사'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
-                                    <img class="f-magition" th:case="'마법사(여)'" th:src="${board.character.characterImageUrl}"
+                                    <img class="f-mage" th:case="'마법사(여)'" th:src="${board.character.characterImageUrl}"
                                          src=""
                                     >
                                     <img class="f-thief" th:case="'도적'" th:src="${board.character.characterImageUrl}"

@@ -22,6 +22,165 @@
     <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css'>
     <title>던파모아온오프</title>
     <style>
+        .myPage-character {
+            background-image: url("/images/icon_char/bg_char.jpeg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            float:left;
+            width: 25px;
+            height: 25px;
+            overflow: hidden;
+            position: relative;
+            display: inline-block;
+            border-radius: 50%;
+            border: 1.5px solid #898989;
+            margin-left:5px;
+        }
+
+        .myPage-character .f-mage  {
+            position: absolute;
+            left: -980%;
+            right: -1010%;
+            top: -1050%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+
+        .myPage-character .default  {
+            position: absolute;
+            left: -980%;
+            right: -1010%;
+            top: -1030%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .m-gunner  {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -700%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .f-gunner  {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -850%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .m-fighter  {
+            position: absolute;
+            left: -1000%;
+            right: -1030%;
+            top: -850%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .f-thief {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -870%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+        .myPage-character .f-fighter {
+            position: absolute;
+            left: -980%;
+            right: -990%;
+            top: -960%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+
+
+        .myPage-character .m-warrior {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -900%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .f-warrior {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -930%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .f-priest {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -930%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+        .myPage-character .m-priest {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -760%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .m-lancer {
+            position: absolute;
+            left: -1000%;
+            right: -1050%;
+            top: -840%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .m-gunwarrior {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -810%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
 
         .boardIcon {
             width: 25px;
@@ -32,6 +191,10 @@
             vertical-align: middle;
         }
 
+        .userLogLink {
+            text-decoration-line: none;
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -78,10 +241,11 @@
                         <small>캐릭터 등록</small> </a>
 
 
-                    <a style="cursor:pointer" class="btn btn-outlined btn-black text-muted " data-toggle="modal"
-                       data-target="#userLogModal"><img
+                    <a style="cursor:pointer" class="btn btn-outlined btn-black text-muted " onclick="getUserBoardLogs()"
+                       data-toggle="modal"
+                       data-target="#userLogModal" ><img
                             src="https://img.icons8.com/metro/26/000000/more.png" width="20" height="20"
-                            class="mr-2 more" ><small> 활동 내역</small></a>
+                            class="mr-2 more"><small> 활동 내역</small></a>
                 </div>
 
                 <div class="col-md-auto ">
@@ -95,7 +259,7 @@
                         </li>
                         <li class="list-inline-item"><a data-toggle="modal"
                                                         data-target="#iconSelectModal" href="#" class="
-                         btn btn-outlined btn-black text-muted">  <small>모험단 등록</small> </a>
+                         btn btn-outlined btn-black text-muted"> <small>모험단 등록</small> </a>
                         </li>
                     </ul>
                 </div>
@@ -116,31 +280,34 @@
                                         <div th:if="${user.characters.isEmpty()}">
                                             <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
                                                 <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
-                                                <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">캐릭터가 존재하지 않습니다.</div>
+                                                <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">
+                                                    캐릭터가 존재하지 않습니다.
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="container">
-                                            <div class="row charThumb" >
+                                            <div class="row charThumb">
                                                 <!-- Single Advisor-->
-                                                <div th:each="char : ${user.characters}" class="col-12 col-sm-6 col-lg-3">
+                                                <div th:each="char : ${user.characters}"
+                                                     class="col-12 col-sm-6 col-lg-3">
                                                     <div class="single_advisor_profile wow fadeInUp characterCard"
                                                          data-wow-delay="0.2s"
                                                          style="background-image: url('/images/icon_char/bg_char.jpeg') ;   background-repeat: no-repeat;   background-position: center;
                                                             background-size: cover;">
                                                         <div style="">
-                                                        <!-- Team Thumb-->
-                                                        <span class="badge bg-light text-dark" style="float:left">
+                                                            <!-- Team Thumb-->
+                                                            <span class="badge bg-light text-dark" style="float:left">
                                                             <img class="icon-fame"
                                                                  th:src="@{/images/icon_char/icon_status_fame.png}"
                                                                  src="" alt="fame"
                                                                  style=""> <small
-                                                                style=" display:inline; color: #d39e00"
-                                                                th:text="${char.adventureFame}"></small> </span>
-                                                        <span class="badge bg-light text-dark" type="button"
-                                                              th:data-id="${char.characterId}"
-                                                              th:data-server="${char.serverId}"
-                                                              th:onclick="deleteCharacter(this.getAttribute('data-server') , this.getAttribute('data-id'))"
-                                                              style="display:inline ; float:right; ">삭제</span></div>
+                                                                    style=" display:inline; color: #d39e00"
+                                                                    th:text="${char.adventureFame}"></small> </span>
+                                                            <span class="badge bg-light text-dark" type="button"
+                                                                  th:data-id="${char.characterId}"
+                                                                  th:data-server="${char.serverId}"
+                                                                  th:onclick="deleteCharacter(this.getAttribute('data-server') , this.getAttribute('data-id'))"
+                                                                  style="display:inline ; float:right; ">삭제</span></div>
                                                         <div class="advisor_thumb">
                                                             <img th:src="${char.characterImageUrl}"
                                                                  src="" style="scale:1.7" alt="">
@@ -149,7 +316,8 @@
                                                         <!-- Team Details-->
                                                         <div class="single_advisor_details_info"
                                                              style="text-align: left">
-                                                            <h4 style="color: #898989;" th:text="${char.getServerName(char.serverId)}"
+                                                            <h4 style="color: #898989;"
+                                                                th:text="${char.getServerName(char.serverId)}"
                                                                 id="charServerId"></h4>
                                                             <h6 th:text="${char.characterName}">
                                                                 Samantha Sarah</h6>
@@ -176,7 +344,8 @@
     </div>
 
 
-    <div class="modal fade" id="charSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" style="margin-left:2%"
+    <div class="modal fade" id="charSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"
+         style="margin-left:2%"
          aria-hidden="true">
         <div class="modal-dialog" style="max-width:500px" role="document">
             <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
@@ -214,101 +383,52 @@
     </div>
 
 
-    <div class="modal fade userLog" id="userLogModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" style="margin-left:2%"
+    <div class="modal fade userLog" id="userLogModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"
+         style="margin-left:2%"
          aria-hidden="true">
         <div class="modal-dialog" style="max-width:500px" role="document">
-            <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
+            <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2); padding:0">
                 <div class="modal-header" style="padding: 5px;">
-                    <div class="row" style="margin-left:0; margin-right:0;">
-                        <div class="col-md-12">
-                            <nav>
-                                <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-                                    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Project Tab 1</a>
-                                    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Project Tab 2</a>
-                                    <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Project Tab 3</a>
-                                </div>
-                            </nav>
+                    <h5 class="modal-title" id="exampleModalLabel2" style="
+    font-size: 16px;
+    margin-left: 12px;">활동 내역</h5>
                 </div>
-                        <div class="tab-content" id="nav-tabContent">
-                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
-                            <div th:each=" board : ${boards}">
-                            <a style="text-decoration-line: none; color: sandybrown" th:href="@{'/board/'+${board.id}+'.df'}">
-                                <img class="boardIcon" src=""
-                                     style="border-radius: 50%; border: 1px solid #898989; display:inline"
-                                     width="20px"
-                                     height="20px"
-                                     th:src="${board.getUserProfileImgUrl()}"/>
-                                <span class="badge bg-transparent text-dark" style="display:inline; margin-right:-10px" th:text="${board.userNickname}">닉네임</span>
-                                <span class="boardTitle" style="font-size: 12px; font-weight: 400; color: #202020; line-height: 1; display:inline;margin-left:4px"
-                                      th:text="${board.boardTitle}"> 게시글 내용
-                </span>
-                                <div style="float:right; display:inline-block; margin-top:-6px;">
-                                    <i class="fa fa-thumbs-up" style="margin-right:5px"> </i>
-                                    <span class="badge bg-transparent text-black" th:text="${board.boardLikeCount}"></span>
-                                    <i class="fa fa-comment" style="margin-right:5px"> </i>
-                                    <span class="badge bg-transparent text-black" th:text="${board.commentCount}"></span>
-
-                                      <span class="badge bg-secondary text-black-50"
-                                                                                                          th:text="${board.getBoardType(board.getBoardType())}" th:if="${board.boardType.name().equals('FREE')}" style="margin-top: 10px;">자유게시판</span>
-                                    <span class="badge bg-warning text-black-50"
-                                          th:text="${board.getBoardType(board.getBoardType())}" th:if="${board.boardType.name().equals('NOTICE')}" style="margin-top: 10px;">자유게시판</span>
-                                    <span class="badge bg-success text-white-50"
-                                          th:text="${board.getBoardType(board.getBoardType())}" th:if="${board.boardType.name().equals('MARKET')}" style="margin-top: 10px; ">자유게시판</span>
-                                    <span class="badge bg-dark text-white-50"
-                                          th:text="${board.getBoardType(board.getBoardType())}" th:if="${board.boardType.name().equals('RECRUITMENT')}" style="margin-top: 10px; ">자유게시판</span>
-                                    <span class="badge bg-light text-black-50"
-                                          th:text="${board.getBoardType(board.getBoardType())}" th:if="${board.boardType.name().equals('QUESTION')}" style="margin-top: 10px; ">자유게시판</span>
-                                    <span class="badge bg-danger text-black-50"
-                                          th:text="${board.getBoardType(board.getBoardType())}" th:if="${board.boardType.name().equals('REPORT')}" style="margin-top: 10px; ">자유게시판</span>
-                                </div></a>
-                            <div class="bar"
-                                 style="width: 100%; height: 2px; background-color: #e6e6e6; margin-top:5px;"></div>
-                        </div>
-                        </div>
-                            <div class="tab-pane fade show active" id="nav-profile" role="tabpanel" aria-labelledby="nav-home-tab">
-                                <div th:each=" comment : ${comments}">
-                                    <a style="text-decoration-line: none; color: sandybrown" th:href="@{'/board/'+${comment.boardId}+'.df'}">
-                                        <img class="boardIcon" src=""
-                                             style="border-radius: 50%; border: 1px solid #898989; display:inline"
-                                             width="20px"
-                                             height="20px"
-                                             th:src="${comment.userProfileImgUrl}"/>
-                                        <span class="badge bg-transparent text-dark" style="display:inline; margin-right:-10px" th:text="${comment.userNickname}">닉네임</span>
-                                        <span class="boardTitle" style="font-size: 12px; font-weight: 400; color: #202020; line-height: 1; display:inline;margin-left:4px"
-                                              th:text="${comment.commentContent}"> 게시글 내용
-                </span>
-                                        <div style="float:right; display:inline-block; margin-top:-6px;">
-                                            <i class="fa fa-thumbs-up" style="margin-right:5px"> </i>
-                                            <span class="badge bg-transparent text-black" th:text="${comment.commentLikeCount}"></span>
-                                            <span class="badge bg-secondary text-black-50"
-                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.equals('FREE')}" style="margin-top: 10px;">자유게시판</span>
-                                            <span class="badge bg-warning text-black-50"
-                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.equals('NOTICE')}" style="margin-top: 10px;">자유게시판</span>
-                                            <span class="badge bg-success text-white-50"
-                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.equals('MARKET')}" style="margin-top: 10px; ">자유게시판</span>
-                                            <span class="badge bg-dark text-white-50"
-                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.equals('RECRUITMENT')}" style="margin-top: 10px; ">자유게시판</span>
-                                            <span class="badge bg-light text-black-50"
-                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.equals('QUESTION')}" style="margin-top: 10px; ">자유게시판</span>
-                                            <span class="badge bg-danger text-black-50"
-                                                  th:text="${comment.getBoardType(comment.getBoardType())}" th:if="${comment.boardType.equals('REPORT')}" style="margin-top: 10px; ">자유게시판</span>
-                                        </div></a>
-                                    <div class="bar"
-                                         style="width: 100%; height: 2px; background-color: #e6e6e6; margin-top:5px;"></div>
-                                </div>
+                <div class="row" style="margin-left:0; margin-right:0;">
+                    <div class="col-md-12">
+                        <nav>
+                            <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home"
+                                   role="tab" aria-controls="nav-home" aria-selected="true">게시글</a>
+                                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile"
+                                   role="tab" aria-controls="nav-profile" aria-selected="false" onclick="getUserCommentLogs()" >댓글</a>
+                                <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact"
+                                   role="tab" aria-controls="nav-contact" aria-selected="false">알람</a>
                             </div>
+                        </nav>
+                    </div>
+                    <div class="tab-content modal-body" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel"
+                             aria-labelledby="nav-home-tab">
+                            <div id="boardLog"></div>
+                        </div>
+                        <div class="tab-pane fade" id="nav-profile" role="tabpanel"
+                             aria-labelledby="nav-home-tab">
+                            <div id="commentLog">
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="modal fade" id="detailModifyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="margin-left:2%"
+    <div class="modal fade" id="detailModifyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         style="margin-left:2%"
          aria-hidden="true">
         <div class="modal-dialog" style="max-width:500px" role="document">
             <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
@@ -360,7 +480,8 @@
         </div>
     </div>
 
-    <div class="modal fade" id="iconSelectModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="margin-left:2%"
+    <div class="modal fade" id="iconSelectModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         style="margin-left:2%"
          aria-hidden="true">
         <div class="modal-dialog" style="max-width:500px" role="document">
             <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
@@ -831,8 +952,9 @@
     }
 
     function setSearchModalResult(list) {
+        let html;
         if (list.length > 0) {
-            var html = '<table class="table table-striped table-hover" style="text-align: center;">';
+            html = '<table class="table table-striped table-hover" style="text-align: center;">';
             html += '<thead style="font-weight: bold;"><tr><td>서버</td><td>닉네임</td>';
             if (list[0].level != undefined) {
                 html += '<td>레벨</td>';
@@ -853,7 +975,7 @@
             html += "</table>";
             $('#searchBody').html(html);
         } else {
-            var html = '<h3 style="text-align: center;">검색 결과가 없습니다.</h3>';
+            html = '<h3 style="text-align: center;">검색 결과가 없습니다.</h3>';
             $('#searchBody').html(html);
         }
     }
@@ -874,13 +996,138 @@
             });
         }
     }
+    function getUserCommentLogs() {
+        $.ajax({
+            url: "/api/user/userLogs.df",
+            type: "GET",
+            data: {
+                page: 0,
+                type: "comments"
+            },
+            success: function (data) {
+                $('#commentLog').html("");
+                let html = "";
+                if (data.content.length > 0) {
+                    $(data.content).each(function () {
+                        html  += '<div data-id="' + this.id + '" style="margin:5px">';
+                        html += '<a style="text-decoration-line: none; color: #535353;" href="/board/'+this.boardId+'.df">';
+                        if (this.commentContent.length < 35) {
+                            html += '<span class="boardTitle">' + this.commentContent + '</span>'
+                        } else {
+                            html += '<span class="commentOverflow" > ' + this.commentContent + '</span>'
+                        }
+                        html +=
+                            '                                   <div style="display:inline-block; float:right;">' +
+                            '                                       <i class="fa fa-heart-o" style=""> </i>' +
+                            '                                       <span class="badge bg-transparent text-black"' +
+                            '                                             >' + this.commentLikeCount + '</span>' +
+                            '                                       <i class="fa fa-comments-o" style=""> </i>' +
+                            '                                       <span class="badge bg-transparent text-black"' +
+                            '                                             >' + this.childrenCommentsSize + '</span>'
+                        if (this.boardType === 'FREE') {
+                            html += '<span class="badge bg-secondary text-black-50" >자유</span>';
+                        } else if (this.boardType === 'NOTICE') {
+                            html += '<span class="badge bg-warning text-black-50" >공지</span>';
+                        } else if (this.boardType === 'RECRUITMENT') {
+                            html += '<span class="badge bg-dark text-white-50" >구인</span>';
+                        } else if (this.boardType === 'MARKET') {
+                            html += '<span class="badge bg-success text-white-50" >거래</span>';
+                        } else if (this.boardType === 'QUESTION') {
+                            html += '<span class="badge bg-light text-black-50" >질문</span>';
+                        } else if (this.boardType === 'REPORT') {
+                            html += '<span class="badge bg-danger text-black-50" >사건</span>';
+                        }
+                        html += '</a>';
+                        html += '</div>';
+                        html += '</div>';
+                        html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
+                    })
+                    $('#commentLog').html(html);
+
+                } else {
+                     html = '<h3 style="text-align: center;">댓글이 존재하지 않습니다.</h3>';
+                    $('#commentLog').html(html);
+                }
+            }, error: function (request, status, error) {
+            }
+        });
+    }
+
+    function getUserBoardLogs() {
+
+        $.ajax({
+            url: "/api/user/userLogs.df",
+            type: "GET",
+            data: {
+                page: 0,
+                type: "board"
+            },
+            success: function (data) {
+                let html= "";
+                $('#boardLogs').html("");
+                if (data.content.length > 0) {
+                    $(data.content).each(function () {
+                        html += '<div data-id="' + this.id + '" style="margin:5px">';
+                        html += '<a style="text-decoration-line: none; color: #535353;" href="/board/'+this.id+'.df">';
+                        if(this.character!=null) {
+                            html += '<div class="myPage-character">'
+                            html += '<img class="text-dark '+this.character.imgStyleClassName+'"  src="' + this.character.characterImageUrl + '"/></div>';
+                            html += '<i class="fa fa-plug" style="margin-left:2px"> </i>';
+                            html += '<span class="badge bg-transparent text-dark" >'+this.character.characterName+'</span>';
+                        }else{
+                            html += '<div class="myPage-character">';
+                            html += '</div>';
+                            html += '<i class="fa fa-plug" style="color: black; margin-left:2px"> </i>';
+                            html += '<span class="badge bg-transparent text-dark" >캐릭터없음</span>';
+                        }
+                        if (this.boardTitle.length < 25) {
+                            html += '<span class="boardTitle">' + this.boardTitle + '</span>';
+                        } else {
+                            html += '<span class="boardTitleOverflow" > ' + this.boardTitle + '</span>';
+                        }
+                        html +=
+                            '                                   <div style="display:inline-block; float:right;">' +
+                            '                                       <i class="fa fa-heart-o" style=""> </i>' +
+                            '                                       <span class="badge bg-transparent text-black"' +
+                            '                                             >' + this.boardLikeCount + '</span>' +
+                            '                                       <i class="fa fa-comment-o" style=""> </i>' +
+                            '                                       <span class="badge bg-transparent text-black"' +
+                            '                                             >' + this.commentCount + '</span>'
+                        if (this.boardType === 'FREE') {
+                            html += '<span class="badge bg-secondary text-black-50" >자유</span>';
+                        } else if (this.boardType === 'NOTICE') {
+                            html += '<span class="badge bg-warning text-black-50" >공지</span>';
+                        } else if (this.boardType === 'RECRUITMENT') {
+                            html += '<span class="badge bg-dark text-white-50" >구인</span>';
+                        } else if (this.boardType === 'MARKET') {
+                            html += '<span class="badge bg-success text-white-50" >거래</span>';
+                        } else if (this.boardType === 'QUESTION') {
+                            html += '<span class="badge bg-light text-black-50" >질문</span>';
+                        } else if (this.boardType === 'REPORT') {
+                            html += '<span class="badge bg-danger text-black-50" >사건</span>';
+                        }
+                        html += '</a>';
+                        html += '</div>';
+                        html += '</div>';
+                        html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
+                    })
+                    $('#boardLog').html(html);
+
+                } else {
+                     html = '<h3 style="text-align: center;">게시글이 존재하지 않습니다.</h3>';
+                    $('#boardLog').html(html);
+                }
+            }, error: function (request, status, error) {
+            }
+        });
+    }
 
 
-    function deleteCharacter(serverId,characterId) {
+    function deleteCharacter(serverId, characterId) {
 
         if (confirm("캐릭터를 삭제하시겠습니까?")) {
             $.ajax({
-                url: "/api/user/char.df?serverId="+serverId +"&characterId=" + characterId + "&request=delete",
+                url: "/api/user/char.df?serverId=" + serverId + "&characterId=" + characterId + "&request=delete",
                 type: "POST",
                 success: function (data) {
                     alert("캐릭터가 삭제되었습니다.");
@@ -920,7 +1167,7 @@
 
     });
 
-    function logoutAlert(){
+    function logoutAlert() {
         $.ajax({
             url: "/api/user/logout",
             type: "POST",
