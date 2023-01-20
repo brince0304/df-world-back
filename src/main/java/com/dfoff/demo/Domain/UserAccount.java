@@ -1,6 +1,5 @@
 package com.dfoff.demo.Domain;
 
-import ch.qos.logback.core.testUtil.FileTestUtil;
 import com.dfoff.demo.Domain.EnumType.UserAccount.SecurityRole;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
 import com.dfoff.demo.Util.FileUtil;
@@ -72,7 +71,7 @@ public class UserAccount extends AuditingFields {
 
     @OneToMany (mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
-    private Set<UserLog> userLogs = new LinkedHashSet<>();
+    private Set<Notification> notifications = new LinkedHashSet<>();
 
 
 

@@ -12,7 +12,7 @@ import static com.dfoff.demo.Domain.Board.Chrono.timesAgo;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class UserLog extends AuditingFields {
+public class Notification extends AuditingFields {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
@@ -35,8 +35,8 @@ public class UserLog extends AuditingFields {
     @Setter
     private String logContent;
 
-    public static UserLog of(UserAccount userAccount,Board board,LogType type,String logContent){
-        return UserLog.builder()
+    public static Notification of(UserAccount userAccount, Board board, LogType type, String logContent){
+        return Notification.builder()
                 .boardId(board.getId())
                 .userAccount(userAccount)
                 .logType(type)
@@ -44,8 +44,8 @@ public class UserLog extends AuditingFields {
                 .build();
     }
 
-    public static UserLog of(UserAccount userAccount,BoardComment comment,LogType type,String logContent){
-        return UserLog.builder()
+    public static Notification of(UserAccount userAccount, BoardComment comment, LogType type, String logContent){
+        return Notification.builder()
                 .boardId(comment.getBoard().getId())
                 .userAccount(userAccount)
                 .logType(type)
@@ -70,14 +70,14 @@ public class UserLog extends AuditingFields {
         private final String logContent;
 
 
-        public static UserLogResponse from(UserLog userLog) {
+        public static UserLogResponse from(Notification notification) {
             return UserLogResponse.builder()
-                    .id(userLog.getId())
-                    .boardId(userLog.getBoardId())
-                    .logType(userLog.getLogType().toString())
-                    .isChecked(userLog.getIsChecked())
-                    .createdDate(timesAgo(userLog.getCreatedAt()))
-                    .logContent(userLog.getLogContent())
+                    .id(notification.getId())
+                    .boardId(notification.getBoardId())
+                    .logType(notification.getLogType().toString())
+                    .isChecked(notification.getIsChecked())
+                    .createdDate(timesAgo(notification.getCreatedAt()))
+                    .logContent(notification.getLogContent())
                     .build();
         }
 

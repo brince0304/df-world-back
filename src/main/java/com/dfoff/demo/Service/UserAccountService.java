@@ -2,7 +2,7 @@ package com.dfoff.demo.Service;
 
 import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Repository.UserAccountRepository;
-import com.dfoff.demo.Repository.UserLogRepository;
+import com.dfoff.demo.Repository.NotificationRepository;
 import com.dfoff.demo.Util.Bcrypt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +26,7 @@ public class UserAccountService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final Bcrypt bcrypt;
 
-    private final UserLogRepository userLogRepository;
+    private final NotificationRepository notificationRepository;
 
 
 
@@ -88,14 +88,14 @@ public class UserAccountService {
         return true;
     }
 
-    public Page<UserLog.UserLogResponse> getUserLog(String userId, Pageable pageable) {
-        Page<UserLog> userLog = userLogRepository.getUserLogByUserAccount_UserId(userId, pageable);
+    public Page<Notification.UserLogResponse> getUserLog(String userId, Pageable pageable) {
+        Page<Notification> userLog = notificationRepository.getUserLogByUserAccount_UserId(userId, pageable);
         userLog.forEach(o-> o.setIsChecked("Y"));
-        return userLog.map(UserLog.UserLogResponse::from);
+        return userLog.map(Notification.UserLogResponse::from);
     }
 
     public Long getUncheckedLogCount(String userId) {
-        return userLogRepository.getUnCheckedLogCount(userId);
+        return notificationRepository.getUnCheckedLogCount(userId);
     }
 
 

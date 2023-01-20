@@ -6,7 +6,6 @@ import com.dfoff.demo.Domain.EnumType.UserAccount.LogType;
 import com.dfoff.demo.Repository.BoardHashtagMapperRepository;
 import com.dfoff.demo.Repository.BoardRepository;
 import com.dfoff.demo.Repository.HashtagRepository;
-import com.dfoff.demo.Repository.UserLogRepository;
 import com.dfoff.demo.Util.UserLogUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -104,7 +103,7 @@ public class BoardService {
         if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
         board_.setBoardLikeCount(board_.getBoardLikeCount()+1);
         if(!board_.getUserAccount().getNickname().equals(nickname)){
-            board_.getUserAccount().getUserLogs().add(UserLog.of(board_.getUserAccount(),board_, BOARD_UNLIKE, UserLogUtil.getLogContent(BOARD_LIKE.name(),nickname)));}
+            board_.getUserAccount().getNotifications().add(Notification.of(board_.getUserAccount(),board_, BOARD_UNLIKE, UserLogUtil.getLogContent(BOARD_LIKE.name(),nickname)));}
         return board_.getBoardLikeCount();
     }
 
@@ -114,7 +113,7 @@ public class BoardService {
         if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
         board_.setBoardLikeCount(board_.getBoardLikeCount()-1);
         if(!board_.getUserAccount().getNickname().equals(nickname)){
-        board_.getUserAccount().getUserLogs().add(UserLog.of(board_.getUserAccount(),board_, BOARD_UNLIKE, UserLogUtil.getLogContent(BOARD_UNLIKE.name(),nickname)));}
+        board_.getUserAccount().getNotifications().add(Notification.of(board_.getUserAccount(),board_, BOARD_UNLIKE, UserLogUtil.getLogContent(BOARD_UNLIKE.name(),nickname)));}
         return board_.getBoardLikeCount();
     }
 
@@ -209,7 +208,7 @@ public class BoardService {
         board_.getBoardComments().forEach(o-> {
             o.setIsDeleted("Y");
             if(!o.getUserAccount().getUserId().equals(board_.getUserAccount().getUserId())){
-                o.getUserAccount().getUserLogs().add(UserLog.of(o.getUserAccount(),board_,LogType.DELETE_COMMENT,UserLogUtil.getLogContent(LogType.DELETE_COMMENT.name(),board_.getUserAccount().getNickname())));
+                o.getUserAccount().getNotifications().add(Notification.of(o.getUserAccount(),board_,LogType.DELETE_COMMENT,UserLogUtil.getLogContent(LogType.DELETE_COMMENT.name(),board_.getUserAccount().getNickname())));
             }
         });
         board_.setCharacter(null);

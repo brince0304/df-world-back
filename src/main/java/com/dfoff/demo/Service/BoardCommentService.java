@@ -3,10 +3,10 @@ package com.dfoff.demo.Service;
 import com.dfoff.demo.Domain.Board;
 import com.dfoff.demo.Domain.BoardComment;
 import com.dfoff.demo.Domain.EnumType.UserAccount.LogType;
+import com.dfoff.demo.Domain.Notification;
 import com.dfoff.demo.Domain.UserAccount;
-import com.dfoff.demo.Domain.UserLog;
 import com.dfoff.demo.Repository.BoardCommentRepository;
-import com.dfoff.demo.Repository.UserLogRepository;
+import com.dfoff.demo.Repository.NotificationRepository;
 import com.dfoff.demo.Util.UserLogUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,7 +22,6 @@ import java.util.Objects;
 @Slf4j
 @Transactional
 public class BoardCommentService {
-    private final UserLogRepository userLogRepository;
     private final BoardCommentRepository commentRepository;
 
 
@@ -51,7 +49,7 @@ public class BoardCommentService {
 
         BoardComment comment_ = commentRepository.save(request.toEntity(account, board));
         if(!account.userId().equals(board.getUserAccount().userId())) {
-            userLogRepository.save(UserLog.of(comment_.getBoard().getUserAccount(), comment_.getBoard(), LogType.COMMENT, UserLogUtil.getLogContent(LogType.COMMENT.name(), account.nickname())));
+            comment_.getBoard().getUserAccount().getNotifications().add(Notification.of(comment_.getBoard().getUserAccount(), comment_.getBoard(), LogType.COMMENT, UserLogUtil.getLogContent(LogType.COMMENT.name(), account.nickname())));
         }
     }
 
@@ -66,7 +64,7 @@ public class BoardCommentService {
         commentRepository.findById(id).ifPresent(comment -> {
             comment.getChildrenComments().forEach(child -> {
                 if(!Objects.equals(comment.getUserAccount().getUserId(), child.getUserAccount().getUserId())) {
-                    comment.getBoard().getUserAccount().getUserLogs().add(UserLog.of(comment.getUserAccount(), child, LogType.DELETE_CHILDREN_COMMENT, UserLogUtil.getLogContent(LogType.DELETE_CHILDREN_COMMENT.name(), comment.getUserAccount().getNickname())));
+                    comment.getBoard().getUserAccount().getNotifications().add(Notification.of(comment.getUserAccount(), child, LogType.DELETE_CHILDREN_COMMENT, UserLogUtil.getLogContent(LogType.DELETE_CHILDREN_COMMENT.name(), comment.getUserAccount().getNickname())));
                 }
             });
         });
@@ -90,7 +88,7 @@ public class BoardCommentService {
         if(nickname.equals("")){nickname="비회원";}
         BoardComment boardComment_ = commentRepository.findBoardCommentById(id);
         boardComment_.setCommentLikeCount(boardComment_.getCommentLikeCount()+1);
-        boardComment_.getBoard().getUserAccount().getUserLogs().add(UserLog.of(boardComment_.getUserAccount(),boardComment_, LogType.COMMENT_LIKE,UserLogUtil.getLogContent(LogType.COMMENT_LIKE.name(),nickname)));
+        boardComment_.getBoard().getUserAccount().getNotifications().add(Notification.of(boardComment_.getUserAccount(),boardComment_, LogType.COMMENT_LIKE,UserLogUtil.getLogContent(LogType.COMMENT_LIKE.name(),nickname)));
         return boardComment_.getCommentLikeCount();
     }
 
@@ -98,7 +96,7 @@ public class BoardCommentService {
         if(nickname.equals("")){nickname="비회원";}
         BoardComment boardComment_ = commentRepository.findBoardCommentById(id);
         boardComment_.setCommentLikeCount(boardComment_.getCommentLikeCount()-1);
-        boardComment_.getBoard().getUserAccount().getUserLogs().add(UserLog.of(boardComment_.getUserAccount(),boardComment_, LogType.COMMENT_UNLIKE,UserLogUtil.getLogContent(LogType.COMMENT_UNLIKE.name(),nickname)));
+        boardComment_.getBoard().getUserAccount().getNotifications().add(Notification.of(boardComment_.getUserAccount(),boardComment_, LogType.COMMENT_UNLIKE,UserLogUtil.getLogContent(LogType.COMMENT_UNLIKE.name(),nickname)));
         return boardComment_.getCommentLikeCount();
     }
 
@@ -113,8 +111,9 @@ public class BoardCommentService {
         children.setIsParent("N");
         children.setParentComment(boardComment_);
         commentRepository.save(children);
-        userLogRepository.save(UserLog.of(boardComment_.getUserAccount(),children, LogType.CHILDREN_COMMENT,UserLogUtil.getLogContent(LogType.CHILDREN_COMMENT.name(),account.nickname())));
-
+        if(!account.userId().equals(board.getUserAccount().userId())) {
+            boardComment_.getUserAccount().getNotifications().add(Notification.of(boardComment_.getUserAccount(),children, LogType.CHILDREN_COMMENT,UserLogUtil.getLogContent(LogType.CHILDREN_COMMENT.name(),account.nickname())));
+        }
     }
 
     public List<BoardComment.BoardCommentResponse> findBestBoardCommentByBoardId(Long boardId) {
