@@ -18,6 +18,9 @@ insert into SAVE_FILE (FILE_NAME,FILE_PATH,FILE_SIZE,FILE_TYPE,CREATED_AT,CREATE
 insert into USER_ACCOUNT (USER_ID, CREATED_AT, CREATED_BY, MODIFIED_AT, MODIFIED_BY, EMAIL, NICKNAME, PASSWORD,PROFILE_ICON) VALUES ( 'test',now(),'test',now(),'test','test@email.com','test','$2a$10$DAd.J6N1fv8ecD0UsYKOu.yPnrAQe.lw4pJmLaX6d3fhJ5Bzllw5.',1);
 insert into USER_ACCOUNT_ROLES (USER_ACCOUNT_USER_ID, ROLES) VALUES ( 'test','ROLE_USER' );
 
+insert into USER_ACCOUNT (USER_ID, CREATED_AT, CREATED_BY, MODIFIED_AT, MODIFIED_BY, EMAIL, NICKNAME, PASSWORD,PROFILE_ICON) VALUES ( 'tes',now(),'test',now(),'test2','test2@email.com','test2','$2a$10$DAd.J6N1fv8ecD0UsYKOu.yPnrAQe.lw4pJmLaX6d3fhJ5Bzllw5.',1);
+insert into USER_ACCOUNT_ROLES (USER_ACCOUNT_USER_ID, ROLES) VALUES ( 'tes','ROLE_USER' );
+
 insert into board (id, board_type, board_title, board_content, board_like_count, board_view_count, user_id, created_at, modified_at, created_by, modified_by, is_deleted) values (1, 'NOTICE', 'Toolbox Murders', 'Cookley', 1, 1, 'test', '2022-03-08 04:56:38', '2022-10-22 08:21:10', 'test', 'test', 'N');
 insert into board (id, board_type, board_title, board_content, board_like_count, board_view_count, user_id, created_at, modified_at, created_by, modified_by, is_deleted) values (2, 'MARKET', 'Legend of the Black Scorpion (a.k.a. The Banquet) (Ye yan)', 'Hatity', 2, 2, 'test', '2022-10-08 10:20:10', '2022-11-14 21:16:26', 'test', 'test', 'N');
 insert into board (id, board_type, board_title, board_content, board_like_count, board_view_count, user_id, created_at, modified_at, created_by, modified_by, is_deleted) values (3, 'FREE', 'Keep the River on Your Right: A Modern Cannibal Tale', 'Konklux', 3, 3, 'test', '2022-08-03 11:54:26', '2022-10-06 12:36:39', 'test', 'test', 'N');
