@@ -1,53 +1,69 @@
 package com.dfoff.demo.Domain;
 
-import com.dfoff.demo.Domain.ForCharacter.CharacterDTO;
+import com.dfoff.demo.Domain.ForCharacter.CharacterDto;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
-import com.dfoff.demo.UserAccountCharacterMapper;
-import io.micrometer.core.lang.Nullable;
 import lombok.*;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
 @Getter
-@Setter
 @ToString
-@AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor (access = AccessLevel.PROTECTED)
+@AllArgsConstructor (access = AccessLevel.PRIVATE)
 @Builder
 public class CharacterEntity extends AuditingFields {
     @Id
     private String characterId;
-
+    @Column (nullable = false)
+    @Setter
     private String serverId;
-
+    @Setter
     private String characterName;
-
+    @Column (nullable = false)
+    @Setter
     private Integer level;
-
+    @Column (nullable = false)
+    @Setter
     private String jobId;
-
+    @Column (nullable = false)
+    @Setter
     private String jobGrowId;
-
+    @Column (nullable = false)
+    @Setter
     private String jobName;
-
+    @Column (nullable = false)
+    @Setter
     private String jobGrowName;
-
+    @Setter
     private String adventureFame;
 
+    @Setter
     private String adventureName;
 
-    @OneToMany (fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY)
     @ToString.Exclude
-    @Nullable
-    private Set<UserAccountCharacterMapper> userAccount = new LinkedHashSet<>();
+    @Builder.Default
+    private final Set<UserAccountCharacterMapper> userAccount = new LinkedHashSet<>();
 
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CharacterEntity that)) return false;
+        return characterId.equals(that.characterId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(characterId);
+    }
 
     /**
      * A DTO for the {@link CharacterEntity} entity
@@ -77,7 +93,6 @@ public class CharacterEntity extends AuditingFields {
         private final String adventureFame;
         private final String adventureName;
 
-        private final Set<UserAccount.UserAccountDTO> userAccounts;
 
         public static CharacterEntity toEntity(CharacterEntityDto dto) {
             return CharacterEntity.builder()
@@ -94,7 +109,7 @@ public class CharacterEntity extends AuditingFields {
                     .build();
         }
 
-        public static CharacterEntityDto from(CharacterDTO dto){
+        public static CharacterEntityDto from(CharacterDto dto) {
             return CharacterEntityDto.builder()
                     .characterId(dto.getCharacterId())
                     .characterName(dto.getCharacterName())
@@ -107,7 +122,7 @@ public class CharacterEntity extends AuditingFields {
                     .build();
         }
 
-        public static CharacterEntity toEntity(CharacterDTO dto) {
+        public static CharacterEntity toEntity(CharacterDto dto) {
             return CharacterEntity.builder()
                     .characterId(dto.getCharacterId())
                     .characterName(dto.getCharacterName())
@@ -120,7 +135,7 @@ public class CharacterEntity extends AuditingFields {
                     .build();
         }
 
-        public static CharacterEntityDto toDto(CharacterEntity entity) {
+        public static CharacterEntityDto from(CharacterEntity entity) {
             return CharacterEntityDto.builder()
                     .characterId(entity.getCharacterId())
                     .characterName(entity.getCharacterName())
@@ -134,6 +149,7 @@ public class CharacterEntity extends AuditingFields {
                     .adventureName(entity.getAdventureName())
                     .build();
         }
+
         @Getter
         @Data
         @Builder
@@ -161,7 +177,7 @@ public class CharacterEntity extends AuditingFields {
             private final String adventureName;
 
 
-            public static CharacterEntityResponse from(CharacterEntityDto dto){
+            public static CharacterEntityResponse from(CharacterEntityDto dto) {
                 return CharacterEntityResponse.builder()
                         .characterId(dto.getCharacterId())
                         .characterName(dto.getCharacterName())
@@ -175,29 +191,30 @@ public class CharacterEntity extends AuditingFields {
                         .adventureName(dto.getAdventureName())
                         .build();
             }
-            public String getServerName(String serverId){
-                if(serverId.equals("bakal")){
+
+            public String getServerName(String serverId) {
+                if (serverId.equals("bakal")) {
                     return "바칼";
-                }else if(serverId.equals("cain")) {
+                } else if (serverId.equals("cain")) {
                     return "카인";
-                }else if(serverId.equals("diregie")) {
+                } else if (serverId.equals("diregie")) {
                     return "디레지에";
-                }else if(serverId.equals("hilder")) {
+                } else if (serverId.equals("hilder")) {
                     return "힐더";
-                }else if(serverId.equals("prey")) {
+                } else if (serverId.equals("prey")) {
                     return "프레이";
-                }else if(serverId.equals("siroco")) {
+                } else if (serverId.equals("siroco")) {
                     return "시로코";
-                }else if(serverId.equals("casillas")) {
+                } else if (serverId.equals("casillas")) {
                     return "카시야스";
-                }else if(serverId.equals("anton")) {
+                } else if (serverId.equals("anton")) {
                     return "안톤";
-                }else{
+                } else {
                     return serverId;
                 }
             }
 
-            public static Set<CharacterEntityResponse> from(Set<CharacterEntityDto> dtos){
+            public static Set<CharacterEntityResponse> from(Set<CharacterEntityDto> dtos) {
                 return dtos.stream().map(CharacterEntityResponse::from).collect(Collectors.toSet());
             }
 

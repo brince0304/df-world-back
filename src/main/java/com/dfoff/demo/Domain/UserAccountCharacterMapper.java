@@ -1,10 +1,9 @@
-package com.dfoff.demo;
+package com.dfoff.demo.Domain;
 
-import com.dfoff.demo.Domain.CharacterEntity;
-import com.dfoff.demo.Domain.UserAccount;
+import jakarta.persistence.*;
 import lombok.*;
 
-import javax.persistence.*;
+
 
 @Entity
 @ToString

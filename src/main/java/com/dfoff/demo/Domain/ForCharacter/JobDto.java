@@ -4,7 +4,6 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
 
-import javax.annotation.Generated;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,15 +14,14 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @ToString
-public class JobDTO {
+public class JobDto {
     private final String jobId;
     private final String jobName;
 
-    private final Set<JobGrowDTO> jobGrowDTOSet = new HashSet<>();
+    private final Set<JobGrowDto> jobGrowDtoSet = new HashSet<>();
 
 
-    @Generated("jsonschema2pojo")
-    public static class JobJSONDTO {
+    public static class JobJSONDto {
 
         @SerializedName("rows")
         @Expose
@@ -32,13 +30,13 @@ public class JobDTO {
         /**
          * No args constructor for use in serialization
          */
-        public JobJSONDTO() {
+        public JobJSONDto() {
         }
 
         /**
          * @param rows
          */
-        public JobJSONDTO(List<Row> rows) {
+        public JobJSONDto(List<Row> rows) {
             super();
             this.rows = rows;
         }
@@ -51,51 +49,51 @@ public class JobDTO {
             this.rows = rows;
         }
 
-        public List<JobDTO> toDTO() {
-            List<JobDTO> jobDTOSet = new ArrayList<>();
+        public List<JobDto> toDTO() {
+            List<JobDto> jobDtoSet = new ArrayList<>();
             for (Row row : rows) {
-                JobDTO jobDTO = JobDTO.builder()
+                JobDto jobDTO = JobDto.builder()
                         .jobId(row.getJobId())
                         .jobName(row.getJobName())
                         .build();
                 for (Row__1 row__1 : row.getRows()) {
-                    JobGrowDTO jobGrowDTO = JobGrowDTO.builder()
+                    JobGrowDto jobGrowDTO = JobGrowDto.builder()
                             .jobGrowId(row__1.getJobGrowId())
                             .jobGrowName(row__1.getJobGrowName())
                             .build();
-                    jobDTO.getJobGrowDTOSet().add(jobGrowDTO);
+                    jobDTO.getJobGrowDtoSet().add(jobGrowDTO);
                     if (row__1.getNext() != null) {
-                        JobGrowDTO jobGrowDTO0 = JobGrowDTO.builder()
+                        JobGrowDto jobGrowDto0 = JobGrowDto.builder()
                                 .jobGrowId(row__1.getNext().getJobGrowId())
                                 .jobGrowName(row__1.getNext().getJobGrowName())
                                 .build();
-                        jobDTO.getJobGrowDTOSet().add(jobGrowDTO0);
+                        jobDTO.getJobGrowDtoSet().add(jobGrowDto0);
                         if (row__1.getNext().getNext() != null) {
-                            JobGrowDTO jobGrowDTO1 = JobGrowDTO.builder()
+                            JobGrowDto jobGrowDto1 = JobGrowDto.builder()
                                     .jobGrowId(row__1.getNext().getNext().getJobGrowId())
                                     .jobGrowName(row__1.getNext().getNext().getJobGrowName())
                                     .build();
-                            jobDTO.getJobGrowDTOSet().add(jobGrowDTO0);
+                            jobDTO.getJobGrowDtoSet().add(jobGrowDto0);
                             if (row__1.getNext().getNext().getNext() != null) {
-                                JobGrowDTO jobGrowDTO2 = JobGrowDTO.builder()
+                                JobGrowDto jobGrowDto2 = JobGrowDto.builder()
                                         .jobGrowId(row__1.getNext().getNext().getNext().getJobGrowId())
                                         .jobGrowName(row__1.getNext().getNext().getNext().getJobGrowName())
                                         .build();
-                                jobDTO.getJobGrowDTOSet().add(jobGrowDTO2);
+                                jobDTO.getJobGrowDtoSet().add(jobGrowDto2);
                             }
                         }
                     }
                 }
-                jobDTOSet.add(jobDTO);
+                jobDtoSet.add(jobDTO);
             }
 
-            return jobDTOSet;
+            return jobDtoSet;
         }
 
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append(JobJSONDTO.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+            sb.append(JobJSONDto.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
             sb.append("rows");
             sb.append('=');
             sb.append(((this.rows == null) ? "<null>" : this.rows));
@@ -120,14 +118,13 @@ public class JobDTO {
             if (other == this) {
                 return true;
             }
-            if ((other instanceof JobJSONDTO) == false) {
+            if ((other instanceof JobJSONDto) == false) {
                 return false;
             }
-            JobJSONDTO rhs = ((JobJSONDTO) other);
+            JobJSONDto rhs = ((JobJSONDto) other);
             return ((this.rows == rhs.rows) || ((this.rows != null) && this.rows.equals(rhs.rows)));
         }
 
-        @Generated("jsonschema2pojo")
         public static class Next {
 
             @SerializedName("jobGrowId")
@@ -230,7 +227,6 @@ public class JobDTO {
 
         }
 
-        @Generated("jsonschema2pojo")
         public static class Row__1 {
 
             @SerializedName("jobGrowId")
@@ -332,7 +328,6 @@ public class JobDTO {
 
         }
 
-        @Generated("jsonschema2pojo")
         public static class Row {
 
             @SerializedName("jobId")
@@ -434,7 +429,6 @@ public class JobDTO {
 
         }
 
-        @Generated("jsonschema2pojo")
         public static class Next__2 {
 
             @SerializedName("jobGrowId")
@@ -518,7 +512,6 @@ public class JobDTO {
 
         }
 
-        @Generated("jsonschema2pojo")
         public static class Next__1 {
 
             @SerializedName("jobGrowId")

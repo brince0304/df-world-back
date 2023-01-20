@@ -1,20 +1,19 @@
 package com.dfoff.demo.Domain;
 
 import com.dfoff.demo.JpaAuditing.AuditingFields;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
-@AllArgsConstructor
 @Getter
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor (access = AccessLevel.PROTECTED)
+@AllArgsConstructor (access = AccessLevel.PRIVATE)
 @Builder
 public class SaveFile extends AuditingFields {
     @Id
@@ -26,11 +25,21 @@ public class SaveFile extends AuditingFields {
     @Setter
     private String filePath;
 
+
+    @Setter
+    private String fileType;
+    @Setter
+    private Long fileSize;
+
+
+
+
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof SaveFile)) return false;
-        SaveFile saveFile = (SaveFile) o;
+        if (!(o instanceof SaveFile saveFile)) return false;
         return id.equals(saveFile.id);
     }
 
@@ -39,54 +48,65 @@ public class SaveFile extends AuditingFields {
         return Objects.hash(id);
     }
 
-    @Setter
-    private String fileType;
-    @Setter
-    private Long fileSize;
+        @Builder
+        public record SaveFileDTO(Long id, String fileName, String filePath, String fileType, Long fileSize,
+                                  LocalDateTime createdAt, LocalDateTime modifiedAt, String createdBy, String modifiedBy) {
+            public static SaveFileDTO from(SaveFile saveFile) {
+                if(saveFile == null) return null;
+                return SaveFileDTO.builder()
+                        .id(saveFile.getId())
+                        .fileName(saveFile.getFileName())
+                        .filePath(saveFile.getFilePath())
+                        .fileType(saveFile.getFileType())
+                        .fileSize(saveFile.getFileSize())
+                        .createdAt(saveFile.getCreatedAt())
+                        .modifiedAt(saveFile.getModifiedAt())
+                        .createdBy(saveFile.getCreatedBy())
+                        .modifiedBy(saveFile.getModifiedBy())
+                        .build();
+            }
 
-    @Getter
+            public SaveFile toEntity() {
+                return SaveFile.builder()
+                        .id(id)
+                        .fileName(this.fileName())
+                        .filePath(this.filePath())
+                        .fileType(this.fileType())
+                        .fileSize(this.fileSize())
+                        .build();
+            }
+
+
+    }
+
+    /**
+     * A DTO for the {@link SaveFile} entity
+     */
+    @Data
     @Builder
-    @AllArgsConstructor
-    public static class SaveFileDTO {
+    public static class SaveFileResponse implements Serializable {
+        private final LocalDateTime createdAt;
+        private final String createdBy;
+        private final LocalDateTime modifiedAt;
+        private final String modifiedBy;
         private final Long id;
         private final String fileName;
         private final String filePath;
         private final String fileType;
         private final Long fileSize;
 
-        private final LocalDateTime createdAt;
-        private final LocalDateTime modifiedAt;
-        private final String createdBy;
-        private final String modifiedBy;
-
-        public static SaveFileDTO from(SaveFile saveFile){
-            if(saveFile == null) return SaveFileDTO.builder().build();
-            return SaveFileDTO.builder()
-                    .id(saveFile.getId())
-                    .fileName(saveFile.getFileName())
-                    .filePath(saveFile.getFilePath())
-                    .fileType(saveFile.getFileType())
-                    .fileSize(saveFile.getFileSize())
-                    .createdAt(saveFile.getCreatedAt())
-                    .modifiedAt(saveFile.getModifiedAt())
-                    .createdBy(saveFile.getCreatedBy())
-                    .modifiedBy(saveFile.getModifiedBy())
+        public static SaveFileResponse from(SaveFileDTO dto ){
+            return SaveFileResponse.builder()
+                    .id(dto.id())
+                    .fileName(dto.fileName())
+                    .filePath(dto.filePath())
+                    .fileType(dto.fileType())
+                    .fileSize(dto.fileSize())
+                    .createdAt(dto.createdAt())
+                    .modifiedAt(dto.modifiedAt())
+                    .createdBy(dto.createdBy())
+                    .modifiedBy(dto.modifiedBy())
                     .build();
         }
-
-        public static SaveFile toEntity(SaveFileDTO saveFileDto){
-            if(saveFileDto == null) return null;
-            return SaveFile.builder()
-                    .id(saveFileDto.getId())
-                    .fileName(saveFileDto.getFileName())
-                    .filePath(saveFileDto.getFilePath())
-                    .fileType(saveFileDto.getFileType())
-                    .fileSize(saveFileDto.getFileSize())
-                    .build();
-        }
-
-
-
     }
-
 }

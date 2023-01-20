@@ -784,8 +784,7 @@ pre code {
 }
 
 .container {
-  padding-right: 15px;
-  padding-left: 15px;
+
   margin-right: auto;
   margin-left: auto;
 }
@@ -885,8 +884,7 @@ pre code {
 .col-lg-12 {
   position: relative;
   min-height: 1px;
-  padding-right: 15px;
-  padding-left: 15px;
+
 }
 
 .col-xs-1,
@@ -2610,7 +2608,6 @@ input[type="button"].btn-block {
 }
 
 .fade {
-  opacity: 0;
   -webkit-transition: opacity 0.15s linear;
           transition: opacity 0.15s linear;
 }

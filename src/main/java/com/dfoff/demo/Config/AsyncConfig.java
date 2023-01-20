@@ -17,10 +17,10 @@ public class AsyncConfig {
     public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
         log.info("start asyncServiceExecutor");
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(20);
-        executor.setMaxPoolSize(200);
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(100);
         executor.setQueueCapacity(100);
-        executor.setThreadNamePrefix("LSH-ASYNC-");
+        executor.setThreadNamePrefix("ASYNC-");
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());
         executor.initialize();
         return executor;

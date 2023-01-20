@@ -15,7 +15,7 @@ body {
 
 .single_advisor_profile {
     position: relative;
-    margin-bottom: 50px;
+    margin-bottom: 30px;
     -webkit-transition-duration: 500ms;
     transition-duration: 500ms;
     z-index: 1;
@@ -31,22 +31,8 @@ body {
     margin: 0 auto;
     padding: 30px 30px 0 30px;
     background-color: transparent;
-    overflow: hidden;
 }
 
-.single_advisor_profile .advisor_thumb::after {
-    -webkit-transition-duration: 500ms;
-    transition-duration: 500ms;
-    position: absolute;
-    width: 150%;
-    height: 80px;
-    bottom: -45px;
-    left: -25%;
-    content: "";
-    background-color: #ffffff;
-    -webkit-transform: rotate(-15deg);
-    transform: rotate(-15deg);
-}
 
 @media only screen and (max-width: 400px) {
     .single_advisor_profile .advisor_thumb::after {
@@ -82,7 +68,7 @@ body {
 .single_advisor_profile .single_advisor_details_info {
     position: relative;
     z-index: 1;
-    padding: 30px;
+    padding: 15px;
     text-align: right;
     -webkit-transition-duration: 500ms;
     transition-duration: 500ms;
@@ -498,7 +484,6 @@ img {
     display: block;
 }
 .search-form {
-    width: 80%;
     margin: 0 auto;
     margin-top: 1rem;
 }
@@ -606,3 +591,40 @@ img {
         text-align: center;
         min-height: 28px;
     }
+
+.boardTitleOverflow {
+    font-size: 12px;
+    font-weight: 400;
+    color: #202020;
+    line-height: 1;
+    display: inline-block;
+    margin-left: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 37%;
+    text-overflow: ellipsis;
+    margin-bottom: -2px;
+}
+
+.commentOverflow {
+    font-size: 12px;
+    font-weight: 400;
+    color: #202020;
+    line-height: 1;
+    display: inline-block;
+    margin-left: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 60%;
+    text-overflow: ellipsis;
+    margin-bottom: -2px;
+}
+
+.boardTitle {
+    font-size: 12px;
+    font-weight: 400;
+    color: #202020;
+    line-height: 1;
+    display: inline;
+    margin-left: 4px;
+}

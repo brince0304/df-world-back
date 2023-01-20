@@ -18,14 +18,8 @@ public class JpaConfig {
     public AuditorAware<String> auditorAware() {
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         if(authentication!=null) {
-            if(authentication.isAuthenticated()) {
                 log.info("authentication: {}", authentication);
                 return () -> Optional.of(authentication.getName());
-            }
-            else{
-                log.info("authentication: {}", authentication);
-                return () -> Optional.of("anonymous");
-            }
         }
         else{
             log.info(SecurityContextHolder.getContext().toString());

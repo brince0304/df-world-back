@@ -2,51 +2,77 @@ package com.dfoff.demo.Domain;
 
 import com.dfoff.demo.Domain.EnumType.UserAccount.SecurityRole;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
-import com.dfoff.demo.UserAccountCharacterMapper;
+import com.dfoff.demo.Util.FileUtil;
+import com.dfoff.demo.Util.OpenAPIUtil;
 import io.micrometer.core.lang.Nullable;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
+
 @Entity
+@Getter
 @ToString
+@NoArgsConstructor (access = AccessLevel.PROTECTED)
+@AllArgsConstructor (access = AccessLevel.PRIVATE)
+@Builder
 @Table(indexes =
         {@Index(columnList = "email", unique = true)
                 , @Index(columnList = "nickname", unique = true)})
-@Builder
 public class UserAccount extends AuditingFields {
     @Id
     @Column(length = 50)
     private String userId;
-
     @Setter
     private String password;
-
     @Setter
     @Column(length = 50, unique = true)
     private String nickname;
-
     @Setter
     @Column(length = 100, unique = true)
     private String email;
     @Setter
-    @JoinColumn(name = "profile_img_id")
+    @JoinColumn(name="profile_icon", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     @OneToOne(fetch = FetchType.EAGER)
-    @ToString.Exclude
-    private SaveFile profileIcon;
+    private SaveFile profileIcon ;
 
-    @OneToMany (mappedBy = "userAccount",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
-    private Set<UserAccountCharacterMapper> characterEntities = new LinkedHashSet<>();
+    @Builder.Default
+    private final Set<UserAccountCharacterMapper> characterEntities = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy="userAccount",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @Builder.Default
+    private final Set<Board> articles = new LinkedHashSet<>();
+
+    @OneToMany(mappedBy ="userAccount",fetch=  FetchType.LAZY, cascade = CascadeType.ALL)
+    @ToString.Exclude
+    @Builder.Default
+    private final Set<BoardComment> comments = new LinkedHashSet<>();
+
+    @Enumerated(EnumType.STRING)
+    @Column(length = 50)
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Builder.Default
+    private final Set<SecurityRole> roles = new HashSet<>(Set.of(SecurityRole.ROLE_USER));
+
+    @Setter
+    @Builder.Default
+    private String isDeleted = "N";
+
+    @OneToMany (mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<Notification> notifications = new LinkedHashSet<>();
+
 
 
     @Override
@@ -61,12 +87,6 @@ public class UserAccount extends AuditingFields {
     public int hashCode() {
         return Objects.hash(userId);
     }
-
-    @Enumerated(EnumType.STRING)
-    @Column(length = 50)
-    @Setter
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<SecurityRole> roles;
 
 
     @Getter
@@ -85,10 +105,9 @@ public class UserAccount extends AuditingFields {
         private final List<GrantedAuthority> authorities;
 
 
-
         @Override
         public Collection<? extends GrantedAuthority> getAuthorities() {
-            return null;
+            return authorities;
         }
 
         @Override
@@ -121,95 +140,48 @@ public class UserAccount extends AuditingFields {
             return true;
         }
     }
-    @Getter
+
+
+
+
+
     @Builder
-    @AllArgsConstructor
-    public static class UserAccountResponse{
-        private final String userId;
-        private final String nickname;
-        private final String email;
-
-        private final SaveFile.SaveFileDTO profileIcon;
-        private final Set<SecurityRole> roles;
-
-        public static UserAccountResponse from(UserAccountDTO userAccount){
-            return UserAccountResponse.builder()
-                    .userId(userAccount.getUserId())
-                    .nickname(userAccount.getNickname())
-                    .email(userAccount.getEmail())
-                    .roles(userAccount.getRoles())
-                    .profileIcon(userAccount.getProfileIcon())
-                    .build();
-        }
-    }
-
-    @AllArgsConstructor
-    @Builder
-    @Getter
-    @ToString
-    @EqualsAndHashCode
-    public static class UserAccountDTO {
-        private final String userId;
-        @Setter
-        private  String password;
-        private final String nickname;
-        private final String email;
-        @Setter
-        private SaveFile.SaveFileDTO profileIcon;
-
-        private final Set<CharacterEntity.CharacterEntityDto> characterEntityDtos;
-
-        private final Set<SecurityRole> roles;
-
-        private final LocalDateTime createdAt;
-        private final String createdBy;
-        private final LocalDateTime modifiedAt;
-        private final String modifiedBy;
-
-        public static UserAccountDTO from(UserAccount userAccount) {
-            return UserAccountDTO.builder()
+    public record UserAccountDto(String userId, String password, String nickname, String email,
+                                 SaveFile.SaveFileDTO profileIcon,
+                                  Set<SecurityRole> roles, LocalDateTime createdAt,
+                                 String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
+        public static UserAccountDto from(UserAccount userAccount) {
+            return UserAccountDto.builder()
                     .userId(userAccount.getUserId())
                     .password(userAccount.getPassword())
                     .nickname(userAccount.getNickname())
                     .email(userAccount.getEmail())
                     .roles(userAccount.getRoles())
                     .profileIcon(SaveFile.SaveFileDTO.from(userAccount.getProfileIcon()))
-                    .characterEntityDtos(
-                            userAccount.getCharacterEntities()==null? new LinkedHashSet<>() : userAccount.getCharacterEntities().stream()
-                                    .map(UserAccountCharacterMapper::getCharacter).map(CharacterEntity.CharacterEntityDto::toDto).collect(Collectors.toSet()))
                     .createdAt(userAccount.getCreatedAt())
                     .createdBy(userAccount.getCreatedBy())
                     .modifiedAt(userAccount.getModifiedAt())
                     .modifiedBy(userAccount.getModifiedBy())
                     .build();
         }
-        public static UserAccountDTO from(PrincipalDto principalDto){
-            return UserAccountDTO.builder()
+
+        public static UserAccountDto from(PrincipalDto principalDto) {
+            return UserAccountDto.builder()
                     .userId(principalDto.getUsername())
                     .password(principalDto.getPassword())
                     .nickname(principalDto.getNickname())
                     .email(principalDto.getEmail())
                     .profileIcon(principalDto.getProfileIcon())
-                    .roles(null)
-                    .createdAt(null)
-                    .createdBy(null)
-                    .modifiedAt(null)
-                    .modifiedBy(null)
                     .build();
         }
 
-        public static UserAccount toEntity(UserAccountDTO userAccountDto) {
+        public UserAccount toEntity() {
             return UserAccount.builder()
-                    .userId(userAccountDto.getUserId())
-                    .password(userAccountDto.getPassword())
-                    .nickname(userAccountDto.getNickname())
-                    .email(userAccountDto.getEmail())
-                    .characterEntities(
-                            userAccountDto.getCharacterEntityDtos()==null ? new LinkedHashSet<>()
-                                    : userAccountDto.getCharacterEntityDtos().stream()
-                                    .map(CharacterEntity.CharacterEntityDto::toEntity).map(o-> UserAccountCharacterMapper.of(UserAccountDTO.toEntity(userAccountDto),o)).collect(Collectors.toSet()))
-                    .profileIcon(SaveFile.SaveFileDTO.toEntity(userAccountDto.getProfileIcon()))
-                    .roles(userAccountDto.getRoles())
+                    .userId(this.userId())
+                    .password(this.password())
+                    .nickname(this.nickname())
+                    .email(this.email())
+                    .profileIcon(this.profileIcon() == null ? null : this.profileIcon().toEntity())
                     .build();
         }
 
@@ -217,21 +189,9 @@ public class UserAccount extends AuditingFields {
     }
 
     @Builder
-    @Getter
-    @ToString
-    @EqualsAndHashCode
-    public static class UserAccountUpdateRequest{
-        @NotEmpty
-        private final String userId;
-        @Nullable
-        private final String password;
-        @Nullable
-        private final String passwordCheck;
-        @Nullable
-        private final String nickname;
-        @Nullable
-        private final String email;
-
+    public record UserAccountUpdateRequest(@NotEmpty String userId, @Nullable String password,
+                                           @Nullable String passwordCheck, @Nullable String nickname,
+                                           @Nullable String email) {
         public UserAccountUpdateRequest(String userId, String password, String passwordCheck, String nickname, String email) {
             this.userId = userId;
             this.password = password;
@@ -240,8 +200,8 @@ public class UserAccount extends AuditingFields {
             this.email = email;
         }
 
-        public UserAccountDTO toDto(){
-            return UserAccountDTO.builder()
+        public UserAccountDto toDto() {
+            return UserAccountDto.builder()
                     .userId(userId)
                     .password(password)
                     .nickname(nickname)
@@ -265,7 +225,7 @@ public class UserAccount extends AuditingFields {
     @AllArgsConstructor
     @ToString
     @EqualsAndHashCode
-    public static class UserAccountSignUpRequest{
+    public static class UserAccountSignUpRequest {
         private final String userId;
         private final String password;
         private final String passwordCheck;
@@ -275,9 +235,8 @@ public class UserAccount extends AuditingFields {
         private final Set<SecurityRole> roles = Set.of(SecurityRole.ROLE_USER);
 
 
-
-        public UserAccountDTO toDto(){
-            return UserAccountDTO.builder()
+        public UserAccountDto toDto() {
+            return UserAccountDto.builder()
                     .userId(userId)
                     .password(password)
                     .nickname(nickname)
@@ -293,21 +252,106 @@ public class UserAccount extends AuditingFields {
                     .password(password)
                     .nickname(nickname)
                     .email(email)
-                    .roles(roles)
                     .build();
         }
     }
+
     @Getter
     @Builder
     @AllArgsConstructor
-    public static class LoginDto{
+    public static class LoginDto {
         private String username;
         private String password;
+    }
 
+
+    /**
+     * A DTO for the {@link CharacterEntity} entity
+     */
+    @Data
+    @Builder
+    public static class CharacterUserAccountResponse implements Serializable {
+        private final String characterId;
+        private final String serverId;
+        private final String characterName;
+        private final Integer level;
+        private final String jobGrowName;
+        private final String adventureFame;
+        private final String adventureName;
+
+        private final String characterImageUrl;
+
+        public String getServerName(String serverId) {
+            if (serverId.equals("bakal")) {
+                return "바칼";
+            } else if (serverId.equals("cain")) {
+                return "카인";
+            } else if (serverId.equals("diregie")) {
+                return "디레지에";
+            } else if (serverId.equals("hilder")) {
+                return "힐더";
+            } else if (serverId.equals("prey")) {
+                return "프레이";
+            } else if (serverId.equals("siroco")) {
+                return "시로코";
+            } else if (serverId.equals("casillas")) {
+                return "카시야스";
+            } else if (serverId.equals("anton")) {
+                return "안톤";
+            } else {
+                return serverId;
+            }
+        }
+
+        public static CharacterUserAccountResponse from(CharacterEntity characterEntity) {
+            return CharacterUserAccountResponse.builder()
+                    .characterId(characterEntity.getCharacterId())
+                    .serverId(characterEntity.getServerId())
+                    .characterName(characterEntity.getCharacterName())
+                    .level(characterEntity.getLevel())
+                    .jobGrowName(characterEntity.getJobGrowName())
+                    .adventureFame(characterEntity.getAdventureFame())
+                    .adventureName(characterEntity.getAdventureName())
+                    .characterImageUrl(OpenAPIUtil.getCharacterImgUrl(characterEntity.getServerId(),characterEntity.getCharacterId(),"2"))
+                    .build();
+        }
+
+        public static Set<CharacterUserAccountResponse> from(Set<UserAccountCharacterMapper> mapper){
+            return mapper.stream().map(UserAccountCharacterMapper::getCharacter).map(CharacterUserAccountResponse::from).collect(Collectors.toSet());
+
+        }
+    }
+
+    @Builder
+    @Data
+    public static class UserAccountMyPageResponse {
+        private final String userId;
+        private final String nickname;
+        private final String email;
+        private final Set<CharacterUserAccountResponse> characters;
+        private final String profileIconPath;
+        private final LocalDateTime createdAt;
+        private final String createdBy;
+        private final LocalDateTime modifiedAt;
+        private final String modifiedBy;
+
+
+
+        public static UserAccountMyPageResponse from(UserAccount userAccount) {
+            return UserAccountMyPageResponse.builder()
+                    .userId(userAccount.getUserId())
+                    .nickname(userAccount.getNickname())
+                    .email(userAccount.getEmail())
+                    .characters(CharacterUserAccountResponse.from(userAccount.getCharacterEntities()))
+                    .profileIconPath(userAccount.getProfileIcon() == null ? null : FileUtil.getProfileIconPath(userAccount.getProfileIcon().getFileName()))
+                    .createdAt(userAccount.getCreatedAt())
+                    .createdBy(userAccount.getCreatedBy())
+                    .modifiedAt(userAccount.getModifiedAt())
+                    .modifiedBy(userAccount.getModifiedBy())
+                    .build();
+        }
 
 
 
     }
-
-
 }

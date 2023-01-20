@@ -1,6 +1,5 @@
 package com.dfoff.demo.Controller;
 
-import com.dfoff.demo.Domain.CharacterEntity;
 import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Repository.CharacterEntityRepository;
@@ -11,7 +10,6 @@ import com.dfoff.demo.SecurityConfig.SecurityService;
 import com.dfoff.demo.Service.CharacterService;
 import com.dfoff.demo.Service.SaveFileService;
 import com.dfoff.demo.Service.UserAccountService;
-import com.dfoff.demo.UserAccountCharacterMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,15 +23,12 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Optional;
-
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -79,13 +74,6 @@ class UserAccountControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        saveFileService.saveFile(SaveFile.SaveFileDTO.builder()
-                .fileName("icon_char_0.png").filePath("icon_char_0.png").build());
-        userAccountService.createAccount(UserAccount.UserAccountDTO.builder()
-                .userId("test2")
-                .password("test2")
-                .nickname("test2")
-                .email("test2").profileIcon(SaveFile.SaveFileDTO.builder().fileName("test2").filePath("test2").build()).build());
 
     }
 
@@ -96,7 +84,7 @@ class UserAccountControllerTest {
         given(userAccountService.existsByUserId(any())).willReturn(true);
         //when
         //then
-        mvc.perform(get("/api/user/validate?username=test2"))
+        mvc.perform(get("/users/check?username=test2"))
                 .andExpect(status().isOk());
     }
 
@@ -107,7 +95,7 @@ class UserAccountControllerTest {
         given(userAccountService.existsByNickname(any())).willReturn(true);
         //when
         //then
-        mvc.perform(get("/api/user/validate?nickname=test"))
+        mvc.perform(get("/users/check?nickname=test"))
                 .andExpect(status().isOk());
     }
 
@@ -118,7 +106,7 @@ class UserAccountControllerTest {
         given(userAccountService.existsByEmail(any())).willReturn(true);
         //when
         //then
-        mvc.perform(get("/api/user/validate?email=test"))
+        mvc.perform(get("/users/check?email=test"))
                 .andExpect(status().isOk());
     }
 
@@ -126,28 +114,27 @@ class UserAccountControllerTest {
     @DisplayName("[view] [POST] /api/user - 회원가입 시도")
     void givenUserDetails_whenCreatingUserAccount_thenCreatesUserAccount() throws Exception {
         //given
-        given(userAccountService.createAccount(any())).willReturn(true);
+        given(userAccountService.createAccount(any(),any())).willReturn(true);
 
         //when&then
-        mvc.perform(post("/api/user")
+        mvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new UserAccount.UserAccountSignUpRequest("test1234", "test", "test", "test1234", "test1234@email.com"))))
                 .andExpect(status().isOk());
     }
 
     @Test
+    @WithUserDetails("test")
+    void getUserLogTest() throws Exception {
+        //when&then
+        mvc.perform(get("/users/logs/").param("type","board").param("sortBy","")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+    }
+
+
+    @Test
     @WithUserDetails ("test")
     void givenUserDetails_whenChangeProfileIcon_thenChangeProfileIcon() throws Exception {
-        given(securityService.loadUserByUsername(any())).willReturn(UserAccount.PrincipalDto.builder()
-                .username("test2")
-                .password("test2")
-                .email("test2")
-                .nickname("test2").profileIcon(SaveFile.SaveFileDTO.builder().fileName("test2").filePath("test2").build())
-                .build());
-        given(saveFileRepository.findByFileName(any())).willReturn(SaveFile.builder()
-                        .id(1L)
-                .fileName("icon_char_01.png").filePath("icon_char_01.png").build());
         //perform
-        mvc.perform(put("/api/user/profile.df?profileIcon=icon_char_01.png"))
+        mvc.perform(put("/users?profileIcon=icon_char_0.png"))
                 .andExpect(status().isOk());
     }
 
@@ -160,46 +147,42 @@ class UserAccountControllerTest {
                 .username("test")
                 .password("123")
                 .build();
-        given(securityService.loadUserByUsername(any())).willReturn(UserAccount.PrincipalDto.builder()
-                .username("test")
-                .password("123")
-                .email("test2")
-                .nickname("test2")
-                .authorities(null)
-                .build());
 
         //when&then
-        mvc.perform(post("/api/user/login").content(mapper.writeValueAsString(loginDto)).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+        mvc.perform(post("/users/login").param("username","test").param("password","123"))
+                .andExpect(status().is3xxRedirection());
     }
     @Test
     @WithUserDetails ("test")
     void  searchCharTest() throws Exception {
         //when&then
-        mvc.perform(get("/api/user/searchChar.df?serverId=all&characterName=테스트"))
+        mvc.perform(get("/users/characters/?serverId=all&characterName=테스트"))
                 .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
+
+
+
 
 
     @Test
     @WithUserDetails ("test")
     void addCharacterTest() throws Exception {
         //when&then
-        mvc.perform(post("/api/user/char.df?request=add&serverId=cain&characterId=77dae44a87261743386852bb3979c03a"))
+        mvc.perform(post("/users/characters?serverId=cain&characterId=77dae44a87261743386852bb3979c03a"))
                 .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
     }
 
     @Test
     void addCharacterExceptionTest() throws Exception {
         //when&then
-        mvc.perform(post("/api/user/char.df?request=add&serverId=cain&characterId=77dae44a87261743386852bb3979c03a"))
-                .andExpect(status().isBadRequest()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
+        mvc.perform(post("/users/characters?serverId=cain&characterId=77dae44a87261743386852bb3979c03a"))
+                .andExpect(status().isForbidden()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
     }
     @Test
     @WithUserDetails ("test")
     void deleteCharacterTest() throws Exception {
         //when&then
-        mvc.perform(post("/api/user/char.df?request=delete&serverId=cain&characterId=77dae44a87261743386852bb3979c03a"))
+        mvc.perform(delete("/users/characters?serverId=cain&characterId=77dae44a87261743386852bb3979c03a"))
                 .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
     }
 
@@ -208,15 +191,15 @@ class UserAccountControllerTest {
     @WithUserDetails ("test")
     void updateProfileTest() throws Exception {
         //when&then
-        mvc.perform(put("/api/user/profile.df?nickname=테스트&email=테스트"))
+        mvc.perform(put("/users?nickname=테스트&email=테스트"))
                 .andExpect(status().isOk());
     }
 
     @Test
     void updateProfileExceptionTest() throws Exception {
         //when&then
-        mvc.perform(put("/api/user/profile.df?nickname=테스트&email=테스트"))
-                .andExpect(status().isBadRequest());
+        mvc.perform(put("/users?nickname=테스트&email=테스트"))
+                .andExpect(status().isForbidden());
     }
 
 

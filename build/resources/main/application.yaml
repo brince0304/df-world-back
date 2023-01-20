@@ -5,7 +5,7 @@ spring:
   thymeleaf3:
     decoupled-logic: true
   datasource:
-    url: jdbc:h2:tcp://localhost/~/my-db-test
+    url: jdbc:h2:tcp://localhost/~/my-db-test;mode=MySQL
     username: sa
     password:
     driver-class-name: org.h2.Driver
@@ -18,11 +18,12 @@ spring:
         multipart:
             max-file-size: 20MB
             max-request-size: 20MB
-            location: /Users/brinc/Desktop/brincestudy/JAVA/df-toy-project/src/main/resources/static/images/imgSaveFolder
+            location: /Users/brinc/Desktop/brincestudy/JAVA/df-toy-project/src/main/resources/static/images/imgSaveFolder/
             enabled: true
   jpa:
     defer-datasource-initialization: true
     open-in-view: true
+
     hibernate.ddl-auto: create-drop
     show-sql: false
     properties:
@@ -36,3 +37,9 @@ spring:
     remote:
       restart:
         enabled: true
+
+com:
+  example:
+    upload:
+      path:
+        profileImg: "/Users/brinc/Desktop/brincestudy/JAVA/df-toy-project/src/main/resources/static/images/imgSaveFolder/"

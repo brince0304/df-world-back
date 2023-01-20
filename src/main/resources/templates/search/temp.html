@@ -202,3 +202,46 @@
 </form>
 </body>
 </html>
+
+switch (this.logType) {
+case "COMMENT":
+if(this.isChecked==='N'){
+html += '<div class="card" style="background-color: #f5f5f5;">';}
+
+  break;
+  case "BOARD_LIKE":
+  if(this.isChecked==='N'){
+  html += '<div class="card" style="background-color: #f5f5f5;">';}
+    html += '<span class="boardTitle">회원님의 게시글에 좋아요가 눌렸습니다.</span>'
+    break;
+    case "COMMENT_LIKE":
+    if(this.isChecked==='N'){
+    html += '<div class="card" style="background-color: #f5f5f5;">';}
+      html += '<span class="boardTitle">회원님의 댓글에 좋아요가 눌렸습니다.</span>'
+      break;
+      case "CHILDREN_COMMENT":
+      if(this.isChecked==='N'){
+      html += '<div class="card" style="background-color: #f5f5f5;">';}
+        html += '<span class="boardTitle">회원님의 댓글에 대댓글이 달렸습니다.</span>'
+        break;
+        case "BOARD_UNLIKE":
+        if(this.isChecked==='N'){
+        html += '<div class="card" style="background-color: #f5f5f5;">';}
+          html += '<span class="boardTitle">회원님의 게시글에 좋아요가 취소되었습니다.</span>'
+          break;
+          case "COMMENT_UNLIKE":
+          if(this.isChecked==='N'){
+          html += '<div class="card" style="background-color: #f5f5f5;">';}
+            html += '<span class="boardTitle">회원님의 댓글에 좋아요가 취소되었습니다.</span>'
+            break;
+            case "DELETE_COMMENT":
+            if(this.isChecked==='N'){
+            html += '<div class="card" style="background-color: #f5f5f5;">';}
+              html += '<span class="boardTitle">회원님의 댓글이 삭제되었습니다.</span>'
+              break;
+              case "DELETE_CHILDREN_COMMENT":
+              if(this.isChecked==='N'){
+              html += '<div class="card" style="background-color: #f5f5f5;">';}
+                html += '<span class="boardTitle">회원님의 대댓글이 삭제되었습니다.</span>'
+                break;
+                }

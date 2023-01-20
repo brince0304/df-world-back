@@ -25,10 +25,10 @@ import java.util.stream.Collectors;
 public class CharacterController {
     private final CharacterService characterService;
 
-    @GetMapping("/character/search.df")
+    @GetMapping("/characters/")
     public ModelAndView searchCharacterInfo(@RequestParam(required = false) String serverId,
                                             @RequestParam(required = false) String characterName,
-                                            @PageableDefault(size = 12) Pageable pageable) throws ExecutionException, InterruptedException {
+                                            @PageableDefault(size = 12) Pageable pageable) {
         ModelAndView mav = new ModelAndView("/search/searchPage");
         if (serverId == null || characterName == null) {
             mav.addObject("characters", Page.empty());

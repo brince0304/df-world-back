@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <link th:href="@{/Login/assets/css/bootstrap.css}" rel="stylesheet"/>
     <meta charset="UTF-8">
+    <script src="https://kit.fontawesome.com/1d4d31d2f3.js" crossorigin="anonymous"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link th:href="@{/Login/assets/css/login-register.css}" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="/css/util.css">
 
     <link rel="stylesheet" href="/header/fonts/icomoon/style.css">
 
@@ -16,17 +18,192 @@
     <link rel="stylesheet" href="/header/css/bootstrap.min.css">
     <!-- Style -->
     <link rel="stylesheet" href="/header/css/style.css">
-    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
-    <script th:src="@{/Login/assets/js/jquery-1.10.2.js}" type="text/javascript"></script>
-    <script th:src="@{/Login/assets/js/bootstrap.js}" type="text/javascript"></script>
-    <script th:src="@{/Login/assets/js/login-register.js}" type="text/javascript"></script>
+
     <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css'>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
-    <title>Title</title>
+    <title>던파모아온오프</title>
     <style>
+        .getMoreBtn {
+            display: inline-flex;
+            padding-right: 30%;
+            padding-left: 30%;
+            scale: 1.3;
+            cursor: pointer;
+        }
+
+        .myPage-character {
+            background-image: url("/images/icon_char/bg_char.jpeg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            float: left;
+            width: 25px;
+            height: 25px;
+            overflow: hidden;
+            position: relative;
+            display: inline-block;
+            border-radius: 50%;
+            border: 1.5px solid #898989;
+            margin-left: 5px;
+        }
+
+        .myPage-character .f-mage {
+            position: absolute;
+            left: -980%;
+            right: -1010%;
+            top: -1050%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
 
 
+        .myPage-character .default {
+            position: absolute;
+            left: -980%;
+            right: -1010%;
+            top: -1030%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .m-gunner {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -700%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .f-gunner {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -850%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .m-fighter {
+            position: absolute;
+            left: -1000%;
+            right: -1030%;
+            top: -850%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .f-thief {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -870%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .f-fighter {
+            position: absolute;
+            left: -980%;
+            right: -990%;
+            top: -960%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+
+        .myPage-character .m-warrior {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -900%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .f-warrior {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -930%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .f-priest {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -930%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .m-priest {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -760%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .m-lancer {
+            position: absolute;
+            left: -1000%;
+            right: -1050%;
+            top: -840%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .myPage-character .m-gunwarrior {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -810%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .boardIcon {
+            width: 25px;
+            aspect-ratio: auto 25 / 25;
+            height: 25px;
+            overflow-clip-margin: content-box;
+            overflow: clip;
+            vertical-align: middle;
+        }
+
+        .userLogLink {
+            text-decoration-line: none;
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -38,7 +215,7 @@
         <div class="card-body ">
             <div class="row">
                 <div class="col-12 ">
-                    <h4 class="card-title "><b th:text="${user.getNickname()} +'님 환영합니다!'">Program Title</b></h4>
+                    <h4 class="card-title "><b th:text="${user.nickname} +' 님 환영합니다!'">Program Title</b></h4>
 
                 </div>
                 <div class="col">
@@ -48,7 +225,7 @@
                                  height="19" id="star"> <span class="vl mr-2 ml-0"></span>
 
                             <span class="font-weight-bold">아이디 : </span><span
-                                th:text="${user.getUserId()}+' 이메일 : '+${user.getEmail()}"></span></p>
+                                th:text="${user.userId}+' 이메일 : '+${user.email}"></span></p>
                     </h6>
                 </div>
             </div>
@@ -73,10 +250,13 @@
                         <small>캐릭터 등록</small> </a>
 
 
-                    <a href="#" class="btn btn-outlined btn-black text-muted "><img
-                            src="https://img.icons8.com/metro/26/000000/more.png" width="20" height="20"
-                            class="mr-2 more"><small> 활동 내역</small></a>
-                    <span class="vl ml-3"></span>
+                    <a style="cursor:pointer" class="btn btn-outlined btn-black text-muted "
+                       onclick="getUserBoardLogs()"
+                       data-toggle="modal"
+                       data-target="#userLogModal"><small><i class="fa fa-bell-o" style="color:darkred ;scale:1.2"
+                                                             aria-hidden="true" th:if="${uncheckedLogCount!=0}"></i>
+                        <i class="fa fa-bell-o" style="scale:1.2" aria-hidden="true"
+                           th:if="${uncheckedLogCount==0}"></i> 활동 내역</small></a>
                 </div>
 
                 <div class="col-md-auto ">
@@ -84,15 +264,21 @@
                         <li class="list-inline-item"><a data-toggle="modal"
                                                         data-target="#iconSelectModal" href="#" class="
                          btn btn-outlined btn-black text-muted"> <img
-                                th:src="@{/api/getFile.df(name=${user.getProfileIcon().getFileName()})}" src=""
+                                th:src="${user.profileIconPath}" src=""
                                 alt="DP" class="  rounded-circle img-fluid " width="20" height="20"> <small>프로필 아이콘
                             변경</small> </a>
+                        </li>
+                        <li class="list-inline-item"><a data-toggle="modal"
+                                                        data-target="#iconSelectModal" href="#" class="
+                         btn btn-outlined btn-black text-muted"> <small>모험단 등록</small> </a>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
     </div>
+    <br>
+    <br>
     <div class="row">
         <div class="col-12">
             <div class="card card-margin">
@@ -101,54 +287,48 @@
                         <div class="col-lg-12">
                             <div class="search-result">
                                 <div class="result-body">
-                                    <div class="table-responsive">
+                                    <div class="table-responsive" style="border:none;">
+                                        <div th:if="${user.characters.isEmpty()}">
+                                            <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+                                                <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
+                                                <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">
+                                                    캐릭터가 존재하지 않습니다.
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="container">
                                             <div class="row charThumb">
-                                                <div th:if="${characters.isEmpty()}">
-                                                    <div class="col-lg-12">
-                                                        <div class="row">
-                                                            <div class="col-lg-12">
-                                                                <div class="text-center">
-                                                                    <h3>등록된 캐릭터가 존재하지 않습니다.</h3>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                                 <!-- Single Advisor-->
-                                                <div th:each="char : ${characters}" class="col-12 col-sm-6 col-lg-3">
+                                                <div th:each="char : ${user.characters}"
+                                                     class="col-12 col-sm-6 col-lg-3">
                                                     <div class="single_advisor_profile wow fadeInUp characterCard"
                                                          data-wow-delay="0.2s"
                                                          style="background-image: url('/images/icon_char/bg_char.jpeg') ;   background-repeat: no-repeat;   background-position: center;
                                                             background-size: cover;">
-
-                                                        <!-- Team Thumb-->
-                                                        <span class="badge bg-light text-dark">
+                                                        <div style="">
+                                                            <!-- Team Thumb-->
+                                                            <span class="badge bg-light text-dark" style="float:left">
                                                             <img class="icon-fame"
                                                                  th:src="@{/images/icon_char/icon_status_fame.png}"
                                                                  src="" alt="fame"
-                                                                 style="float : left; float : top ; display:inline"> <small
-                                                                style=" display:inline; color: #d39e00"
-                                                                th:text="${char.adventureFame}"></small> </span>
-                                                        <span class="badge bg-light text-dark" type="button"
-                                                              th:data-id="${char.characterId}"
-                                                              th:data-server="${char.serverId}"
-                                                              th:onclick="deleteCharacter(this.getAttribute('data-server') , this.getAttribute('data-id'))"
-                                                              style="display:inline ; float:right; float: top">삭제</span>
+                                                                 style=""> <small
+                                                                    style=" display:inline; color: #d39e00"
+                                                                    th:text="${char.adventureFame}"></small> </span>
+                                                            <span class="badge bg-light text-dark" type="button"
+                                                                  th:data-id="${char.characterId}"
+                                                                  th:data-server="${char.serverId}"
+                                                                  onclick="deleteCharacter(this.getAttribute('data-id'), this.getAttribute('data-server'))"
+                                                                  style="display:inline ; float:right; ">삭제</span></div>
                                                         <div class="advisor_thumb">
-                                                            <img th:src="@{'https://img-api.neople.co.kr/df/servers/'+${char.serverId}+'/characters/' + ${char.characterId} + '?zoom=2'}"
-                                                                 src="" alt="">
+                                                            <img th:src="${char.characterImageUrl}"
+                                                                 src="" style="scale:1.7" alt="">
                                                             <!-- Social Info-->
-                                                            <div class="social-info"><a href="#"><i
-                                                                    class="fa fa-facebook"></i> 데미지 데미지</a><a
-                                                                    href="#"><i
-                                                                    class="fa fa-twitter"></i></a><a href="#"><i
-                                                                    class="fa fa-linkedin"></i></a></div>
                                                         </div>
                                                         <!-- Team Details-->
                                                         <div class="single_advisor_details_info"
                                                              style="text-align: left">
-                                                            <h4 style="color: #898989;" th:text="${char.serverId}"
+                                                            <h4 style="color: #898989;"
+                                                                th:text="${char.getServerName(char.serverId)}"
                                                                 id="charServerId"></h4>
                                                             <h6 th:text="${char.characterName}">
                                                                 Samantha Sarah</h6>
@@ -176,6 +356,7 @@
 
 
     <div class="modal fade" id="charSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"
+         style="margin-left:2%"
          aria-hidden="true">
         <div class="modal-dialog" style="max-width:500px" role="document">
             <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
@@ -206,14 +387,138 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
                 </div>
             </div>
         </div>
     </div>
 
 
+    <div class="modal fade notification" id="userLogModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"
+         style="margin-left:2%"
+         aria-hidden="true">
+        <div class="modal-dialog" style="max-width:500px" role="document">
+            <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2); padding:0">
+                <div class="modal-header" style="padding: 5px;">
+                    <h5 class="modal-title" id="exampleModalLabel2" style="
+    font-size: 16px;
+    margin-left: 12px;">활동 내역</h5>
+                </div>
+                <div class="row" style="margin-left:0; margin-right:0;">
+                    <div class="col-md-12">
+                        <nav>
+                            <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab"
+                                   href="#nav-board"
+                                   role="tab" aria-controls="nav-home" aria-selected="true">게시글</a>
+                                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-comment"
+                                   role="tab" aria-controls="nav-profile" aria-selected="false"
+                                   onclick="getUserCommentLogs()">댓글</a>
+                                <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-log"
+                                   role="tab" aria-controls="nav-contact" aria-selected="false" onclick="getUserLogs()">알람</a>
+                            </div>
+                        </nav>
+                    </div>
+                    <div class="tab-content modal-body" id="nav-tabContent">
+                        <div class="tab-pane fade show active" id="nav-board" role="tabpanel"
+                             aria-labelledby="nav-home-tab">
+                            <div style="">
+                                <a data-toggle="dropdown"
+                                   class="align-items-center dropdown-link " aria-haspopup="true"
+                                   aria-expanded="false" data-offset="-70, 20"
+                                   style="text-decoration-line: none ;color: black; cursor:pointer">
+                                    <div style="padding-left:10px">
+                                        <span id="sortByBoard"><i class="fa fa-calendar-o"></i> 최신순</span>
+                                        <span class="arrow icon-keyboard_arrow_down"></span></div>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="z-index: 1000">
+                                    <a class="dropdown-item" onclick="getUserBoardLogs('like')"> <span
+                                            class="fa fa-heart-o"></span> 좋아요순</a>
+                                    <a class="dropdown-item" onclick="getUserBoardLogs('view')"><span
+                                            class="fa fa-eye"></span> 조회수순</a>
+                                    <a class="dropdown-item" onclick="getUserBoardLogs('commentCount')"><span
+                                            class="fa fa-comments-o"></span> 댓글갯수순</a>
+                                    <a class="dropdown-item" onclick="getUserBoardLogs('date')"><span
+                                            class="fa fa-calendar-o"></span> 최신순</a>
+                                </div>
+                            </div>
+                            <div id="boardLog"></div>
+                            <div style="display: inline-flex; margin-left:10px">
+                                <div id="prevBoardssBtn" style=" cursor:pointer" onclick="getUserBoardLogs(-1)"
+                                     disabled>
+                                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                                </div>
+                                <span class="text-black" id="boardPage"
+                                      style="margin-left:10px ; margin-right:10px">0</span>
+                                <div id="nextBoardsBtn" style="cursor:pointer" onclick="getUserBoardLogs(1)" disabled>
+                                    <i class="fa fa-arrow-right" style="" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="nav-comment" role="tabpanel"
+                             aria-labelledby="nav-home-tab">
+                            <div style="">
+                                <a data-toggle="dropdown"
+                                   class="align-items-center dropdown-link " aria-haspopup="true"
+                                   aria-expanded="false" data-offset="-70, 20"
+                                   style="text-decoration-line: none ;color: black; cursor:pointer">
+                                    <div style="padding-left:10px">
+                                        <span id="sortByComment"><i class="fa fa-calendar-o"></i> 최신순</span>
+                                        <span class="arrow icon-keyboard_arrow_down"></span></div>
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="z-index: 1000">
+                                    <a class="dropdown-item" onclick="getUserCommentLogs('like')"> <span
+                                            class="fa fa-heart-o"></span> 좋아요순</a>
+                                    <a class="dropdown-item" onclick="getUserCommentLogs('date')"><span
+                                            class="fa fa-calendar-o"></span> 최신순</a>
+                                </div>
+                            </div>
+                            <div id="commentLog">
+                            </div>
+                            <div style="display: inline-flex; margin-left:10px">
+                                <div id="prevCommentsBtn" style=" cursor:pointer" onclick="getUserCommentLogs(-1)"
+                                     disabled>
+                                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                                </div>
+                                <span class="text-black" id="commentPage"
+                                      style="margin-left:10px ; margin-right:10px">0</span>
+                                <div id="nextCommentsBtn" style="cursor:pointer" onclick="getUserCommentLogs(1)"
+                                     disabled>
+                                    <i class="fa fa-arrow-right" style="" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="nav-log" role="tabpanel"
+                             aria-labelledby="nav-home-tab">
+                            <div style="">
+
+                            </div>
+                            <div id="notification">
+                            </div>
+                            <div style="display: inline-flex; margin-left:10px">
+                                <div id="prevUserLogBtn" style=" cursor:pointer" onclick="getUserLogs(-1)" disabled>
+                                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                                </div>
+                                <span class="text-black" id="userLogPage"
+                                      style="margin-left:10px ; margin-right:10px">0</span>
+                                <div id="nextUserLogBtn" style="cursor:pointer" onclick="getUserLogs(1)" disabled>
+                                    <i class="fa fa-arrow-right" style="" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal fade" id="detailModifyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         style="margin-left:2%"
          aria-hidden="true">
         <div class="modal-dialog" style="max-width:500px" role="document">
             <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
@@ -266,6 +571,7 @@
     </div>
 
     <div class="modal fade" id="iconSelectModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+         style="margin-left:2%"
          aria-hidden="true">
         <div class="modal-dialog" style="max-width:500px" role="document">
             <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
@@ -389,6 +695,7 @@
     </div>
 
 </div>
+
 <footer id="footer">
     푸터
 </footer>
@@ -399,7 +706,6 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js'></script>
 <!-- Bootstrap JS -->
 <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'></script>
-<script th:href="@{/js/scriptfile.js}"></script>
 </body>
 <script>
     let emailCheck = false;
@@ -410,7 +716,7 @@
         if (confirm("아이콘을 변경하시겠습니까?")) {
             const iconName = "icon_char_" + number + ".png";
             $.ajax({
-                url: "/api/user/profile.df?profileIcon=" + iconName,
+                url: "/users?profileIcon=" + iconName,
                 type: "PUT",
                 data: {
                     iconNumber: number
@@ -506,7 +812,7 @@
     $('#nicknameUpdate').blur(function () {
         const nickname = $('#nicknameUpdate').val();
         $.ajax({
-            url: "/api/user/validate?nickname=" + nickname,
+            url: "/users/check?nickname=" + nickname,
             type: "GET",
             success: function (data) {
                 if (data === "true") {
@@ -534,7 +840,7 @@
     $('#emailUpdate').blur(function () {
         const email = $('#emailUpdate').val();
         $.ajax({
-            url: "/api/user/validate?email=" + email,
+            url: "/users/check?email=" + email,
             type: "GET",
             success: function (data) {
                 if (data === "true") {
@@ -616,7 +922,7 @@
             return;
         } else if (confirm("비밀번호를 변경하시겠습니까?")) {
             $.ajax({
-                url: "/api/user/profile.df?password=" + password,
+                url: "/users?password=" + password,
                 type: "PUT",
                 success: function (data) {
                     alert("비밀번호가 변경되었습니다.");
@@ -625,6 +931,7 @@
                     $('#passwordCheckUpdateForm').removeClass('was-validated');
                     $('#passwordCheckUpdate').removeClass("is-valid");
                     passwordBooleanCheck = false;
+                    location.reload();
                 }, error: function (request, status, error) {
                     alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
                 }
@@ -640,7 +947,7 @@
             return;
         } else if (confirm("이메일을 변경하시겠습니까?")) {
             $.ajax({
-                url: "/api/user/profile.df?email=" + email,
+                url: "/users?email=" + email,
                 type: "PUT",
                 success: function (data) {
                     alert("이메일이 변경되었습니다.");
@@ -648,6 +955,8 @@
                     $('#emailUpdateForm').removeClass('was-validated');
                     $('#emailUpdate').removeClass("is-valid");
                     emailCheck = false;
+                    location.reload();
+
                 }, error: function (request, status, error) {
                     alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
                 }
@@ -663,7 +972,7 @@
             return;
         } else if (confirm("닉네임을 변경하시겠습니까?")) {
             $.ajax({
-                url: "/api/user/profile.df?nickname=" + nickname,
+                url: "/users?nickname=" + nickname,
                 type: "PUT",
                 success: function (data) {
                     alert("닉네임이 변경되었습니다.");
@@ -671,6 +980,8 @@
                     $('#nicknameUpdateForm').removeClass('was-validated');
                     $('#nicknameUpdate').removeClass("is-valid");
                     nicknameCheck = false;
+                    location.reload();
+
                 }, error: function (request, status, error) {
                     alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
                 }
@@ -716,7 +1027,12 @@
         const characterName = $('#characterName').val();
         const serverId = $('#serverId').val();
         $.ajax({
-            url: "/api/user/searchChar.df?page=0&serverId=" + serverId + "&characterName=" + characterName,
+            url: "/users/characters/",
+            data: {
+                characterName: characterName,
+                serverId: serverId,
+                page : 0
+            },
             type: "GET",
             success: function (data) {
                 if (data == null) {
@@ -731,8 +1047,9 @@
     }
 
     function setSearchModalResult(list) {
+        let html = "";
         if (list.length > 0) {
-            var html = '<table class="table table-striped table-hover" style="text-align: center;">';
+            html = '<table class="table table-striped table-hover" style="text-align: center;">';
             html += '<thead style="font-weight: bold;"><tr><td>서버</td><td>닉네임</td>';
             if (list[0].level != undefined) {
                 html += '<td>레벨</td>';
@@ -753,7 +1070,7 @@
             html += "</table>";
             $('#searchBody').html(html);
         } else {
-            var html = '<h3 style="text-align: center;">검색 결과가 없습니다.</h3>';
+            html = '<h3 style="text-align: center;">검색 결과가 없습니다.</h3>';
             $('#searchBody').html(html);
         }
     }
@@ -762,7 +1079,11 @@
 
         if (confirm("캐릭터를 추가하시겠습니까?")) {
             $.ajax({
-                url: "/api/user/char.df?characterId=" + characterId + "&serverId=" + serverId + "&request=add",
+                url: "/users/characters",
+                data: {
+                    serverId: serverId,
+                    characterId: characterId
+                },
                 type: "POST",
                 success: function (data) {
                     alert("캐릭터가 추가되었습니다.");
@@ -775,13 +1096,357 @@
         }
     }
 
+    let logPage = 0;
+    let logSortBy = ";"
 
-    function deleteCharacter(serverId,characterId) {
+    function getUserLogs(page) {
+        if (logPage !== 0 && page === -1 && page !== null) {
+            logPage--;
+        } else if (page != null && page === 1) {
+            logPage++;
+        } else if (page === null) {
+            logPage = 0;
+        }
+        $.ajax({
+            url: "/users/logs/",
+            type: "GET",
+            data: {
+                page: logPage,
+                type: "log",
+            },
+            success: function (data) {
+                console.log(page);
+                const next = document.getElementById('nextUserLogBtn');
+                const prev = document.getElementById('prevUserLogBtn');
+                next.disabled = false;
+                prev.disabled = false;
+                $('#notification').html("");
+                let html = "";
+                if (data.content.length > 0) {
+                    $(data.content).each(function () {
+                        html += '<div data-id="' + this.id + '" style="margin:5px">';
+                        html += '<a style="text-decoration-line: none; color: #535353;" href="/boards/' + this.boardId + '">';
+                        html += '<span class="boardTitle">'+this.logContent+'</span>'
+                        html += '<span style="color:grey; font-size: 11px; float:right; display:inline-flex;" >' + this.createdDate + '</span>';
+                        html += '</a>';
+                        html += '</div>';
+                        html += '</div>';
+                        html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
+                    });
+                    $('#notification').html(html);
+                } else {
+                    html = '<h3 style="text-align: center;">알림이 존재하지 않습니다.</h3>';
+                    $('#notification').html(html);
+                }
+                if (data.last === true) {
+                    next.disabled = true;
+                    $('#nextUserLogBtn').addClass('text-secondary');
+                    $('#nextUserLogsBtn').removeClass('text-primary');
+                } else {
+                    next.disabled = false;
+                    $('#nextUserLogBtn').removeClass('text-secondary');
+                }
+                if (data.number === 0) {
+                    prev.disabled = true;
+                    $('#prevUserLogsBtn').addClass('text-secondary');
+                } else {
+                    prev.disabled = false;
+                    $('#prevUserLogBtn').removeClass('text-secondary');
+                    $('#nextUserLogBtn').removeClass('text-secondary');
+                    next.disabled = false;
+                }
+                $('#userLogPage').text(logPage + 1);
+            }, error: function (request, status, error) {
+                console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
 
+            }
+        });
+    }
+
+
+    function getUserCommentLogs(page) {
+        if (commentPage !== 0 && page === -1 && page !== null) {
+            commentPage--;
+        } else if (page != null && page === 1) {
+            commentPage++;
+        } else if (page === null) {
+            commentPage = 0;
+        }
+        if (page === 'like') {
+            commentPage = 0;
+            commentSortBy = "like";
+            $('#sortByComment').text(" 좋아요순");
+            $('#sortByComment').removeClass('fa fa-calendar-o');
+            $('#sortByComment').addClass('fa fa-heart-o');
+        } else if (page === 'date') {
+            commentPage = 0;
+            commentSortBy = "";
+            $('#sortByComment').text(" 최신순");
+            $('#sortByComment').removeClass('fa fa-heart-o');
+            $('#sortByComment').addClass('fa fa-calendar-o');
+        }
+        $.ajax({
+            url: "/users/logs/",
+            type: "GET",
+            data: {
+                page: commentPage,
+                type: "comment",
+                sortBy: commentSortBy
+            },
+            success: function (data) {
+                console.log(page);
+                const next = document.getElementById('nextCommentsBtn');
+                const prev = document.getElementById('prevCommentsBtn');
+                next.disabled = false;
+                prev.disabled = false;
+                $('#commentLog').html("");
+                let html = "";
+                if (data.content.length > 0) {
+                    $(data.content).each(function () {
+                        if (this.isDeleted === 'N') {
+                            html += '<div data-id="' + this.id + '" style="margin:5px">';
+                            html += '<a style="text-decoration-line: none; color: #535353;" href="/boards/' + this.boardId + '">';
+                            if (this.commentContent.length < 35) {
+                                html += '<span class="boardTitle">' + this.commentContent + '</span>'
+                            } else {
+                                html += '<span class="commentOverflow" > ' + this.commentContent + '</span>'
+                            }
+                            html +=
+                                '                                   <div style="display:inline-block; float:right;">' +
+                                '                                       <i class="fa fa-heart-o" style=""> </i>' +
+                                '                                       <span class="badge bg-transparent text-black"' +
+                                '                                             >' + this.commentLikeCount + '</span>' +
+                                '                                       <i class="fa fa-comments-o" style=""> </i>' +
+                                '                                       <span class="badge bg-transparent text-black"' +
+                                '                                             >' + this.childrenCommentsSize + '</span>'
+                            html += '<span style="color:grey; font-size: 11px;" >' + this.createdAt + '</span>';
+                            html += '</a>';
+                            html += '</div>';
+                            html += '</div>';
+                            html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
+                        } else {
+                            html += '<div data-id="' + this.id + '" style="margin:5px">';
+                            html += '<i class="fa fa-exclamation" aria-hidden="true" style="color:darkred"></i>';
+                            if (this.commentContent.length < 35) {
+                                html += '<span class="boardTitle" style="color:darkred">' + this.commentContent + '</span>'
+                            } else {
+                                html += '<span class="commentOverflow"  style="color:darkred"> ' + this.commentContent + '</span>'
+                            }
+                            html +=
+                                '                                   <div style="display:inline-block; float:right;">' +
+                                '                                       <i class="fa fa-heart-o" style=""> </i>' +
+                                '                                       <span class="badge bg-transparent text-black"' +
+                                '                                             >' + this.commentLikeCount + '</span>' +
+                                '                                       <i class="fa fa-comments-o" style=""> </i>' +
+                                '                                       <span class="badge bg-transparent text-black"' +
+                                '                                             >' + this.childrenCommentsSize + '</span>'
+                            html += '<span style="color:grey; font-size: 11px;" >' + this.createdAt + '</span>';
+                            html += '</div>';
+                            html += '</div>';
+                            html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
+                        }
+                    });
+                    $('#commentLog').html(html);
+                } else {
+                    html = '<h3 style="text-align: center;">댓글이 존재하지 않습니다.</h3>';
+                    $('#commentLog').html(html);
+                }
+                if (data.last === true) {
+                    next.disabled = true;
+                    $('#nextCommentsBtn').addClass('text-secondary');
+                    $('#nextCommentsBtn').removeClass('text-primary');
+                } else {
+                    next.disabled = false;
+                    $('#nextCommentsBtn').removeClass('text-secondary');
+                }
+                if (data.number === 0) {
+                    prev.disabled = true;
+                    $('#prevCommentsBtn').addClass('text-secondary');
+                } else {
+                    prev.disabled = false;
+                    $('#prevCommentsBtn').removeClass('text-secondary');
+                    $('#nextCommentsBtn').removeClass('text-secondary');
+                    next.disabled = false;
+                }
+                $('#commentPage').text(commentPage + 1);
+            }, error: function (request, status, error) {
+                console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+
+            }
+        });
+    }
+
+    let boardPage = 0;
+    let commentPage = 0;
+    let boardSortBy = "";
+    let commentSortBy = "";
+
+    function getUserBoardLogs(page) {
+        if (boardPage !== 0 && page === -1 && page !== null) {
+            boardPage = boardPage - 1;
+        } else if (page != null && page === 1) {
+            boardPage = boardPage + 1;
+        } else if (page === null) {
+            boardPage = 0;
+        }
+        if (page === 'like') {
+            boardSortBy = "like";
+            boardPage = 0;
+            $('#sortByBoard').text(' 좋아요');
+            $('#sortByBoard').removeClass('fa fa-calendar-o');
+            $('#sortByBoard').removeClass('fa fa-eye');
+            $('#sortByBoard').removeClass('fa fa-comments-o');
+            $('#sortByBoard').addClass('fa fa-heart-o');
+
+        } else if (page === 'commentCount') {
+            boardSortBy = "commentCount";
+            boardPage = 0;
+            $('#sortByBoard').text(' 코멘트순');
+            $('#sortByBoard').removeClass('fa fa-calendar-o');
+            $('#sortByBoard').removeClass('fa fa-eye');
+            $('#sortByBoard').removeClass('fa fa-heart-o');
+            $('#sortByBoard').addClass('fa fa-comments-o');
+
+        } else if (page === 'view') {
+            boardSortBy = "view";
+            boardPage = 0;
+            $('#sortByBoard').text(' 조회수순');
+            $('#sortByBoard').removeClass('fa fa-calendar-o');
+            $('#sortByBoard').removeClass('fa fa-heart-o');
+            $('#sortByBoard').removeClass('fa fa-comments-o');
+            $('#sortByBoard').addClass('fa fa-eye');
+        } else if (page === 'date') {
+            boardSortBy = "";
+            boardPage = 0;
+            $('#sortByBoard').text(' 최신순');
+            $('#sortByBoard').removeClass('fa fa-heart-o');
+            $('#sortByBoard').removeClass('fa fa-eye');
+            $('#sortByBoard').removeClass('fa fa-comments-o');
+            $('#sortByBoard').addClass('fa fa-calendar-o');
+        }
+        $.ajax({
+            url: "/users/logs/",
+            type: "GET",
+            data: {
+                page: boardPage,
+                type: "board",
+                sortBy: boardSortBy
+            },
+            success: function (data) {
+                const next = document.getElementById('nextBoardsBtn');
+                const prev = document.getElementById('prevBoardssBtn');
+                next.disabled = false;
+                prev.disabled = false;
+                let html = "";
+                $('#boardLogs').html("");
+                if (data.content.length > 0) {
+                    $(data.content).each(function () {
+                        if (this.isDeleted === 'N') {
+                            html += '<div data-id="' + this.id + '" style="margin:5px">';
+                            html += '<a style="text-decoration-line: none; color: #535353;" href="/boards/' + this.id +'">';
+                            if (this.character != null) {
+                                html += '<div class="myPage-character">'
+                                html += '<img class="text-dark ' + this.character.imgStyleClassName + '"  src="' + this.character.characterImageUrl + '"/></div>';
+                                html += '<i class="fa fa-plug" style="margin-left:2px"> </i>';
+                                html += '<span class="badge bg-transparent text-dark" >' + this.character.characterName + '</span>';
+                            } else {
+                                html += '<div class="myPage-character">';
+                                html += '</div>';
+                                html += '<i class="fa fa-plug" style="color: black; margin-left:2px"> </i>';
+                                html += '<span class="badge bg-transparent text-dark" >캐릭터없음</span>';
+                            }
+                            if (this.boardTitle.length < 25) {
+                                html += '<span class="boardTitle">' + this.boardTitle + '</span>';
+                            } else {
+                                html += '<span class="boardTitleOverflow" > ' + this.boardTitle + '</span>';
+                            }
+                            html +=
+                                '                                   <div style="display:inline-block; float:right;">' +
+                                '                                       <i class="fa fa-heart-o" style=""> </i>' +
+                                '                                       <span class="badge bg-transparent text-black"' +
+                                '                                             >' + this.boardLikeCount + '</span>' +
+                                '                                       <i class="fa fa-comment-o" style=""> </i>' +
+                                '                                       <span class="badge bg-transparent text-black"' +
+                                '                                             >' + this.commentCount + '</span>'
+                            html += '<span style="color:grey; font-size: 11px;" >' + this.createdAt + '</span>';
+                            html += '</a>';
+                            html += '</div>';
+                            html += '</div>';
+                            html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
+                        } else {
+                            html += '<div data-id="' + this.id + '" style="margin:5px">';
+                            if (this.character != null) {
+                                html += '<div class="myPage-character">'
+                                html += '<img class="text-dark ' + this.character.imgStyleClassName + '"  src="' + this.character.characterImageUrl + '"/></div>';
+                                html += '<i class="fa fa-exclamation" style="margin-left:2px; color:darkred"> </i>';
+                                html += '<span class="badge bg-transparent"  style="color:darkred">삭제됨</span>';
+                            } else {
+                                html += '<div class="myPage-character">';
+                                html += '</div>';
+                                html += '<i class="fa fa-exclamation" style="color: darkred; margin-left:2px"> </i>';
+                                html += '<span class="badge bg-transparent" style="color:darkred" >삭제됨</span>';
+                            }
+                            if (this.boardTitle.length < 25) {
+                                html += '<span class="boardTitle" style="color:darkred">' + this.boardTitle + '</span>';
+                            } else {
+                                html += '<span class="boardTitleOverflow" style="color:darkred" > ' + this.boardTitle + '</span>';
+                            }
+                            html +=
+                                '                                   <div style="display:inline-block; float:right;">' +
+                                '                                       <i class="fa fa-heart-o" style=""> </i>' +
+                                '                                       <span class="badge bg-transparent text-black"' +
+                                '                                             >' + this.boardLikeCount + '</span>' +
+                                '                                       <i class="fa fa-comment-o" style=""> </i>' +
+                                '                                       <span class="badge bg-transparent text-black"' +
+                                '                                             >' + this.commentCount + '</span>'
+                            html += '<span style="color:grey; font-size: 11px;" >' + this.createdAt + '</span>';
+                            html += '</div>';
+                            html += '</div>';
+                            html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
+                        }
+                    });
+
+                    $('#boardLog').html(html);
+                } else {
+                    html = '<h3 style="text-align: center;">게시글이 존재하지 않습니다.</h3>';
+                    $('#boardLog').html(html);
+                }
+                if (data.last === true) {
+                    next.disabled = true;
+                    $('#nextBoardsBtn').addClass('disabled text-secondary');
+                } else {
+                    next.disabled = false;
+                    $('#nextBoardsBtn').removeClass('disabled text-secondary');
+                }
+                if (data.number === 0) {
+                    prev.disabled = true;
+                    $('#prevBoardssBtn').addClass('disabled text-secondary');
+                } else {
+                    prev.disabled = false;
+                    $('#prevBoardssBtn').removeClass('disabled text-secondary');
+                    $('#nextBoardsBtn').removeClass('disabled text-secondary');
+                    next.disabled = false;
+
+                }
+                $('#boardPage').text(boardPage + 1);
+            }, error: function (request, status, error) {
+                console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+            }, done: function (data) {
+
+            }
+        });
+    }
+
+
+    function deleteCharacter(serverId, characterId) {
         if (confirm("캐릭터를 삭제하시겠습니까?")) {
             $.ajax({
-                url: "/api/user/char.df?serverId="+serverId +"&characterId=" + characterId + "&request=delete",
-                type: "POST",
+                url: "/users/characters",
+                data : {
+                    serverId : serverId,
+                    characterId : characterId
+                },
+                type: "DELETE",
                 success: function (data) {
                     alert("캐릭터가 삭제되었습니다.");
                     location.reload();
@@ -819,5 +1484,17 @@
 
 
     });
+
+    function logoutAlert() {
+        $.ajax({
+            url: "/users/logout",
+            type: "POST",
+            success: function (data) {
+                console.log(data);
+                alert("로그아웃 되었습니다.");
+                location.reload();
+            }
+        });
+    }
 </script>
 </html>

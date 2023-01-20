@@ -1,7 +1,6 @@
 $(window).scroll(function() {
     if ($(document).scrollTop() > 50) {
         $('.nav').addClass('affix');
-        console.log("OK");
     } else {
         $('.nav').removeClass('affix');
     }
@@ -12,7 +11,6 @@ $(window).scroll(function() {
 $(window).scroll(function() {
     if ($(document).scrollTop() > 50) {
         $('.nav').addClass('affix');
-        console.log("OK");
     } else {
         $('.nav').removeClass('affix');
     }
@@ -21,25 +19,18 @@ $(window).scroll(function() {
 
 
 
+
+
 $(document).ready(function() {
     var s = $("#navbar");
     var pos = s.position();
 
-    $(window).scroll(function() {
-        var windowpos = $(window).scrollTop();
-
-        if (windowpos >= pos.top) {
-            s.addClass("stick");
-        } else {
-            s.removeClass("stick");
-        }
-    });
 
 });
 function logoutAlert(){
     $.ajax({
-        url: "/api/user/logout",
-        type: "GET",
+        url: "/users/logout",
+        type: "POST",
         success: function (data) {
             console.log(data);
             alert("로그아웃 되었습니다.");
@@ -47,6 +38,22 @@ function logoutAlert(){
         }
     });
 }
+
+$(function() {
+
+    $('.custom-dropdown').on('show.bs.dropdown', function() {
+        var that = $(this);
+        setTimeout(function(){
+            that.find('.dropdown-menu').addClass('active');
+        }, 100);
+
+
+    });
+    $('.custom-dropdown').on('hide.bs.dropdown', function() {
+        $(this).find('.dropdown-menu').removeClass('active');
+    });
+
+});
 
 let nicknameCheck = false;
 let emailCheck = false;
@@ -124,7 +131,7 @@ $('#usernameRegister').blur(function(){
     let username = $('#usernameRegister').val();
     if(username===''){return;}
     $.ajax({
-        url: '/api/user/validate?username='+username,
+        url: '/users/check?username='+username,
         type: 'GET',
         success: function(data){
             if(data === 'false'){
@@ -146,7 +153,7 @@ $('#nicknameRegister').blur(function(){
     let nickname = $('#nicknameRegister').val();
     if(nickname===''){return;}
     $.ajax({
-        url: '/api/user/validate?nickname='+nickname,
+        url: '/users/check?nickname='+nickname,
         type: 'GET',
         success: function(data){
             if(data === 'false'){
@@ -168,7 +175,7 @@ $('#emailRegister').blur(function(){
     let email = $('#emailRegister').val();
     if(email===''){return;}
     $.ajax({
-        url: '/api/user/validate?email='+email,
+        url: '/users/check?email='+email,
         type: 'GET',
         success: function(data){
             if(data === 'false'){
@@ -199,7 +206,7 @@ function registerSubmit(){
         return;
     }
     $.ajax({
-        url: '/api/user/',
+        url: '/users',
         type: 'POST',
         data: JSON.stringify({
             "userId": username,
@@ -293,3 +300,27 @@ $('.nav-menu a, #mobile-nav a, .scrollto').on('click', function() {
         }
     }
 });
+
+
+$(function () {
+    $('#loginForm').keypress(function (e) {
+        if (e.keyCode == 13) {
+            loginAjax();
+
+        }
+    });
+
+
+});
+
+$(function () {
+    $('#signupForm').keypress(function (e) {
+        if (e.keyCode == 13) {
+            registerSubmit();
+
+        }
+    });
+
+
+});
+

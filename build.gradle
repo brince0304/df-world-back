@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '2.7.7'
-	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+	id 'org.springframework.boot' version '3.0.1'
+	id 'io.spring.dependency-management' version '1.1.0'
 }
 
 group = 'com.dfoff'
@@ -19,8 +19,9 @@ repositories {
 }
 
 dependencies {
+	implementation('io.github.furstenheim:copy_down:1.0')
 implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
-implementation('io.hypersistence:hypersistence-utils-hibernate-55:3.0.1')
+implementation('io.hypersistence:hypersistence-utils-hibernate-60:3.1.0')
 	implementation('commons-io:commons-io:2.11.0')
     implementation 'com.google.code.gson:gson:2.8.8'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
@@ -31,7 +32,7 @@ implementation('io.hypersistence:hypersistence-utils-hibernate-55:3.0.1')
   implementation 'org.springframework.boot:spring-boot-starter-security'
   implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
   implementation 'org.springframework.boot:spring-boot-starter-web'
-  implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+  implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
   compileOnly 'org.projectlombok:lombok'
   developmentOnly 'org.springframework.boot:spring-boot-devtools'
   runtimeOnly 'com.h2database:h2'

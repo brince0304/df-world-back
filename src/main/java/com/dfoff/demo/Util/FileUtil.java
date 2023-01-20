@@ -1,7 +1,6 @@
 package com.dfoff.demo.Util;
 
 import com.dfoff.demo.Domain.SaveFile;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -12,8 +11,9 @@ import java.util.UUID;
 public class FileUtil {
     private FileUtil() {
     }
-    @Value("${com.example.upload.path.profileImg}")
-    public static String uploadPath;
+    public static String uploadPath ="/Users/brinc/Desktop/brincestudy/JAVA/df-toy-project/src/main/resources/static/images/imgSaveFolder/";
+
+    public static String getFilePath = "/files/?name=";
 
 
     public  static String getExtension(String fileName) {
@@ -24,13 +24,17 @@ public class FileUtil {
     }
 
     public static File getMultipartFileToFile(MultipartFile multipartFile) throws IOException {
-        File file = new File(uploadPath,getFileNameWithUUID(multipartFile.getOriginalFilename()));
+        File file = new File(uploadPath,getFileNameWithUUID(Objects.requireNonNull(multipartFile.getOriginalFilename())));
         multipartFile.transferTo(file);
         return file;
     }
 
     public static File getFileFromSaveFile(SaveFile.SaveFileDTO saveFileDto) {
-        return new File(saveFileDto.getFilePath()+"/"+saveFileDto.getFileName());
+        return new File(saveFileDto.filePath());
+    }
+
+    public static String getProfileIconPath(String profileIcon) {
+        return getFilePath + profileIcon;
     }
 
 
@@ -46,7 +50,7 @@ public class FileUtil {
         Long fileSize = multipartFile.getSize();
         return SaveFile.SaveFileDTO.builder()
                 .fileName(fileName)
-                .filePath("/Users/brinc/Desktop/brincestudy/JAVA/df-toy-project/src/main/resources/static/images/imgSaveFolder"+fileName)
+                .filePath(uploadPath+fileName)
                 .fileType(fileType)
                 .fileSize(fileSize)
                 .build();// TODO: 경로가 자꾸 null 로 입력되기 때문에 해결 방안을 찾아야함.

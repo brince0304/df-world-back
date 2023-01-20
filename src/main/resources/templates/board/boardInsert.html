@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet"/>
+    <link href="/css/searchForm.css" rel="stylesheet"/>
+    <link href="/Login/assets/css/bootstrap.css" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <script src="https://kit.fontawesome.com/1d4d31d2f3.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="/Login/assets/css/login-register.css" rel="stylesheet"/>
+    <link href="/Login/assets/css/main.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+
+    <link rel="stylesheet" href="/header/fonts/icomoon/style.css">
+    <link rel="stylesheet" href="/css/util.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <!-- Style -->
+    <link rel="stylesheet" href="/header/css/style.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <script src="/Login/assets/js/bootstrap.js" type="text/javascript"></script>
+    <script src="/Login/assets/js/login-register.js" type="text/javascript"></script>
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css'>
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <!-- TOAST UI Editor CDN(CSS) -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
+    <title>던파모아 온오프</title>
+    <style>
+        .board-character {
+            background-image: url("/images/icon_char/bg_char.jpeg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+
+            width: 80px;
+            height: 80px;
+            overflow: hidden;
+            position: relative;
+            float: right;
+            display: inline-block;
+            border-radius: 40%;
+            border: 1.5px solid #898989;
+
+
+        }
+
+        .board-character img {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -1000%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+    </style>
+</head>
+<body>
+<header id="header">
+  헤더
+</header>
+<input type="hidden" th:value="${requestType}" id="request">
+<div style="margin-top:92px ;" class="container">
+    <div class="row" style="padding-top: 3%;">
+        <form method="post" >
+            <div class="s003" style="float:right; display:inline-block">
+                <div class="input-field first-wrap">
+                    <div class="input-select">
+                        <select data-trigger="" name="boardType" id="boardType">
+                            <option value="FREE">자유</option>
+                            <option value="RECRUITMENT">구인</option>
+                            <option value="MARKET">거래</option>
+                            <option value="QUESTION">질문</option>
+                            <option value="REPORT">사건/사고</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <h5 class="my-3 border-bottom pb-2">게시글 등록하기</h5>
+            <div class="mb-3">
+                <label for="titleAdd" class="form-label" style="display: inline-block">제목</label>
+                <label for="titleUpdate" class="form-label" style="display: inline-block">제목</label>
+                <input type="text"   placeholder="제목을 입력해주세요" name="title" id="titleAdd" class="form-control" th:if="${requestType.equals('add')}">
+                <input type="text"   placeholder="제목을 입력해주세요" name="title" th:value="${boardResponse.boardTitle}" id="titleUpdate" class="form-control" th:if="${requestType.equals('update')}">
+            </div>
+            <div class="field-error"></div>
+            <div class="mb-3">
+                <label class="form-label">내용</label>
+
+                <input type="hidden" name="content" id="updateContent" th:if="${requestType.equals('update') }" th:value="${boardResponse.convert(boardResponse.boardContent)}">
+                <div id="editor1"></div>
+                <span style="font-size: 12px; color: #999999; margin-left: 10px" id="contentWarning">5자이상 입력해주세요.</span>
+                <div class="board-character" th:if="${ requestType.equals('update') && boardResponse.character==null}" style="margin-right: 20px; margin-top:20px; float:right">
+                    <img id="charThumb" src="" >
+                    <div style="font-size: 20px; font-weight: 500; color: #999999; margin-left:22px"></div>
+                </div>
+                <div class="board-character" th:if="${ requestType.equals('update') && boardResponse.character!=null}" style="margin-right: 20px; margin-top:20px; float:right">
+
+                    <img id="charThumb" th:src="${boardResponse.character.characterImageUrl}" >
+                    <div style="font-size: 20px; font-weight: 500; color: #999999; margin-left:22px"></div>
+                </div>
+
+                <div class="board-character" th:if="${ requestType.equals('add')}"
+                     style="margin-right: 20px; margin-top:20px; float:right">
+                    <img id="charThumb" src="" >
+                    <div style="font-size: 20px; font-weight: 500; color: #999999; margin-left:22px"></div>
+                </div>
+                <br>
+                <a style="text-decoration-line: none;cursor:pointer" onclick="characterDelete()" ><span style="float:right; display: inline-block; margin-right:10px; margin-top:-5px" class="badge bg-danger" id="characterDelete"  >X</span></a>
+
+
+            </div>
+            <div class="mb-3" style="width:200px; margin-top:-20px">
+                <label for="hashtag" class="form-label"  th:if="${requestType.equals('add')}"  >해시태그</label>
+                <input type="text" name="hashtag" id="hashtag" th:if="${requestType.equals('add')}"  class="form-control">
+                <label for="updateHashtag" class="form-label" th:if="${requestType.equals('update') && hashtag!=null}" >해시태그</label>
+                <input type="text" name="updateHashtag" id="updateHashtag" th:if="${requestType.equals('update') && hashtag!=null}" th:value="${hashtag}"   class="form-control">
+                <span style="font-size: 12px; color: #999999; margin-left: 10px" id="hashtagWarning">해시태그는 #로 구분해주세요</span>
+                <input type="hidden" name="content" id="requestId" th:if="${requestType.equals('update') }" th:value="${boardResponse.getId()}">
+            </div>
+            <button type="button" id="characterStatus" class="btn btn-outline-dark" style="display: inline-block; float: right; margin-right:10px"  data-toggle="modal"
+                    data-target="#charSearchModal">캐릭터 등록</button>
+            <input type="hidden" name="characterId" id="characterIdInput"  >
+            <input type="hidden" name="characterId" id="serverIdInput"  >
+            <input type="hidden" id="characterExist" th:value="${characterExist}" >
+            <input type="hidden" id="characterIdResponse" th:value="${characterId}" >
+            <input type="hidden" id="serverIdResponse" th:value="${serverId}" >
+            <input type="hidden" id="characterNameResponse" th:value="${characterName}" >
+
+
+            <button type="button" onclick="uploadArticle()" class="btn btn-outline-dark my-2" th:if="${requestType.equals('add')}">등록</button>
+            <button type="button" onclick="updateArticle()" class="btn btn-outline-dark my-2" th:if="${requestType.equals('update')}">수정</button>
+        </form>
+        </div>
+
+            </div>
+
+<div class="modal fade" id="charSearchModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2" style="margin-left:2%"
+     aria-hidden="true">
+    <div class="modal-dialog" style="max-width:500px" role="document">
+        <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
+            <div class="modal-header" style="padding: 5px;">
+                <div class="input-group" style="z-index: 1;">
+                    <div class="input-group">
+                        <select name="serverId" id="serverId">
+                            <option value="all">전체</option>
+                            <option value="adventure">모험단</option>
+                            <option value="cain">카인</option>
+                            <option value="diregie">디레지에</option>
+                            <option value="siroco">시로코</option>
+                            <option value="prey">프레이</option>
+                            <option value="casillas">카시야스</option>
+                            <option value="hilder">힐더</option>
+                            <option value="anton">안톤</option>
+                            <option value="bakal">바칼</option>
+                        </select>
+                        <input type="text" placeholder="입력" class="form-control" id="characterName"
+                               name="characterName">
+                        <button type="button" class="btn btn-info" style="height:39px;" id="btn-search" href="#"
+                                onclick="searchCharacter()">검색
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div id="boardSearchBody" class="modal-body" style="min-height: 300px; max-height: 500px; overflow: auto;">
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<footer id="footer">
+  푸터
+</footer>
+<script src="/header/js/jquery.sticky.js"></script>
+<script src="/header/js/main.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.1.js"></script>
+<!-- Popper JS -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js'></script>
+<!-- Bootstrap JS -->
+<script src='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'></script>
+<script src="/js/scriptfile.js"></script>
+<script src="/js/choices.js"></script>
+
+</body>
+<script>
+    $(document).ready(function(){
+        if($('#characterExist').val() === 'true'){
+            $('#characterStatus').text($('#characterNameResponse').val());
+            $('#characterStatus').removeClass('btn-outline-dark');
+            $('#characterStatus').addClass('btn-success');
+            $('#characterDelete').show();
+            $('#characterIdInput').val($('#characterIdResponse').val());
+            $('#serverIdInput').val($('#serverIdResponse').val());
+        }else {
+            $('#characterDelete').hide()
+        }
+
+        fileIds ="";
+        request ="";
+    });
+    var fileIds = "";
+    var request = document.getElementById("request").value;
+
+    function uploadArticle(){
+        const title = $('#titleAdd').val();
+        const hashtag = $('#hashtag').val();
+        const boardType = $('#boardType').val();
+        const characterId = $('#characterIdInput').val();
+        const serverId = $('#serverIdInput').val();
+        const data = {
+            boardTitle: title,
+            boardContent: editor.getHTML(),
+            hashtag: hashtag,
+            boardFiles : fileIds,
+            boardType: boardType,
+            characterId: characterId,
+            serverId : serverId,
+        }
+        $.ajax({
+            type: "POST",
+            url: "/boards",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (response) {
+                alert("등록되었습니다.")
+                location.href= "/boards/"+response;
+            },
+            error: function (request, status, error) {
+                alert(request.responseText);
+            }
+        });
+    }
+
+    function updateArticle() {
+        if (confirm("수정하시겠습니까?")) {
+            const boardId = $('#requestId').val();
+            const title = $('#titleUpdate').val();
+            const hashtag = $('#updateHashtag').val();
+            const boardType = $('#boardType').val();
+            const characterId= $('#characterIdInput').val();
+            const serverId = $('#serverIdInput').val();
+            const data = {
+                id: boardId,
+                boardTitle: title,
+                boardContent: editor.getHTML(),
+                hashtag: hashtag,
+                boardFiles: fileIds,
+                boardType: boardType,
+                characterId: characterId,
+                serverId : serverId,
+            }
+            $.ajax({
+                type: "PUT",
+                url: "/boards",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    alert("수정되었습니다.")
+                    location.href = "/boards/" + response;
+                },
+                error: function (request, status, error) {
+                    alert(request.responseText);
+                }
+            });
+        }
+    }
+
+
+
+
+        const editor = new toastui.Editor({
+            el: document.querySelector('#editor1'),
+            initialEditType: 'markdown',
+            previewStyle: 'vertical',
+            height: '500px',
+            initialValue: $('#updateContent').val(),
+            events: {
+                change: function () {
+                    const content = editor.getMarkdown();
+                    if(content.length > 10000){
+                        $('#contentWarning').text("글자수가 10000자를 초과하였습니다.");
+                        $('#contentWarning').css("color","red");
+                        editor.setMarkdown(content.substring(0,10000));
+                    }else if (content.length < 5 ){
+                        $('#contentWarning').text("5자 이상 입력해주세요.");
+                        $('#contentWarning').css("color","red");
+                }else{
+                        $('#contentWarning').text("글자수 : "+content.length);
+                        $('#contentWarning').css("color","black");
+                    }}
+            },
+            hooks: {
+                addImageBlobHook: (blob, callback) => {
+                    // blob : Java Script 파일 객체
+                    //console.log(blob);
+
+                    const formData = new FormData();
+                    formData.append('file', blob);
+
+                    let url = '/files/?name=';
+                    $.ajax({
+                        type: 'POST',
+                        enctype: 'multipart/form-data',
+                        url: '/files',
+                        data: formData,
+                        dataType: 'json',
+                        processData: false,
+                        contentType: false,
+                        cache: false,
+                        timeout: 600000,
+                        success: function (data) {
+                            //console.log('ajax 이미지 업로드 성공');
+                            url += data.fileName;
+                            fileIds += data.id + ",";
+                            // callback : 에디터(마크다운 편집기)에 표시할 텍스트, 뷰어에는 imageUrl 주소에 저장된 사진으로 나옴
+                            // 형식 : ![대체 텍스트](주소)
+                            callback(url, '사진 대체 텍스트 입력');
+                        },
+                        error: function (e) {
+                            //console.log('ajax 이미지 업로드 실패');
+                            //console.log(e.abort([statusText]));
+
+                            callback('image_load_fail', '사진 대체 텍스트 입력');
+                        }
+                    });
+                }
+            }
+        });
+    const choices = new Choices('[data-trigger]',
+        {
+            searchEnabled: false,
+            itemSelectText: '',
+        });
+
+    function searchCharacter() {
+        const characterName = $('#characterName').val();
+        const serverId = $('#serverId').val();
+        $.ajax({
+            url: "/boards/characters/?page=0&serverId=" + serverId + "&characterName=" + characterName,
+            type: "GET",
+            success: function (data) {
+                if (data == null) {
+                    alert("캐릭터를 찾을 수 없습니다.");
+
+                } else {
+                    setSearchModalResult(data);
+                }
+            }, error: function (request, status, error) {
+            }
+        });
+    }
+
+    function getServerName(serverId) {
+        switch (serverId) {
+            case "cain":
+                return "카인";
+                break;
+            case "diregie":
+                return "디레지에";
+                break;
+            case "siroco":
+                return "시로코";
+                break;
+            case "prey":
+                return "프레이";
+                break;
+            case "casillas":
+                return "카시야스";
+                break;
+            case "hilder":
+                return "힐더";
+                break;
+            case "anton":
+                return "안톤";
+                break;
+            case "bakal":
+                return "바칼";
+                break;
+        }
+    }
+
+    function setSearchModalResult(list) {
+        if (list.length > 0) {
+            var html = '<table class="table table-striped table-hover" style="text-align: center;">';
+            html += '<thead style="font-weight: bold;"><tr><td>서버</td><td>닉네임</td>';
+            if (list[0].level != undefined) {
+                html += '<td>레벨</td>';
+            }
+            html += '<td>직업</td></tr></thead>';
+            html += '<tbody>';
+            for (var i = 0; i < list.length; i++) {
+                html += ' <tr class="search-item" data-server="' + list[i].serverId + '" data-id="' + list[i].characterId + '" data-name="' + list[i].characterName + '" onclick="setBoardCharacter(\'' + list[i].serverId + '\',\'' + list[i].characterId + '\',\'' + list[i].characterName+ '\')">';
+                html += '<td>' + getServerName(list[i].serverId) + "</td>";
+                html += '<td>' + list[i].characterName + "</td>";
+                if (list[i].level != undefined) {
+                    html += '<td>' + list[i].level + "</td>";
+                }
+                html += '<td>' + list[i].jobGrowName + "</td>";
+                html += '</tr>';
+            }
+            html += '</tbody>';
+            html += "</table>";
+            $('#boardSearchBody').html(html);
+        } else {
+            var html = '<h3 style="text-align: center;">검색 결과가 없습니다.</h3>';
+            $('#boardSearchBody').html(html);
+        }
+    }
+    function setBoardCharacter(serverId,characterId,characterName) {
+        if(confirm(characterName+"(으)로 설정하시겠습니까?")){
+            $('#charSearchModal').modal('hide');
+            $('#characterDelete').show();
+            $('#characterIdInput').val(characterId);
+            $('#characterStatus').removeClass('btn-outline-dark');
+            $('#characterStatus').addClass('btn-success');
+             $('#serverIdInput').val(serverId);
+            $('#characterStatus').text(characterName);
+            $('#charThumb').attr('src','https://img-api.neople.co.kr/df/servers/'+serverId+'/characters/'+characterId+'?zoom=1');
+        }
+    }
+
+    function characterDelete(){
+        $('#serverIdInput').val("");
+        $('#characterIdInput').val('');
+        $('#characterDelete').hide();
+        $('#characterStatus').text('캐릭터 등록');
+        $('#characterStatus').removeClass('bg-success');
+        $('#charThumb').attr('src','');
+    }
+
+
+
+    $(function () {
+        $('#characterName').keypress(function (e) {
+            if (e.keyCode == 13) {
+                searchCharacter();
+            }
+        });
+
+
+    });
+
+    $('#hashtag').keyup(function (e) {
+
+        if($('#hashtag').val().split('#').length>4){
+            $('#hashtagWarning').text('해시태그는 5개까지 입력 가능합니다.');
+            $('#hashtagWarning').css('color','red');
+
+        }else{
+            $('#hashtagWarning').text('해시태그는 #로 구분합니다.');
+            $('#hashtagWarning').css('color','silver');
+        }
+    });
+
+    $('#hashtag').blur(function (e) {
+        $('#hashtag').val().split('#').forEach(function (item) {
+            if (item.length > 10) {
+                $('#hashtagWarning').text('태그당 8자 이내로 입력해주세요.');
+                $('#hashtagWarning').css('color','red');
+            }
+            if (item.indexOf(' ') > -1) {
+                $('#hashtagWarning').text('공백은 포함하지 않습니다.');
+                $('#hashtagWarning').css('color','red');
+            }
+        });
+    });
+    $('#updateHashtag').blur(function (e) {
+        $('#updateHashtag').val().split('#').forEach(function (item) {
+            if (item.length > 10) {
+                $('#hashtagWarning').text('태그당 8자 이내로 입력해주세요.');
+                $('#hashtagWarning').css('color','red');
+            }
+            if (item.indexOf(' ') > -1) {
+                $('#hashtagWarning').text('공백은 포함하지 않습니다.');
+                $('#hashtagWarning').css('color','red');
+            }
+        });
+    });
+
+    $('#updateHashtag').keyup(function (e) {
+        if($('#updateHashtag').val().split('#').length>4){
+            $('#hashtagWarning').text('해시태그는 5개까지 입력 가능합니다.');
+            $('#hashtagWarning').css('color','red');
+
+        }else{
+            $('#hashtagWarning').text('해시태그는 #로 구분합니다.');
+            $('#hashtagWarning').css('color','silver');
+        }
+    });
+</script>
+</html>

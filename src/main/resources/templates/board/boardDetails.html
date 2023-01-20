@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet"/>
+    <link href="/css/searchForm.css" rel="stylesheet"/>
+    <link href="/Login/assets/css/bootstrap.css" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <script src="https://kit.fontawesome.com/1d4d31d2f3.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="/Login/assets/css/login-register.css" rel="stylesheet"/>
+    <link href="/Login/assets/css/main.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="/css/util.css">
+
+
+    <link rel="stylesheet" href="/header/fonts/icomoon/style.css">
+
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/header/css/bootstrap.min.css">
+    <!-- Style -->
+    <link rel="stylesheet" href="/header/css/style.css">
+    <link rel="stylesheet" href="/header/css/style.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <script src="/Login/assets/js/bootstrap.js" type="text/javascript"></script>
+    <script src="/Login/assets/js/login-register.js" type="text/javascript"></script>
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css'>
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    <!-- TOAST UI Editor CDN(CSS) -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css"/>
+    <title>던파모아 온오프</title>
+    <style>
+        .wrap {
+            width: 500px;
+        }
+        .wrap textarea {
+            width: 90%;
+            resize: none;
+            overflow-y: hidden; /* prevents scroll bar flash */
+            padding: 1.1em; /* prevents text jump on Enter keypress */
+            padding-bottom: 0.2em;
+            line-height: 1.6;
+        }
+        .board-character {
+            background-image: url("/images/icon_char/bg_char.jpeg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+
+            width: 80px;
+            height: 80px;
+            overflow: hidden;
+            position: relative;
+            float: right;
+            display: inline-block;
+            border-radius: 40%;
+            border: 1.5px solid #898989;
+
+        }
+
+        .board-character img {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -1000%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+
+        .boardIcon {
+            width: 25px;
+            aspect-ratio: auto 25 / 25;
+            height: 25px;
+            overflow-clip-margin: content-box;
+            overflow: clip;
+            vertical-align: middle;
+        }
+
+
+
+
+    </style>
+</head>
+<body>
+<header id="header">헤더
+</header>
+<div class="container" style="margin-top:150px ;">
+    <div class="card card-margin">
+        <div class="search-result">
+            <div class="result-body">
+                <div style="width: 100%; line-height: 2; background-color: white; border-bottom: 2px solid #e6e6e6; padding-top:3px ; padding-bottom: 3px; padding: 2px 5px;">
+
+                    <div class="notice_detail" data-id="1"
+                         style="padding-left: 8px; cursor: pointer;">
+                                    <span th:if="${boardType!=null && boardType!= boardType.equals('NOTICE')}"
+                                          style="font-size: 20px; font-weight: 400; color: #202020; line-height: 1;"><a
+                                            th:href="@{'/boards/?boardType=NOTICE'}"
+                                            style="text-decoration-line: none; color: black;">공지사항 바로가기</a><i
+                                            class="fas fa-chevron-right" style="padding-left: 8px;"></i></span>
+                        <span th:if="${boardType!=null && boardType== boardType.equals('NOTICE')}"
+                              style="font-size: 20px; font-weight: 400; color: #202020; line-height: 1;">공지사항</span>
+                        <span th:if="${boardType==null}"
+                              style="font-size: 20px; font-weight: 400; color: #202020; line-height: 1;"><a
+                                th:href="@{'/boards/?boardType=NOTICE'}"
+                                style="text-decoration-line: none; color: black;">공지사항 바로가기</a><i
+                                class="fas fa-chevron-right" style="padding-left: 8px;"></i></span>
+                        <div class="dropdown custom-dropdown" style="display: inline;   float: right;">
+                            <a th:href="@{/boards/insert(request=add)}"
+                               data-offset="-70, 20"
+                               style="text-decoration-line: none ;color: black; margin-right:10px" sec:authorize="isAuthenticated()">
+                                <span class="fa fa-pencil-square-o" aria-hidden="true"></span> 글쓰기
+                            </a>
+                            <a data-toggle="modal"
+                               data-target="#loginModal" href="#"
+                               data-offset="-70, 20"
+                               style="text-decoration-line: none ;color: silver; margin-right:10px" sec:authorize="!isAuthenticated()">
+                                <span class="fa fa-user-secret" aria-hidden="true"></span> 로그인
+                            </a>
+                            <a href="#" data-toggle="dropdown"
+                               class="align-items-center dropdown-link " aria-haspopup="true"
+                               aria-expanded="false" th:if="${boardType==null}" data-offset="-70, 20"
+                               style="text-decoration-line: none ;color: black;">
+                                <span class="fa fa-user-circle-o"></span> 통합
+                                <span class="arrow icon-keyboard_arrow_down"></span>
+                            </a>
+                            <a href="#" data-toggle="dropdown"
+                               class="align-items-center dropdown-link " aria-haspopup="true"
+                               aria-expanded="false" th:if="${boardType!=null && boardType.equals('NOTICE')}"
+                               data-offset="-70, 20" style="text-decoration-line: none ;color: black;">
+                                                    <span
+                                                            class="fa fa-bell-o"></span> 공지
+                                <span class="arrow icon-keyboard_arrow_down"></span>
+                            </a>
+                            <a href="#" data-toggle="dropdown"
+                               class="align-items-center dropdown-link " aria-haspopup="true"
+                               aria-expanded="false" th:if="${boardType!=null && boardType.equals('FREE')}"
+                               data-offset="-70, 20" style="text-decoration-line: none ;color: black;">
+                                                    <span
+                                                            class="fa fa-comments-o"></span> 자유
+                                <span class="arrow icon-keyboard_arrow_down"></span>
+                            </a>
+                            <a href="#" data-toggle="dropdown"
+                               class="align-items-center dropdown-link " aria-haspopup="true"
+                               aria-expanded="false" th:if="${boardType!=null && boardType.equals('RECRUITMENT')}"
+                               data-offset="-70, 20" style="text-decoration-line: none ;color: black;">
+                                                    <span
+                                                            class="fa fa-users"></span> 구인
+                                <span class="arrow icon-keyboard_arrow_down"></span>
+                            </a>
+                            <a href="#" data-toggle="dropdown"
+                               class="align-items-center dropdown-link " aria-haspopup="true"
+                               aria-expanded="false" th:if="${boardType!=null && boardType.equals('MARKET')}"
+                               data-offset="-70, 20" style="text-decoration-line: none ;color: black;">
+                                                    <span
+                                                            class="fa fa-money"></span> 거래
+                                <span class="arrow icon-keyboard_arrow_down"></span>
+                            </a>
+                            <a href="#" data-toggle="dropdown"
+                               class="align-items-center dropdown-link " aria-haspopup="true"
+                               aria-expanded="false" th:if="${boardType!=null && boardType.equals('QUESTION')}"
+                               data-offset="-70, 20" style="text-decoration-line: none ;color: black;">
+                                                    <span
+                                                            class="fa fa-question-circle-o"></span> 질문
+                                <span class="arrow icon-keyboard_arrow_down"></span>
+                            </a>
+                            <a href="#" data-toggle="dropdown"
+                               class="align-items-center dropdown-link " aria-haspopup="true"
+                               aria-expanded="false" th:if="${boardType!=null && boardType.equals('REPORT')}"
+                               data-offset="-70, 20" style="text-decoration-line: none ;color: black;">
+                                                    <span
+                                                            class="fa fa-hand-fist"></span> 사건/사고
+                                <span class="arrow icon-keyboard_arrow_down"></span>
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="z-index: 1000">
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType='}"> <span
+                                        class="fa fa-user-circle-o"></span> 통합게시판</a>
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType=FREE'}"><span
+                                        class="fa fa-comments-o"></span> 자유게시판</a>
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType=RECRUITMENT'}"><span
+                                        class="fa fa-users"></span> 구인게시판</a>
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType=MARKET'}"><span
+                                        class="fa fa-money"></span> 거래게시판</a>
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType=QUESTION'}"><span
+                                        class="fa fa-question-circle-o"></span> 질문 답변</a>
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType=REPORT'}"><span
+                                        class="fa fa-hand-fist"></span> 사건/사고</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div th:each="best : ${bestArticles}" style="padding: 2px 13px;">
+                <a style="text-decoration-line: none; color: sandybrown" th:href="@{'/boards/'+${best.id}}">
+                    <i class="fa fa-trophy" aria-hidden="true" style="margin-right:-5px; margin-left:-2px"></i>
+                    <span class="badge bg-transparent text-dark" style="display:inline; margin-right:-10px">베스트</span>
+                    <span th:if="${best.boardTitle.length()<25}"  style="font-size: 12px; font-weight: 400; color: #202020; line-height: 1; display:inline;margin-left:4px"
+                          th:text="${best.boardTitle}">공지사항 바로가기
+                </span>
+                    <span th:if="${best.boardTitle.length()>25}" class="boardTitleOverflow"
+                          th:text="${best.boardTitle}">공지사항 바로가기
+                </span>
+                    <div style="float:right; display:inline-block; margin-top:-6px;"><img class="boardIcon" src=""
+                                                                                          style="border-radius: 50%; border: 1px solid #898989; display:inline"
+                                                                                          width="20px"
+                                                                                          height="20px"
+                                                                                          th:src="${best.getUserProfileImgUrl()}"/>
+                        <span style="padding-left: 10px; padding-right: 10px; color: #4C4C4C; font-size: 14px; font-weight: 600; padding-top: 2px; display:inline"
+                              th:text="${best.userNickname}">테스트</span> <span
+                                class="badge bg-secondary text-black-50"
+                                th:text="${best.getBoardType(best.getBoardType())}"
+                                th:if="${best.boardType.name().equals('FREE')}"
+                                style="margin-top: 10px;">자유게시판</span>
+                        <span class="badge bg-warning text-black-50"
+                              th:text="${best.getBoardType(best.getBoardType())}"
+                              th:if="${best.boardType.name().equals('NOTICE')}" style="margin-top: 10px;">자유게시판</span>
+                        <span class="badge bg-success text-white-50"
+                              th:text="${best.getBoardType(best.getBoardType())}"
+                              th:if="${best.boardType.name().equals('MARKET')}" style="margin-top: 10px; ">자유게시판</span>
+                        <span class="badge bg-dark text-white-50"
+                              th:text="${best.getBoardType(best.getBoardType())}"
+                              th:if="${best.boardType.name().equals('RECRUITMENT')}"
+                              style="margin-top: 10px; ">자유게시판</span>
+                        <span class="badge bg-light text-black-50"
+                              th:text="${best.getBoardType(best.getBoardType())}"
+                              th:if="${best.boardType.name().equals('QUESTION')}"
+                              style="margin-top: 10px; ">자유게시판</span>
+                        <span class="badge bg-danger text-black-50"
+                              th:text="${best.getBoardType(best.getBoardType())}"
+                              th:if="${best.boardType.name().equals('REPORT')}" style="margin-top: 10px; ">자유게시판</span>
+                    </div>
+                </a>
+                <div class="bar"
+                     style="width: 108%; height: 2px; background-color: #e6e6e6; margin-top:5px; margin-left:-15px"></div>
+            </div>
+
+            <div style="width:100%;">
+                <div style="background-color: white;">
+
+
+                    <div style="padding: 10px 20px 0px;">
+                        <a style="text-decoration-line: none" th:href="@{/boards/(boardType=${article.boardType})}">
+                                                    <span class="badge bg-secondary text-black-50"
+                                                          th:text="${article.getBoardType(article.getBoardType())}"
+                                                          th:if="${article.boardType.name().equals('FREE')}">자유게시판</span>
+                            <span class="badge bg-warning text-black-50"
+                                  th:text="${article.getBoardType(article.getBoardType())}"
+                                  th:if="${article.boardType.name().equals('NOTICE')}">자유게시판</span>
+                            <span class="badge bg-success text-white-50"
+                                  th:text="${article.getBoardType(article.getBoardType())}"
+                                  th:if="${article.boardType.name().equals('MARKET')}">자유게시판</span>
+                            <span class="badge bg-dark text-white-50"
+                                  th:text="${article.getBoardType(article.getBoardType())}"
+                                  th:if="${article.boardType.name().equals('RECRUITMENT')}">자유게시판</span>
+                            <span class="badge bg-light text-black-50"
+                                  th:text="${article.getBoardType(article.getBoardType())}"
+                                  th:if="${article.boardType.name().equals('QUESTION')}">자유게시판</span>
+                            <span class="badge bg-danger text-black-50"
+                                  th:text="${article.getBoardType(article.getBoardType())}"
+                                  th:if="${article.boardType.name().equals('REPORT')}">자유게시판</span></a>
+                        <div th:each="hashtag : ${article.hashtags}" style="display: inline-block">
+                            <a style="text-decoration-line: none" href="#"
+                               th:href="@{/boards/(searchType=hashtag,keyword=${hashtag})}">
+                                <span class="badge bg-info text-black"
+                                      th:text="'#'+${hashtag}">#해시태그1</span></a>
+                        </div>
+                        <a style="text-decoration-line: none" href="#"
+                           th:href="@{/boards/(searchType='characterName',keyword=${article.character.characterName})}"
+                           th:if="${article.character!=null}">
+                            <i class="fa fa-plug" style="color: black; margin-left:2px"
+                               th:if="${article.character!=null}"></i>
+                            <span class="badge bg-transparent" th:if="${article.character!=null}"
+                                  th:text="${article.character.characterName}" style="margin-left: -9px; color:black"> 캐릭터</span></a>
+                        <div class="board-character" th:if="${article.character!=null}"
+                             >
+                            <img th:src="${article.character.characterImageUrl}"
+                                 src=""
+                            >
+                        </div>
+                        <div class="board-character" th:if="${article.character==null}"
+                             >
+                            <div style="font-size: 20px; font-weight: 500; color: #999999; margin-left:22px"></div>
+                        </div>
+
+                    </div>
+
+                    <div style="padding: 10px 20px 20px;">
+                        <span style="font-size: 24px; color: #202020;" class="boardTitle"
+                              th:text="${article.boardTitle}">엔트법석질문421421214214</span><br>
+
+
+                        <div class="" style="padding-bottom:10px; padding-top:5px; width: 100%;">
+                            <img class="boardIcon" data-icon="0" style="border-radius: 50%; border: 1px solid #898989;"
+                                 src="" width="25px" height="25px"
+                                 th:src="${article.getUserProfileIconPath()}"/>
+                            <span class="userNick"
+                                  style="padding-left: 5px; padding-right: 10px; color: #4C4C4C; font-size: 14px; font-weight: 600; padding-top: 2px;"
+                                  th:text="${article.userNickname}">만능초밥</span>
+                            <span style="color: #4C4C4C; font-size: 16px; padding-top: 2px;"
+                                  th:text="${article.getCreatedAt()}">2023-01-13 20:55</span>
+                            <input type="hidden" th:value="${article.id}" id="boardId">
+                        </div>
+                        <div class="row"
+                             style=" height: 2px; width: 109%; background: #e8e8e8; margin-top: 10px; margin-bottom: 10px; margin-left: -20px"></div>
+                        <div style="padding-bottom:30px;">
+                            <div style="display: inline-block; cursor: pointer; scale:1.2" id="likeLogFalse" onclick="likeBoard()">
+                                <i class="far fa-thumbs-up" style="margin-left: 3px; color: #999999;"></i> <span class="badge bg-transparent text-secondary"
+                                        style="font-size: 12px; color: #999999; font-weight: 500; display: inline ;margin-right:6px; margin-left:-10%"
+                                        th:text="${article.boardLikeCount}" id="likeCountFalse"> 0</span></div>
+                            <div style="display: inline-block; cursor: pointer; scale:1.2" id="likeLogTrue" onclick="likeBoard()" >
+                                <i class="far fa-thumbs-up" style="margin-left: 3px; color: black;"></i>   <span class="badge bg-transparent text-black"
+                                        style="font-size: 12px; color: black; font-weight: 500; display: inline ;margin-right:6px; margin-left:-10%"
+                                        th:text="${article.boardLikeCount}" id="likeCountTrue"> 0</span></div>
+                            <div style="display: inline-block; cursor: pointer; scale:1.2"   >
+                                <i class="far fa-eye" style="margin-left: -6px; color: black; "></i><span
+                                style="font-size: 13px; color: black; font-weight: 500; display: inline; " class="badge bg-transparent text-black"
+                                th:text="${article.boardViewCount}"> 0</span> </div>
+                            <input id="likeLog" th:value="${likeLog}" type="hidden">
+                            <a style="text-decoration-line: none" th:href="@{/boards/insert(request=update,id=${boardId})}" href="#">
+                            <span
+                                    class="badge bg-secondary" style="float:right; display: inline-block; cursor: pointer"
+                                    th:if="${article.userId==#authentication.name}"  >수정</span></a>
+
+                            <span class="badge bg-danger" style="float:right; display: inline-block; margin-right: 10px; cursor: pointer"
+                                  th:if="${article.userId==#authentication.name}"
+                                  onclick="deleteArticle()">삭제</span>
+
+                            <br>
+                            <br>
+                            <div id="articleContent">
+                                <input type="hidden" th:utext="${article.boardContent}" id="content">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bar"
+                         style="width: 100%; height: 2px; background-color: #e6e6e6; margin-top:5px; "></div>
+                    <div style="background-color: #F2F2F2">
+                        <div style="margin-left:2%">
+                            <i class="fa fa-commenting" aria-hidden="true" style="margin-left:2% ; margin-right:2px"></i>
+                            <span style="font-size: 16px; color: #4C4C4C; font-weight: 500;  padding-top: 10px;  display: inline-block;" id="commentCount"
+                                  th:text="${article.commentCount}+' 개'"> 0 개</span>
+                            <div style=" display: inline-block; margin-right:2%; cursor: pointer" id="commentRefreshBtn" onclick="getBoardComment($('#boardId').val())">
+                            <span style="font-size: 16px; color: #4C4C4C; font-weight: 500;  padding-top: 10px;  " class="badge bg-transparent text-black"
+                            > <i class="fa fa-refresh" aria-hidden="true" style="margin-left:2% ; margin-right:2px"></i> 댓글</span>
+                            </div>
+                        </div>
+                        <div class="">
+                            <div class="input-group" style="padding:15px;" sec:authorize="!isAuthenticated()">
+                                <textarea type="text" class="form-control" placeholder="로그인 후 댓글을 작성할 수 있습니다."
+                                          aria-label="Recipient's username" aria-describedby="basic-addon2" disabled></textarea>
+                                <span class="input-group-addon text-center" id="forLogin"
+                                      style="cursor: pointer; padding:2rem;" data-toggle="modal"
+                                      data-target="#loginModal"><i class="fa fa-user-secret"
+                                                                   style="margin-left: -5px; scale:1.5 ; margin-right:8px"></i>
+                                 </span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div style="background-color: #F2F2F2" sec:authorize="isAuthenticated()">
+
+                        <div class="">
+                            <div class="input-group" style="padding:15px;">
+                                            <textarea class="form-control" id="comment"
+                                                      style="min-height: 50px; max-height: 100px; overflow-y: hidden;"
+                                                      placeholder="댓글을 입력해주세요."></textarea>
+                                <span class="input-group-addon text-center" id="commentSave"  onclick="commentSave()"
+                                      style="cursor: pointer; padding:2rem;"><i class="fa fa-comment"
+                                                                                style="margin-left: -5px; scale:1.5"></i></span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div id="bestCommentsStatus">
+
+                </div>
+                <div id="bestComments"></div>
+                    <div style="" id="commentList">
+                    </div>
+                    <input hidden th:if="${#authentication!=null}" th:value="${#authentication.getName()}"
+                           id="principalId">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <footer id="footer">푸터
+            </footer>
+            <script src="/header/js/jquery.sticky.js"></script>
+            <script src="/header/js/main.js"></script>
+            <script src="https://code.jquery.com/jquery-3.6.1.js"></script>
+            <!-- Popper JS -->
+            <script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js'></script>
+            <!-- Bootstrap JS -->
+            <script src='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'></script>
+            <script src="/js/scriptfile.js"></script>
+            <script src="/js/choices.js"></script>
+
+</body>
+<script>
+
+    function replyCommentCancelBest(id) {
+        $("#" + id + "-replyFormBtnBest").show();
+        $("#" + id + "-refreshBtnBest").hide();
+        $("#"+id+"-replyCommentFormBest").hide();
+    }
+
+    function replyCommentCheckBest(id) {
+        var commentContent = $("#"+id+"-replyInputBest").val();
+        const data = {
+            boardId: $("#boardId").val(),
+            commentContent: commentContent,
+            commentId: id
+        }
+        $.ajax({
+            url: "/comments?mode=children",
+            type: "POST",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                alert("등록되었습니다.")
+                commentReplyForm(id);
+            },
+            error: function (e) {
+                alert(e.responseText);            }
+        });
+    }
+
+    function commentReplyFormBest(id) {
+        replyCommentCancel(id);
+        $('#'+id+'-replyFormBtnBest').hide();
+        $('#'+id+'-refreshBtnBest').show();
+        $("#"+id+"-replyCommentFormBest").empty();
+        var html = "";
+        html += "<textarea    style='padding:10px;border-radius:20px;background-color: transparent; margin-left:5%; width:85%' id='" + id + "-replyInputBest'></textarea>";
+        html += "<div style='margin-left:5%; margin-top:1%; display: flex; margin-bottom: 10px' >";
+        html += "<a style='text-decoration-line: none;cursor:pointer' onclick='replyCommentCheckBest(" + id + ")'>"
+        html += "<span class='badge bg-transparent text-black' style='margin-left:5px;'> <i class='fa fa-comment-o' style='margin-left:1%; margin-right:20%;' ></i>등록</span></a>";
+        html += "<a style='text-decoration-line: none;cursor:pointer'  onclick='replyCommentCancelBest(" + id + ")'>";
+        html += "<span class='badge bg-transparent text-black' style='margin-left:5px; '><i class='fa fa-times' style='margin-left:2%; margin-right:20%' ></i>답글 접기</span></a>";
+        html += "</div>";
+        $.ajax({
+            url: "/comments/",
+            data: {
+                boardId : $("#boardId").val(),
+                commentId: id
+            },
+            type: "GET",
+            success: function (data) {
+                $('#'+id+'-replyFormBtnBest').html("<i class='fa fa-comments-o' style='margin-right:10%' aria-hidden='true'></i>답글 : " + data.comments.length + "개");
+                $(data.comments).each(function(){
+                    if(this.isParent==='N'){
+                        html += "<div style='padding:10px; width:95%; margin-left:4%'>";
+                        html += "<div style='margin-left:4%;'>";
+                        html += "<a style='color:#898989'><img class='boardIcon' style='border:1px solid #BDBDBD;border-radius:20px;' width='30px' height='30px' src='"+this.userProfileImgUrl+"'/>";
+                        html += "<span style='margin-left:2%' class='text-black-50' data-id='" + this.id + "'>" + this.userNickname + "</span>";
+                        html += "</a>";
+                        if (this.userId === $("#principalId").val()) {
+                            html += "<span class='badge bg-transparent text-black' id='"+this.id+"-updateBestReply' style=' display: inline-block; margin-left: 2% ; cursor: pointer'  onclick='updateCommentBestReply(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정</span>";
+                            html += "<span class='updateBtn badge bg-transparent text-black' id='"+this.id+"-updateCheckBestReply' style=' display: inline-block; margin-left: 2%; cursor: pointer'  onclick='updateCommentCheckBestReply(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정하기</span>";
+                            html += " <span class='badge bg-transparent text-black' id='"+this.id+"-deleteBest' style='display: inline-block; cursor: pointer'  onclick='deleteCommentBest(" + this.id + ")'><i class='fa fa-trash-o' style='margin-right:10%'></i> 삭제</span>";
+                            html += " <span class='updateCancelBtn badge bg-transparent text-black' id='"+this.id+"-updateCancelBestReply' style='display: inline-block; cursor: pointer '  onclick='updateCancelBestReply(" + this.id + ")'><i class='fa fa-times' style='margin-right:10%'></i> 취소</span>";
+
+                        }
+                        html += "</div>";
+                        html += "<div style='margin-left:3%; margin-top:1%'>";
+                        html += "<div style='display:flex;'>";
+                        html += "<span style='padding:10px;border-radius:20px;background-color: white; margin-left:1% ; white-space: pre-wrap; display: flex' id='" + this.id + "-contentBestReply'>" + this.commentContent + "</span>";
+                        html += "<textarea class='updateInput'   style='padding:10px;border-radius:20px;background-color: transparent; margin-left:1%; width:90%' id='" + this.id + "-contentInputBestReply'></textarea>";
+                        html += "</div>";
+                        html += "<div style='display:flex;' >";
+                        html += "</div>";
+                        html += "<span style='float:left;padding:5px; ; color: grey; display: inline-block'>";
+                        html += "<a style='padding:10px;'>";
+                        html += this.createdAt
+                        html += "</a>";
+                        html += "</span>";
+                        html += "<div style='margin-top:2px; display:inline-block; cursor:pointer' id='"+this.id+"-like-disable-Best' class='replyCommentLike' onclick='commentLikeBestReply("+this.id+")'>";
+                        html += "<i class='fa fa-heart-o' style=' margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
+                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount0-Best' style='cursor: pointer; margin-top:7px ;  scale:1.1'>";
+                        html += this.commentLikeCount;
+                        html += "</span>";
+                        html+= "</div>"
+                        html += "<div style='margin-top:2px ;display:inline-block; cursor:pointer' id='"+this.id+"-like-Best' class='replyCommentLike' onclick='commentDislikeBestReply("+this.id+")'>";
+                        html += "<i class='fa fa-heart' style='margin-left: 5px;  scale:0.8 '  aria-hidden='true' ></i>"
+                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount1-Best' style='cursor: pointer; margin-top:7px ;scale:1.1'>";
+                        html += this.commentLikeCount;
+                        html += "</span>";
+                        html+= "</div>"
+                        html += "</div>";
+                        html += "</div>";
+                    }
+                })
+                $("#"+id+"-replyCommentFormBest").html(html);
+                $("#"+id+"-replyCommentFormBest").show();
+                $(".updateInput").hide();
+                $(".updateBtn").hide();
+                $(".updateCancelBtn").hide();
+                $(".replyCommentLike").hide();
+                $.each(data.likeMap,function (key,value) {
+                    if (value=== true) {
+                        $("#" + key + "-like-Best").show();
+                        $("#" + key + "-like-disable-Best").hide();
+                    } else {
+                        $("#" + key + "-like-Best").hide();
+                        $("#" + key + "-like-disable-Best").show();
+                    }
+                })
+            },
+            error: function (e) {
+                alert(e.responseText);            }
+        });
+
+    }
+    function commentLikeBestReply(id) {
+        const boardId = $("#boardId").val();
+
+        $.ajax({
+            type: "POST",
+            url: "/comments/like-comment",
+            data: {
+                boardId: boardId,
+                commentId: id
+            },
+            success: function (data) {
+                $("#" + id + "-likeCount0-Best").text(data);
+                $("#" + id + "-likeCount1-Best").text(data);
+                $("#" + id + "-like-Best").show();
+                $("#" + id + "-like-disable-Best").hide();
+            },
+            error: function (e) {
+                alert(e.responseText);            }
+        });
+    }
+
+    function commentDislikeBestReply(id) {
+        const boardId = $("#boardId").val();
+        $.ajax({
+            type: "POST",
+            url: "/comments/like-comment",
+            data: {
+                boardId: boardId,
+                commentId: id
+            },
+            success: function (data) {
+                $("#" + id + "-likeCount0-Best").text(data);
+                $("#" + id + "-likeCount1-Best").text(data);
+                $("#" + id + "-like-Best").hide();
+                $("#" + id + "-like-disable-Best").show();
+            },
+            error: function (e) {
+                alert(e.responseText);            }
+        });
+    }
+
+
+    function commentLikeBest(id) {
+        const boardId = $("#boardId").val();
+
+        $.ajax({
+            type: "POST",
+            url: "/comments/like-comment",
+            data: {
+                boardId: boardId,
+                commentId: id
+            },
+            success: function (data) {
+                $("#" + id + "-likeCount0Best").text(data);
+                $("#" + id + "-likeCount1Best").text(data);
+                $("#" + id + "-likeBest").show();
+                $("#" + id + "-like-disableBest").hide();
+            },
+            error: function (e) {
+                alert(e.responseText);
+            }
+        });
+    }
+
+    function commentDislikeBest(id) {
+        const boardId = $("#boardId").val();
+        $.ajax({
+            type: "POST",
+            url: "/comments/like-comment",
+            data: {
+                boardId: boardId,
+                commentId: id
+            },
+            success: function (data) {
+                $("#" + id + "-likeCount0Best").text(data);
+                $("#" + id + "-likeCount1Best").text(data);
+                $("#" + id + "-likeBest").hide();
+                $("#" + id + "-like-disableBest").show();
+            },
+            error: function (e) {
+                alert(e.responseText);            }
+        });
+    }
+    function updateCommentBestReply(commentId) {
+        var content = $("#" + commentId + "-contentBestReply").text();
+        $("#" + commentId + "-contentBestReply").hide();
+        $("#" + commentId + "-contentInputBestReply").show();
+        $("#" + commentId + "-contentInputBestReply").val(content);
+        $("#" + commentId + "-updateBestReply").hide();
+        $("#" + commentId + "-deleteBestReply").hide();
+        $("#" + commentId + "-updateCheckBestReply").show();
+        $("#" + commentId + "-updateCancelBestReply").show();
+    }
+
+    function updateCancelBestReply(commentId) {
+
+        $("#" + commentId + "-contentBestReply").show();
+        $("#" + commentId + "-contentInputBestReply").hide();
+        $("#" + commentId + "-updateBestReply").show();
+        $("#" + commentId + "-deleteBestReply").show();
+        $("#" + commentId + "-updateCheckBestReply").hide();
+        $("#" + commentId + "-updateCancelBestReply").hide();
+    }
+
+    function updateCommentCheckBestReply(commentId){
+        if(confirm("수정하시겠습니까?")) {
+            var content = $("#" + commentId + "-contentInputBestReply").val();
+            const boardId= $('#boardId').val();
+            const data = {
+                commentId: commentId,
+                commentContent: content,
+                boardId: boardId
+            }
+            $.ajax({
+                url: "/comments",
+                type: "PUT",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    alert("수정되었습니다.")
+                    getBoardComment(boardId);
+                },
+                error: function (e) {
+                    alert(e.responseText);                }
+            });
+        }
+    }
+
+    function updateCommentBest(commentId) {
+        var content = $("#" + commentId + "-contentBest").text();
+        $("#" + commentId + "-contentBest").hide();
+        $("#" + commentId + "-contentInputBest").show();
+        $("#" + commentId + "-contentInputBest").val(content);
+        $("#" + commentId + "-updateBest").hide();
+        $("#" + commentId + "-deleteBest").hide();
+        $("#" + commentId + "-updateCheckBest").show();
+        $("#" + commentId + "-updateCancelBest").show();
+    }
+
+    function updateCancelBest(commentId) {
+
+        $("#" + commentId + "-contentBest").show();
+        $("#" + commentId + "-contentInputBest").hide();
+        $("#" + commentId + "-updateBest").show();
+        $("#" + commentId + "-deleteBest").show();
+        $("#" + commentId + "-updateCheckBest").hide();
+        $("#" + commentId + "-updateCancelBest").hide();
+    }
+
+    function updateCommentCheckBest(commentId){
+        if(confirm("수정하시겠습니까?")) {
+            var content = $("#" + commentId + "-contentInputBest").val();
+            const boardId= $('#boardId').val();
+            const data = {
+                commentId: commentId,
+                commentContent: content,
+                boardId: boardId
+            }
+            $.ajax({
+                url: "/comments",
+                type: "PUT",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    alert("수정되었습니다.")
+                    getBoardComment(boardId);
+                },
+                error: function (e) {
+                    alert(e.responseText);                }
+            });
+        }
+    }
+
+    function deleteCommentBest(commendId) {
+        if(confirm("삭제하시겠습니까?")) {
+            $.ajax({
+                url: "/comments",
+                type: "DELETE",
+                data: {
+                    commentId: commendId
+                },
+                success: function (data) {
+                    alert("삭제되었습니다.");
+                    getBoardComment($('#boardId').val());
+                },
+                error: function (e) {
+                    alert(e.responseText);                }
+            });
+        }
+    }
+    $(document).ready(function () {
+        const viewer = toastui.Editor.factory({
+            el: document.querySelector("#articleContent"),
+            viewer: true,
+
+            height: "500px",
+            initialValue: document.getElementById("content").value,
+        });
+        if ($("#likeLog").val() === "true") {
+            $("#likeLogTrue").show();
+            $("#likeLogFalse").hide();
+        } else {
+            $("#likeLogTrue").hide();
+            $("#likeLogFalse").show();
+        }
+        getBoardComment($('#boardId').val());
+    });
+
+    function getBoardComment(boardId) {
+
+        $('#commentList').empty();
+        var html = "";
+        var html2 = "";
+        var html3 = "";
+        let count =0;
+        $.ajax({
+            url: "/comments/",
+            type: "GET",
+            data: {
+                boardId: boardId
+            },
+            success: function (data) {
+                 count = data.comments.length;
+                $(data.comments).each(function () {
+                    if (this.isParent === 'Y') {
+                        count += this.childrenComments.length;
+                        html += "<div style='padding:10px; width:95%'>";
+                        html += "<div style='margin-left:4%;'>";
+                        html += "<a style='color:#898989'><img class='boardIcon' style='border:1px solid #BDBDBD;border-radius:20px;' width='30px' height='30px' src='" + this.userProfileImgUrl + "'/>";
+                        html += "<span style='margin-left:2%' class='text-black-50' data-id='" + this.id + "'>" + this.userNickname + "</span>";
+                        html += "</a>";
+                        if (this.userId === $("#principalId").val()) {
+                            html += "<span class='badge bg-transparent text-black' id='"+this.id+"-update' style=' display: inline-block; margin-left: 2% ; cursor: pointer'  onclick='updateComment(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정</span>";
+                            html += "<span class='updateBtn badge bg-transparent text-black' id='"+this.id+"-updateCheck' style=' display: inline-block; margin-left: 2%; cursor: pointer'  onclick='updateCommentCheck(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정하기</span>";
+                            html += " <span class='badge bg-transparent text-black' id='"+this.id+"-delete' style='display: inline-block; cursor: pointer'  onclick='deleteComment(" + this.id + ")'><i class='fa fa-trash-o' style='margin-right:10%'></i> 삭제</span>";
+                            html += " <span class='updateCancelBtn badge bg-transparent text-black' id='"+this.id+"-updateCancel' style='display: inline-block; cursor: pointer '  onclick='updateCancel(" + this.id + ")'><i class='fa fa-times' style='margin-right:10%'></i> 취소</span>";
+                        }
+                        html += "</div>";
+                        html += "<div style='margin-left:3%; margin-top:1%'>";
+                        html += "<div style='display:flex;'>";
+                        html += "<span style='padding:10px;border-radius:20px;background-color: lightsteelblue; margin-left:1% ; white-space: pre-wrap; display: flex' id='" + this.id + "-content'>" + this.commentContent + "</span>";
+                        html += "<textarea class='updateInput'   style='padding:10px;border-radius:20px;background-color: transparent; margin-left:1%; width:90%' id='" + this.id + "-contentInput'></textarea>";
+                        html += "</div>";
+                        html += "<div style='display:flex;' >";
+                        html += "</div>";
+                        html += "<span style='float:left;padding:5px; ; color: grey; display: inline-block'>";
+                        html += "<a style='padding:10px;'>";
+                        html += this.createdAt
+                        html += "</a>";
+                        html += "</span>";
+                        html += "<span style=' margin-top:5px; cursor:pointer' class='badge bg-transparent text-black' onclick='commentReplyForm("+this.id+")'  id='"+this.id+"-replyFormBtn'>";
+                        html += "<i class='fa fa-comments-o' style='margin-right:10%' aria-hidden='true'></i>"
+                        html += " 답글 : " + this.childrenComments.length + "개";
+                        html += "</span>";
+                        html += "<span style=' margin-top:5px; cursor:pointer' class='badge bg-transparent text-black refreshBtn' onclick='commentReplyForm("+this.id+")' id='"+this.id+"-refreshBtn' >";
+                        html += "<i class='fa fa-refresh' style='margin-right:10%;' aria-hidden='true'></i>"
+                        html += "새로고침";
+                        html += "</span>";
+                        html += "<div style='margin-top:2px; display:inline-block;cursor:pointer' id='"+this.id+"-like-disable' class='commentLike' onclick='commentLike("+this.id+")'>";
+                        html += "<i class='fa fa-heart-o' style='margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
+                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount0' style='cursor: pointer; margin-top:7px ;  scale:1.1'>";
+                        html += this.commentLikeCount;
+                        html += "</span>";
+                        html+= "</div>"
+                        html += "<div style='margin-top:2px ; display:inline-block;cursor:pointer' id='"+this.id+"-like' class='commentLike' onclick='commentDislike("+this.id+")'>";
+                        html += "<i class='fa fa-heart' style=' margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
+                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount1' style='cursor: pointer; margin-top:7px ; scale:1.1'>";
+                        html += this.commentLikeCount;
+                        html += "</span>";
+                        html+= "</div>"
+                        html += "</div>";
+                        html += "</div>";
+                        html += "<div id='"+this.id+"-replyCommentForm' style='margin-left:10px' class='replyForm'>";
+                        html += "</div>";
+                    }
+                })
+
+                html2 += "<div style='background-color: #F2F2F2; padding:15px; margin-top:-20px;'>";
+                 html2 +=   "<div style='margin-left :-4px'>";
+                html2 +=   " <i class='fa fa-certificate' aria-hidden='true' style='margin-left:2% ; margin-right:2px'></i>";
+                html2 +=   "     <span style='font-size: 16px; color: #4C4C4C; font-weight: 500;  padding-top: 10px;  display: inline-block;' id='bestCommentCount'>베댓 : "+data.bestComments.length+" 개</span>";
+                html2 +=   "       <i class='fa fa-list' aria-hidden='true' style='margin-left: 10px; margin-right:2px'></i>";
+                html2 +=   "       <span class='bestCommentBtn' style='font-size: 16px; color: #4C4C4C; font-weight: 500;  padding-top: 10px;  display: inline-block; cursor:pointer' onclick='getBestComments()'>펼치기</span>";
+                html2 +=   "       <span class='bestCommentBtn-disable' style='font-size: 16px; color: #4C4C4C; font-weight: 500;  padding-top: 10px;  display: inline-block; cursor:pointer' onclick='hideBestComments()'>접기</span>";
+                html2 +=   "     </div>";
+                html2 +=   " </div>";
+                $('#bestCommentsStatus').html(html2);
+                $(data.bestComments).each(function(){
+
+                    html3 += "<div style='padding:10px; width:100%; background-color:#F2F2F2'>";
+                    html3 += "<div style='margin-left:4%;'>";
+                    html3 += "<a style='color:#898989'><img class='boardIcon' style='border:1px solid #BDBDBD;border-radius:20px;' width='30px' height='30px' src='" + this.userProfileImgUrl + "'/>";
+                    html3 += "<span style='margin-left:2%' class='text-black-50' data-id='" + this.id + "'>" + this.userNickname + "</span>";
+                    html3 += "</a>";
+                    html3 += "<i class=\"fa fa-trophy\" aria-hidden=\"true\" style=\"margin-left:8px; scale:1.1\"></i>"
+                    html3 += "<i class=\"fa fa-certificate\" aria-hidden=\"true\" style=\"float:right ;margin-right:4%; scale:1.1\"></i>"
+                    if (this.userId === $("#principalId").val()) {
+                        html3 += "<span class='badge bg-transparent text-black' id='"+this.id+"-updateBest' style=' display: inline-block; margin-left: 2% ; cursor: pointer'  onclick='updateCommentBest(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정</span>";
+                        html3 += "<span class='updateBtn badge bg-transparent text-black' id='"+this.id+"-updateCheckBest' style=' display: inline-block; margin-left: 2%; cursor: pointer'  onclick='updateCommentCheckBest(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정하기</span>";
+                        html3 += " <span class='badge bg-transparent text-black' id='"+this.id+"-deleteBest' style='display: inline-block; cursor: pointer'  onclick='deleteCommentBest(" + this.id + ")'><i class='fa fa-trash-o' style='margin-right:10%'></i> 삭제</span>";
+                        html3 += " <span class='updateCancelBtn badge bg-transparent text-black' id='"+this.id+"-updateCancelBest' style='display: inline-block; cursor: pointer '  onclick='updateCancelBest(" + this.id + ")'><i class='fa fa-times' style='margin-right:10%'></i> 취소</span>";
+                    }
+                    html3 += "</div>";
+                    html3 += "<div style='margin-left:3%; margin-top:1%'>";
+                    html3 += "<div style='display:flex;'>";
+                    html3 += "<span style='padding:10px;border-radius:20px;background-color: lightsteelblue; margin-left:1% ; white-space: pre-wrap; display: flex' id='" + this.id + "-contentBest'>" + this.commentContent + "</span>";
+                    html3 += "<textarea class='updateInput'   style='padding:10px;border-radius:20px;background-color: transparent; margin-left:1%; width:90%' id='" + this.id + "-contentInputBest'></textarea>";
+                    html3 += "</div>";
+                    html3 += "<div style='display:flex;' >";
+                    html3 += "</div>";
+                    html3 += "<span style='float:left;padding:5px; ; color: grey; display: inline-block'>";
+                    html3 += "<a style='padding:10px;'>";
+                    html3 += this.createdAt
+                    html3 += "</a>";
+                    html3 += "</span>";
+                    if(this.isParent==='Y') {
+                        html3 += "<span style=' margin-top:5px; cursor:pointer' class='badge bg-transparent text-black' onclick='commentReplyFormBest(" + this.id + ")'  id='" + this.id + "-replyFormBtnBest'>";
+                        html3 += "<i class='fa fa-comments-o' style='margin-right:10%' aria-hidden='true'></i>"
+                        html3 += " 답글 : " + this.childrenComments.length + "개";
+                        html3 += "</span>";
+                    }
+                    html3 += "<span style=' margin-top:5px; cursor:pointer' class='badge bg-transparent text-black refreshBtn' onclick='commentReplyFormBest("+this.id+")' id='"+this.id+"-refreshBtnBest' >";
+                    html3 += "<i class='fa fa-refresh' style='margin-right:10%;' aria-hidden='true'></i>"
+                    html3 += "새로고침";
+                    html3 += "</span>";
+                    html3 += "<div style='margin-top:2px; display:inline-block;cursor:pointer' id='"+this.id+"-like-disableBest' class='commentLike' onclick='commentLikeBest("+this.id+")'>";
+                    html3 += "<i class='fa fa-heart-o' style=' margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
+                    html3 += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount0Best' style='cursor: pointer; margin-top:7px ; scale:1.1'>";
+                    html3 += this.commentLikeCount;
+                    html3+= "</span>";
+                    html3+= "</div>"
+                    html3 += "<div style='margin-top:2px ; display:inline-block;cursor:pointer' id='"+this.id+"-likeBest' class='commentLike' onclick='commentDislikeBest("+this.id+")'>";
+                    html3 += "<i class='fa fa-heart' style=' margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
+                    html3 += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount1Best' style='cursor: pointer; margin-top:7px ; scale:1.1'>";
+                    html3 += this.commentLikeCount;
+                    html3 += "</span>";
+                    html3+= "</div>"
+                    html3 += "</div>";
+                    html3 += "</div>";
+                    html3 += "<div id='"+this.id+"-replyCommentFormBest' style=' background-color: #F2F2F2;' class='replyForm'>";
+                    html3 += "</div>";
+                })
+                $('#bestComments').empty();
+                $('#bestComments').html(html3);
+                $('#bestComments').hide();
+                $('#commentCount').text(count+" 개");
+                $("#commentList").html(html);
+                $(".updateInput").hide();
+                $(".updateBtn").hide();
+                $(".updateCancelBtn").hide();
+                $(".replyForm").hide();
+                $(".refreshBtn").hide();
+                $(".commentLike").hide();
+                $(".bestCommentBtn-disable").hide();
+                console.log(data.likeMap);
+                $.each(data.likeMap,function (key, value) {
+                    if (value === true) {
+                        $("#" + key + "-likeBest").show();
+                        $("#" + key + "-like-disableBest").hide();
+                        $("#" + key + "-like").show();
+                        $("#" + key + "-like-disable").hide();
+
+                    } else {
+                        $("#" + key + "-likeBest").hide();
+                        $("#" + key + "-like-disableBest").show();
+                        $("#" + key + "-like").hide();
+                        $("#" + key + "-like-disable").show();
+                    }
+                })
+            },
+            error: function (e) {
+                alert(e.responseText);            }
+        })
+    }
+    function getBestComments(){
+        $('#bestComments').show();
+        $('.bestCommentBtn').hide();
+        $('.bestCommentBtn-disable').show();
+    }
+
+    function hideBestComments(){
+        $('#bestComments').hide();
+        $('.bestCommentBtn-disable').hide();
+        $('.bestCommentBtn').show();
+    }
+
+    function replyCommentCancel(id) {
+        $("#" + id + "-replyFormBtn").show();
+        $("#" + id + "-refreshBtn").hide();
+        $("#"+id+"-replyCommentForm").hide();
+    }
+
+    function replyCommentCheck(id) {
+        var commentContent = $("#"+id+"-replyInput").val();
+        const data = {
+            boardId: $("#boardId").val(),
+            commentContent: commentContent,
+            commentId: id
+        }
+        $.ajax({
+            url: "/comments?mode=children",
+            type: "POST",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                alert("등록되었습니다.")
+                commentReplyForm(id);
+            },
+            error: function (e) {
+                console.log(e);
+                alert(e.responseText);            }
+        });
+    }
+
+    function commentReplyForm(id) {
+        replyCommentCancelBest(id);
+        $('#'+id+'-replyFormBtn').hide();
+        $('#'+id+'-refreshBtn').show();
+        $("#"+id+"-replyCommentForm").empty();
+        var html = "";
+        html += "<textarea    style='padding:10px;border-radius:20px;background-color: transparent; margin-left:5%; width:85%' id='" + id + "-replyInput'></textarea>";
+        html += "<div style='margin-left:5%; margin-top:1%; display: flex; margin-bottom: 10px' >";
+        html += "<a style='text-decoration-line: none; cursor:pointer;'  onclick='replyCommentCheck(" + id + ")'>"
+        html += "<span class='badge bg-transparent text-black' style='margin-left:5px;'> <i class='fa fa-comment-o' style='margin-left:1%; margin-right:20%;' ></i>등록</span></a>";
+        html += "<a style='text-decoration-line: none; cursor:pointer'  onclick='replyCommentCancel(" + id + ")'>";
+        html += "<span class='badge bg-transparent text-black' style='margin-left:5px; '><i class='fa fa-times' style='margin-left:2%; margin-right:20%' ></i>답글 접기</span></a>";
+        html += "</div>";
+        $.ajax({
+            url: "/comments/",
+            data: {
+                boardId : $("#boardId").val(),
+                commentId: id
+            },
+            type: "GET",
+            success: function (data) {
+                $('#'+id+'-replyFormBtn').html("<i class='fa fa-comments-o' style='margin-right:10%' aria-hidden='true'></i>답글 : " + data.comments.length + "개");
+                $(data.comments).each(function(){
+                    if(this.isParent==='N'){
+                        html += "<div style='padding:10px; width:95%'>";
+                        html += "<div style='margin-left:4%;'>";
+                        html += "<a style='color:#898989'><img class='boardIcon' style='border:1px solid #BDBDBD;border-radius:20px;' width='30px' height='30px' src='" + this.userProfileImgUrl + "'/>";
+                        html += "<span style='margin-left:2%' class='text-black-50' data-id='" + this.id + "'>" + this.userNickname + "</span>";
+                        html += "</a>";
+                        if (this.userId === $("#principalId").val()) {
+                            html += "<span class='badge bg-transparent text-black' id='"+this.id+"-update' style=' display: inline-block; margin-left: 2% ; cursor: pointer'  onclick='updateComment(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정</span>";
+                            html += "<span class='updateBtn badge bg-transparent text-black' id='"+this.id+"-updateCheck' style=' display: inline-block; margin-left: 2%; cursor: pointer'  onclick='updateCommentCheck(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정하기</span>";
+                            html += " <span class='badge bg-transparent text-black' id='"+this.id+"-delete' style='display: inline-block; cursor: pointer'  onclick='deleteComment(" + this.id + ")'><i class='fa fa-trash-o' style='margin-right:10%'></i> 삭제</span>";
+                            html += " <span class='updateCancelBtn badge bg-transparent text-black' id='"+this.id+"-updateCancel' style='display: inline-block; cursor: pointer '  onclick='updateCancel(" + this.id + ")'><i class='fa fa-times' style='margin-right:10%'></i> 취소</span>";
+
+                        }
+                        html += "</div>";
+                        html += "<div style='margin-left:3%; margin-top:1%'>";
+                        html += "<div style='display:flex;'>";
+                        html += "<span style='padding:10px;border-radius:20px;background-color: whitesmoke; margin-left:1% ; white-space: pre-wrap; display: flex' id='" + this.id + "-content'>" + this.commentContent + "</span>";
+                        html += "<textarea class='updateInput'   style='padding:10px;border-radius:20px;background-color: transparent; margin-left:1%; width:90%' id='" + this.id + "-contentInput'></textarea>";
+                        html += "</div>";
+                        html += "<div style='display:flex;' >";
+                        html += "</div>";
+                        html += "<span style='float:left;padding:5px; ; color: grey; display: inline-block'>";
+                        html += "<a style='padding:10px;'>";
+                        html += this.createdAt
+                        html += "</a>";
+                        html += "</span>";
+                        html += "<div style='margin-top:2px; display:inline-block; cursor:pointer' id='"+this.id+"-like-disable' class='replyCommentLike' onclick='commentLike("+this.id+")'>";
+                        html += "<i class='fa fa-heart-o' style=' margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
+                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount0' style='cursor: pointer; margin-top:7px ;  scale:1.1'>";
+                        html += this.commentLikeCount;
+                        html += "</span>";
+                        html+= "</div>"
+                        html += "<div style='margin-top:2px ;display:inline-block; cursor:pointer' id='"+this.id+"-like' class='replyCommentLike' onclick='commentDislike("+this.id+")'>";
+                        html += "<i class='fa fa-heart' style=' margin-left:5px; scale:0.8 '  aria-hidden='true' ></i>"
+                        html += "<span class='badge bg-transparent text-black' id='"+this.id+"-likeCount1' style='cursor: pointer; margin-top:7px ;  scale:1.1'>";
+                        html += this.commentLikeCount;
+                        html += "</span>";
+                        html+= "</div>"
+
+                        html += "</div>";
+                        html += "</div>";
+                    }
+                })
+                $("#"+id+"-replyCommentForm").html(html);
+                $("#"+id+"-replyCommentForm").show();
+                $(".updateInput").hide();
+                $(".updateBtn").hide();
+                $(".updateCancelBtn").hide();
+                $(".replyCommentLike").hide();
+                $.each(data.likeMap,function (key,value) {
+                    if (value=== true) {
+                        $("#" + key + "-like").show();
+                        $("#" + key + "-like-disable").hide();
+                    } else {
+                        $("#" + key + "-like").hide();
+                        $("#" + key + "-like-disable").show();
+                    }
+                })
+            },
+            error: function (e) {
+                alert(e.responseText);            }
+        });
+
+    }
+
+
+    function commentLike(id) {
+        const boardId = $("#boardId").val();
+
+        $.ajax({
+            type: "POST",
+            url: "/comments/like-comment",
+            data: {
+                boardId: boardId,
+                commentId: id
+            },
+            success: function (data) {
+                $("#" + id + "-likeCount0").text(data);
+                $("#" + id + "-likeCount1").text(data);
+                $("#" + id + "-like").show();
+                $("#" + id + "-like-disable").hide();
+            },
+            error: function (e) {
+                alert(e.responseText);            }
+        });
+    }
+
+    function commentDislike(id) {
+        const boardId = $("#boardId").val();
+        $.ajax({
+            type: "POST",
+            url: "/comments/like-comment",
+            data: {
+                boardId: boardId,
+                commentId: id
+            },
+            success: function (data) {
+                $("#" + id + "-likeCount0").text(data);
+                $("#" + id + "-likeCount1").text(data);
+                $("#" + id + "-like").hide();
+                $("#" + id + "-like-disable").show();
+            },
+            error: function (e) {
+                alert(e.responseText);            }
+        });
+    }
+
+    function updateComment(commentId) {
+        var content = $("#" + commentId + "-content").text();
+        $("#" + commentId + "-content").hide();
+        $("#" + commentId + "-contentInput").show();
+        $("#" + commentId + "-contentInput").val(content);
+        $("#" + commentId + "-update").hide();
+        $("#" + commentId + "-delete").hide();
+        $("#" + commentId + "-updateCheck").show();
+        $("#" + commentId + "-updateCancel").show();
+    }
+
+    function updateCancel(commentId) {
+
+        $("#" + commentId + "-content").show();
+        $("#" + commentId + "-contentInput").hide();
+        $("#" + commentId + "-update").show();
+        $("#" + commentId + "-delete").show();
+        $("#" + commentId + "-updateCheck").hide();
+        $("#" + commentId + "-updateCancel").hide();
+    }
+
+    function updateCommentCheck(commentId){
+        if(confirm("수정하시겠습니까?")) {
+            var content = $("#" + commentId + "-contentInput").val();
+            const boardId= $('#boardId').val();
+            const data = {
+                commentId: commentId,
+                commentContent: content,
+                boardId: boardId
+            }
+            $.ajax({
+                url: "/comments",
+                type: "PUT",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                success: function (data) {
+                    alert("수정되었습니다.")
+                    getBoardComment(boardId);
+                },
+                error: function (e) {
+                    alert(e.responseText);                }
+            });
+        }
+    }
+
+    function deleteComment(commendId) {
+        if(confirm("삭제하시겠습니까?")) {
+            $.ajax({
+                url: "/comments",
+                type: "DELETE",
+                data: {
+                    commentId: commendId
+                },
+                success: function (data) {
+                    alert("삭제되었습니다.");
+                    getBoardComment($('#boardId').val());
+                },
+                error: function (e) {
+                    alert(e.responseText);
+                }
+            });
+        }
+    }
+
+    function commentSave() {
+        const content = $("#comment").val();
+        const boardId = $("#boardId").val();
+        const data = {
+            commentContent: content,
+            boardId: boardId
+        };
+        $.ajax({
+            url: "/comments",
+            type: "POST",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            success: function (success) {
+                alert('댓글 작성 완료');
+                $('#comment').val('');
+                getBoardComment($('#boardId').val());
+            },
+            error: function (e) {
+                alert(e.responseText);            }
+        });
+    }
+
+
+    function deleteArticle() {
+        if (confirm("삭제하시겠습니까?")) {
+            $.ajax({
+                url: "/boards",
+                type: "delete",
+                data: {
+                    id: $("#boardId").val()
+                },
+                success: function (data) {
+                    alert("삭제되었습니다.");
+                    location.href = "/board.df";
+                },
+                error: function (request, status, error) {
+                    alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+                }
+            });
+        }
+    }
+
+    function likeBoard() {
+        const boardId = $("#boardId").val();
+        $.ajax({
+            url: "/boards/like-board",
+            type: "POST",
+            data: {
+                boardId: boardId
+            },
+            success: function (data) {
+                $("#likeLogTrue").toggle();
+                $("#likeLogFalse").toggle();
+                $("#likeLog").val("true");
+                $("#likeCountTrue").text(data);
+                $("#likeCountFalse").text(data);
+            },
+            error: function (request, status, error) {
+                alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+            }
+        });
+    }
+
+</script>
+</html>
