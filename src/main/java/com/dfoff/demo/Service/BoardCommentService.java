@@ -2,8 +2,12 @@ package com.dfoff.demo.Service;
 
 import com.dfoff.demo.Domain.Board;
 import com.dfoff.demo.Domain.BoardComment;
+import com.dfoff.demo.Domain.EnumType.UserAccount.LogType;
 import com.dfoff.demo.Domain.UserAccount;
+import com.dfoff.demo.Domain.UserLog;
 import com.dfoff.demo.Repository.BoardCommentRepository;
+import com.dfoff.demo.Repository.UserLogRepository;
+import com.dfoff.demo.Util.UserLogUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,13 +16,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 @Transactional
 public class BoardCommentService {
+    private final UserLogRepository userLogRepository;
     private final BoardCommentRepository commentRepository;
+
 
 
     public BoardComment.BoardCommentResponse findBoardCommentById(Long id){
@@ -41,7 +48,11 @@ public class BoardCommentService {
         if(request.getCommentContent() == null || request.getCommentContent().equals("")){
             throw new IllegalArgumentException("댓글 내용을 입력해주세요.");
         }
-        commentRepository.save(request.toEntity(account, board));
+
+        BoardComment comment_ = commentRepository.save(request.toEntity(account, board));
+        if(!account.userId().equals(board.getUserAccount().userId())) {
+            userLogRepository.save(UserLog.of(comment_.getBoard().getUserAccount(), comment_.getBoard(), LogType.COMMENT, UserLogUtil.getLogContent(LogType.COMMENT.name(), account.nickname())));
+        }
     }
 
     public List<BoardComment.BoardCommentResponse> findBoardCommentsByParentId(Long boardId, Long parentId){
@@ -49,6 +60,16 @@ public class BoardCommentService {
     }
 
     public void deleteBoardComment(Long id){
+        if(!commentRepository.existsById(id)){
+            throw new EntityNotFoundException("존재하지 않는 댓글입니다.");
+        }
+        commentRepository.findById(id).ifPresent(comment -> {
+            comment.getChildrenComments().forEach(child -> {
+                if(!Objects.equals(comment.getUserAccount().getUserId(), child.getUserAccount().getUserId())) {
+                    comment.getBoard().getUserAccount().getUserLogs().add(UserLog.of(comment.getUserAccount(), child, LogType.DELETE_CHILDREN_COMMENT, UserLogUtil.getLogContent(LogType.DELETE_CHILDREN_COMMENT.name(), comment.getUserAccount().getNickname())));
+                }
+            });
+        });
         commentRepository.deleteChildrenCommentById(id);
         commentRepository.deleteBoardCommentById(id);
 
@@ -65,15 +86,19 @@ public class BoardCommentService {
         boardComment_.setCommentContent(request.getCommentContent());
     }
 
-    public Integer updateBoardCommentLike(Long id){
+    public Integer updateBoardCommentLike(Long id,String nickname){
+        if(nickname.equals("")){nickname="비회원";}
         BoardComment boardComment_ = commentRepository.findBoardCommentById(id);
         boardComment_.setCommentLikeCount(boardComment_.getCommentLikeCount()+1);
+        boardComment_.getBoard().getUserAccount().getUserLogs().add(UserLog.of(boardComment_.getUserAccount(),boardComment_, LogType.COMMENT_LIKE,UserLogUtil.getLogContent(LogType.COMMENT_LIKE.name(),nickname)));
         return boardComment_.getCommentLikeCount();
     }
 
-    public Integer updateBoardCommentDisLike(Long id){
+    public Integer updateBoardCommentDisLike(Long id,String nickname){
+        if(nickname.equals("")){nickname="비회원";}
         BoardComment boardComment_ = commentRepository.findBoardCommentById(id);
         boardComment_.setCommentLikeCount(boardComment_.getCommentLikeCount()-1);
+        boardComment_.getBoard().getUserAccount().getUserLogs().add(UserLog.of(boardComment_.getUserAccount(),boardComment_, LogType.COMMENT_UNLIKE,UserLogUtil.getLogContent(LogType.COMMENT_UNLIKE.name(),nickname)));
         return boardComment_.getCommentLikeCount();
     }
 
@@ -88,6 +113,8 @@ public class BoardCommentService {
         children.setIsParent("N");
         children.setParentComment(boardComment_);
         commentRepository.save(children);
+        userLogRepository.save(UserLog.of(boardComment_.getUserAccount(),children, LogType.CHILDREN_COMMENT,UserLogUtil.getLogContent(LogType.CHILDREN_COMMENT.name(),account.nickname())));
+
     }
 
     public List<BoardComment.BoardCommentResponse> findBestBoardCommentByBoardId(Long boardId) {

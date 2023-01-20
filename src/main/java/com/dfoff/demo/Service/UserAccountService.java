@@ -1,10 +1,8 @@
 package com.dfoff.demo.Service;
 
-import com.dfoff.demo.Domain.Board;
-import com.dfoff.demo.Domain.BoardComment;
-import com.dfoff.demo.Domain.SaveFile;
-import com.dfoff.demo.Domain.UserAccount;
+import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Repository.UserAccountRepository;
+import com.dfoff.demo.Repository.UserLogRepository;
 import com.dfoff.demo.Util.Bcrypt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +25,8 @@ public class UserAccountService {
     private final UserAccountRepository userAccountRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final Bcrypt bcrypt;
+
+    private final UserLogRepository userLogRepository;
 
 
 
@@ -88,6 +88,16 @@ public class UserAccountService {
         return true;
     }
 
+    public Page<UserLog.UserLogResponse> getUserLog(String userId, Pageable pageable) {
+        Page<UserLog> userLog = userLogRepository.getUserLogByUserAccount_UserId(userId, pageable);
+        userLog.forEach(o-> o.setIsChecked("Y"));
+        return userLog.map(UserLog.UserLogResponse::from);
+    }
+
+    public Long getUncheckedLogCount(String userId) {
+        return userLogRepository.getUnCheckedLogCount(userId);
+    }
+
 
 
     @Transactional(readOnly = true)
@@ -102,8 +112,7 @@ public class UserAccountService {
     @Transactional(readOnly = true)
     public Page<BoardComment.BoardCommentMyPageResponse> getCommentsByUserId(String userId, Pageable pageable) {
         if(userAccountRepository.existsByUserId(userId)){
-            Page<BoardComment.BoardCommentMyPageResponse> responses= userAccountRepository.findBoardCommentsByUserId(userId, pageable).map(BoardComment.BoardCommentMyPageResponse::from);
-            return responses;
+            return userAccountRepository.findBoardCommentsByUserId(userId, pageable).map(BoardComment.BoardCommentMyPageResponse::from);
         }
         return Page.empty();
     }
@@ -111,14 +120,13 @@ public class UserAccountService {
     @Transactional(readOnly = true)
     public Page<BoardComment.BoardCommentMyPageResponse> getCommentsByUserIdOrderByLikeCount(String userId, Pageable pageable) {
         if(userAccountRepository.existsByUserId(userId)){
-            Page<BoardComment.BoardCommentMyPageResponse> responses= userAccountRepository.findBoardCommentsByUserIdOrderByLikeCount(userId, pageable).map(BoardComment.BoardCommentMyPageResponse::from);
-            return responses;
+            return userAccountRepository.findBoardCommentsByUserIdOrderByLikeCount(userId, pageable).map(BoardComment.BoardCommentMyPageResponse::from);
         }
         return Page.empty();
     }
 
     @Transactional(readOnly = true)
-    public Page<Board.BoardListMyPageResponse> getBoardsByUserAccount(String userId,Pageable pageable) {
+    public Page<Board.BoardListMyPageResponse> getBoardsByUserId(String userId, Pageable pageable) {
         if(userAccountRepository.existsByUserId(userId)){
             return userAccountRepository.findBoardsByUserId(userId, pageable).map(Board.BoardListMyPageResponse::from);
         }
@@ -126,7 +134,7 @@ public class UserAccountService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Board.BoardListMyPageResponse> getBoardsByUserAccountOrderByLikeCount(String userId,Pageable pageable) {
+    public Page<Board.BoardListMyPageResponse> getBoardsByUserIdOrderByLikeCount(String userId, Pageable pageable) {
         if(userAccountRepository.existsByUserId(userId)){
             return userAccountRepository.findBoardsByUserIdOrderByLikeCount(userId, pageable).map(Board.BoardListMyPageResponse::from);
         }
@@ -134,7 +142,7 @@ public class UserAccountService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Board.BoardListMyPageResponse> getBoardsByUserAccountOrderByViewCount(String userId,Pageable pageable) {
+    public Page<Board.BoardListMyPageResponse> getBoardsByUserIdOrderByViewCount(String userId, Pageable pageable) {
         if(userAccountRepository.existsByUserId(userId)){
             log.info("userId: {}", userId);
             return userAccountRepository.findBoardsByUserIdOrderByViewCount(userId, pageable).map(Board.BoardListMyPageResponse::from);
@@ -143,7 +151,7 @@ public class UserAccountService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Board.BoardListMyPageResponse> getBoardsByUserAccountOrderByComentCount(String userId,Pageable pageable) {
+    public Page<Board.BoardListMyPageResponse> getBoardsByUserIdOrderByComentCount(String userId, Pageable pageable) {
         if(userAccountRepository.existsByUserId(userId)){
             return userAccountRepository.findBoardsByUserIdOrderByCommentCount(userId, pageable).map(Board.BoardListMyPageResponse::from);
         }

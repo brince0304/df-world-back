@@ -70,6 +70,10 @@ public class UserAccount extends AuditingFields {
     @Builder.Default
     private String isDeleted = "N";
 
+    @OneToMany (mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<UserLog> userLogs = new LinkedHashSet<>();
+
 
 
     @Override

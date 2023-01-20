@@ -50,7 +50,7 @@ public class BoardComment extends AuditingFields {
     @Builder.Default
     private String isParent = "Y";
 
-    @OneToMany (mappedBy = "parentComment",fetch = FetchType.LAZY)
+    @OneToMany (mappedBy = "parentComment",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @ToString.Exclude
     @Builder.Default
     private final Set<BoardComment> childrenComments = new LinkedHashSet<>();
