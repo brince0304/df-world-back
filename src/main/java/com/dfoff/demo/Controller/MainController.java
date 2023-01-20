@@ -17,7 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class MainController {
     private final BoardService boardService;
 
-    @GetMapping("/main.df")
+    @GetMapping("/main")
     public ModelAndView main(@PageableDefault(size=5,sort = "createdAt",direction = Sort.Direction.DESC) Pageable pageable) throws ParseException {
         ModelAndView mav = new ModelAndView("index");
         mav.addObject("articles",boardService.getBoardsByKeyword(null,null,null,pageable));
@@ -26,7 +26,7 @@ public class MainController {
 
     @GetMapping("/")
     public ModelAndView index() throws ParseException {
-        return new ModelAndView("redirect:/main.df");
+        return new ModelAndView("redirect:/main");
     }
 
 }

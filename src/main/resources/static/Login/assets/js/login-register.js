@@ -46,9 +46,9 @@ function loginAjax(){
     let username = $("#username").val();
     let password = $("#password").val();
     $.ajax({
-        url: "/api/user/login?username="+username+"&password="+password,
+        url: "/users/login",
+        data: {username: username, password: password},
         type: "POST",
-        contentType: "application/json; charset=utf-8",
         success: function (data) {
             console.log(data);
             alert("로그인 되었습니다.");

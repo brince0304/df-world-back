@@ -25,13 +25,13 @@ public class SaveFileController {
     private final SaveFileService saveFileService;
     private final BoardService boardService;
 
-    @PostMapping("/api/upload.df")
+    @PostMapping("/files")
     public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file) throws IOException {
             SaveFile.SaveFileDTO fileDto = saveFileService.saveFile(FileUtil.getFileDtoFromMultiPartFile(file));
             return new ResponseEntity<>(fileDto, HttpStatus.OK);
         }
 
-    @GetMapping("/api/getFile.df")
+    @GetMapping("/files/")
     public ResponseEntity<?> getFileImg(@RequestParam String name) throws IOException {
         File file = FileUtil.getFileFromSaveFile(saveFileService.getFileByFileName(name));
         byte[] imgArray = IOUtils.toByteArray(new FileInputStream(file));

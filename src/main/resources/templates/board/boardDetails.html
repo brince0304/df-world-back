@@ -104,18 +104,18 @@
                          style="padding-left: 8px; cursor: pointer;">
                                     <span th:if="${boardType!=null && boardType!= boardType.equals('NOTICE')}"
                                           style="font-size: 20px; font-weight: 400; color: #202020; line-height: 1;"><a
-                                            th:href="@{'/board.df?boardType=NOTICE'}"
+                                            th:href="@{'/boards/?boardType=NOTICE'}"
                                             style="text-decoration-line: none; color: black;">공지사항 바로가기</a><i
                                             class="fas fa-chevron-right" style="padding-left: 8px;"></i></span>
                         <span th:if="${boardType!=null && boardType== boardType.equals('NOTICE')}"
                               style="font-size: 20px; font-weight: 400; color: #202020; line-height: 1;">공지사항</span>
                         <span th:if="${boardType==null}"
                               style="font-size: 20px; font-weight: 400; color: #202020; line-height: 1;"><a
-                                th:href="@{'/board.df?boardType=NOTICE'}"
+                                th:href="@{'/boards/?boardType=NOTICE'}"
                                 style="text-decoration-line: none; color: black;">공지사항 바로가기</a><i
                                 class="fas fa-chevron-right" style="padding-left: 8px;"></i></span>
                         <div class="dropdown custom-dropdown" style="display: inline;   float: right;">
-                            <a th:href="@{/board/insert.df(request=add)}"
+                            <a th:href="@{/boards/insert(request=add)}"
                                data-offset="-70, 20"
                                style="text-decoration-line: none ;color: black; margin-right:10px" sec:authorize="isAuthenticated()">
                                 <span class="fa fa-pencil-square-o" aria-hidden="true"></span> 글쓰기
@@ -182,17 +182,17 @@
                                 <span class="arrow icon-keyboard_arrow_down"></span>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="z-index: 1000">
-                                <a class="dropdown-item" th:href="@{'/board.df?boardType='}"> <span
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType='}"> <span
                                         class="fa fa-user-circle-o"></span> 통합게시판</a>
-                                <a class="dropdown-item" th:href="@{'/board.df?boardType=FREE'}"><span
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType=FREE'}"><span
                                         class="fa fa-comments-o"></span> 자유게시판</a>
-                                <a class="dropdown-item" th:href="@{'/board.df?boardType=RECRUITMENT'}"><span
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType=RECRUITMENT'}"><span
                                         class="fa fa-users"></span> 구인게시판</a>
-                                <a class="dropdown-item" th:href="@{'/board.df?boardType=MARKET'}"><span
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType=MARKET'}"><span
                                         class="fa fa-money"></span> 거래게시판</a>
-                                <a class="dropdown-item" th:href="@{'/board.df?boardType=QUESTION'}"><span
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType=QUESTION'}"><span
                                         class="fa fa-question-circle-o"></span> 질문 답변</a>
-                                <a class="dropdown-item" th:href="@{'/board.df?boardType=REPORT'}"><span
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType=REPORT'}"><span
                                         class="fa fa-hand-fist"></span> 사건/사고</a>
                             </div>
                         </div>
@@ -202,7 +202,7 @@
             </div>
 
             <div th:each="best : ${bestArticles}" style="padding: 2px 13px;">
-                <a style="text-decoration-line: none; color: sandybrown" th:href="@{'/board/'+${best.id}+'.df'}">
+                <a style="text-decoration-line: none; color: sandybrown" th:href="@{'/boards/'+${best.id}}">
                     <i class="fa fa-trophy" aria-hidden="true" style="margin-right:-5px; margin-left:-2px"></i>
                     <span class="badge bg-transparent text-dark" style="display:inline; margin-right:-10px">베스트</span>
                     <span th:if="${best.boardTitle.length()<25}"  style="font-size: 12px; font-weight: 400; color: #202020; line-height: 1; display:inline;margin-left:4px"
@@ -250,7 +250,7 @@
 
 
                     <div style="padding: 10px 20px 0px;">
-                        <a style="text-decoration-line: none" th:href="@{/board.df(boardType=${article.boardType})}">
+                        <a style="text-decoration-line: none" th:href="@{/boards/(boardType=${article.boardType})}">
                                                     <span class="badge bg-secondary text-black-50"
                                                           th:text="${article.getBoardType(article.getBoardType())}"
                                                           th:if="${article.boardType.name().equals('FREE')}">자유게시판</span>
@@ -271,12 +271,12 @@
                                   th:if="${article.boardType.name().equals('REPORT')}">자유게시판</span></a>
                         <div th:each="hashtag : ${article.hashtags}" style="display: inline-block">
                             <a style="text-decoration-line: none" href="#"
-                               th:href="@{/board.df(searchType=hashtag,keyword=${hashtag})}">
+                               th:href="@{/boards/(searchType=hashtag,keyword=${hashtag})}">
                                 <span class="badge bg-info text-black"
                                       th:text="'#'+${hashtag}">#해시태그1</span></a>
                         </div>
                         <a style="text-decoration-line: none" href="#"
-                           th:href="@{/board.df(searchType='characterName',keyword=${article.character.characterName})}"
+                           th:href="@{/boards/(searchType='characterName',keyword=${article.character.characterName})}"
                            th:if="${article.character!=null}">
                             <i class="fa fa-plug" style="color: black; margin-left:2px"
                                th:if="${article.character!=null}"></i>
@@ -327,7 +327,7 @@
                                 style="font-size: 13px; color: black; font-weight: 500; display: inline; " class="badge bg-transparent text-black"
                                 th:text="${article.boardViewCount}"> 0</span> </div>
                             <input id="likeLog" th:value="${likeLog}" type="hidden">
-                            <a style="text-decoration-line: none" th:href="@{/board/insert.df(request=update,id=${boardId})}" href="#">
+                            <a style="text-decoration-line: none" th:href="@{/boards/insert(request=update,id=${boardId})}" href="#">
                             <span
                                     class="badge bg-secondary" style="float:right; display: inline-block; cursor: pointer"
                                     th:if="${article.userId==#authentication.name}"  >수정</span></a>
@@ -425,7 +425,7 @@
             commentId: id
         }
         $.ajax({
-            url: "/api/comment.df?mode=children",
+            url: "/comments?mode=children",
             type: "POST",
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
@@ -452,7 +452,7 @@
         html += "<span class='badge bg-transparent text-black' style='margin-left:5px; '><i class='fa fa-times' style='margin-left:2%; margin-right:20%' ></i>답글 접기</span></a>";
         html += "</div>";
         $.ajax({
-            url: "/api/comment.df",
+            url: "/comments/",
             data: {
                 boardId : $("#boardId").val(),
                 commentId: id
@@ -529,7 +529,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/api/likeComment.df",
+            url: "/comments/like-comment",
             data: {
                 boardId: boardId,
                 commentId: id
@@ -549,7 +549,7 @@
         const boardId = $("#boardId").val();
         $.ajax({
             type: "POST",
-            url: "/api/likeComment.df",
+            url: "/comments/like-comment",
             data: {
                 boardId: boardId,
                 commentId: id
@@ -571,7 +571,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/api/likeComment.df",
+            url: "/comments/like-comment",
             data: {
                 boardId: boardId,
                 commentId: id
@@ -592,7 +592,7 @@
         const boardId = $("#boardId").val();
         $.ajax({
             type: "POST",
-            url: "/api/likeComment.df",
+            url: "/comments/like-comment",
             data: {
                 boardId: boardId,
                 commentId: id
@@ -638,7 +638,7 @@
                 boardId: boardId
             }
             $.ajax({
-                url: "/api/comment.df",
+                url: "/comments",
                 type: "PUT",
                 data: JSON.stringify(data),
                 contentType: "application/json; charset=utf-8",
@@ -683,7 +683,7 @@
                 boardId: boardId
             }
             $.ajax({
-                url: "/api/comment.df",
+                url: "/comments",
                 type: "PUT",
                 data: JSON.stringify(data),
                 contentType: "application/json; charset=utf-8",
@@ -700,7 +700,7 @@
     function deleteCommentBest(commendId) {
         if(confirm("삭제하시겠습니까?")) {
             $.ajax({
-                url: "/api/comment.df",
+                url: "/comments",
                 type: "DELETE",
                 data: {
                     commentId: commendId
@@ -740,7 +740,7 @@
         var html3 = "";
         let count =0;
         $.ajax({
-            url: "/api/comment.df",
+            url: "/comments/",
             type: "GET",
             data: {
                 boardId: boardId
@@ -924,7 +924,7 @@
             commentId: id
         }
         $.ajax({
-            url: "/api/comment.df?mode=children",
+            url: "/comments?mode=children",
             type: "POST",
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
@@ -952,7 +952,7 @@
         html += "<span class='badge bg-transparent text-black' style='margin-left:5px; '><i class='fa fa-times' style='margin-left:2%; margin-right:20%' ></i>답글 접기</span></a>";
         html += "</div>";
         $.ajax({
-            url: "/api/comment.df",
+            url: "/comments/",
             data: {
                 boardId : $("#boardId").val(),
                 commentId: id
@@ -1032,7 +1032,7 @@
 
         $.ajax({
             type: "POST",
-            url: "/api/likeComment.df",
+            url: "/comments/like-comment",
             data: {
                 boardId: boardId,
                 commentId: id
@@ -1052,7 +1052,7 @@
         const boardId = $("#boardId").val();
         $.ajax({
             type: "POST",
-            url: "/api/likeComment.df",
+            url: "/comments/like-comment",
             data: {
                 boardId: boardId,
                 commentId: id
@@ -1099,7 +1099,7 @@
                 boardId: boardId
             }
             $.ajax({
-                url: "/api/comment.df",
+                url: "/comments",
                 type: "PUT",
                 data: JSON.stringify(data),
                 contentType: "application/json; charset=utf-8",
@@ -1116,7 +1116,7 @@
     function deleteComment(commendId) {
         if(confirm("삭제하시겠습니까?")) {
             $.ajax({
-                url: "/api/comment.df",
+                url: "/comments",
                 type: "DELETE",
                 data: {
                     commentId: commendId
@@ -1140,7 +1140,7 @@
             boardId: boardId
         };
         $.ajax({
-            url: "/api/comment.df",
+            url: "/comments",
             type: "POST",
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
@@ -1158,7 +1158,7 @@
     function deleteArticle() {
         if (confirm("삭제하시겠습니까?")) {
             $.ajax({
-                url: "/api/board.df",
+                url: "/boards",
                 type: "delete",
                 data: {
                     id: $("#boardId").val()
@@ -1177,7 +1177,7 @@
     function likeBoard() {
         const boardId = $("#boardId").val();
         $.ajax({
-            url: "/api/like.df",
+            url: "/boards/like-board",
             type: "POST",
             data: {
                 boardId: boardId

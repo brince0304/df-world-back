@@ -231,13 +231,13 @@
         }
         $.ajax({
             type: "POST",
-            url: "/api/board.df",
+            url: "/boards",
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (response) {
                 alert("등록되었습니다.")
-                location.href= "/board/"+response+".df";
+                location.href= "/boards/"+response;
             },
             error: function (request, status, error) {
                 alert(request.responseText);
@@ -265,13 +265,13 @@
             }
             $.ajax({
                 type: "PUT",
-                url: "/api/board.df",
+                url: "/boards",
                 data: JSON.stringify(data),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (response) {
                     alert("수정되었습니다.")
-                    location.href = "/board/" + response + ".df";
+                    location.href = "/boards/" + response;
                 },
                 error: function (request, status, error) {
                     alert(request.responseText);
@@ -312,11 +312,11 @@
                     const formData = new FormData();
                     formData.append('file', blob);
 
-                    let url = '/api/getFile.df?name=';
+                    let url = '/files/?name=';
                     $.ajax({
                         type: 'POST',
                         enctype: 'multipart/form-data',
-                        url: '/api/upload.df',
+                        url: '/files',
                         data: formData,
                         dataType: 'json',
                         processData: false,
@@ -351,7 +351,7 @@
         const characterName = $('#characterName').val();
         const serverId = $('#serverId').val();
         $.ajax({
-            url: "/api/user/searchChar.df?page=0&serverId=" + serverId + "&characterName=" + characterName,
+            url: "/boards/characters/?page=0&serverId=" + serverId + "&characterName=" + characterName,
             type: "GET",
             success: function (data) {
                 if (data == null) {

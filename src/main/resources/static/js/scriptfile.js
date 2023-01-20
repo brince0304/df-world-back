@@ -29,7 +29,7 @@ $(document).ready(function() {
 });
 function logoutAlert(){
     $.ajax({
-        url: "/api/user/logout",
+        url: "/users/logout",
         type: "POST",
         success: function (data) {
             console.log(data);
@@ -131,7 +131,7 @@ $('#usernameRegister').blur(function(){
     let username = $('#usernameRegister').val();
     if(username===''){return;}
     $.ajax({
-        url: '/api/user/validate?username='+username,
+        url: '/users/check?username='+username,
         type: 'GET',
         success: function(data){
             if(data === 'false'){
@@ -153,7 +153,7 @@ $('#nicknameRegister').blur(function(){
     let nickname = $('#nicknameRegister').val();
     if(nickname===''){return;}
     $.ajax({
-        url: '/api/user/validate?nickname='+nickname,
+        url: '/users/check?nickname='+nickname,
         type: 'GET',
         success: function(data){
             if(data === 'false'){
@@ -175,7 +175,7 @@ $('#emailRegister').blur(function(){
     let email = $('#emailRegister').val();
     if(email===''){return;}
     $.ajax({
-        url: '/api/user/validate?email='+email,
+        url: '/users/check?email='+email,
         type: 'GET',
         success: function(data){
             if(data === 'false'){
@@ -206,7 +206,7 @@ function registerSubmit(){
         return;
     }
     $.ajax({
-        url: '/api/user',
+        url: '/users',
         type: 'POST',
         data: JSON.stringify({
             "userId": username,

@@ -147,7 +147,7 @@
             <div class="search-form" >
                 <div class="card-body p-0">
                     <div class="s003">
-                    <form th:action="@{/character/search.df}" id="search-form" method="get">
+                    <form th:action="@{/characters/}" id="search-form" method="get">
                     <div class="inner-form">
                         <div class="input-field first-wrap">
                             <div class="input-select">
@@ -237,13 +237,13 @@
                                                 <ul class="pagination" th:with="start=${(characters.number/5)*5 + 1},
                     last=(${start + 4 < characters.totalPages ? start + 4 : characters.totalPages})">
                                                     <li class="page-item" th:class="${characters.first} ? 'disabled'">
-                                                        <a th:href="${characters.first} ? '#' :@{/character/search.df(page=${0},characterName=${characterName},serverId=${serverId})}"  class="page-link" aria-label="Previous" >
+                                                        <a th:href="${characters.first} ? '#' :@{/characters/search(page=${0},characterName=${characterName},serverId=${serverId})}"  class="page-link" aria-label="Previous" >
                                                             <span aria-hidden="true">«</span>
                                                         </a>
                                                     </li>
-                                                    <li  class="page-item"  th:each="page: ${#numbers.sequence(start , last)}" th:class="${page == characters.number + 1} ? 'active'" ><a class="page-link" th:text="${page }" th:href="@{/character/search.df(page=${page -1},characterName=${characterName},serverId=${serverId})}" >1</a></li>
+                                                    <li  class="page-item"  th:each="page: ${#numbers.sequence(start , last)}" th:class="${page == characters.number + 1} ? 'active'" ><a class="page-link" th:text="${page }" th:href="@{/characters/search(page=${page -1},characterName=${characterName},serverId=${serverId})}" >1</a></li>
                                                     <li class="page-item" th:class="${characters.totalPages == characters.number +1 } ? 'disabled'">
-                                                        <a href="#" class="page-link" aria-label="Next"    th:href="@{/character/search.df(page=${characters.number +1},characterName=${characterName},serverId=${serverId})}" >
+                                                        <a href="#" class="page-link" aria-label="Next"    th:href="@{/characters/search(page=${characters.number +1},characterName=${characterName},serverId=${serverId})}" >
                                                             <span aria-hidden="true">»</span>
                                                         </a>
                                                     </li>

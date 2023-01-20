@@ -388,7 +388,7 @@
             <div class="search-form">
                 <div class="card-body p-0" >
                     <div class="s003">
-                        <form th:action="@{/board.df}" id="board-search-form" method="get">
+                        <form th:action="@{/boards}" id="board-search-form" method="get">
                             <div class="inner-form">
                                 <div class="input-field first-wrap">
                                     <div class="input-select">
@@ -432,18 +432,18 @@
                          style="padding-left: 8px; cursor: pointer;">
                                     <span th:if="${boardType!=null && boardType!= boardType.equals('NOTICE')}"
                                           style="font-size: 20px; font-weight: 400; color: #202020; line-height: 1;"><a
-                                            th:href="@{'/board.df?boardType=NOTICE'}"
+                                            th:href="@{'/boards/?boardType=NOTICE'}"
                                             style="text-decoration-line: none; color: black;">공지사항 바로가기</a><i
                                             class="fas fa-chevron-right" style="padding-left: 8px;"></i></span>
                         <span th:if="${boardType!=null && boardType== boardType.equals('NOTICE')}"
                               style="font-size: 20px; font-weight: 400; color: #202020; line-height: 1;">공지사항</span>
                         <span th:if="${boardType==null}"
                               style="font-size: 20px; font-weight: 400; color: #202020; line-height: 1;"><a
-                                th:href="@{'/board.df?boardType=NOTICE'}"
+                                th:href="@{'/boards/?boardType=NOTICE'}"
                                 style="text-decoration-line: none; color: black;">공지사항 바로가기</a><i
                                 class="fas fa-chevron-right" style="padding-left: 8px;"></i></span>
                         <div class="dropdown custom-dropdown" style="display: inline;   float: right;">
-                            <a th:href="@{/board/insert.df(request=add)}"
+                            <a th:href="@{/boards/insert(request=add)}"
                                data-offset="-70, 20"
                                style="text-decoration-line: none ;color: black; margin-right:10px" sec:authorize="isAuthenticated()">
                                 <span class="fa fa-pencil-square-o" aria-hidden="true"></span> 글쓰기
@@ -510,17 +510,17 @@
                                 <span class="arrow icon-keyboard_arrow_down"></span>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="z-index: 1000">
-                                <a class="dropdown-item" th:href="@{'/board.df?boardType='}"> <span
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType='}"> <span
                                         class="fa fa-user-circle-o"></span> 통합게시판</a>
-                                <a class="dropdown-item" th:href="@{'/board.df?boardType=FREE'}"><span
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType=FREE'}"><span
                                         class="fa fa-comments-o"></span> 자유게시판</a>
-                                <a class="dropdown-item" th:href="@{'/board.df?boardType=RECRUITMENT'}"><span
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType=RECRUITMENT'}"><span
                                         class="fa fa-users"></span> 구인게시판</a>
-                                <a class="dropdown-item" th:href="@{'/board.df?boardType=MARKET'}"><span
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType=MARKET'}"><span
                                         class="fa fa-money"></span> 거래게시판</a>
-                                <a class="dropdown-item" th:href="@{'/board.df?boardType=QUESTION'}"><span
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType=QUESTION'}"><span
                                         class="fa fa-question-circle-o"></span> 질문 답변</a>
-                                <a class="dropdown-item" th:href="@{'/board.df?boardType=REPORT'}"><span
+                                <a class="dropdown-item" th:href="@{'/boards/?boardType=REPORT'}"><span
                                         class="fa fa-hand-fist"></span> 사건/사고</a>
                             </div>
                         </div>
@@ -530,7 +530,7 @@
             </div>
 
             <div th:each="best : ${bestArticles}" style="padding: 2px 13px;">
-                <a style="text-decoration-line: none; color: sandybrown" th:href="@{'/board/'+${best.id}+'.df'}">
+                <a style="text-decoration-line: none; color: sandybrown" th:href="@{'/boards/'+${best.id}}">
                     <i class="fa fa-trophy" aria-hidden="true" style="margin-right:-5px; margin-left:-2px"></i>
                     <span class="badge bg-transparent text-dark" style="display:inline; margin-right:-10px">베스트</span>
                     <span th:if="${best.boardTitle.length()<25}" style="font-size: 12px; font-weight: 400; color: #202020; line-height: 1; display:inline;margin-left:4px"
@@ -573,7 +573,7 @@
                     <div class="row item" data-id="72621" style="cursor: pointer;">
 
                             <div class="contents"
-                                 style=" padding-left: 20px; width: 100%;">             <a style="text-decoration-line: none" th:href="@{/board.df(boardType=${board.boardType})}">
+                                 style=" padding-left: 20px; width: 100%;">             <a style="text-decoration-line: none" th:href="@{/boards/(boardType=${board.boardType})}">
                                                     <span class="badge bg-secondary text-black-50"
                                                           th:text="${board.getBoardType(board.getBoardType())}" th:if="${board.boardType.name().equals('FREE')}" style="margin-top: 10px; margin-left:10px">자유게시판</span>
                                 <span class="badge bg-warning text-black-50"
@@ -587,7 +587,7 @@
                                 <span class="badge bg-danger text-black-50"
                                       th:text="${board.getBoardType(board.getBoardType())}" th:if="${board.boardType.name().equals('REPORT')}" style="margin-top: 10px; margin-left:10px">자유게시판</span></a>
                                 <div th:each="hashtag : ${board.hashtags}" style="display: inline-block">
-                                    <a style="text-decoration-line: none" href="#" th:href="@{/board.df(searchType=hashtag,keyword=${hashtag})}">
+                                    <a style="text-decoration-line: none" href="#" th:href="@{/boards/(searchType=hashtag,keyword=${hashtag})}">
                                         <span class="badge bg-info text-black" th:text="'#'+${hashtag}">#해시태그1</span></a>
                                 </div>
                                 <a style="text-decoration-line: none" href="#"
@@ -639,7 +639,7 @@
 
                                 <br>
                                 <div style="padding: 10px;">
-                                    <a style="text-decoration-line: none" th:href="@{'/board/'+${board.id}+'.df'}">
+                                    <a style="text-decoration-line: none" th:href="@{'/boards/'+${board.id}}">
                                                 <span style="font-size: 24px; color: #202020; line-height: 1;"
                                                       th:utext="${board.boardTitle}" class="title">저 다음 이스핀즈 융합 컨설팅 해주실분...</span><br>
                                     </a>
@@ -689,7 +689,7 @@
                 <ul class="pagination" th:with="start=${(articles.number/5)*5 + 1},
                     last=(${start + 4 < articles.totalPages ? start + 4 : articles.totalPages})">
                     <li class="page-item" th:class="${articles.first} ? 'disabled'">
-                        <a th:href="${articles.first} ? '#' :@{/board.df(page=${0},searchType=${searchType},keyword=${keyword},boardType=${boardType})}"
+                        <a th:href="${articles.first} ? '#' :@{/boards/(page=${0},searchType=${searchType},keyword=${keyword},boardType=${boardType})}"
                            class="page-link" aria-label="Previous">
                             <span aria-hidden="true">«</span>
                         </a>
@@ -697,12 +697,12 @@
                     <li class="page-item" th:each="page: ${#numbers.sequence(start , last)}"
                         th:class="${page == articles.number + 1} ? 'active'"><a
                             class="page-link" th:text="${page }"
-                            th:href="@{/board.df(page=${page -1},searchType=${searchType},keyword=${keyword},boardType=${boardType})}">1</a>
+                            th:href="@{/boards/(page=${page -1},searchType=${searchType},keyword=${keyword},boardType=${boardType})}">1</a>
                     </li>
                     <li class="page-item"
                         th:class="${articles.totalPages == articles.number +1 } ? 'disabled'">
                         <a href="#" class="page-link" aria-label="Next"
-                           th:href="@{/board.df(page=${articles.number +1},searchType=${searchType},keyword=${keyword},boardType=${boardType})}">
+                           th:href="@{/boards/(page=${articles.number +1},searchType=${searchType},keyword=${keyword},boardType=${boardType})}">
                             <span aria-hidden="true">»</span>
                         </a>
                     </li>

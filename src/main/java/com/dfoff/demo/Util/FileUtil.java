@@ -13,7 +13,7 @@ public class FileUtil {
     }
     public static String uploadPath ="/Users/brinc/Desktop/brincestudy/JAVA/df-toy-project/src/main/resources/static/images/imgSaveFolder/";
 
-    public static String getFilePath = "/api/getFile.df?name=";
+    public static String getFilePath = "/files/?name=";
 
 
     public  static String getExtension(String fileName) {
@@ -24,7 +24,7 @@ public class FileUtil {
     }
 
     public static File getMultipartFileToFile(MultipartFile multipartFile) throws IOException {
-        File file = new File(uploadPath,getFileNameWithUUID(multipartFile.getOriginalFilename()));
+        File file = new File(uploadPath,getFileNameWithUUID(Objects.requireNonNull(multipartFile.getOriginalFilename())));
         multipartFile.transferTo(file);
         return file;
     }

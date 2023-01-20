@@ -22,19 +22,20 @@
     <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css'>
     <title>던파모아온오프</title>
     <style>
-        .getMoreBtn{
-            display:inline-flex;
-            padding-right:30%;
-            padding-left:30%;
-            scale :1.3;
-            cursor:pointer;
+        .getMoreBtn {
+            display: inline-flex;
+            padding-right: 30%;
+            padding-left: 30%;
+            scale: 1.3;
+            cursor: pointer;
         }
+
         .myPage-character {
             background-image: url("/images/icon_char/bg_char.jpeg");
             background-repeat: no-repeat;
             background-size: cover;
             background-position: center;
-            float:left;
+            float: left;
             width: 25px;
             height: 25px;
             overflow: hidden;
@@ -42,10 +43,10 @@
             display: inline-block;
             border-radius: 50%;
             border: 1.5px solid #898989;
-            margin-left:5px;
+            margin-left: 5px;
         }
 
-        .myPage-character .f-mage  {
+        .myPage-character .f-mage {
             position: absolute;
             left: -980%;
             right: -1010%;
@@ -57,7 +58,7 @@
         }
 
 
-        .myPage-character .default  {
+        .myPage-character .default {
             position: absolute;
             left: -980%;
             right: -1010%;
@@ -68,7 +69,7 @@
             min-width: 100%;
         }
 
-        .myPage-character .m-gunner  {
+        .myPage-character .m-gunner {
             position: absolute;
             left: -1000%;
             right: -1010%;
@@ -79,7 +80,7 @@
             min-width: 100%;
         }
 
-        .myPage-character .f-gunner  {
+        .myPage-character .f-gunner {
             position: absolute;
             left: -1000%;
             right: -1010%;
@@ -90,7 +91,7 @@
             min-width: 100%;
         }
 
-        .myPage-character .m-fighter  {
+        .myPage-character .m-fighter {
             position: absolute;
             left: -1000%;
             right: -1030%;
@@ -111,6 +112,7 @@
             min-height: 100%;
             min-width: 100%;
         }
+
         .myPage-character .f-fighter {
             position: absolute;
             left: -980%;
@@ -121,7 +123,6 @@
             min-height: 100%;
             min-width: 100%;
         }
-
 
 
         .myPage-character .m-warrior {
@@ -156,6 +157,7 @@
             min-height: 100%;
             min-width: 100%;
         }
+
         .myPage-character .m-priest {
             position: absolute;
             left: -1000%;
@@ -248,11 +250,13 @@
                         <small>캐릭터 등록</small> </a>
 
 
-                    <a style="cursor:pointer" class="btn btn-outlined btn-black text-muted " onclick="getUserBoardLogs()"
+                    <a style="cursor:pointer" class="btn btn-outlined btn-black text-muted "
+                       onclick="getUserBoardLogs()"
                        data-toggle="modal"
-                       data-target="#userLogModal" ><img
-                            src="https://img.icons8.com/metro/26/000000/more.png" width="20" height="20"
-                            class="mr-2 more"><small> 활동 내역</small></a>
+                       data-target="#userLogModal"><small><i class="fa fa-bell-o" style="color:darkred ;scale:1.2"
+                                                             aria-hidden="true" th:if="${uncheckedLogCount!=0}"></i>
+                        <i class="fa fa-bell-o" style="scale:1.2" aria-hidden="true"
+                           th:if="${uncheckedLogCount==0}"></i> 활동 내역</small></a>
                 </div>
 
                 <div class="col-md-auto ">
@@ -404,26 +408,28 @@
                     <div class="col-md-12">
                         <nav>
                             <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
-                                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home"
+                                <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab"
+                                   href="#nav-board"
                                    role="tab" aria-controls="nav-home" aria-selected="true">게시글</a>
-                                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile"
-                                   role="tab" aria-controls="nav-profile" aria-selected="false" onclick="getUserCommentLogs()" >댓글</a>
-                                <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact"
-                                   role="tab" aria-controls="nav-contact" aria-selected="false">알람</a>
+                                <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-comment"
+                                   role="tab" aria-controls="nav-profile" aria-selected="false"
+                                   onclick="getUserCommentLogs()">댓글</a>
+                                <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-log"
+                                   role="tab" aria-controls="nav-contact" aria-selected="false" onclick="getUserLogs()">알람</a>
                             </div>
                         </nav>
                     </div>
                     <div class="tab-content modal-body" id="nav-tabContent">
-                        <div class="tab-pane fade show active" id="nav-home" role="tabpanel"
+                        <div class="tab-pane fade show active" id="nav-board" role="tabpanel"
                              aria-labelledby="nav-home-tab">
                             <div style="">
-                                <a  data-toggle="dropdown"
+                                <a data-toggle="dropdown"
                                    class="align-items-center dropdown-link " aria-haspopup="true"
                                    aria-expanded="false" data-offset="-70, 20"
                                    style="text-decoration-line: none ;color: black; cursor:pointer">
                                     <div style="padding-left:10px">
-                                    <span  id="sortByBoard"><i class="fa fa-calendar-o" ></i> 최신순</span>
-                                    <span class="arrow icon-keyboard_arrow_down"></span></div>
+                                        <span id="sortByBoard"><i class="fa fa-calendar-o"></i> 최신순</span>
+                                        <span class="arrow icon-keyboard_arrow_down"></span></div>
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="z-index: 1000">
                                     <a class="dropdown-item" onclick="getUserBoardLogs('like')"> <span
@@ -437,26 +443,28 @@
                                 </div>
                             </div>
                             <div id="boardLog"></div>
-                            <div style="display: inline-flex; margin-left:10px" >
-                                <div id="prevBoardssBtn" style=" cursor:pointer" onclick="getUserBoardLogs(-1)" disabled>
-                                    <i class="fa fa-arrow-left" aria-hidden="true" ></i>
+                            <div style="display: inline-flex; margin-left:10px">
+                                <div id="prevBoardssBtn" style=" cursor:pointer" onclick="getUserBoardLogs(-1)"
+                                     disabled>
+                                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
                                 </div>
-                                <span  class="text-black" id="boardPage" style="margin-left:10px ; margin-right:10px">0</span>
+                                <span class="text-black" id="boardPage"
+                                      style="margin-left:10px ; margin-right:10px">0</span>
                                 <div id="nextBoardsBtn" style="cursor:pointer" onclick="getUserBoardLogs(1)" disabled>
                                     <i class="fa fa-arrow-right" style="" aria-hidden="true"></i>
                                 </div>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="nav-profile" role="tabpanel"
+                        <div class="tab-pane fade" id="nav-comment" role="tabpanel"
                              aria-labelledby="nav-home-tab">
                             <div style="">
-                                <a  data-toggle="dropdown"
-                                    class="align-items-center dropdown-link " aria-haspopup="true"
-                                    aria-expanded="false" data-offset="-70, 20"
-                                    style="text-decoration-line: none ;color: black; cursor:pointer">
+                                <a data-toggle="dropdown"
+                                   class="align-items-center dropdown-link " aria-haspopup="true"
+                                   aria-expanded="false" data-offset="-70, 20"
+                                   style="text-decoration-line: none ;color: black; cursor:pointer">
                                     <div style="padding-left:10px">
-                                    <span id="sortByComment"><i class="fa fa-calendar-o" ></i> 최신순</span>
-                                    <span class="arrow icon-keyboard_arrow_down"></span></div>
+                                        <span id="sortByComment"><i class="fa fa-calendar-o"></i> 최신순</span>
+                                        <span class="arrow icon-keyboard_arrow_down"></span></div>
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="z-index: 1000">
                                     <a class="dropdown-item" onclick="getUserCommentLogs('like')"> <span
@@ -467,12 +475,33 @@
                             </div>
                             <div id="commentLog">
                             </div>
-                            <div style="display: inline-flex; margin-left:10px" >
-                                <div id="prevCommentsBtn" style=" cursor:pointer" onclick="getUserCommentLogs(-1)" disabled>
-                                    <i class="fa fa-arrow-left" aria-hidden="true" ></i>
+                            <div style="display: inline-flex; margin-left:10px">
+                                <div id="prevCommentsBtn" style=" cursor:pointer" onclick="getUserCommentLogs(-1)"
+                                     disabled>
+                                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
                                 </div>
-                                <span  class="text-black" id="commentPage" style="margin-left:10px ; margin-right:10px">0</span>
-                                <div id="nextCommentsBtn" style="cursor:pointer" onclick="getUserCommentLogs(1)" disabled>
+                                <span class="text-black" id="commentPage"
+                                      style="margin-left:10px ; margin-right:10px">0</span>
+                                <div id="nextCommentsBtn" style="cursor:pointer" onclick="getUserCommentLogs(1)"
+                                     disabled>
+                                    <i class="fa fa-arrow-right" style="" aria-hidden="true"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="nav-log" role="tabpanel"
+                             aria-labelledby="nav-home-tab">
+                            <div style="">
+
+                            </div>
+                            <div id="userLog">
+                            </div>
+                            <div style="display: inline-flex; margin-left:10px">
+                                <div id="prevUserLogBtn" style=" cursor:pointer" onclick="getUserLogs(-1)" disabled>
+                                    <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                                </div>
+                                <span class="text-black" id="userLogPage"
+                                      style="margin-left:10px ; margin-right:10px">0</span>
+                                <div id="nextUserLogBtn" style="cursor:pointer" onclick="getUserLogs(1)" disabled>
                                     <i class="fa fa-arrow-right" style="" aria-hidden="true"></i>
                                 </div>
                             </div>
@@ -687,7 +716,7 @@
         if (confirm("아이콘을 변경하시겠습니까?")) {
             const iconName = "icon_char_" + number + ".png";
             $.ajax({
-                url: "/api/user/profile.df?profileIcon=" + iconName,
+                url: "/users?profileIcon=" + iconName,
                 type: "PUT",
                 data: {
                     iconNumber: number
@@ -783,7 +812,7 @@
     $('#nicknameUpdate').blur(function () {
         const nickname = $('#nicknameUpdate').val();
         $.ajax({
-            url: "/api/user/validate?nickname=" + nickname,
+            url: "/users/check?nickname=" + nickname,
             type: "GET",
             success: function (data) {
                 if (data === "true") {
@@ -811,7 +840,7 @@
     $('#emailUpdate').blur(function () {
         const email = $('#emailUpdate').val();
         $.ajax({
-            url: "/api/user/validate?email=" + email,
+            url: "/users/check?email=" + email,
             type: "GET",
             success: function (data) {
                 if (data === "true") {
@@ -893,7 +922,7 @@
             return;
         } else if (confirm("비밀번호를 변경하시겠습니까?")) {
             $.ajax({
-                url: "/api/user/profile.df?password=" + password,
+                url: "/users?password=" + password,
                 type: "PUT",
                 success: function (data) {
                     alert("비밀번호가 변경되었습니다.");
@@ -918,7 +947,7 @@
             return;
         } else if (confirm("이메일을 변경하시겠습니까?")) {
             $.ajax({
-                url: "/api/user/profile.df?email=" + email,
+                url: "/users?email=" + email,
                 type: "PUT",
                 success: function (data) {
                     alert("이메일이 변경되었습니다.");
@@ -943,7 +972,7 @@
             return;
         } else if (confirm("닉네임을 변경하시겠습니까?")) {
             $.ajax({
-                url: "/api/user/profile.df?nickname=" + nickname,
+                url: "/users?nickname=" + nickname,
                 type: "PUT",
                 success: function (data) {
                     alert("닉네임이 변경되었습니다.");
@@ -998,7 +1027,12 @@
         const characterName = $('#characterName').val();
         const serverId = $('#serverId').val();
         $.ajax({
-            url: "/api/user/searchChar.df?page=0&serverId=" + serverId + "&characterName=" + characterName,
+            url: "/users/characters/",
+            data: {
+                characterName: characterName,
+                serverId: serverId,
+                page : 0
+            },
             type: "GET",
             success: function (data) {
                 if (data == null) {
@@ -1013,7 +1047,7 @@
     }
 
     function setSearchModalResult(list) {
-        let html="";
+        let html = "";
         if (list.length > 0) {
             html = '<table class="table table-striped table-hover" style="text-align: center;">';
             html += '<thead style="font-weight: bold;"><tr><td>서버</td><td>닉네임</td>';
@@ -1045,7 +1079,11 @@
 
         if (confirm("캐릭터를 추가하시겠습니까?")) {
             $.ajax({
-                url: "/api/user/char.df?characterId=" + characterId + "&serverId=" + serverId + "&request=add",
+                url: "/users/characters",
+                data: {
+                    serverId: serverId,
+                    characterId: characterId
+                },
                 type: "POST",
                 success: function (data) {
                     alert("캐릭터가 추가되었습니다.");
@@ -1058,70 +1096,136 @@
         }
     }
 
+    let logPage = 0;
+    let logSortBy = ";"
+
+    function getUserLogs(page) {
+        if (logPage !== 0 && page === -1 && page !== null) {
+            logPage--;
+        } else if (page != null && page === 1) {
+            logPage++;
+        } else if (page === null) {
+            logPage = 0;
+        }
+        $.ajax({
+            url: "/users/logs/",
+            type: "GET",
+            data: {
+                page: logPage,
+                type: "log",
+            },
+            success: function (data) {
+                console.log(page);
+                const next = document.getElementById('nextUserLogBtn');
+                const prev = document.getElementById('prevUserLogBtn');
+                next.disabled = false;
+                prev.disabled = false;
+                $('#userLog').html("");
+                let html = "";
+                if (data.content.length > 0) {
+                    $(data.content).each(function () {
+                        html += '<div data-id="' + this.id + '" style="margin:5px">';
+                        html += '<a style="text-decoration-line: none; color: #535353;" href="/boards/' + this.boardId + '">';
+                        html += '<span class="boardTitle">'+this.logContent+'</span>'
+                        html += '<span style="color:grey; font-size: 11px; float:right; display:inline-flex;" >' + this.createdDate + '</span>';
+                        html += '</a>';
+                        html += '</div>';
+                        html += '</div>';
+                        html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
+                    });
+                    $('#userLog').html(html);
+                } else {
+                    html = '<h3 style="text-align: center;">알림이 존재하지 않습니다.</h3>';
+                    $('#userLog').html(html);
+                }
+                if (data.last === true) {
+                    next.disabled = true;
+                    $('#nextUserLogBtn').addClass('text-secondary');
+                    $('#nextUserLogsBtn').removeClass('text-primary');
+                } else {
+                    next.disabled = false;
+                    $('#nextUserLogBtn').removeClass('text-secondary');
+                }
+                if (data.number === 0) {
+                    prev.disabled = true;
+                    $('#prevUserLogsBtn').addClass('text-secondary');
+                } else {
+                    prev.disabled = false;
+                    $('#prevUserLogBtn').removeClass('text-secondary');
+                    $('#nextUserLogBtn').removeClass('text-secondary');
+                    next.disabled = false;
+                }
+                $('#userLogPage').text(logPage + 1);
+            }, error: function (request, status, error) {
+                console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+
+            }
+        });
+    }
+
 
     function getUserCommentLogs(page) {
-        if(commentPage !==0 && page ===-1 && page!==null){
+        if (commentPage !== 0 && page === -1 && page !== null) {
             commentPage--;
-        }else if(page!=null && page===1){
+        } else if (page != null && page === 1) {
             commentPage++;
-        }else if(page===null){
-            commentPage=0;
+        } else if (page === null) {
+            commentPage = 0;
         }
-        if(page==='like') {
-            commentPage=0;
+        if (page === 'like') {
+            commentPage = 0;
             commentSortBy = "like";
             $('#sortByComment').text(" 좋아요순");
             $('#sortByComment').removeClass('fa fa-calendar-o');
             $('#sortByComment').addClass('fa fa-heart-o');
-        }else if(page==='date'){
-            commentPage=0;
+        } else if (page === 'date') {
+            commentPage = 0;
             commentSortBy = "";
             $('#sortByComment').text(" 최신순");
             $('#sortByComment').removeClass('fa fa-heart-o');
             $('#sortByComment').addClass('fa fa-calendar-o');
         }
         $.ajax({
-            url: "/api/user/userLogs.df",
+            url: "/users/logs/",
             type: "GET",
             data: {
                 page: commentPage,
-                type: "comments",
+                type: "comment",
                 sortBy: commentSortBy
             },
             success: function (data) {
                 console.log(page);
                 const next = document.getElementById('nextCommentsBtn');
                 const prev = document.getElementById('prevCommentsBtn');
-                next.disabled=false;
-                prev.disabled=false;
+                next.disabled = false;
+                prev.disabled = false;
                 $('#commentLog').html("");
                 let html = "";
                 if (data.content.length > 0) {
                     $(data.content).each(function () {
-                        if(this.isDeleted==='N'){
-                        html  += '<div data-id="' + this.id + '" style="margin:5px">';
-                        html += '<a style="text-decoration-line: none; color: #535353;" href="/board/'+this.boardId+'.df">';
-                        if (this.commentContent.length < 35) {
-                            html += '<span class="boardTitle">' + this.commentContent + '</span>'
+                        if (this.isDeleted === 'N') {
+                            html += '<div data-id="' + this.id + '" style="margin:5px">';
+                            html += '<a style="text-decoration-line: none; color: #535353;" href="/boards/' + this.boardId + '">';
+                            if (this.commentContent.length < 35) {
+                                html += '<span class="boardTitle">' + this.commentContent + '</span>'
+                            } else {
+                                html += '<span class="commentOverflow" > ' + this.commentContent + '</span>'
+                            }
+                            html +=
+                                '                                   <div style="display:inline-block; float:right;">' +
+                                '                                       <i class="fa fa-heart-o" style=""> </i>' +
+                                '                                       <span class="badge bg-transparent text-black"' +
+                                '                                             >' + this.commentLikeCount + '</span>' +
+                                '                                       <i class="fa fa-comments-o" style=""> </i>' +
+                                '                                       <span class="badge bg-transparent text-black"' +
+                                '                                             >' + this.childrenCommentsSize + '</span>'
+                            html += '<span style="color:grey; font-size: 11px;" >' + this.createdAt + '</span>';
+                            html += '</a>';
+                            html += '</div>';
+                            html += '</div>';
+                            html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
                         } else {
-                            html += '<span class="commentOverflow" > ' + this.commentContent + '</span>'
-                        }
-                        html +=
-                            '                                   <div style="display:inline-block; float:right;">' +
-                            '                                       <i class="fa fa-heart-o" style=""> </i>' +
-                            '                                       <span class="badge bg-transparent text-black"' +
-                            '                                             >' + this.commentLikeCount + '</span>' +
-                            '                                       <i class="fa fa-comments-o" style=""> </i>' +
-                            '                                       <span class="badge bg-transparent text-black"' +
-                            '                                             >' + this.childrenCommentsSize + '</span>'
-                        html += '<span style="color:grey; font-size: 11px;" >' + this.createdAt + '</span>';
-                        html += '</a>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
-                        }
-                    else{
-                            html  += '<div data-id="' + this.id + '" style="margin:5px">';
+                            html += '<div data-id="' + this.id + '" style="margin:5px">';
                             html += '<i class="fa fa-exclamation" aria-hidden="true" style="color:darkred"></i>';
                             if (this.commentContent.length < 35) {
                                 html += '<span class="boardTitle" style="color:darkred">' + this.commentContent + '</span>'
@@ -1140,31 +1244,31 @@
                             html += '</div>';
                             html += '</div>';
                             html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
-                    }
+                        }
                     });
                     $('#commentLog').html(html);
                 } else {
-                     html = '<h3 style="text-align: center;">댓글이 존재하지 않습니다.</h3>';
+                    html = '<h3 style="text-align: center;">댓글이 존재하지 않습니다.</h3>';
                     $('#commentLog').html(html);
                 }
-                if(data.last === true){
-                    next.disabled=true;
+                if (data.last === true) {
+                    next.disabled = true;
                     $('#nextCommentsBtn').addClass('text-secondary');
                     $('#nextCommentsBtn').removeClass('text-primary');
-                }else{
-                    next.disabled=false;
+                } else {
+                    next.disabled = false;
                     $('#nextCommentsBtn').removeClass('text-secondary');
                 }
-                if(data.number === 0){
-                    prev.disabled=true;
+                if (data.number === 0) {
+                    prev.disabled = true;
                     $('#prevCommentsBtn').addClass('text-secondary');
-                }else{
-                    prev.disabled=false;
+                } else {
+                    prev.disabled = false;
                     $('#prevCommentsBtn').removeClass('text-secondary');
                     $('#nextCommentsBtn').removeClass('text-secondary');
-                    next.disabled=false;
+                    next.disabled = false;
                 }
-                $('#commentPage').text(commentPage+1);
+                $('#commentPage').text(commentPage + 1);
             }, error: function (request, status, error) {
                 console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
 
@@ -1178,42 +1282,42 @@
     let commentSortBy = "";
 
     function getUserBoardLogs(page) {
-        if(boardPage !==0 && page ===-1 && page!==null){
-            boardPage = boardPage-1;
-        }else if(page!=null && page===1){
-            boardPage = boardPage+1;
-        }else if(page===null){
-            boardPage=0;
+        if (boardPage !== 0 && page === -1 && page !== null) {
+            boardPage = boardPage - 1;
+        } else if (page != null && page === 1) {
+            boardPage = boardPage + 1;
+        } else if (page === null) {
+            boardPage = 0;
         }
-        if(page==='like'){
+        if (page === 'like') {
             boardSortBy = "like";
-            boardPage=0;
+            boardPage = 0;
             $('#sortByBoard').text(' 좋아요');
             $('#sortByBoard').removeClass('fa fa-calendar-o');
             $('#sortByBoard').removeClass('fa fa-eye');
             $('#sortByBoard').removeClass('fa fa-comments-o');
             $('#sortByBoard').addClass('fa fa-heart-o');
 
-        }else if(page==='commentCount'){
+        } else if (page === 'commentCount') {
             boardSortBy = "commentCount";
-            boardPage=0;
+            boardPage = 0;
             $('#sortByBoard').text(' 코멘트순');
             $('#sortByBoard').removeClass('fa fa-calendar-o');
             $('#sortByBoard').removeClass('fa fa-eye');
             $('#sortByBoard').removeClass('fa fa-heart-o');
             $('#sortByBoard').addClass('fa fa-comments-o');
 
-        }else if(page ==='view') {
+        } else if (page === 'view') {
             boardSortBy = "view";
-            boardPage=0;
+            boardPage = 0;
             $('#sortByBoard').text(' 조회수순');
             $('#sortByBoard').removeClass('fa fa-calendar-o');
             $('#sortByBoard').removeClass('fa fa-heart-o');
             $('#sortByBoard').removeClass('fa fa-comments-o');
             $('#sortByBoard').addClass('fa fa-eye');
-        }else if(page==='date'){
+        } else if (page === 'date') {
             boardSortBy = "";
-            boardPage=0;
+            boardPage = 0;
             $('#sortByBoard').text(' 최신순');
             $('#sortByBoard').removeClass('fa fa-heart-o');
             $('#sortByBoard').removeClass('fa fa-eye');
@@ -1221,7 +1325,7 @@
             $('#sortByBoard').addClass('fa fa-calendar-o');
         }
         $.ajax({
-            url: "/api/user/userLogs.df",
+            url: "/users/logs/",
             type: "GET",
             data: {
                 page: boardPage,
@@ -1231,52 +1335,52 @@
             success: function (data) {
                 const next = document.getElementById('nextBoardsBtn');
                 const prev = document.getElementById('prevBoardssBtn');
-                next.disabled=false;
-                prev.disabled=false;
-                let html= "";
+                next.disabled = false;
+                prev.disabled = false;
+                let html = "";
                 $('#boardLogs').html("");
                 if (data.content.length > 0) {
                     $(data.content).each(function () {
-                        if(this.isDeleted==='N'){
-                        html += '<div data-id="' + this.id + '" style="margin:5px">';
-                        html += '<a style="text-decoration-line: none; color: #535353;" href="/board/'+this.id+'.df">';
-                        if(this.character!=null) {
-                            html += '<div class="myPage-character">'
-                            html += '<img class="text-dark '+this.character.imgStyleClassName+'"  src="' + this.character.characterImageUrl + '"/></div>';
-                            html += '<i class="fa fa-plug" style="margin-left:2px"> </i>';
-                            html += '<span class="badge bg-transparent text-dark" >'+this.character.characterName+'</span>';
-                        }else{
-                            html += '<div class="myPage-character">';
-                            html += '</div>';
-                            html += '<i class="fa fa-plug" style="color: black; margin-left:2px"> </i>';
-                            html += '<span class="badge bg-transparent text-dark" >캐릭터없음</span>';
-                        }
-                        if (this.boardTitle.length < 25) {
-                            html += '<span class="boardTitle">' + this.boardTitle + '</span>';
-                        } else {
-                            html += '<span class="boardTitleOverflow" > ' + this.boardTitle + '</span>';
-                        }
-                        html +=
-                            '                                   <div style="display:inline-block; float:right;">' +
-                            '                                       <i class="fa fa-heart-o" style=""> </i>' +
-                            '                                       <span class="badge bg-transparent text-black"' +
-                            '                                             >' + this.boardLikeCount + '</span>' +
-                            '                                       <i class="fa fa-comment-o" style=""> </i>' +
-                            '                                       <span class="badge bg-transparent text-black"' +
-                            '                                             >' + this.commentCount + '</span>'
-                        html += '<span style="color:grey; font-size: 11px;" >' + this.createdAt + '</span>';
-                        html += '</a>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
-                        }
-                        else{                        html += '<div data-id="' + this.id + '" style="margin:5px">';
-                            if(this.character!=null) {
+                        if (this.isDeleted === 'N') {
+                            html += '<div data-id="' + this.id + '" style="margin:5px">';
+                            html += '<a style="text-decoration-line: none; color: #535353;" href="/boards/' + this.id +'">';
+                            if (this.character != null) {
                                 html += '<div class="myPage-character">'
-                                html += '<img class="text-dark '+this.character.imgStyleClassName+'"  src="' + this.character.characterImageUrl + '"/></div>';
+                                html += '<img class="text-dark ' + this.character.imgStyleClassName + '"  src="' + this.character.characterImageUrl + '"/></div>';
+                                html += '<i class="fa fa-plug" style="margin-left:2px"> </i>';
+                                html += '<span class="badge bg-transparent text-dark" >' + this.character.characterName + '</span>';
+                            } else {
+                                html += '<div class="myPage-character">';
+                                html += '</div>';
+                                html += '<i class="fa fa-plug" style="color: black; margin-left:2px"> </i>';
+                                html += '<span class="badge bg-transparent text-dark" >캐릭터없음</span>';
+                            }
+                            if (this.boardTitle.length < 25) {
+                                html += '<span class="boardTitle">' + this.boardTitle + '</span>';
+                            } else {
+                                html += '<span class="boardTitleOverflow" > ' + this.boardTitle + '</span>';
+                            }
+                            html +=
+                                '                                   <div style="display:inline-block; float:right;">' +
+                                '                                       <i class="fa fa-heart-o" style=""> </i>' +
+                                '                                       <span class="badge bg-transparent text-black"' +
+                                '                                             >' + this.boardLikeCount + '</span>' +
+                                '                                       <i class="fa fa-comment-o" style=""> </i>' +
+                                '                                       <span class="badge bg-transparent text-black"' +
+                                '                                             >' + this.commentCount + '</span>'
+                            html += '<span style="color:grey; font-size: 11px;" >' + this.createdAt + '</span>';
+                            html += '</a>';
+                            html += '</div>';
+                            html += '</div>';
+                            html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
+                        } else {
+                            html += '<div data-id="' + this.id + '" style="margin:5px">';
+                            if (this.character != null) {
+                                html += '<div class="myPage-character">'
+                                html += '<img class="text-dark ' + this.character.imgStyleClassName + '"  src="' + this.character.characterImageUrl + '"/></div>';
                                 html += '<i class="fa fa-exclamation" style="margin-left:2px; color:darkred"> </i>';
                                 html += '<span class="badge bg-transparent"  style="color:darkred">삭제됨</span>';
-                            }else{
+                            } else {
                                 html += '<div class="myPage-character">';
                                 html += '</div>';
                                 html += '<i class="fa fa-exclamation" style="color: darkred; margin-left:2px"> </i>';
@@ -1304,27 +1408,27 @@
 
                     $('#boardLog').html(html);
                 } else {
-                     html = '<h3 style="text-align: center;">게시글이 존재하지 않습니다.</h3>';
+                    html = '<h3 style="text-align: center;">게시글이 존재하지 않습니다.</h3>';
                     $('#boardLog').html(html);
                 }
-                if(data.last === true){
-                    next.disabled=true;
+                if (data.last === true) {
+                    next.disabled = true;
                     $('#nextBoardsBtn').addClass('disabled text-secondary');
-                }else{
-                    next.disabled=false;
+                } else {
+                    next.disabled = false;
                     $('#nextBoardsBtn').removeClass('disabled text-secondary');
                 }
-                if(data.number === 0){
-                    prev.disabled=true;
+                if (data.number === 0) {
+                    prev.disabled = true;
                     $('#prevBoardssBtn').addClass('disabled text-secondary');
-                }else{
-                    prev.disabled=false;
+                } else {
+                    prev.disabled = false;
                     $('#prevBoardssBtn').removeClass('disabled text-secondary');
                     $('#nextBoardsBtn').removeClass('disabled text-secondary');
-                   next.disabled=false;
+                    next.disabled = false;
 
                 }
-                $('#boardPage').text(boardPage+1);
+                $('#boardPage').text(boardPage + 1);
             }, error: function (request, status, error) {
                 console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
             }, done: function (data) {
@@ -1334,13 +1438,15 @@
     }
 
 
-
-
     function deleteCharacter(serverId, characterId) {
         if (confirm("캐릭터를 삭제하시겠습니까?")) {
             $.ajax({
-                url: "/api/user/char.df?serverId=" + serverId + "&characterId=" + characterId + "&request=delete",
-                type: "POST",
+                url: "/users/characters",
+                data : {
+                    serverId : serverId,
+                    characterId : characterId
+                },
+                type: "DELETE",
                 success: function (data) {
                     alert("캐릭터가 삭제되었습니다.");
                     location.reload();
@@ -1381,7 +1487,7 @@
 
     function logoutAlert() {
         $.ajax({
-            url: "/api/user/logout",
+            url: "/users/logout",
             type: "POST",
             success: function (data) {
                 console.log(data);

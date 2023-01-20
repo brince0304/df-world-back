@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class CharacterController {
     private final CharacterService characterService;
 
-    @GetMapping("/character/search.df")
+    @GetMapping("/characters/")
     public ModelAndView searchCharacterInfo(@RequestParam(required = false) String serverId,
                                             @RequestParam(required = false) String characterName,
                                             @PageableDefault(size = 12) Pageable pageable) {

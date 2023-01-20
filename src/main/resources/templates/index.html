@@ -248,7 +248,7 @@
 
         <div class="col-sm-12 col-md-12 col-lg-6 col-xl-6 div_right">
             <div class="contentBox">
-                <header class="sectionHeader" style="cursor:pointer;" onclick="location.href='board.df'">
+                <header class="sectionHeader" style="cursor:pointer;" onclick="location.href='boards/'">
                     <b>통합게시판</b>
                     <span style="float:right;font-size: 14px;padding: 6px;"><i
                             class="fas fa-angle-right"></i></span>
@@ -268,7 +268,7 @@
                                  ">
                         <div style="padding: .75rem; margin-left: 3px;" th:each="article :${articles}">
                             <div style="line-height: 20px; font-size: 16px; word-break: break-all; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                <a style="color:black; font-weight: 400; text-decoration-line: none" data-id="" th:text="${article.boardTitle}" th:href="@{'/board/'+${article.id}+'.df'}">회랑3단</a>
+                                <a style="color:black; font-weight: 400; text-decoration-line: none" data-id="" th:text="${article.boardTitle}" th:href="@{'/boards/'+${article.id}}">회랑3단</a>
                             </div>
 
                             <div style="margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">

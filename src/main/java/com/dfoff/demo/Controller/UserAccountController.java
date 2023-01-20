@@ -6,10 +6,8 @@ import com.dfoff.demo.Service.CharacterService;
 import com.dfoff.demo.Service.SaveFileService;
 import com.dfoff.demo.Service.UserAccountService;
 import com.dfoff.demo.Util.Bcrypt;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +35,7 @@ public class UserAccountController {
     private final Bcrypt bcrypt;
 
 
-    @GetMapping("/api/user/validate")
+    @GetMapping("/users/check")
     public String checkExist(@RequestParam(required = false) String email,
                              @RequestParam(required = false) String nickname,
                              @RequestParam(required = false) String username) {
@@ -66,7 +64,7 @@ public class UserAccountController {
     }
 
 
-    @GetMapping("/api/user/searchChar.df")
+    @GetMapping("/users/characters/")
     public ResponseEntity<?> searchChar(@RequestParam(required = false) String serverId,
                                         @RequestParam(required = false) String characterName,
                                         @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable,
@@ -94,33 +92,41 @@ public class UserAccountController {
     }
 
 
-    @PostMapping("/api/user")
+    @PostMapping("/users")
     public ResponseEntity<?> createAccount(@RequestBody UserAccount.UserAccountSignUpRequest request) {
         if (!request.getPassword().equals(request.getPasswordCheck())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        userAccountService.createAccount(request, saveFileService.getFileByFileName("icon_char_0.png"));
+        userAccountService.createAccount(request, saveFileService.getFileByFileName("icon_char_0"));
             return new ResponseEntity<>(request.getUserId(), HttpStatus.OK);
     }
 
-    @PostMapping("/api/user/char.df")
-    public ResponseEntity<?> addCharacter(@RequestParam(required = false) String request,
+    @PostMapping("/users/characters")
+    public ResponseEntity<?> addCharacter(
                                           @RequestParam(required = false) String serverId,
                                           @RequestParam(required = false) String characterId,
                                           @AuthenticationPrincipal UserAccount.PrincipalDto principal) {
         if (principal == null) {
             throw new SecurityException("로그인이 필요합니다.");
         }
-        if (request.equals("add")) {
             characterService.getCharacterAbilityThenSaveAsync(characterService.getCharacter(serverId, characterId));
             characterService.addCharacter(UserAccount.UserAccountDto.from(principal), characterService.getCharacter(serverId, characterId));
-        } else if (request.equals("delete")) {
-            characterService.deleteCharacter(UserAccount.UserAccountDto.from(principal), characterService.getCharacter(serverId, characterId));
-        }
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
-    @GetMapping("/user/myPage.df")
+    @DeleteMapping("/users/characters")
+    public ResponseEntity<?> deleteCharacter(
+                                          @RequestParam(required = false) String serverId,
+                                          @RequestParam(required = false) String characterId,
+                                          @AuthenticationPrincipal UserAccount.PrincipalDto principal) {
+        if (principal == null) {
+            throw new SecurityException("로그인이 필요합니다.");
+        }
+            characterService.deleteCharacter(UserAccount.UserAccountDto.from(principal), characterService.getCharacter(serverId, characterId));
+        return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+
+    @GetMapping("/users/my-page")
     public ModelAndView getMyPage(@AuthenticationPrincipal UserAccount.PrincipalDto principal) {
         if (principal == null) {
             throw new SecurityException("로그인이 필요합니다.");
@@ -128,10 +134,11 @@ public class UserAccountController {
         ModelAndView mav = new ModelAndView("/mypage/mypage");
         UserAccount.UserAccountMyPageResponse response = userAccountService.getUserAccountById(principal.getUsername());
         mav.addObject("user", response);
+        mav.addObject("uncheckedLogCount", userAccountService.getUncheckedLogCount(principal.getUsername()));
         return mav;
     }
 
-    @GetMapping("/api/user/userLogs.df")
+    @GetMapping("/users/logs/")
     public ResponseEntity<?> getLog(@AuthenticationPrincipal UserAccount.PrincipalDto principal,
                                     @RequestParam String type,
                                     @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable,
@@ -142,26 +149,29 @@ public class UserAccountController {
         if (type.equals("board")) {
             return switch (sortBy) {
                 case "like" ->
-                        new ResponseEntity<>(userAccountService.getBoardsByUserAccountOrderByLikeCount(principal.getUsername(), pageable), HttpStatus.OK);
+                        new ResponseEntity<>(userAccountService.getBoardsByUserIdOrderByLikeCount(principal.getUsername(), pageable), HttpStatus.OK);
                 case "commentCount" ->
-                        new ResponseEntity<>(userAccountService.getBoardsByUserAccountOrderByComentCount(principal.getUsername(), pageable), HttpStatus.OK);
+                        new ResponseEntity<>(userAccountService.getBoardsByUserIdOrderByComentCount(principal.getUsername(), pageable), HttpStatus.OK);
                 case "view" ->
-                        new ResponseEntity<>(userAccountService.getBoardsByUserAccountOrderByViewCount(principal.getUsername(), pageable), HttpStatus.OK);
+                        new ResponseEntity<>(userAccountService.getBoardsByUserIdOrderByViewCount(principal.getUsername(), pageable), HttpStatus.OK);
                 default ->
-                        new ResponseEntity<>(userAccountService.getBoardsByUserAccount(principal.getUsername(), pageable), HttpStatus.OK);
+                        new ResponseEntity<>(userAccountService.getBoardsByUserId(principal.getUsername(), pageable), HttpStatus.OK);
             };
-        } if (type.equals("comments")) {
+        } if (type.equals("comment")) {
             if(sortBy.equals("like")) {
                 return new ResponseEntity<>(userAccountService.getCommentsByUserIdOrderByLikeCount(principal.getUsername(), pageable), HttpStatus.OK);
             }
             return new ResponseEntity<>(userAccountService.getCommentsByUserId(principal.getUsername(), pageable), HttpStatus.OK);
+        }
+        if(type.equals("log")){
+            return new ResponseEntity<>(userAccountService.getUserLog(principal.getUsername(), pageable), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 
 
-    @PutMapping("/api/user/profile.df")
+    @PutMapping("/users")
     public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
                                            @RequestParam(required = false) String nickname,
                                            @RequestParam(required = false) String email,

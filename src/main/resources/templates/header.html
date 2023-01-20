@@ -29,16 +29,16 @@
 
         <nav id="nav-menu-container">
             <ul class="nav-menu">
-                <li ><a th:href="@{/main.df}">메인화면</a></li>
-                <li><a th:href="@{/character/search.df}">캐릭터 검색</a></li>
+                <li ><a th:href="@{/main}">메인화면</a></li>
+                <li><a th:href="@{/characters/}">캐릭터 검색</a></li>
                 <li><a sec:authorize="!isAuthenticated()" data-toggle="modal" href="#"
                        data-target="#loginModal">로그인</a>
                     <a sec:authorize="isAuthenticated()" href="javascript: logoutAlert();"
                        th:if="${#authentication!=null}">로그아웃</a></li>
                 <li><a  sec:authorize="isAuthenticated()"
-                        th:href="@{/user/myPage.df}" th:text="마이페이지"></a></li>
+                        th:href="@{/users/my-page}" th:text="마이페이지"></a></li>
                 <li><a href="">랭킹</a></li>
-                <li><a th:href="@{/board.df}">게시판</a></li>
+                <li><a th:href="@{/boards/}">게시판</a></li>
 
                 <li class="menu-has-children"><a href="">컨텐츠</a>
                     <ul>

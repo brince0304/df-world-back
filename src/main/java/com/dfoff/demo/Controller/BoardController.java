@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @RestController
@@ -38,7 +39,7 @@ public class BoardController {
 
 
 
-    @GetMapping("/board.df")
+    @GetMapping("/boards/")
     public ModelAndView getBoardList(@RequestParam (required = false) BoardType boardType,
                                      @RequestParam (required = false) String keyword,
                                      @PageableDefault(size = 10,sort = "createdAt",direction = Sort.Direction.DESC) Pageable pageable,
@@ -54,21 +55,33 @@ public class BoardController {
         mav.addObject("searchType",searchType);
         return mav;
     }
-    @PostMapping ("/api/like.df")
-    public ResponseEntity<?> likeBoard(@RequestParam Long boardId, HttpServletRequest req) {
-        if(redisService.checkBoardLikeLog(req.getRemoteAddr(),boardId)) {
-            redisService.deleteBoardLikeLog(req.getRemoteAddr(),boardId);
-            return new ResponseEntity<>(boardService.decreaseLikeCount(boardId),HttpStatus.OK);
+    @PostMapping ("/boards/like-board")
+    public ResponseEntity<?> likeBoard(@RequestParam Long boardId, HttpServletRequest req, @AuthenticationPrincipal UserAccount.PrincipalDto principal) {
+        if(principal==null) {
+            if (redisService.checkBoardLikeLog(req.getRemoteAddr(), boardId)) {
+                redisService.deleteBoardLikeLog(req.getRemoteAddr(), boardId);
+                return new ResponseEntity<>(boardService.decreaseLikeCount(boardId,""), HttpStatus.OK);
 
+            } else {
+                redisService.saveBoardLikeLog(req.getRemoteAddr(), boardId);
+                return new ResponseEntity<>(boardService.increaseLikeCount(boardId,""), HttpStatus.OK);
+            }
         }else{
-            redisService.saveBoardLikeLog(req.getRemoteAddr(),boardId);
-            return new ResponseEntity<>(boardService.increaseLikeCount(boardId),HttpStatus.OK);
+
+            if(redisService.checkBoardLikeLog(req.getRemoteAddr(),boardId)) {
+                redisService.deleteBoardLikeLog(req.getRemoteAddr(),boardId);
+                return new ResponseEntity<>(boardService.decreaseLikeCount(boardId, principal.getNickname()),HttpStatus.OK);
+
+            }else{
+                redisService.saveBoardLikeLog(req.getRemoteAddr(),boardId);
+                return new ResponseEntity<>(boardService.increaseLikeCount(boardId,principal.getNickname()),HttpStatus.OK);
+            }
         }
     }
 
 
 
-    @GetMapping("/board/{boardId}.df")
+    @GetMapping("/boards/{boardId}")
     public ModelAndView getBoardDetails(@PathVariable Long boardId,
                                         HttpServletRequest req) {
             ModelAndView mav = new ModelAndView("/board/boardDetails");
@@ -86,7 +99,7 @@ public class BoardController {
 
 
 
-    @GetMapping("/board/insert.df")
+    @GetMapping("/boards/insert")
     public ModelAndView getBoardInsert(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
                                        @RequestParam (required = true) String request,
                                        @RequestParam (required = false) String id,
@@ -119,7 +132,7 @@ public class BoardController {
         return mav;
     }
 
-    @DeleteMapping("/api/board.df")
+    @DeleteMapping("/boards")
 public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
                                       @RequestParam (required = true) Long id) {
 
@@ -135,8 +148,36 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
             return new ResponseEntity<>(HttpStatus.OK);
         }
 
+    @GetMapping("/boards/characters/")
+    public ResponseEntity<?> searchChar(@RequestParam(required = false) String serverId,
+                                        @RequestParam(required = false) String characterName,
+                                        @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable,
+                                        @AuthenticationPrincipal UserAccount.PrincipalDto principal) {
+        if (principal == null) {
+            throw new SecurityException("로그인이 필요합니다.");
+        }
+        if (serverId == null || characterName == null) {
+            throw new IllegalArgumentException("서버 아이디, 캐릭터 아이디는 필수입니다.");
+        }
+        if (serverId.equals("adventure")) {
+            return new ResponseEntity<>(characterService.getCharacterByAdventureName(characterName, pageable).map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).toList(), HttpStatus.OK);
+        }
+        List<CompletableFuture<CharacterEntity.CharacterEntityDto>> dtos = new ArrayList<>();
+        List<CharacterEntity.CharacterEntityDto> dtos1 = characterService.getCharacterDTOs(serverId, characterName);
+        for (CharacterEntity.CharacterEntityDto dto : dtos1.subList(0, Math.min(dtos1.size(), 15))) {
+            if (dto.getLevel() >= 100) {
+                dtos.add(characterService.getCharacterAbilityThenSaveAsync(dto));
+            } else {
+                dtos.add(CompletableFuture.completedFuture(dto));
+            }
+        }
+        int size = Math.min(dtos.size(), 15);
+        return new ResponseEntity<>(dtos.stream().map(CompletableFuture::join).map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toList()).subList(0, size), HttpStatus.OK);
+    }
 
-    @PostMapping("/api/board.df")
+
+
+    @PostMapping("/boards")
     public ResponseEntity<?> saveBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody @Valid Board.BoardRequest boardRequest, BindingResult bindingResult) {
 
         if(principalDto==null){
@@ -153,7 +194,7 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
         return new ResponseEntity<>(boardService.createBoard(boardRequest,set ,UserAccount.UserAccountDto.from(principalDto),character),HttpStatus.OK);}
 
 
-    @PutMapping("/api/board.df")
+    @PutMapping("/boards")
     public ResponseEntity<?> updateBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody @Valid Board.BoardRequest updateRequest,BindingResult bindingResult) {
 
         String writer = boardService.getBoardAuthor(updateRequest.getId());

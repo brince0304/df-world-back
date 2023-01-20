@@ -32,88 +32,101 @@ public class BoardCommentController {
     private final RedisService redisService;
     private final BoardService boardService;
 
-    @GetMapping("/api/comment.df")
+    @GetMapping("/comments/")
     public ResponseEntity<?> getBoardComments(HttpServletRequest req,
                                               @RequestParam(required = false) Long boardId,
-                                              @RequestParam (required = false) Long commentId){
-        Map<String,Object> map = new HashMap<>();
-        Map<String,Boolean> likeMap = new HashMap<>();
-        List<BoardComment.BoardCommentResponse > bestComments = commentService.findBestBoardCommentByBoardId(boardId);
-        map.put("bestComments",bestComments);
+                                              @RequestParam(required = false) Long commentId) {
+        Map<String, Object> map = new HashMap<>();
+        Map<String, Boolean> likeMap = new HashMap<>();
+        List<BoardComment.BoardCommentResponse> bestComments = commentService.findBestBoardCommentByBoardId(boardId);
+        map.put("bestComments", bestComments);
         List<BoardComment.BoardCommentResponse> comments;
-        if(commentId==null) {
+        if (commentId == null) {
             comments = commentService.findBoardCommentByBoardId(boardId);
-        }
-        else{
+        } else {
             comments = commentService.findBoardCommentsByParentId(boardId, commentId);
         }
-        return getResponseEntity(req, boardId, map, likeMap, comments,bestComments);
+        return getResponseEntity(req, boardId, map, likeMap, comments, bestComments);
     }
 
     private ResponseEntity<?> getResponseEntity(HttpServletRequest req, @RequestParam(required = false) Long boardId, Map<String, Object> map, Map<String, Boolean> likeMap, List<BoardComment.BoardCommentResponse> comments
-    , List<BoardComment.BoardCommentResponse> bestComments) {
-        map.put("comments",comments);
-        comments.forEach(o->{
+            , List<BoardComment.BoardCommentResponse> bestComments) {
+        map.put("comments", comments);
+        comments.forEach(o -> {
             likeMap.put(String.valueOf(o.getId()), redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, o.getId()));
         });
-        bestComments.forEach(o->{
+        bestComments.forEach(o -> {
             likeMap.put(String.valueOf(o.getId()), redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, o.getId()));
         });
-        map.put("likeMap",likeMap);
+        map.put("likeMap", likeMap);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    @PostMapping("/api/likeComment.df")
-    public ResponseEntity<?> likeComment(@RequestParam Long commentId,@RequestParam Long boardId, HttpServletRequest req) {
-        if(redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId,commentId)) {
-            redisService.deleteBoardCommentLikeLog(req.getRemoteAddr(),boardId,commentId);
-            return new ResponseEntity<>(commentService.updateBoardCommentDisLike(commentId),HttpStatus.OK);
+    @PostMapping("/comments/like-comment")
+    public ResponseEntity<?> likeComment(@RequestParam Long commentId, @RequestParam Long boardId, HttpServletRequest req, @AuthenticationPrincipal UserAccount.PrincipalDto principal) {
+        if(principal!=null) {
+            if (redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId)) {
+                redisService.deleteBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId);
+                return new ResponseEntity<>(commentService.updateBoardCommentDisLike(commentId, principal.getNickname()), HttpStatus.OK);
 
+            } else {
+                redisService.saveBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId);
+                return new ResponseEntity<>(commentService.updateBoardCommentLike(commentId, principal.getNickname()), HttpStatus.OK);
+            }
         }else{
-            redisService.saveBoardCommentLikeLog(req.getRemoteAddr(),boardId,commentId);
-            return new ResponseEntity<>(commentService.updateBoardCommentLike(commentId),HttpStatus.OK);
+            if (redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId)) {
+                redisService.deleteBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId);
+                return new ResponseEntity<>(commentService.updateBoardCommentDisLike(commentId, ""), HttpStatus.OK);
+
+            } else {
+                redisService.saveBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId);
+                return new ResponseEntity<>(commentService.updateBoardCommentLike(commentId, ""), HttpStatus.OK);
+            }
         }
     }
 
-    @PostMapping("/api/comment.df")
+    @PostMapping("/comments")
     public ResponseEntity<?> createBoardComment(@RequestBody @Valid BoardComment.BoardCommentRequest request, BindingResult bindingResult, @AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
-                                                @RequestParam (required = false) String mode){
-        if(principalDto==null){throw new SecurityException("로그인이 필요합니다.");}
-        if(bindingResult.hasErrors()){
-            return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
+                                                @RequestParam(required = false) String mode) {
+        if (principalDto == null) {
+            throw new SecurityException("로그인이 필요합니다.");
+        }
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
         }
         Board.BoardDto boardDto = boardService.getBoardDto(request.getBoardId());
-        if(mode!=null&&mode.equals("children")) {
-            commentService.createChildrenComment(request.getCommentId(),request,UserAccount.UserAccountDto.from(principalDto),boardDto);
+        if (mode != null && mode.equals("children")) {
+            commentService.createChildrenComment(request.getCommentId(), request, UserAccount.UserAccountDto.from(principalDto), boardDto);
             return new ResponseEntity<>(HttpStatus.OK);
-        }else {
+        } else {
             commentService.createBoardComment(request, UserAccount.UserAccountDto.from(principalDto), boardDto);
             return new ResponseEntity<>("success", HttpStatus.OK);
         }
     }
 
 
-    @DeleteMapping("/api/comment.df")
-    public ResponseEntity<?> deleteBoardComment(@AuthenticationPrincipal UserAccount.PrincipalDto dto , @RequestParam Long commentId){
+    @DeleteMapping("/comments")
+    public ResponseEntity<?> deleteBoardComment(@AuthenticationPrincipal UserAccount.PrincipalDto dto, @RequestParam Long commentId) {
         String id = commentService.getCommentAuthor(commentId);
-        if(dto==null || !id.equals(dto.getUsername())){
-            return new ResponseEntity<>("권한이 없습니다.",HttpStatus.UNAUTHORIZED);
+        if (dto == null || !id.equals(dto.getUsername())) {
+            return new ResponseEntity<>("권한이 없습니다.", HttpStatus.UNAUTHORIZED);
         }
         commentService.deleteBoardComment(commentId);
-        return new ResponseEntity<>("success",HttpStatus.OK);
+        return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
 
-    @PutMapping("/api/comment.df")
-    public ResponseEntity<?> updateBoardComment(@RequestBody @Valid BoardComment.BoardCommentRequest request,BindingResult bindingResult, @AuthenticationPrincipal UserAccount.PrincipalDto principalDto){
+    @PutMapping("/comments")
+    public ResponseEntity<?> updateBoardComment(@RequestBody @Valid BoardComment.BoardCommentRequest request, BindingResult bindingResult, @AuthenticationPrincipal UserAccount.PrincipalDto principalDto) {
 
-        if(principalDto==null){
+        if (principalDto == null) {
             throw new SecurityException("로그인이 필요합니다.");
-        }if(bindingResult.hasErrors()){
-            return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
         }
-        commentService.updateBoardComment(request.getCommentId(),request,principalDto.getUsername());
-        return new ResponseEntity<>("success",HttpStatus.OK);
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
+        }
+        commentService.updateBoardComment(request.getCommentId(), request, principalDto.getUsername());
+        return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
 }
