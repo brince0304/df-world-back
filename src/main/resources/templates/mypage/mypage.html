@@ -394,7 +394,7 @@
     </div>
 
 
-    <div class="modal fade userLog" id="userLogModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"
+    <div class="modal fade notification" id="userLogModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"
          style="margin-left:2%"
          aria-hidden="true">
         <div class="modal-dialog" style="max-width:500px" role="document">
@@ -493,7 +493,7 @@
                             <div style="">
 
                             </div>
-                            <div id="userLog">
+                            <div id="notification">
                             </div>
                             <div style="display: inline-flex; margin-left:10px">
                                 <div id="prevUserLogBtn" style=" cursor:pointer" onclick="getUserLogs(-1)" disabled>
@@ -1120,7 +1120,7 @@
                 const prev = document.getElementById('prevUserLogBtn');
                 next.disabled = false;
                 prev.disabled = false;
-                $('#userLog').html("");
+                $('#notification').html("");
                 let html = "";
                 if (data.content.length > 0) {
                     $(data.content).each(function () {
@@ -1133,10 +1133,10 @@
                         html += '</div>';
                         html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
                     });
-                    $('#userLog').html(html);
+                    $('#notification').html(html);
                 } else {
                     html = '<h3 style="text-align: center;">알림이 존재하지 않습니다.</h3>';
-                    $('#userLog').html(html);
+                    $('#notification').html(html);
                 }
                 if (data.last === true) {
                     next.disabled = true;

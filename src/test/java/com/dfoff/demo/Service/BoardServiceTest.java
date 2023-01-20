@@ -3,6 +3,7 @@ package com.dfoff.demo.Service;
 import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.Repository.BoardRepository;
+import com.dfoff.demo.Repository.NotificationRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,8 @@ class BoardServiceTest {
     @InjectMocks BoardService sut;
     @Mock
     BoardRepository boardRepository;
+    @Mock
+    NotificationRepository notificationRepository;
 
 
     @Test
@@ -70,6 +73,7 @@ class BoardServiceTest {
         //then
         then(boardRepository).should().findBoardById(any(Long.class));
     }
+
 
     @Test
     void getArticlesByKeywordTest(){
@@ -159,7 +163,7 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
         given(boardRepository.findBoardById(any(Long.class))).willReturn(board);
 
         //when
-        sut.increaseLikeCount(any(Long.class));
+        sut.increaseLikeCount(any(Long.class),"");
 
         //then
         then(boardRepository).should().findBoardById(any(Long.class));
@@ -174,7 +178,7 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
         given(boardRepository.findBoardById(any(Long.class))).willReturn(board);
 
         //when
-        sut.decreaseLikeCount(any(Long.class));
+        sut.decreaseLikeCount(any(Long.class),"");
 
         //then
         then(boardRepository).should().findBoardById(any(Long.class));

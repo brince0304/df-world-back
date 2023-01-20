@@ -97,7 +97,7 @@ public class UserAccountController {
         if (!request.getPassword().equals(request.getPasswordCheck())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        userAccountService.createAccount(request, saveFileService.getFileByFileName("icon_char_0"));
+        userAccountService.createAccount(request, saveFileService.getFileByFileName("icon_char_0.png"));
             return new ResponseEntity<>(request.getUserId(), HttpStatus.OK);
     }
 

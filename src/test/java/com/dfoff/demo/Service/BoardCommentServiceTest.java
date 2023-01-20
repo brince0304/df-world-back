@@ -3,6 +3,7 @@ package com.dfoff.demo.Service;
 import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.Repository.BoardCommentRepository;
+import com.dfoff.demo.Repository.NotificationRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -26,6 +27,9 @@ class BoardCommentServiceTest {
 
     @Mock
     BoardCommentRepository boardCommentRepository;
+
+    @Mock
+    NotificationRepository notificationRepository;
 
     @Test
     void findBoardCommentById() {
@@ -102,9 +106,9 @@ class BoardCommentServiceTest {
     @Test
     void deleteBoardComment() {
         //given
-
+        given(boardCommentRepository.existsById(any(Long.class))).willReturn(true);
         //when
-        sut.deleteBoardComment(any(Long.class));
+        sut.deleteBoardComment(anyLong());
 
         //then
         then(boardCommentRepository).should().deleteBoardCommentById(any(Long.class));
@@ -130,7 +134,7 @@ class BoardCommentServiceTest {
         given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(createBoardComment0());
 
         //when
-        sut.updateBoardCommentLike(eq(1L) );
+        sut.updateBoardCommentLike(eq(1L),"" );
 
         //then
         then(boardCommentRepository).should().findBoardCommentById(anyLong());
@@ -142,7 +146,7 @@ class BoardCommentServiceTest {
         given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(createBoardComment0());
 
         //when
-        sut.updateBoardCommentDisLike(eq(1L) );
+        sut.updateBoardCommentDisLike(eq(1L),"");
 
         //then
         then(boardCommentRepository).should().findBoardCommentById(anyLong());
@@ -152,14 +156,28 @@ class BoardCommentServiceTest {
     void createChildrenComment() {
         //given
         given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(createBoardComment0());
-        given(boardCommentRepository.save(any(BoardComment.class))).willReturn(createBoardComment0());
 
         //when
         sut.createChildrenComment(eq(1L), createBoardCommentChildrenRequestDto(), UserAccount.UserAccountDto.from(createUserAccount()),createBoardDto());
 
         //then
-        then(boardCommentRepository).should().save(any(BoardComment.class));
+        then(boardCommentRepository).should().findBoardCommentById(anyLong());
     }
+
+    @Test
+    void createNotificationTest(){
+        //given
+        given(boardCommentRepository.save(any())).willReturn(createBoardComment0());
+
+        //when
+        sut.createBoardComment(createBoardCommentRequestDto(), UserAccount.UserAccountDto.from(createUserAccoun0()),createBoardDto());
+
+        //then
+        then(boardCommentRepository).should().save(any());
+        assertThat(createUserAccoun0().getNotifications().size()).isEqualTo(1);
+    }
+
+
 
     @Test
     void findBestBoardCommentByBoardId() {
@@ -212,6 +230,20 @@ class BoardCommentServiceTest {
         return account;
     }
 
+    private UserAccount createUserAccoun0(){
+        UserAccount account =  UserAccount.builder().
+                userId("test20").
+                password("test2").
+                email("test").
+                nickname("test").
+                build();
+        SaveFile saveFile = SaveFile.builder().
+                fileName("test").
+                filePath("test").
+                build();
+        account.setProfileIcon(saveFile);
+        return account;
+    }
 
     private BoardComment.BoardCommentRequest boardCommentRequest() {
         return BoardComment.BoardCommentRequest.builder()
@@ -256,6 +288,14 @@ class BoardCommentServiceTest {
     private BoardComment createBoardComment0(){
         return BoardComment.builder()
                 .userAccount(createUserAccount())
+                .board(createBoard())
+                .commentContent("test")
+                .build();
+    }
+
+    private BoardComment createBoardComment1(){
+        return BoardComment.builder()
+                .userAccount(createUserAccoun0())
                 .board(createBoard())
                 .commentContent("test")
                 .build();
