@@ -35,11 +35,44 @@ public class OpenAPIUtil {
 
     public static final String CHARACTER_ABILITY_URL = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/status?apikey="+API_KEY;
 
+    public static final String CHARACTER_EQUIPMENT_URL = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/equip/equipment?apikey="+API_KEY;
 
+    public static final String EQUIPMENT_IMG_URL = "https://img-api.neople.co.kr/df/items/<itemId>?zoom=<zoom>";
 
+    public static final String EQUIPMENT_DETAIL_URL = "https://api.neople.co.kr/df/items/<itemId>?apikey="+ API_KEY;
+
+    public static final String CHARACTER_BUFF_EQUIPMENT_URL = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/skill/buff/equip/equipment?apikey="+API_KEY;
+
+    public static final String CHARACTER_BUFF_AVATAR_URL = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/skill/buff/equip/avatar?apikey="+API_KEY;
+
+    public static final String CHARACTER_BUFF_CREATURE_URL = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/skill/buff/equip/creature?apikey="+API_KEY;
+
+        public static final String CHARACTER_AVATAR_URL = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/equip/avatar?apikey="+API_KEY;
+
+        public static final String CHARACTER_TALISMAN_URL ="https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/equip/talisman?apikey="+API_KEY;
+
+        public static final String CHARACTER_SKILL_URL = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/skill/style?apikey="+API_KEY;
+
+        public static final String CHARACTER_SKILL_DETAIL_URL  = "https://api.neople.co.kr/df/skills/<jobId>/<skillId>?apikey="+API_KEY;
     @Bean
     public static Gson getGson() {
         return new Gson();
+    }
+
+
+    public static String getCharacterSkillDetailUrl(String jobId, String skillId) {
+        return CHARACTER_SKILL_DETAIL_URL.replace("<jobId>", jobId).replace("<skillId>", skillId );
+    }
+    public static String getEquipmentDetailUrl(String itemId) {
+        return EQUIPMENT_DETAIL_URL.replace("<itemId>", itemId);
+    }
+
+    public static String getCharacterTalismanUrl (String serverId, String characterId) {
+        return CHARACTER_TALISMAN_URL.replace("<serverId>", serverId).replace("<characterId>", characterId);
+    }
+
+    public static String getCharacterSkillUrl(String serverId, String characterId) {
+        return CHARACTER_SKILL_URL.replace("<serverId>", serverId).replace("<characterId>", characterId);
     }
 
 
@@ -48,9 +81,38 @@ public class OpenAPIUtil {
                 .replace("<characterName>", characterName).replace("<jobId>", "").replace("<jobGrowId>", "");
     }
 
+    public static String getCharacterBuffAvatarUrl(String serverId, String characterId) {
+        return CHARACTER_BUFF_AVATAR_URL.replace("<serverId>", serverId)
+                .replace("<characterId>", characterId);
+    }
+
+    public static String getCharacterBuffCreatureUrl(String serverId, String characterId) {
+        return CHARACTER_BUFF_CREATURE_URL.replace("<serverId>", serverId)
+                .replace("<characterId>", characterId);
+    }
+
     public static String getCharacterAbilityUrl(String serverId, String characterId) {
         return CHARACTER_ABILITY_URL.replace("<serverId>", serverId)
                 .replace("<characterId>", characterId);
+    }
+
+    public static String getCharacterAvatarUrl(String serverId, String characterId) {
+        return CHARACTER_AVATAR_URL.replace("<serverId>", serverId)
+                .replace("<characterId>", characterId);
+    }
+
+    public static String getCharacterBuffEquipmentUrl(String serverId, String characterId) {
+        return CHARACTER_BUFF_EQUIPMENT_URL.replace("<serverId>", serverId)
+                .replace("<characterId>", characterId);
+    }
+
+    public static String getCharacterEquipmentUrl(String serverId, String characterId) {
+        return CHARACTER_EQUIPMENT_URL.replace("<serverId>", serverId)
+                .replace("<characterId>", characterId);
+    }
+
+    public static String getEquipmentImgUrl(String itemId) {
+        return EQUIPMENT_IMG_URL.replace("<itemId>", itemId);
     }
 
     public static String getCharacterDetailsUrl(String serverId, String characterId) {
