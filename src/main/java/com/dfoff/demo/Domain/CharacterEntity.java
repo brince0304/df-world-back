@@ -1,16 +1,22 @@
 package com.dfoff.demo.Domain;
 
+import com.dfoff.demo.Domain.ForCharacter.CharacterAbilityDto;
 import com.dfoff.demo.Domain.ForCharacter.CharacterDto;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
+import com.dfoff.demo.Util.SearchPageUtil;
 import lombok.*;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.dfoff.demo.Util.SearchPageUtil.timesAgo;
+
 
 @Entity
 @Getter
@@ -46,6 +52,12 @@ public class CharacterEntity extends AuditingFields {
 
     @Setter
     private String adventureName;
+
+    @Setter
+    private String guildId;
+
+    @Setter
+    private String guildName;
 
     @OneToMany(fetch = FetchType.LAZY)
     @ToString.Exclude
@@ -93,6 +105,13 @@ public class CharacterEntity extends AuditingFields {
         private final String adventureFame;
         private final String adventureName;
 
+        private final String guildId;
+
+        private final String guildName;
+
+
+
+
 
         public static CharacterEntity toEntity(CharacterEntityDto dto) {
             return CharacterEntity.builder()
@@ -106,6 +125,8 @@ public class CharacterEntity extends AuditingFields {
                     .jobGrowName(dto.getJobGrowName())
                     .adventureFame(dto.getAdventureFame())
                     .adventureName(dto.getAdventureName())
+                    .guildId(dto.getGuildId())
+                    .guildName(dto.getGuildName())
                     .build();
         }
 
@@ -134,6 +155,27 @@ public class CharacterEntity extends AuditingFields {
                     .serverId(dto.getServerId())
                     .build();
         }
+        public static String getServerName(String serverId) {
+            if (serverId.equals("bakal")) {
+                return "바칼";
+            } else if (serverId.equals("cain")) {
+                return "카인";
+            } else if (serverId.equals("diregie")) {
+                return "디레지에";
+            } else if (serverId.equals("hilder")) {
+                return "힐더";
+            } else if (serverId.equals("prey")) {
+                return "프레이";
+            } else if (serverId.equals("siroco")) {
+                return "시로코";
+            } else if (serverId.equals("casillas")) {
+                return "카시야스";
+            } else if (serverId.equals("anton")) {
+                return "안톤";
+            } else {
+                return serverId;
+            }
+        }
 
         public static CharacterEntityDto from(CharacterEntity entity) {
             return CharacterEntityDto.builder()
@@ -147,21 +189,24 @@ public class CharacterEntity extends AuditingFields {
                     .jobGrowName(entity.getJobGrowName())
                     .adventureFame(entity.getAdventureFame())
                     .adventureName(entity.getAdventureName())
+                    .guildId(entity.getGuildId())
+                    .guildName(entity.getGuildName())
                     .build();
         }
+
 
         @Getter
         @Data
         @Builder
         public static class CharacterEntityResponse implements Serializable {
-            private final LocalDateTime createdAt;
-            private final String createdBy;
-            private final LocalDateTime modifiedAt;
-            private final String modifiedBy;
+            private final String createdAt;
+            private final String modifiedAt;
             private final String characterId;
             private final String characterName;
 
             private final String serverId;
+
+            private final String serverName;
 
             private final Integer level;
 
@@ -176,6 +221,12 @@ public class CharacterEntity extends AuditingFields {
             private final String adventureFame;
             private final String adventureName;
 
+            private final String guildId;
+
+            private final String guildName;
+
+            private final List<CharacterAbilityDto.Status__1> status;
+
 
             public static CharacterEntityResponse from(CharacterEntityDto dto) {
                 return CharacterEntityResponse.builder()
@@ -189,10 +240,33 @@ public class CharacterEntity extends AuditingFields {
                         .jobGrowName(dto.getJobGrowName())
                         .adventureFame(dto.getAdventureFame())
                         .adventureName(dto.getAdventureName())
+                        .serverName(getServerName(dto.getServerId()))
+                        .guildId(dto.getGuildId())
+                        .guildName(dto.getGuildName())
+                        .modifiedAt(dto.getModifiedAt()!=null?timesAgo(dto.getModifiedAt()):"방금 전")
                         .build();
             }
 
-            public String getServerName(String serverId) {
+            public static CharacterEntityResponse from(CharacterAbilityDto dto,String serverId) {
+                return CharacterEntityResponse.builder()
+                        .characterId(dto.getCharacterId())
+                        .characterName(dto.getCharacterName())
+                        .serverId(serverId)
+                        .level(dto.getLevel())
+                        .jobId(dto.getJobId())
+                        .jobGrowId(dto.getJobGrowId())
+                        .jobName(dto.getJobName())
+                        .jobGrowName(dto.getJobGrowName())
+                        .adventureFame(dto.getAdventureFame())
+                        .adventureName(dto.getAdventureName())
+                        .serverName(getServerName(serverId))
+                        .guildId(dto.getGuildId())
+                        .guildName(dto.getGuildName())
+                        .status(dto.getStatus())
+                        .build();
+            }
+
+            public static String getServerName(String serverId) {
                 if (serverId.equals("bakal")) {
                     return "바칼";
                 } else if (serverId.equals("cain")) {

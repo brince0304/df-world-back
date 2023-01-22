@@ -5,7 +5,8 @@ import com.dfoff.demo.JpaAuditing.AuditingFields;
 import jakarta.persistence.*;
 import lombok.*;
 
-import static com.dfoff.demo.Domain.Board.Chrono.timesAgo;
+import static com.dfoff.demo.Util.SearchPageUtil.timesAgo;
+
 
 @Entity
 @Builder

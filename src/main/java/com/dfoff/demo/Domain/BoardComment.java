@@ -15,8 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.dfoff.demo.Domain.Board.Chrono.timesAgo;
-import static com.dfoff.demo.Domain.Board.Chrono.timesAgo;
+import static com.dfoff.demo.Util.SearchPageUtil.timesAgo;
 
 
 @Table (indexes=@Index(name = "idx_createdAt" , columnList = "createdAt"))

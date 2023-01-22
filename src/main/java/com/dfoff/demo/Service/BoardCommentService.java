@@ -88,7 +88,9 @@ public class BoardCommentService {
         if(nickname.equals("")){nickname="비회원";}
         BoardComment boardComment_ = commentRepository.findBoardCommentById(id);
         boardComment_.setCommentLikeCount(boardComment_.getCommentLikeCount()+1);
-        boardComment_.getBoard().getUserAccount().getNotifications().add(Notification.of(boardComment_.getUserAccount(),boardComment_, LogType.COMMENT_LIKE,UserLogUtil.getLogContent(LogType.COMMENT_LIKE.name(),nickname)));
+        if(!boardComment_.getUserAccount().getUserId().equals(nickname)) {
+            boardComment_.getBoard().getUserAccount().getNotifications().add(Notification.of(boardComment_.getUserAccount(), boardComment_, LogType.COMMENT_LIKE, UserLogUtil.getLogContent(LogType.COMMENT_LIKE.name(), nickname)));
+        }
         return boardComment_.getCommentLikeCount();
     }
 
@@ -96,7 +98,9 @@ public class BoardCommentService {
         if(nickname.equals("")){nickname="비회원";}
         BoardComment boardComment_ = commentRepository.findBoardCommentById(id);
         boardComment_.setCommentLikeCount(boardComment_.getCommentLikeCount()-1);
-        boardComment_.getBoard().getUserAccount().getNotifications().add(Notification.of(boardComment_.getUserAccount(),boardComment_, LogType.COMMENT_UNLIKE,UserLogUtil.getLogContent(LogType.COMMENT_UNLIKE.name(),nickname)));
+        if(!boardComment_.getUserAccount().getUserId().equals(nickname)) {
+            boardComment_.getBoard().getUserAccount().getNotifications().add(Notification.of(boardComment_.getUserAccount(), boardComment_, LogType.COMMENT_UNLIKE, UserLogUtil.getLogContent(LogType.COMMENT_UNLIKE.name(), nickname)));
+        }
         return boardComment_.getCommentLikeCount();
     }
 
