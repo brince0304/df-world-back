@@ -2,10 +2,7 @@ package com.dfoff.demo.Service;
 
 
 import com.dfoff.demo.Domain.CharacterEntity;
-import com.dfoff.demo.Domain.ForCharacter.CharacterDto;
-import com.dfoff.demo.Domain.ForCharacter.CharacterAbilityDto;
-import com.dfoff.demo.Domain.ForCharacter.JobDto;
-import com.dfoff.demo.Domain.ForCharacter.ServerDto;
+import com.dfoff.demo.Domain.ForCharacter.*;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Repository.CharacterEntityRepository;
 import com.dfoff.demo.Repository.UserAccountCharacterMapperRepository;
@@ -26,6 +23,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static com.dfoff.demo.Util.OpenAPIUtil.*;
+import static com.dfoff.demo.Util.SearchPageUtil.timesAgo;
 
 @Service
 @RequiredArgsConstructor
@@ -49,12 +47,43 @@ public class CharacterService {
         return characterEntityList.stream().map(CharacterEntity.CharacterEntityDto::from).collect(Collectors.toList());
     }
 
+
+    public CharacterSkillDetailJsonDto getCharacterSkillDetail(String serverId, String characterId) {
+        return parseUtil(OpenAPIUtil.getCharacterSkillDetailUrl(serverId, characterId), CharacterSkillDetailJsonDto.class);
+    }
+
+    public String getLastUpdatedByCharacterId(String characterId) {
+        return timesAgo(characterEntityRepository.getReferenceById(characterId).getModifiedAt());
+    }
+
     public CharacterEntity.CharacterEntityDto getCharacter(String serverId,String characterId) {
         if(characterId==null || characterId.equals("")){
             return null;
         }
         CharacterEntity characterEntity = characterEntityRepository.findById(characterId).orElseGet(()-> characterEntityRepository.save(CharacterAbilityDto.toEntity(parseUtil(OpenAPIUtil.getCharacterAbilityUrl(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto(),serverId)));
         return CharacterEntity.CharacterEntityDto.from(characterEntity);
+    }
+
+    public CharacterEquipmentJsonDto getCharacterEquipment(String serverId,String characterId) {
+        if(characterId==null || characterId.equals("")){
+            return null;
+        }
+        return parseUtil(OpenAPIUtil.getCharacterEquipmentUrl(serverId, characterId), CharacterEquipmentJsonDto.class);
+    }
+
+    public List<EquipmentDetailJsonDto> getEquipmentDetail(CharacterEquipmentJsonDto dto) {
+        List <EquipmentDetailJsonDto> list = new ArrayList<>();
+        for(CharacterEquipmentJsonDto.Equipment eq : dto.getEquipment()){
+            list.add(parseUtil(OpenAPIUtil.getEquipmentDetailUrl(eq.getItemId()),EquipmentDetailJsonDto.class));
+        }
+        return list;
+    }
+
+    public CharacterBuffEquipmentJsonDto getCharacterBuffEquipment(String serverId,String characterId) {
+        if(characterId==null || characterId.equals("")){
+            return null;
+        }
+        return parseUtil(OpenAPIUtil.getCharacterBuffEquipmentUrl(serverId, characterId), CharacterBuffEquipmentJsonDto.class);
     }
 
     public Page<CharacterEntity.CharacterEntityDto> getCharacterByAdventureName(String adventureName, Pageable pageable) {
@@ -71,6 +100,14 @@ public class CharacterService {
         return CompletableFuture.completedFuture(CharacterEntity.CharacterEntityDto.from(entity));
     }
 
+    public CharacterAbilityDto getCharacterAbility(String serverId, String characterId) {
+        CharacterAbilityDto characterDto = parseUtil(OpenAPIUtil.getCharacterAbilityUrl(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
+        CharacterEntity character = characterEntityRepository.save(CharacterAbilityDto.toEntity(characterDto,serverId));
+        character.setAdventureFame(characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().isEmpty() ? "0" : characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().get().getValue());
+        characterDto.setAdventureFame(character.getAdventureFame());
+        return characterDto;
+    }
+
     public void addCharacter(UserAccount.UserAccountDto account, CharacterEntity.CharacterEntityDto character) { //캐릭터가 존재하지 않을 이유가 없음
         if (userAccountRepository.existsByUserId(account.userId())) {
             UserAccount userAccount = userAccountRepository.findById(account.userId()).orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
@@ -78,6 +115,11 @@ public class CharacterService {
             UserAccountCharacterMapper mapper = UserAccountCharacterMapper.of(userAccount, characterEntity);
             mapperRepository.save(mapper);
         }
+    }
+
+    public List<CharacterTalismanJsonDto.Talisman> getCharacterTalisman(String serverId, String characterId) {
+        CharacterTalismanJsonDto dto = parseUtil(OpenAPIUtil.getCharacterTalismanUrl(serverId, characterId), CharacterTalismanJsonDto.class);
+        return dto.getTalismans();
     }
 
 
@@ -91,7 +133,30 @@ public class CharacterService {
                 mapper.setUserAccount(null);
             }
         }
+    }
 
+    public CharacterSkillStyleJsonDto.Style getCharacterSkillStyle(String serverId, String characterId) {
+        CharacterSkillStyleJsonDto dto = parseUtil(OpenAPIUtil.getCharacterSkillUrl(serverId, characterId), CharacterSkillStyleJsonDto.class);
+        return dto.getSkill().getStyle();
+    }
+
+    public Long getBoardCountByCharacterId(String characterId){
+        return characterEntityRepository.getBoardCountByCharacterId(characterId);
+    }
+
+    public CharacterBuffAvatarJsonDto getCharacterBuffAvatar(String serverId, String characterId) {
+        CharacterBuffAvatarJsonDto dto = parseUtil(OpenAPIUtil.getCharacterBuffAvatarUrl(serverId, characterId), CharacterBuffAvatarJsonDto.class);
+       return dto;
+    }
+
+    public CharacterBuffCreatureJsonDto getCharacterBuffCreature(String serverId, String characterId) {
+        CharacterBuffCreatureJsonDto dto = parseUtil(OpenAPIUtil.getCharacterBuffCreatureUrl(serverId, characterId), CharacterBuffCreatureJsonDto.class);
+        return dto;
+    }
+
+    public CharacterAvatarJsonDto getCharacterAvatar(String serverId, String characterId) {
+        CharacterAvatarJsonDto dto = parseUtil(OpenAPIUtil.getCharacterAvatarUrl(serverId, characterId), CharacterAvatarJsonDto.class);
+        return dto;
     }
 
 
