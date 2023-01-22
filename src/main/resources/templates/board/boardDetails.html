@@ -284,9 +284,10 @@
                                   th:text="${article.character.characterName}" style="margin-left: -9px; color:black"> 캐릭터</span></a>
                         <div class="board-character" th:if="${article.character!=null}"
                              >
-                            <img th:src="${article.character.characterImageUrl}"
+                            <a style="text-decoration-line: none" th:href="@{/characters/detail(characterId=${article.character.characterId},serverId=${article.character.serverId})}">
+                            <img  th:src="${article.character.characterImageUrl}"
                                  src=""
-                            >
+                            ></a>
                         </div>
                         <div class="board-character" th:if="${article.character==null}"
                              >

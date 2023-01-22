@@ -202,6 +202,7 @@
 
                                                 <!-- Single Advisor-->
                                                 <div th:each="char : ${characters}" class="col-12 col-sm-6 col-lg-3">
+                                                    <a style="text-decoration-line: none" th:href="@{/characters/detail(characterId=${char.characterId},serverId=${char.serverId})}">
                                                     <div
                                                          class="single_advisor_profile wow fadeInUp characterCard "
                                                          data-wow-delay="0.2s">
@@ -230,20 +231,20 @@
                                                                th:text="'모험단 갱신필요'" th:if="${char.adventureName==null}">
                                                                </p> <p style="display:inline" th:text=" 'Lv.'+${char.level}"></p>
                                                         </div>
-                                                    </div>
+                                                    </div></a>
                                                 </div>
                                             </div>
                                             <nav class="pagination-outer" th:if="${!characters.isEmpty()}"  aria-label="Page navigation">
                                                 <ul class="pagination" th:with="start=${(characters.number/5)*5 + 1},
                     last=(${start + 4 < characters.totalPages ? start + 4 : characters.totalPages})">
                                                     <li class="page-item" th:class="${characters.first} ? 'disabled'">
-                                                        <a th:href="${characters.first} ? '#' :@{/characters/search(page=${0},characterName=${characterName},serverId=${serverId})}"  class="page-link" aria-label="Previous" >
+                                                        <a th:href="${characters.first} ? '#' :@{/characters/(page=${0},characterName=${characterName},serverId=${serverId})}"  class="page-link" aria-label="Previous" >
                                                             <span aria-hidden="true">«</span>
                                                         </a>
                                                     </li>
-                                                    <li  class="page-item"  th:each="page: ${#numbers.sequence(start , last)}" th:class="${page == characters.number + 1} ? 'active'" ><a class="page-link" th:text="${page }" th:href="@{/characters/search(page=${page -1},characterName=${characterName},serverId=${serverId})}" >1</a></li>
+                                                    <li  class="page-item"  th:each="page: ${#numbers.sequence(start , last)}" th:class="${page == characters.number + 1} ? 'active'" ><a class="page-link" th:text="${page }" th:href="@{/characters/(page=${page -1},characterName=${characterName},serverId=${serverId})}" >1</a></li>
                                                     <li class="page-item" th:class="${characters.totalPages == characters.number +1 } ? 'disabled'">
-                                                        <a href="#" class="page-link" aria-label="Next"    th:href="@{/characters/search(page=${characters.number +1},characterName=${characterName},serverId=${serverId})}" >
+                                                        <a href="#" class="page-link" aria-label="Next"    th:href="@{/characters/(page=${characters.number +1},characterName=${characterName},serverId=${serverId})}" >
                                                             <span aria-hidden="true">»</span>
                                                         </a>
                                                     </li>
