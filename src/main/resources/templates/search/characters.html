@@ -430,7 +430,7 @@
             padding: 0;
             overflow-y: hidden;
             overflow-x: auto;
-            box-shadow: 0 5px 10px 0px #8c8c8c;
+            box-shadow: 0 5px 10px 0px #d8cece;
         }
 
         .nav_u > li {
@@ -783,17 +783,17 @@
 
 
                     <div class="mb-1" id="char_rank">
-                        <a id="c_gray">버프랭킹</a>
-                        <span class="rank-text">32위 / 120,162명</span>
-                        <span class="rank-text badge rounded-pill bg-success">상위 0.0%</span>
+                        <a id="c_gray">전체명성랭킹</a>
+                        <span class="rank-text">[[${characterRank}]]위 / [[${characterCount}]]명</span>
+                        <span class="rank-text badge rounded-pill bg-warning text-dark">상위 [[${characterPercent}]]%</span>
                     </div>
-
-
                     <div class="mb-1" id="char_rank">
-                        <a id="c_gray">직업랭킹</a>
-                        <span class="rank-text">454위 / 122,679명</span>
-                        <span class="rank-text badge rounded-pill bg-warning text-dark">상위 0.4%</span>
+                        <a id="c_gray">직업명성랭킹</a>
+                        <span class="rank-text">[[${characterRankByJobName}]]위 / [[${characterCountByJobName}]]명</span>
+                        <span class="rank-text badge rounded-pill bg-success">상위 [[${characterPercentByJobName}]]%</span>
                     </div>
+
+
 
 
                     <div class="mb-1" id="char_guild">
@@ -814,8 +814,8 @@
 			</span>
                     </div>
 
-                    <div class="mb-1" th:if="${!buffStatus.isEmpty()}">
-                        <a id="char_buff" >Lv.[[${buffStatus.get(1)}]] [[${buffStatus.get(0)}]] +
+                    <div class="mb-1" th:if="${buffStatus.size()>1}">
+                        <a id="char_buff"  >Lv.[[${buffStatus.get(1)}]] [[${buffStatus.get(0)}]] +
                             [[${buffStatus.get(2)}]]</a>
 
                     </div>
@@ -842,11 +842,6 @@
                         <ul class="nav_u">
                             <li id="equip" class="nav_l nav_lon"><a href="#" class="nav_a active">
                                 장비<span class="blind"></span>
-                            </a></li>
-
-
-                            <li id="damage" class="nav_l"><a href="#" class="nav_a">
-                                데미지<span class="blind"></span>
                             </a></li>
 
 
@@ -949,23 +944,16 @@
                     </table>
                 </div>
             </div>
-
-            <div class="media-29101 d-md-flex w-100">
-                <div class="img">
-                    <img src="images/hero_2.jpg" alt="Image" class="img-fluid">
-                </div>
-                <div class="text">
-                    <a class="category d-block mb-4" href="#">Travel &mdash; Second Tab</a>
-                    <h2><a href="#">Take your mobile photography to the next level</a></h2>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Repudiandae fuga optio dolorem,
-                        fugit voluptates sint ducimus praesentium iste!</p>
-                </div>
-            </div> <!-- .item -->
-
             <div class="media-29101 d-md-flex w-100">
                 <div class="contantsView" id="buff_reinforce_list" data-id="true" style="min-height: 500px; width:100%">
                     <span class="nav-link equip-nav-style active" style="font-weight: bold;">장비</span>
                     <div class="buff-item-equip">
+                        <div th:if="${buffEquipment.skill.buff==null}">
+                            <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+                                <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
+                                <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">버프강화 장비가 존재하지 않습니다.</div>
+                            </div>
+                        </div>
                         <table class="buff-item-equip-table" style="width: 100%; border-spacing: 0 5px;">
                             <tbody th:if="${buffEquipment.skill.buff!=null}">
                             <tr class="itemRows" th:each="buffEquip:${buffEquipment.skill.buff.equipment}">
@@ -994,6 +982,12 @@
 
                     <span class="nav-link equip-nav-style active" style="font-weight: bold;">아바타</span>
                     <div class="buff-item-avator">
+                        <div th:if="${buffAvatar.skill.buff==null}">
+                            <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+                                <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
+                                <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">버프강화 아바타가 존재하지 않습니다.</div>
+                            </div>
+                        </div>
                         <table class="buff-item-avatar-table" style="width: 100%; border-spacing: 0 5px;">
                             <tbody th:if="${buffAvatar.skill.buff!=null}">
                             <tr class="itemRows" th:each="buffAvatar:${buffAvatar.skill.buff.avatar}">
@@ -1025,6 +1019,12 @@
 
                     <span class="nav-link equip-nav-style active" style="font-weight: bold;">크리처</span>
                     <div class="buff-item-creature">
+                        <div th:if="${buffCreature.skill.buff==null || buffCreature.skill.buff.creature==null}">
+                            <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+                                <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
+                                <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">버프강화 크리쳐가 존재하지 않습니다.</div>
+                            </div>
+                        </div>
                         <table class="buff-item-creature-table" style="width: 100%; border-spacing: 0 5px;">
                             <tbody>
                             <tr class="itemRows"
@@ -1051,8 +1051,14 @@
             </div> <!-- .item -->
             <div class="media-29101 d-md-flex w-100">
                 <div class="contantsView" id="availtable" style="width: 100%;">
+                    <div th:if="${characterAbility.status==null|| characterAbility.status.size()<44}">
+                        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+                            <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
+                            <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">능력치를 조회할 수 없습니다.</div>
+                        </div>
+                    </div>
                     <table class="table" id="statusTable" style="table-layout: fixed;"
-                           th:if="${characterAbility.status.size()>0}">
+                           th:if="${characterAbility.status.size()>45}">
                         <tr>
                             <td id="HP_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
                                 th:text="${characterAbility.status.get(0).name}"><img class="status_img"
@@ -1446,6 +1452,13 @@
                 </div>
             </div>
             <div class="media-29101 d-md-flex w-100">
+                <div class="contantsView" id="avatartable" data-id="true" style="padding: 10px; width:100%">
+                <div th:if="${characterAvatar.avatar.size()==0}">
+                    <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+                        <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
+                        <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">아바타가 존재하지 않습니다.</div>
+                    </div>
+                </div>
                 <table style="width:100%">
                     <tr class="itemRows" th:if="${characterAvatar.avatar.size()>0}"
                         th:each="avatar:${characterAvatar.avatar}">
@@ -1470,9 +1483,16 @@
                         </td>
                     </tr>
                 </table>
+                </div>
             </div>
             <div class="media-29101 d-md-flex w-100">
                 <div class="contantsView" id="talismantable" data-id="true" style="padding: 10px; width:100%">
+                    <div th:if="${characterTalisman==null}">
+                        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+                            <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
+                            <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">탈리스만이 존재하지 않습니다.</div>
+                        </div>
+                    </div>
                     <table class="" id="t_table" style="width: 100%">
                         <tbody>
                         <tr class="itemRows" th:if="${characterTalisman.size()>0}"
@@ -1622,6 +1642,8 @@
             return "#000";
         }
     }
+
+
 
 </script>
 </html>

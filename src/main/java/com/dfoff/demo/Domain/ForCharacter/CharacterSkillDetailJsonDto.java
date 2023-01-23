@@ -506,31 +506,31 @@ public class CharacterSkillDetailJsonDto implements Serializable
 
         @SerializedName("value1")
         @Expose
-        private Integer value1;
+        private String value1;
         @SerializedName("value2")
         @Expose
-        private Integer value2;
+        private String value2;
         @SerializedName("value3")
         @Expose
-        private Integer value3;
+        private String value3;
         @SerializedName("value4")
         @Expose
-        private Integer value4;
+        private String value4;
         @SerializedName("value5")
         @Expose
-        private Integer value5;
+        private String value5;
         @SerializedName("value6")
         @Expose
-        private Integer value6;
+        private String value6;
         @SerializedName("value7")
         @Expose
-        private Integer value7;
+        private String value7;
         @SerializedName("value8")
         @Expose
-        private Integer value8;
+        private String value8;
         @SerializedName("value9")
         @Expose
-        private Integer value9;
+        private String value9;
         private final static long serialVersionUID = 3104201765010513409L;
 
         /**
@@ -552,7 +552,7 @@ public class CharacterSkillDetailJsonDto implements Serializable
          * @param value3
          * @param value9
          */
-        public OptionValue(Integer value1, Integer value2, Integer value3, Integer value4, Integer value5, Integer value6, Integer value7, Integer value8, Integer value9) {
+        public OptionValue(String value1, String value2, String value3, String value4, String value5, String value6, String value7, String value8, String value9) {
             super();
             this.value1 = value1;
             this.value2 = value2;
@@ -565,75 +565,75 @@ public class CharacterSkillDetailJsonDto implements Serializable
             this.value9 = value9;
         }
 
-        public Integer getValue1() {
+        public String getValue1() {
             return value1;
         }
 
-        public void setValue1(Integer value1) {
+        public void setValue1(String value1) {
             this.value1 = value1;
         }
 
-        public Integer getValue2() {
+        public String getValue2() {
             return value2;
         }
 
-        public void setValue2(Integer value2) {
+        public void setValue2(String value2) {
             this.value2 = value2;
         }
 
-        public Integer getValue3() {
+        public String getValue3() {
             return value3;
         }
 
-        public void setValue3(Integer value3) {
+        public void setValue3(String value3) {
             this.value3 = value3;
         }
 
-        public Integer getValue4() {
+        public String getValue4() {
             return value4;
         }
 
-        public void setValue4(Integer value4) {
+        public void setValue4(String value4) {
             this.value4 = value4;
         }
 
-        public Integer getValue5() {
+        public String getValue5() {
             return value5;
         }
 
-        public void setValue5(Integer value5) {
+        public void setValue5(String value5) {
             this.value5 = value5;
         }
 
-        public Integer getValue6() {
+        public String getValue6() {
             return value6;
         }
 
-        public void setValue6(Integer value6) {
+        public void setValue6(String value6) {
             this.value6 = value6;
         }
 
-        public Integer getValue7() {
+        public String getValue7() {
             return value7;
         }
 
-        public void setValue7(Integer value7) {
+        public void setValue7(String value7) {
             this.value7 = value7;
         }
 
-        public Integer getValue8() {
+        public String getValue8() {
             return value8;
         }
 
-        public void setValue8(Integer value8) {
+        public void setValue8(String value8) {
             this.value8 = value8;
         }
 
-        public Integer getValue9() {
+        public String getValue9() {
             return value9;
         }
 
-        public void setValue9(Integer value9) {
+        public void setValue9(String value9) {
             this.value9 = value9;
         }
 

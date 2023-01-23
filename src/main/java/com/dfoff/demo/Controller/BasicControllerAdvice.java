@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.ModelAndView;
 
 @ControllerAdvice
@@ -21,6 +22,11 @@ public class BasicControllerAdvice {
         return new ModelAndView ("errorPage/404",HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(HttpClientErrorException.class)
+    public ModelAndView handleEntityNotFoundException(HttpClientErrorException exception) {
+        exception.getMessage();
+        return new ModelAndView ("errorPage/404",HttpStatus.NOT_FOUND);
+    }
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentExceptionException(IllegalArgumentException exception) {
         exception.getMessage();

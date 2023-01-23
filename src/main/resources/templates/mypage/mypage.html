@@ -301,6 +301,8 @@
                                                 <!-- Single Advisor-->
                                                 <div th:each="char : ${user.characters}"
                                                      class="col-12 col-sm-6 col-lg-3">
+                                                    <a style="text-decoration-line: none;text-decoration-color: black"
+                                                       th:href="@{/characters/detail(characterId=${char.characterId},serverId=${char.serverId})}">
                                                     <div class="single_advisor_profile wow fadeInUp characterCard"
                                                          data-wow-delay="0.2s"
                                                          style="background-image: url('/images/icon_char/bg_char.jpeg') ;   background-repeat: no-repeat;   background-position: center;
@@ -340,6 +342,7 @@
                                                                th:text=" 'Lv.'+${char.level}"></p>
                                                         </div>
                                                     </div>
+                                                    </a>
                                                 </div>
                                             </div>
                                         </div>

@@ -2,9 +2,11 @@ package com.dfoff.demo.Service;
 
 
 import com.dfoff.demo.Domain.CharacterEntity;
+import com.dfoff.demo.Domain.CharacterSkillDetail;
 import com.dfoff.demo.Domain.ForCharacter.*;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Repository.CharacterEntityRepository;
+import com.dfoff.demo.Repository.CharacterSkillDetailRepository;
 import com.dfoff.demo.Repository.UserAccountCharacterMapperRepository;
 import com.dfoff.demo.Repository.UserAccountRepository;
 import com.dfoff.demo.Domain.UserAccountCharacterMapper;
@@ -30,6 +32,7 @@ import static com.dfoff.demo.Util.SearchPageUtil.timesAgo;
 @Slf4j
 @Transactional
 public class CharacterService {
+    private final CharacterSkillDetailRepository characterSkillDetailRepository;
     private final CharacterEntityRepository characterEntityRepository;
     private final UserAccountRepository userAccountRepository;
 
@@ -47,9 +50,15 @@ public class CharacterService {
         return characterEntityList.stream().map(CharacterEntity.CharacterEntityDto::from).collect(Collectors.toList());
     }
 
+    public void saveSkillDetails(CharacterSkillStyleJsonDto style, CharacterSkillDetailJsonDto detail){
+        characterSkillDetailRepository.saveAll(CharacterSkillDetail.CharacterSkillDetailDto.toEntity(style,detail));
+    }
 
-    public CharacterSkillDetailJsonDto getCharacterSkillDetail(String serverId, String characterId) {
-        return parseUtil(OpenAPIUtil.getCharacterSkillDetailUrl(serverId, characterId), CharacterSkillDetailJsonDto.class);
+
+
+
+    public List<CharacterSkillDetail.CharacterSkillDetailDto> getCharacterSkillDetail(String serverId, String characterId) {
+        return getSkillDetails(parseUtil(OpenAPIUtil.getCharacterSkillUrl(serverId, characterId), CharacterSkillStyleJsonDto.class));
     }
 
     public String getLastUpdatedByCharacterId(String characterId) {
@@ -140,9 +149,50 @@ public class CharacterService {
         return dto.getSkill().getStyle();
     }
 
+    public List<CharacterSkillDetail.CharacterSkillDetailDto> getSkillDetails(CharacterSkillStyleJsonDto dto) {
+        List<CharacterSkillDetail> list = new ArrayList<>();
+        for(CharacterSkillStyleJsonDto.Active active : dto.getSkill().getStyle().getActive()){
+            log.info("jobID:{}, skillId:{}",dto.getJobId(),active.getSkillId());
+            if(active.getRequiredLevel()>=20){
+            characterSkillDetailRepository.getCharacterSkillDetailBySkillIdAndSkillLevel(active.getSkillId(),String.valueOf(active.getLevel())).ifPresentOrElse(list::add,()->{
+                CharacterSkillDetailJsonDto detail = parseUtil(OpenAPIUtil.getCharacterSkillDetailUrl(dto.getJobId(),active.getSkillId()), CharacterSkillDetailJsonDto.class);
+                characterSkillDetailRepository.saveAll(CharacterSkillDetail.CharacterSkillDetailDto.toEntity(dto,detail));
+            }
+            );
+            }
+        }
+        return list.stream().map(CharacterSkillDetail.CharacterSkillDetailDto::from).collect(Collectors.toList());
+    }
+
+    public Long getCharacterCount(){
+        return characterEntityRepository.count();
+    }
+
+    public Long getCharacterCountByJobName(String jobName){
+        return characterEntityRepository.getCharacterCountByJobName(jobName);
+    }
+
+    public Long getRankByCharacterId(String characterId){
+        return characterEntityRepository.getRankByCharacterId(characterId);
+    }
+
+
+
+    public Long getRankByCharacterIdAndJobName(String characterId, String jobName){
+        return characterEntityRepository.getRankByCharacterId(characterId,jobName);
+    }
+
+    public Double getRankPercent(Long rank, Long count){
+        return (double)rank/count*100;
+    }
+
+
+
     public Long getBoardCountByCharacterId(String characterId){
         return characterEntityRepository.getBoardCountByCharacterId(characterId);
     }
+
+
 
     public CharacterBuffAvatarJsonDto getCharacterBuffAvatar(String serverId, String characterId) {
         CharacterBuffAvatarJsonDto dto = parseUtil(OpenAPIUtil.getCharacterBuffAvatarUrl(serverId, characterId), CharacterBuffAvatarJsonDto.class);
