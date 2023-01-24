@@ -1,15 +1,9 @@
 package com.dfoff.demo.Service;
 
 
-import com.dfoff.demo.Domain.CharacterEntity;
-import com.dfoff.demo.Domain.CharacterSkillDetail;
+import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.ForCharacter.*;
-import com.dfoff.demo.Domain.UserAccount;
-import com.dfoff.demo.Repository.CharacterEntityRepository;
-import com.dfoff.demo.Repository.CharacterSkillDetailRepository;
-import com.dfoff.demo.Repository.UserAccountCharacterMapperRepository;
-import com.dfoff.demo.Repository.UserAccountRepository;
-import com.dfoff.demo.Domain.UserAccountCharacterMapper;
+import com.dfoff.demo.Repository.*;
 import com.dfoff.demo.Util.OpenAPIUtil;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +31,7 @@ public class CharacterService {
     private final UserAccountRepository userAccountRepository;
 
     private final UserAccountCharacterMapperRepository mapperRepository;
+
 
     private final Gson gson = OpenAPIUtil.getGson();
 
@@ -83,8 +78,9 @@ public class CharacterService {
     public List<EquipmentDetailJsonDto> getEquipmentDetail(CharacterEquipmentJsonDto dto) {
         List <EquipmentDetailJsonDto> list = new ArrayList<>();
         for(CharacterEquipmentJsonDto.Equipment eq : dto.getEquipment()){
-            list.add(parseUtil(OpenAPIUtil.getEquipmentDetailUrl(eq.getItemId()),EquipmentDetailJsonDto.class));
+               list.add(parseUtil(OpenAPIUtil.getEquipmentDetailUrl(eq.getItemId()),EquipmentDetailJsonDto.class));
         }
+        log.info("list size : {}",list.size());
         return list;
     }
 
@@ -202,6 +198,10 @@ public class CharacterService {
     public CharacterBuffCreatureJsonDto getCharacterBuffCreature(String serverId, String characterId) {
         CharacterBuffCreatureJsonDto dto = parseUtil(OpenAPIUtil.getCharacterBuffCreatureUrl(serverId, characterId), CharacterBuffCreatureJsonDto.class);
         return dto;
+    }
+
+    public Page<CharacterEntity.CharacterEntityDto> getCharactersOrderByAdventureFame(Pageable pageable){
+        return characterEntityRepository.findAll(pageable).map(CharacterEntity.CharacterEntityDto::from);
     }
 
     public CharacterAvatarJsonDto getCharacterAvatar(String serverId, String characterId) {
