@@ -35,6 +35,11 @@ public interface CharacterEntityRepository  extends JpaRepository<CharacterEntit
 
     //해당 캐릭터가 전체 캐릭터중에 명성이 몇번째인지 퍼센트로 알아내는 쿼리
 
+    @Query("select c from CharacterEntity  c order by c.adventureFame desc")
+    Page<CharacterEntity> getCharacterEntitiesOrderByAdventureFame(Pageable pageable);
+
+    @Query("select c from CharacterEntity  c where c.jobName = :jobName order by c.adventureFame desc")
+    Page<CharacterEntity> getCharacterEntitiesOrderByAdventureFameAndJobName(String jobName, Pageable pageable);
 
     @Query("select count(c) from CharacterEntity c where c.jobGrowName = :jobGrowName")
     Long getCharacterCountByJobGrowName(String jobGrowName);
