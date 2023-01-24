@@ -531,6 +531,10 @@ public class CharacterSkillDetailJsonDto implements Serializable
         @SerializedName("value9")
         @Expose
         private String value9;
+
+        @SerializedName("value10")
+        @Expose
+        private String value10;
         private final static long serialVersionUID = 3104201765010513409L;
 
         /**
@@ -552,7 +556,7 @@ public class CharacterSkillDetailJsonDto implements Serializable
          * @param value3
          * @param value9
          */
-        public OptionValue(String value1, String value2, String value3, String value4, String value5, String value6, String value7, String value8, String value9) {
+        public OptionValue(String value1, String value2, String value3, String value4, String value5, String value6, String value7, String value8, String value9,String value10) {
             super();
             this.value1 = value1;
             this.value2 = value2;
@@ -563,6 +567,7 @@ public class CharacterSkillDetailJsonDto implements Serializable
             this.value7 = value7;
             this.value8 = value8;
             this.value9 = value9;
+            this.value10 = value10;
         }
 
         public String getValue1() {
@@ -637,6 +642,14 @@ public class CharacterSkillDetailJsonDto implements Serializable
             this.value9 = value9;
         }
 
+        public String getValue10() {
+            return value10;
+        }
+
+        public void setValue10(String value9) {
+            this.value10 = value10;
+        }
+
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
@@ -676,6 +689,10 @@ public class CharacterSkillDetailJsonDto implements Serializable
             sb.append("value9");
             sb.append('=');
             sb.append(((this.value9 == null)?"<null>":this.value9));
+            sb.append(',');
+            sb.append("value10");
+            sb.append('=');
+            sb.append(((this.value10 == null)?"<null>":this.value10));
             sb.append(',');
             if (sb.charAt((sb.length()- 1)) == ',') {
                 sb.setCharAt((sb.length()- 1), ']');
