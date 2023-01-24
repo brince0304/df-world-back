@@ -3,6 +3,7 @@ package com.dfoff.demo.Controller;
 import com.dfoff.demo.Domain.CharacterEntity;
 import com.dfoff.demo.Domain.ForCharacter.CharacterBuffEquipmentJsonDto;
 import com.dfoff.demo.Domain.ForCharacter.CharacterEquipmentJsonDto;
+import com.dfoff.demo.Domain.ForCharacter.EquipmentDetailJsonDto;
 import com.dfoff.demo.Service.CharacterService;
 import com.dfoff.demo.Util.SearchPageUtil;
 import lombok.RequiredArgsConstructor;
@@ -70,10 +71,13 @@ public class CharacterController {
         mav.addObject("characterId", characterId);
         CharacterBuffEquipmentJsonDto characterBuffEquipment = characterService.getCharacterBuffEquipment(serverId, characterId);
         CharacterEquipmentJsonDto characterEquipmentJsonDto= characterService.getCharacterEquipment(serverId, characterId);
+        List<EquipmentDetailJsonDto> equipmentDetailJsonDtos = characterService.getEquipmentDetail(characterEquipmentJsonDto);
         mav.addObject("buffEquipment",characterBuffEquipment);
         mav.addObject("characterEquipment",characterEquipmentJsonDto );
         mav.addObject("characterAbility", CharacterEntity.CharacterEntityDto.CharacterEntityResponse.from(characterService.getCharacterAbility(serverId, characterId),serverId));
-        mav.addObject("buffStatus", SearchPageUtil.getBuffPercent(characterBuffEquipment));
+        mav.addObject("characterEquipmentDetails",characterService.getEquipmentDetail(characterEquipmentJsonDto));
+        log.info("characterEquipmentJsonDto : {}",characterEquipmentJsonDto.getEquipment().size());
+        mav.addObject("buffStatus", SearchPageUtil.getBuffPercent(characterBuffEquipment,equipmentDetailJsonDtos));
         mav.addObject("buffAvatar",characterService.getCharacterBuffAvatar(serverId, characterId));
         mav.addObject("buffCreature",characterService.getCharacterBuffCreature(serverId, characterId));
         mav.addObject("characterAvatar",characterService.getCharacterAvatar(serverId, characterId));
@@ -86,15 +90,16 @@ public class CharacterController {
         Long characterCountByJobName = characterService.getCharacterCountByJobName(characterBuffEquipment.getJobName());
         Long characterCount = characterService.getCharacterCount();
         String characterPercent = String.format("%.2f", (double) characterRank / characterCount * 100);
-        String characterPercentByJobname = String.format("%.2f", (double) characterRankByJobName / characterCountByJobName * 100);
+        String characterPercentByJobName = String.format("%.2f", (double) characterRankByJobName / characterCountByJobName * 100);
         mav.addObject("characterRank", characterRank);
         mav.addObject("characterRankByJobName", characterRankByJobName);
         mav.addObject("characterCountByJobName", characterCountByJobName);
         mav.addObject("characterCount", characterCount);
         mav.addObject("characterPercent", characterPercent);
-        mav.addObject("characterPercentByJobname", characterPercentByJobname);
+        mav.addObject("characterPercentByJobName", characterPercentByJobName);
         return mav;
     }
+
 
 
 
