@@ -90,7 +90,7 @@ public class UserAccountService {
 
     public Page<Notification.UserLogResponse> getUserLog(String userId, Pageable pageable) {
         Page<Notification> userLog = notificationRepository.getUserLogByUserAccount_UserId(userId, pageable);
-        userLog.forEach(o-> o.setIsChecked("Y"));
+        userLog.forEach(o-> o.setChecked(Boolean.TRUE));
         return userLog.map(Notification.UserLogResponse::from);
     }
 

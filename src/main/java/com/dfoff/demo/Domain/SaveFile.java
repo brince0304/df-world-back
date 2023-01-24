@@ -4,6 +4,7 @@ import com.dfoff.demo.JpaAuditing.AuditingFields;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.Objects;
 @NoArgsConstructor (access = AccessLevel.PROTECTED)
 @AllArgsConstructor (access = AccessLevel.PRIVATE)
 @Builder
+@SQLDelete(sql = "UPDATE save_file SET deleted = true, deleted_at = now() WHERE id = ?")
 public class SaveFile extends AuditingFields {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -30,6 +32,13 @@ public class SaveFile extends AuditingFields {
     private String fileType;
     @Setter
     private Long fileSize;
+
+    @Builder.Default
+    private Boolean deleted = Boolean.FALSE;
+
+
+    private LocalDateTime deletedAt;
+
 
 
 

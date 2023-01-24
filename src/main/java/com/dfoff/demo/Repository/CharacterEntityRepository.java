@@ -16,7 +16,7 @@ public interface CharacterEntityRepository  extends JpaRepository<CharacterEntit
 
     Long countCharacterEntitiesByJobName(String jobName);
 
-    @Query("select count(b) from Board b  inner join b.character c on b.character.characterId=c.characterId where b.isDeleted='N' and c.characterId=:characterId")
+    @Query("select count(b) from Board b  inner join b.character c on b.character.characterId=c.characterId where b.deleted=false and c.characterId=:characterId")
     Long getBoardCountByCharacterId(String characterId);
 
 

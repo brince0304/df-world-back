@@ -23,6 +23,7 @@ import java.util.Objects;
 @Transactional
 public class BoardCommentService {
     private final BoardCommentRepository commentRepository;
+    private final NotificationRepository notificationRepository;
 
 
 
@@ -49,7 +50,7 @@ public class BoardCommentService {
 
         BoardComment comment_ = commentRepository.save(request.toEntity(account, board));
         if(!account.userId().equals(board.getUserAccount().userId())) {
-            comment_.getBoard().getUserAccount().getNotifications().add(Notification.of(comment_.getBoard().getUserAccount(), comment_.getBoard(), LogType.COMMENT, UserLogUtil.getLogContent(LogType.COMMENT.name(), account.nickname())));
+            notificationRepository.save(Notification.of(comment_.getBoard().getUserAccount(), comment_.getBoard(), LogType.COMMENT, UserLogUtil.getLogContent(LogType.COMMENT.name(), account.nickname())));
         }
     }
 
@@ -68,8 +69,7 @@ public class BoardCommentService {
                 }
             });
         });
-        commentRepository.deleteChildrenCommentById(id);
-        commentRepository.deleteBoardCommentById(id);
+        commentRepository.deleteById(id);
 
     }
 
@@ -110,13 +110,15 @@ public class BoardCommentService {
         BoardComment boardComment_ = commentRepository.findBoardCommentById(parentId);
         if(boardComment_== null){
             throw new EntityNotFoundException("해당 댓글이 존재하지 않습니다.");
+        }if(boardComment_.getBoard().getDeleted()|| !Objects.equals(boardComment_.getBoard().getId(), request.getBoardId())){
+            throw new EntityNotFoundException("게시글이 삭제되었거나 댓글이 존재하지 않습니다.");
         }
         BoardComment children = request.toEntity(account,board);
-        children.setIsParent("N");
+        children.setIsParent(Boolean.FALSE);
         children.setParentComment(boardComment_);
         commentRepository.save(children);
         if(!account.userId().equals(board.getUserAccount().userId())) {
-            boardComment_.getUserAccount().getNotifications().add(Notification.of(boardComment_.getUserAccount(),children, LogType.CHILDREN_COMMENT,UserLogUtil.getLogContent(LogType.CHILDREN_COMMENT.name(),account.nickname())));
+            notificationRepository.save(Notification.of(boardComment_.getUserAccount(),children, LogType.CHILDREN_COMMENT,UserLogUtil.getLogContent(LogType.CHILDREN_COMMENT.name(),account.nickname())));
         }
     }
 

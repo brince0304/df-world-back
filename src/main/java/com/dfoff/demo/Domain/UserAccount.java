@@ -8,6 +8,7 @@ import io.micrometer.core.lang.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @Table(indexes =
         {@Index(columnList = "email", unique = true)
                 , @Index(columnList = "nickname", unique = true)})
+@SQLDelete(sql = "UPDATE user_account SET deleted = true, deleted_at = now() WHERE id = ?")
 public class UserAccount extends AuditingFields {
     @Id
     @Column(length = 50)
@@ -67,11 +69,14 @@ public class UserAccount extends AuditingFields {
 
     @Setter
     @Builder.Default
-    private String isDeleted = "N";
+    private Boolean deleted= Boolean.FALSE;
 
     @OneToMany (mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private Set<Notification> notifications = new LinkedHashSet<>();
+
+
+    private LocalDateTime deletedAt;
 
 
 

@@ -9,6 +9,10 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
@@ -27,6 +31,7 @@ import static com.dfoff.demo.Util.SearchPageUtil.timesAgo;
 @Builder
 @AllArgsConstructor (access = AccessLevel.PRIVATE)
 @NoArgsConstructor (access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE board SET deleted = true , deleted_at = now() WHERE id = ?")
 public class Board extends AuditingFields {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,7 +59,7 @@ public class Board extends AuditingFields {
     @Setter
     @Column(nullable = false)
     @Builder.Default
-    private String isDeleted = "N";
+    private Boolean deleted = Boolean.FALSE;
     @Setter
     @Builder.Default
     private Integer boardViewCount = 0;
@@ -62,18 +67,18 @@ public class Board extends AuditingFields {
     @Builder.Default
     private Integer boardLikeCount = 0;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     @JoinColumn(name = "board_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     private final Set<SaveFile> boardFiles = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     @ToString.Exclude
     private final Set<BoardComment> boardComments = new LinkedHashSet<>();
 
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     @Builder.Default
     @ToString.Exclude
     private final Set<BoardHashtagMapper> hashtags = new LinkedHashSet<>();
@@ -82,6 +87,8 @@ public class Board extends AuditingFields {
     @JoinColumn(name = "character_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     @Setter
     private CharacterEntity character;
+
+    private LocalDateTime deletedAt;
 
 
     @Override
@@ -111,7 +118,7 @@ public class Board extends AuditingFields {
         private final String boardTitle;
         private final String boardContent;
         private final UserAccount.UserAccountDto userAccount;
-        private final String isDeleted;
+
         private final Integer boardViewCount;
         private final Integer boardLikeCount;
 
@@ -127,7 +134,6 @@ public class Board extends AuditingFields {
                     .boardTitle(board.getBoardTitle())
                     .boardContent(board.getBoardContent())
                     .userAccount(UserAccount.UserAccountDto.from(board.getUserAccount()))
-                    .isDeleted(board.getIsDeleted())
                     .boardViewCount(board.getBoardViewCount())
                     .boardLikeCount(board.getBoardLikeCount())
                     .build();
@@ -218,7 +224,6 @@ public class Board extends AuditingFields {
         private final BoardType boardType;
         private final String boardTitle;
         private final String boardContent;
-        private final String isDeleted;
         private final Integer boardViewCount;
         private final Integer boardLikeCount;
         private final String commentCount;
@@ -262,7 +267,6 @@ public class Board extends AuditingFields {
                     .boardType(board.getBoardType())
                     .boardTitle(board.getBoardTitle())
                     .boardContent(board.getBoardContent())
-                    .isDeleted(board.getIsDeleted())
                     .boardViewCount(board.getBoardViewCount())
                     .boardLikeCount(board.getBoardLikeCount())
                     .commentCount(String.valueOf(board.getBoardComments().size()))
@@ -289,7 +293,7 @@ public class Board extends AuditingFields {
         private final BoardType boardType;
         private final String boardTitle;
         private final String boardContent;
-        private final String isDeleted;
+        private Boolean deleted;
         private final Integer boardViewCount;
         private final Integer boardLikeCount;
         private final String commentCount;
@@ -329,7 +333,7 @@ public class Board extends AuditingFields {
                     .createdAt(timesAgo(board.getCreatedAt()))
                     .createdBy(board.getCreatedBy())
                     .id(board.getId())
-                    .isDeleted(board.getIsDeleted())
+                    .deleted(board.getDeleted())
                     .modifiedAt(timesAgo(board.getModifiedAt()))
                     .modifiedBy(board.getModifiedBy())
                     .character(board.getCharacter() == null ? null : CharacterBoardResponse.from(board.getCharacter()))
@@ -383,13 +387,12 @@ public class Board extends AuditingFields {
         private final String modifiedBy;
         private final Long id;
         private final BoardType boardType;
-        @NotNull
-        @Length(min = 1, max = 100)
+
         private final String boardTitle;
-        @NotNull
-        @Length(min = 1, max = 10000)
+
         private final String boardContent;
-        private final String isDeleted;
+
+        private Boolean deleted;
         private final Integer boardViewCount;
         private final Integer boardLikeCount;
 
@@ -433,7 +436,7 @@ public class Board extends AuditingFields {
                     .boardType(board.getBoardType())
                     .boardTitle(board.getBoardTitle())
                     .boardContent(board.getBoardContent())
-                    .isDeleted(board.getIsDeleted())
+                    .deleted(board.getDeleted())
                     .boardViewCount(board.getBoardViewCount())
                     .boardLikeCount(board.getBoardLikeCount())
                     .character(board.getCharacter() == null ? null : CharacterBoardResponse.from(board.getCharacter()))

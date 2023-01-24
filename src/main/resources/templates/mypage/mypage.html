@@ -1206,7 +1206,7 @@
                 let html = "";
                 if (data.content.length > 0) {
                     $(data.content).each(function () {
-                        if (this.isDeleted === 'N') {
+                        if (this.deleted === false) {
                             html += '<div data-id="' + this.id + '" style="margin:5px">';
                             html += '<a style="text-decoration-line: none; color: #535353;" href="/boards/' + this.boardId + '">';
                             if (this.commentContent.length < 35) {
@@ -1344,7 +1344,7 @@
                 $('#boardLogs').html("");
                 if (data.content.length > 0) {
                     $(data.content).each(function () {
-                        if (this.isDeleted === 'N') {
+                        if (this.deleted === false) {
                             html += '<div data-id="' + this.id + '" style="margin:5px">';
                             html += '<a style="text-decoration-line: none; color: #535353;" href="/boards/' + this.id +'">';
                             if (this.character != null) {

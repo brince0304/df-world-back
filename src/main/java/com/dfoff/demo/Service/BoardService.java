@@ -206,13 +206,12 @@ public class BoardService {
             mapper_.setHashtag(null);
         }
         board_.getBoardComments().forEach(o-> {
-            o.setIsDeleted("Y");
             if(!o.getUserAccount().getUserId().equals(board_.getUserAccount().getUserId())){
                 o.getUserAccount().getNotifications().add(Notification.of(o.getUserAccount(),board_,LogType.DELETE_COMMENT,UserLogUtil.getLogContent(LogType.DELETE_COMMENT.name(),board_.getUserAccount().getNickname())));
             }
         });
         board_.setCharacter(null);
-        boardRepository.deleteBoardById(id);
+        boardRepository.deleteById(id);
     }
     @Transactional (readOnly = true)
     public Set<SaveFile.SaveFileDTO> getBoardSaveFile(Long id){
