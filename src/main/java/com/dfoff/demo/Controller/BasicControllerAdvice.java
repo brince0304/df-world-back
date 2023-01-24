@@ -25,7 +25,7 @@ public class BasicControllerAdvice {
     @ExceptionHandler(HttpClientErrorException.class)
     public ModelAndView handleEntityNotFoundException(HttpClientErrorException exception) {
         exception.getMessage();
-        return new ModelAndView ("errorPage/404",HttpStatus.NOT_FOUND);
+        return new ModelAndView (exception.getMessage(),HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentExceptionException(IllegalArgumentException exception) {
