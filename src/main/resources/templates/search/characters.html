@@ -1503,12 +1503,12 @@
                                                                  th:src="@{'https://img-api.neople.co.kr/df/items/'+${talisman.talisman.itemId}}"><span
                                         class="slot-badge">탈리스만</span></div>
                                 <div class="item-info-view">
-                                    <div class="item-info-left"><a class="tvitemName" style="color: #FF00FF;"
-                                                                   th:text="${talisman.talisman.itemName}">카펠라의 성흔 :
+                                    <div class="item-info-left"><a class="tvitemName talismanName" style="color: #FF00FF;"
+                                                                   th:text="${talisman.talisman.itemName}" th:data-talismanName="${talisman.talisman.itemName}">카펠라의 성흔 :
                                         마녀의 정원</a></div>
                                     <div th:if="${talisman.runes.size()>0}" th:each="rune :${talisman.runes}">
-                                    <span class="avatar-text" style="color: #FF00FF;"><i class="far fa-circle"
-                                                                                         style="font-weight: bold; color: #5F00FF !important;"></i>[[${rune.itemName}]]</span>
+                                    <span class="avatar-text runeName" style="color: #FF00FF;" th:data-item="${rune.itemName}"><i class="far fa-circle talismanColor" th:data-item="${rune.itemName}"
+                                                                                         style="font-weight: bold;"></i>[[${rune.itemName}]]</span>
                                     </div>
                                 </div>
                             </td>
@@ -1582,6 +1582,28 @@
             $(this).css('color', getColor(rarity));
         });
     })
+    $(document).ready(function () {
+        $('.talismanColor').each(function () {
+            var itemName = $(this).attr('data-item');
+            $(this).css('color', getTalismanColor(itemName));
+        });
+    })
+
+    $(document).ready(function () {
+        $('.talismanName').each(function () {
+            var itemName = $(this).attr('data-talismanName');
+            $(this).css('color', getTalismanNameColor(itemName));
+        });
+    })
+
+    $(document).ready(function () {
+        $('.runeName').each(function () {
+            var itemName = $(this).attr('data-item');
+            $(this).css('color', getRuneColor(itemName));
+        });
+    })
+
+
 
     $(document).ready(function () {
         $('input[name="styleRadio"]').click(function () {
@@ -1591,23 +1613,7 @@
     })
     let characterBuffBoolean = false;
 
-    function getCharacterBuff() {
-        if (characterBuffBoolean === false) {
-            characterBuffBoolean = true;
-            $.ajax({
-                url: '/characters/',
-                type: 'post',
-                data: {
-                    characterId: $('#characterId').val()
-                },
-                success: function (data) {
-                    if (data != null) {
-                        $('#characterBuff').html(data);
-                    }
-                }
-            });
-        }
-    }
+
 
     function getColor(itemRarity) {
         if (itemRarity === "언커먼") {
@@ -1626,6 +1632,35 @@
             return "#FFB400";
         }
     }
+
+    function getRuneColor(itemRarity) {
+        if (itemRarity.includes("빛바랜")) {
+            return "#68D5ED";
+        } else if (itemRarity.includes("갈라진")) {
+            return "#8e8e93";
+        } else if (itemRarity.includes("선명한")) {
+            return "#B36BFF";
+        } else if (itemRarity.includes("화려한")) {
+            return "#FF00FF";
+        }
+    }
+
+    function getTalismanNameColor(itemRarity) {
+        if (itemRarity.includes("빛바랜")) {
+            return "#68D5ED";
+        } else if (itemRarity.includes("갈라진")) {
+            return "#8e8e93";
+        } else if (itemRarity.includes("온전한")) {
+            return "#B36BFF";
+        }else if (itemRarity.includes("성흔의")) {
+            return "#B36BFF";
+        } else if (itemRarity.includes("카펠라")) {
+            return "#FF00FF";
+        } else{
+            return "#FF00FF";
+        }
+    }
+
 
     function getTalismanColor(itemName) {
         if (itemName.indexOf('세컨드 팩트') > -1) {
