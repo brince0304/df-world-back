@@ -81,6 +81,18 @@ public class CharacterController {
         mav.addObject("boardCount",characterService.getBoardCountByCharacterId( characterId));
         mav.addObject("characterSkillStyle",characterService.getCharacterSkillStyle(serverId, characterId));
         mav.addObject("lastUpdated",characterService.getLastUpdatedByCharacterId(characterId));
+        Long characterRank = characterService.getRankByCharacterId(characterId);
+        Long characterRankByJobName = characterService.getRankByCharacterIdAndJobName(characterId, characterBuffEquipment.getJobName());
+        Long characterCountByJobName = characterService.getCharacterCountByJobName(characterBuffEquipment.getJobName());
+        Long characterCount = characterService.getCharacterCount();
+        String characterPercent = String.format("%.2f", (double) characterRank / characterCount * 100);
+        String characterPercentByJobname = String.format("%.2f", (double) characterRankByJobName / characterCountByJobName * 100);
+        mav.addObject("characterRank", characterRank);
+        mav.addObject("characterRankByJobName", characterRankByJobName);
+        mav.addObject("characterCountByJobName", characterCountByJobName);
+        mav.addObject("characterCount", characterCount);
+        mav.addObject("characterPercent", characterPercent);
+        mav.addObject("characterPercentByJobname", characterPercentByJobname);
         return mav;
     }
 
