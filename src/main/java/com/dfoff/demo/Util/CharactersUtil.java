@@ -16,7 +16,7 @@ import java.util.StringTokenizer;
 @Slf4j
 public class CharactersUtil {
 
-    public static List<String> getBuffPercent(CharacterBuffEquipmentJsonDto dto, List<EquipmentDetailJsonDto> equipment){
+    public static List<String> getBuffPercent(CharacterBuffEquipmentJsonDto dto, List<EquipmentDetailJsonDto> equipment) throws InterruptedException {
         List<String> list = new ArrayList<>();
         int levelPlus =0;
         if(equipment.size()>0){
@@ -35,8 +35,6 @@ public class CharactersUtil {
                     if(!str.contains("50")){
                         str = buff.getItemBuff()!=null? buff.getItemBuff().getExplain().substring( buff.getItemBuff().getExplain().indexOf("+")+1, buff.getItemBuff().getExplain().indexOf("+")+2) : "0";
                         levelPlus += Integer.parseInt(str.charAt(0)+"");
-                        log.info("str : {}",str);
-                        log.info("levelPlus : {}",levelPlus);
                     }
                 }
             }
@@ -71,7 +69,6 @@ public class CharactersUtil {
                 while(st.hasMoreTokens()){
                     String token = st.nextToken();
                     if(token.contains("스킬") || token.contains("데미지")||token.contains("무기")){
-                        log.info("token : {}",token);
                         String num = token.substring(token.length()-3,token.length()-2);
                         switch (Integer.parseInt(num)-1) {
                             case 0 -> list.add(val.getValue1() + "%");
@@ -85,7 +82,6 @@ public class CharactersUtil {
                             case 8 -> list.add(val.getValue9() + "%");
                             case 9 -> list.add(val.getValue10() + "%");
                         }
-                        log.info("스킬버프 : "+list);
                         return list;
                     }
                 }
@@ -100,77 +96,19 @@ public class CharactersUtil {
     public static String getSkillFinalPercent (CharacterSkillDetailJsonDto dto, int level) {
         List<String> percentPerLevel = new ArrayList<>();
         String optionDesc = dto.getLevelInfo().getOptionDesc();
-        if(optionDesc==null||optionDesc.contains("증가")){
-            return "0";
-        }
         List<CharacterSkillDetailJsonDto.Row> optionValues = dto.getLevelInfo().getRows();
-        StringTokenizer st = new StringTokenizer(optionDesc, "\n");
-        String[] optionDescs = new String[st.countTokens()];
-        while(st.hasMoreTokens()){
-            for(int i=0; i<optionDescs.length; i++){
-                optionDescs[i] = st.nextToken();
-            }
-        }
-        for (CharacterSkillDetailJsonDto.Row row : optionValues) {
-            List<Double> optionValuesInt = new ArrayList<>();
-            if (row.getOptionValue().getValue1() != null) {
-                optionValuesInt.add(!row.getOptionValue().getValue1().equals("-") ? Double.parseDouble(row.getOptionValue().getValue1()) : 0);
-            }
-            if (row.getOptionValue().getValue2() != null) {
-                optionValuesInt.add(!row.getOptionValue().getValue2().equals("-") ? Double.parseDouble(row.getOptionValue().getValue2()) : 0);
-            }
-            if (row.getOptionValue().getValue3() != null) {
-                optionValuesInt.add(!row.getOptionValue().getValue3().equals("-") ? Double.parseDouble(row.getOptionValue().getValue3()) : 0);
-            }
-            if (row.getOptionValue().getValue4() != null) {
-                optionValuesInt.add(!row.getOptionValue().getValue4().equals("-") ? Double.parseDouble(row.getOptionValue().getValue4()) : 0);
-            }
-            if (row.getOptionValue().getValue5() != null) {
-                optionValuesInt.add(!row.getOptionValue().getValue5().equals("-") ? Double.parseDouble(row.getOptionValue().getValue5()) : 0);
-            }
-            if (row.getOptionValue().getValue6() != null) {
-                optionValuesInt.add(!row.getOptionValue().getValue6().equals("-") ? Double.parseDouble(row.getOptionValue().getValue6()) : 0);
-            }
-            if (row.getOptionValue().getValue7() != null) {
-                optionValuesInt.add(!row.getOptionValue().getValue7().equals("-") ? Double.parseDouble(row.getOptionValue().getValue7()) : 0);
-            }
-            if (row.getOptionValue().getValue8() != null) {
-                optionValuesInt.add(!row.getOptionValue().getValue8().equals("-") ? Double.parseDouble(row.getOptionValue().getValue8()) : 0);
-            }
-            if (row.getOptionValue().getValue9() != null) {
-                optionValuesInt.add(!row.getOptionValue().getValue9().equals("-") ? Double.parseDouble(row.getOptionValue().getValue9()) : 0);
-            }
-            double[] dp = new double[optionDescs.length - 1];
-            int k = 0;
-            if (optionDescs[0].contains("공격력") && !optionDescs[0].contains("px") && optionDescs[0].contains("x")) {
-                dp[0] = optionValuesInt.get(k) * optionValuesInt.get(k + 1);
-                k += 2;
-            } else if (optionDescs[0].contains("공격력") && !optionDescs[0].contains("px")) {
-                dp[0] = optionValuesInt.get(k);
-                k += 1;
-            } else if (optionDescs[0].contains("x") && !optionDescs[0].contains("px")) {
-                k += 2;
-            } else {
-                k += 1;
-            }
-
-            for (int j = 1; j < optionDescs.length - 1; j++) {
-                if (optionDescs[j].contains("공격력") && !optionDescs[j].contains("px") && optionDescs[j].contains("x")) {
-                    dp[j] = dp[j - 1] + (optionValuesInt.get(k) * optionValuesInt.get(k + 1));
-                    k += 2;
-                } else if (optionDescs[j].contains("공격력") && !optionDescs[j].contains("px")) {
-                    dp[j] = dp[j - 1] + optionValuesInt.get(k);
-                    k += 1;
-                } else if (optionDescs[j].contains("x") && !optionDescs[j].contains("px")) {
-                    k += 2;
-                } else {
-                    k += 1;
-                }
-            }
-            percentPerLevel.add(dp[optionDescs.length - 2] + "");
-        }
-        log.info("percentPerLevel : {}",percentPerLevel);
-        return percentPerLevel.get(level-1);
+        CharacterSkillDetailJsonDto.OptionValue levelValue = optionValues.stream().filter(o->o.getLevel().equals(level)).findFirst().get().getOptionValue();
+        optionDesc= optionDesc.replace("value1",levelValue.getValue1()+"");
+        optionDesc= optionDesc.replace("value2",levelValue.getValue2()+"");
+        optionDesc= optionDesc.replace("value3",levelValue.getValue3()+"");
+        optionDesc= optionDesc.replace("value4",levelValue.getValue4()+"");
+        optionDesc= optionDesc.replace("value5",levelValue.getValue5()+"");
+        optionDesc= optionDesc.replace("value6",levelValue.getValue6()+"");
+        optionDesc= optionDesc.replace("value7",levelValue.getValue7()+"");
+        optionDesc= optionDesc.replace("value8",levelValue.getValue8()+"");
+        optionDesc= optionDesc.replace("value9",levelValue.getValue9()+"");
+        optionDesc= optionDesc.replace("value10",levelValue.getValue10()+"");
+        return optionDesc;
     }
 
 
