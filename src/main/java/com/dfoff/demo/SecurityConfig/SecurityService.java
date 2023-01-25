@@ -40,7 +40,7 @@ public class SecurityService implements UserDetailsService {
                 .password(account.getPassword())
                 .nickname(account.getNickname())
                 .email(account.getEmail())
-                .profileIcon(Objects.requireNonNull(SaveFile.SaveFileDTO.from(account.getProfileIcon())))
+                .profileIcon(Objects.requireNonNull(SaveFile.SaveFileDto.from(account.getProfileIcon())))
                 .authorities(authorities)
                 .build();
     }

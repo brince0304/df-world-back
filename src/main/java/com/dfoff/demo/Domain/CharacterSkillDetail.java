@@ -1,8 +1,8 @@
 package com.dfoff.demo.Domain;
 
-import com.dfoff.demo.Domain.ForCharacter.CharacterSkillDetailJsonDto;
-import com.dfoff.demo.Domain.ForCharacter.CharacterSkillStyleJsonDto;
-import com.dfoff.demo.Util.SearchPageUtil;
+import com.dfoff.demo.Domain.JsonDtos.CharacterSkillDetailJsonDto;
+import com.dfoff.demo.Domain.JsonDtos.CharacterSkillStyleJsonDto;
+import com.dfoff.demo.Util.CharactersUtil;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,8 +11,6 @@ import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Entity
 @AllArgsConstructor
@@ -83,7 +81,7 @@ public class CharacterSkillDetail {
                                 .jobId(style.getJobId())
                                 .skillId(active.getSkillId())
                                 .skillLevel(String.valueOf(row.getLevel()))
-                                .finishPercent(SearchPageUtil.getSkillFinalPercent(detail, row.getLevel()))
+                                .finishPercent(CharactersUtil.getSkillFinalPercent(detail, row.getLevel()))
                                 .skillName(active.getName())
                                 .build());
                     }

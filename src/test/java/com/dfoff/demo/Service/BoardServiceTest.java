@@ -10,13 +10,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -58,7 +56,7 @@ class BoardServiceTest {
 
     }
 
-    private Set<SaveFile.SaveFileDTO> createSaveFileDto() {
+    private Set<SaveFile.SaveFileDto> createSaveFileDto() {
         return new HashSet<>();
     }
 

@@ -39,9 +39,9 @@ public class BoardService {
 
 
 
-    public Long createBoard(Board.BoardRequest request, Set<SaveFile.SaveFileDTO> saveFile, UserAccount.UserAccountDto dto, CharacterEntity.CharacterEntityDto character) {
+    public Long createBoard(Board.BoardRequest request, Set<SaveFile.SaveFileDto> saveFile, UserAccount.UserAccountDto dto, CharacterEntity.CharacterEntityDto character) {
         Board board_ = boardRepository.save(request.toEntity(dto.toEntity()));
-        saveFile.stream().map(SaveFile.SaveFileDTO::toEntity).forEach(o-> board_.getBoardFiles().add(o));
+        saveFile.stream().map(SaveFile.SaveFileDto::toEntity).forEach(o-> board_.getBoardFiles().add(o));
         if(createHashtag(request.getHashtag()).size()>5){
             throw new IllegalArgumentException("해시태그는 5개까지만 등록 가능합니다.");
         }
@@ -175,7 +175,7 @@ public class BoardService {
         return Board.BoardDto.from(board_);
     }
 
-    public Long updateBoard(Long id, Board.BoardRequest request, Set<SaveFile.SaveFileDTO> fileDtos, CharacterEntity.CharacterEntityDto character) {
+    public Long updateBoard(Long id, Board.BoardRequest request, Set<SaveFile.SaveFileDto> fileDtos, CharacterEntity.CharacterEntityDto character) {
        Board board_ =  boardRepository.findBoardById(id);
        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
        if(request != null){
@@ -194,7 +194,7 @@ public class BoardService {
               }
               board_.setBoardType(request.getBoardType());
        }
-       fileDtos.stream().map(SaveFile.SaveFileDTO::toEntity).forEach(o-> board_.getBoardFiles().add(o));
+       fileDtos.stream().map(SaveFile.SaveFileDto::toEntity).forEach(o-> board_.getBoardFiles().add(o));
        return board_.getId();
 
     }
@@ -214,9 +214,9 @@ public class BoardService {
         boardRepository.deleteById(id);
     }
     @Transactional (readOnly = true)
-    public Set<SaveFile.SaveFileDTO> getBoardSaveFile(Long id){
+    public Set<SaveFile.SaveFileDto> getBoardSaveFile(Long id){
         Board board_ = boardRepository.findBoardById(id);
         if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
-        return board_.getBoardFiles().stream().map(SaveFile.SaveFileDTO::from).collect(Collectors.toSet());
+        return board_.getBoardFiles().stream().map(SaveFile.SaveFileDto::from).collect(Collectors.toSet());
     }
 }

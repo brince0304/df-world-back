@@ -46,7 +46,6 @@ public class BoardController {
                                      @RequestParam (required = false) String searchType) {
         ModelAndView mav = new ModelAndView("/board/boardList");
         mav.addObject("articles",boardService.getBoardsByKeyword(boardType,keyword,searchType,pageable));
-        log.info("articles : {}",mav.getModel().get("articles"));
         mav.addObject("bestArticles",boardService.getBestBoard(boardType));
         if(boardType!=null) {
             mav.addObject("boardType", boardType.toString());
@@ -166,7 +165,7 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
         List<CharacterEntity.CharacterEntityDto> dtos1 = characterService.getCharacterDTOs(serverId, characterName);
         for (CharacterEntity.CharacterEntityDto dto : dtos1.subList(0, Math.min(dtos1.size(), 15))) {
             if (dto.getLevel() >= 100) {
-                dtos.add(characterService.getCharacterAbilityThenSaveAsync(dto));
+                dtos.add(characterService.getCharacterAbilityAsync(dto));
             } else {
                 dtos.add(CompletableFuture.completedFuture(dto));
             }
@@ -186,7 +185,7 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
         }
-        Set<SaveFile.SaveFileDTO> set = saveFileService.getFileDtosFromRequestsFileIds(boardRequest);
+        Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestsFileIds(boardRequest);
         if(boardRequest.getServerId().equals("")){
             return new ResponseEntity<>(boardService.createBoard(boardRequest,set,UserAccount.UserAccountDto.from(principalDto),null),HttpStatus.OK);
         }
@@ -204,7 +203,7 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
         if(bindingResult.hasErrors()){
             return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
         }
-        Set<SaveFile.SaveFileDTO> set = saveFileService.getFileDtosFromRequestsFileIds(updateRequest);
+        Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestsFileIds(updateRequest);
             CharacterEntity.CharacterEntityDto character = characterService.getCharacter(updateRequest.getServerId(),updateRequest.getCharacterId());
             return new ResponseEntity<>(boardService.updateBoard(updateRequest.getId(),updateRequest,set,character),HttpStatus.OK);
     }

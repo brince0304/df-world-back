@@ -2,7 +2,6 @@ package com.dfoff.demo.Domain;
 
 import com.dfoff.demo.JpaAuditing.AuditingFields;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 
@@ -58,11 +57,11 @@ public class SaveFile extends AuditingFields {
     }
 
         @Builder
-        public record SaveFileDTO(Long id, String fileName, String filePath, String fileType, Long fileSize,
+        public record SaveFileDto(Long id, String fileName, String filePath, String fileType, Long fileSize,
                                   LocalDateTime createdAt, LocalDateTime modifiedAt, String createdBy, String modifiedBy) {
-            public static SaveFileDTO from(SaveFile saveFile) {
+            public static SaveFileDto from(SaveFile saveFile) {
                 if(saveFile == null) return null;
-                return SaveFileDTO.builder()
+                return SaveFileDto.builder()
                         .id(saveFile.getId())
                         .fileName(saveFile.getFileName())
                         .filePath(saveFile.getFilePath())
@@ -104,7 +103,7 @@ public class SaveFile extends AuditingFields {
         private final String fileType;
         private final Long fileSize;
 
-        public static SaveFileResponse from(SaveFileDTO dto ){
+        public static SaveFileResponse from(SaveFileDto dto ){
             return SaveFileResponse.builder()
                     .id(dto.id())
                     .fileName(dto.fileName())

@@ -22,19 +22,19 @@ public class SaveFileService {
     private final SaveFileRepository saveFileRepository;
 
     @Transactional(readOnly = true)
-    public SaveFile.SaveFileDTO getFile(Long fileId) {
+    public SaveFile.SaveFileDto getFile(Long fileId) {
         log.info("getFile() fileId: {}", fileId);
-        return saveFileRepository.findById(fileId).map(SaveFile.SaveFileDTO::from).orElseThrow(()-> new EntityNotFoundException("파일이 없습니다 - fileId: " + fileId));
+        return saveFileRepository.findById(fileId).map(SaveFile.SaveFileDto::from).orElseThrow(()-> new EntityNotFoundException("파일이 없습니다 - fileId: " + fileId));
     }
 
     @Transactional(readOnly = true)
-    public SaveFile.SaveFileDTO getFileByFileName(String fileName) {
+    public SaveFile.SaveFileDto getFileByFileName(String fileName) {
         log.info("getFileByFileName() fileId: {}", fileName);
         if(Objects.isNull(fileName)) {
             throw new IllegalArgumentException("파일 이름이 없습니다");
         }
 
-        return SaveFile.SaveFileDTO.from(saveFileRepository.findByFileName(fileName).orElseThrow(()-> new IllegalArgumentException("파일이 없습니다 - fileName: " + fileName)));
+        return SaveFile.SaveFileDto.from(saveFileRepository.findByFileName(fileName).orElseThrow(()-> new IllegalArgumentException("파일이 없습니다 - fileName: " + fileName)));
     }
 
 
@@ -52,10 +52,10 @@ public class SaveFileService {
         }
     }
 
-    public SaveFile.SaveFileDTO saveFile(SaveFile.SaveFileDTO saveFile) {
+    public SaveFile.SaveFileDto saveFile(SaveFile.SaveFileDto saveFile) {
         if(saveFile == null){throw new IllegalArgumentException("파일이 없습니다");}
         log.info("saveFile() saveFile: {}", saveFile);
-        return SaveFile.SaveFileDTO.from(saveFileRepository.save(saveFile.toEntity()));
+        return SaveFile.SaveFileDto.from(saveFileRepository.save(saveFile.toEntity()));
     }
 
 
@@ -70,16 +70,16 @@ public class SaveFileService {
         }
     }
 
-    public Set<SaveFile.SaveFileDTO> getFileDtosFromRequestsFileIds(Board.BoardRequest dto) {
+    public Set<SaveFile.SaveFileDto> getFileDtosFromRequestsFileIds(Board.BoardRequest dto) {
         deleteUnuploadedFilesFromBoardContent(dto.getBoardContent(),dto.getBoardFiles());
         String[] fileIdArr = Objects.requireNonNull(dto.getBoardFiles()).split(",");
-        Set<SaveFile.SaveFileDTO> saveFileDtos = new HashSet<>();
+        Set<SaveFile.SaveFileDto> saveFileDtos = new HashSet<>();
         for (String fileId : fileIdArr) {
             log.info("fileId: {}", fileId);
             if (fileId.equals("")) {
                 break;
             }
-            saveFileRepository.findById(Long.parseLong(fileId)).ifPresent(saveFile -> saveFileDtos.add(SaveFile.SaveFileDTO.from(saveFile)));
+            saveFileRepository.findById(Long.parseLong(fileId)).ifPresent(saveFile -> saveFileDtos.add(SaveFile.SaveFileDto.from(saveFile)));
         }
         return saveFileDtos;
     }

@@ -1,9 +1,8 @@
 package com.dfoff.demo.Domain;
 
-import com.dfoff.demo.Domain.ForCharacter.CharacterAbilityDto;
-import com.dfoff.demo.Domain.ForCharacter.CharacterDto;
+import com.dfoff.demo.Domain.JsonDtos.CharacterAbilityDto;
+import com.dfoff.demo.Domain.JsonDtos.CharacterDto;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
-import com.dfoff.demo.Util.SearchPageUtil;
 import lombok.*;
 
 import jakarta.persistence.*;
@@ -15,7 +14,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.dfoff.demo.Util.SearchPageUtil.timesAgo;
+import static com.dfoff.demo.Util.CharactersUtil.timesAgo;
 
 
 @Entity

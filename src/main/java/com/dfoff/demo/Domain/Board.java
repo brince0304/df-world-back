@@ -3,27 +3,22 @@ package com.dfoff.demo.Domain;
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
 import com.dfoff.demo.Util.FileUtil;
-import com.dfoff.demo.Util.OpenAPIUtil;
+import com.dfoff.demo.Util.RestTemplateUtil;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.dfoff.demo.Util.BoardUtil.converter;
-import static com.dfoff.demo.Util.SearchPageUtil.timesAgo;
+import static com.dfoff.demo.Util.CharactersUtil.timesAgo;
 
 @Entity
 @Getter
@@ -204,7 +199,7 @@ public class Board extends AuditingFields {
                     .jobName(characterEntity.getJobName())
                     .adventureName(characterEntity.getAdventureName() == null ? "갱신필요" : characterEntity.getAdventureName())
                     .adventureFame(characterEntity.getAdventureFame() == null ? "0" : characterEntity.getAdventureFame())
-                    .characterImageUrl(OpenAPIUtil.getCharacterImgUrl(characterEntity.getServerId(), characterEntity.getCharacterId(), "1"))
+                    .characterImageUrl(RestTemplateUtil.getCharacterImgUri(characterEntity.getServerId(), characterEntity.getCharacterId(), "1"))
                     .imgStyleClassName(getStyleClassName(characterEntity.getJobName()))
                     .build();
         }

@@ -5,7 +5,7 @@ import com.dfoff.demo.JpaAuditing.AuditingFields;
 import jakarta.persistence.*;
 import lombok.*;
 
-import static com.dfoff.demo.Util.SearchPageUtil.timesAgo;
+import static com.dfoff.demo.Util.CharactersUtil.timesAgo;
 
 
 @Entity

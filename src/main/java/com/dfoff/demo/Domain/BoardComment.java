@@ -10,7 +10,6 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
@@ -19,7 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.dfoff.demo.Util.SearchPageUtil.timesAgo;
+import static com.dfoff.demo.Util.CharactersUtil.timesAgo;
 
 
 @Table (indexes=@Index(name = "idx_createdAt" , columnList = "createdAt"))
