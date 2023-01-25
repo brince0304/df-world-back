@@ -111,7 +111,7 @@ class BoardCommentServiceTest {
         sut.deleteBoardComment(anyLong());
 
         //then
-        then(boardCommentRepository).should().deleteBoardCommentById(any(Long.class));
+        then(boardCommentRepository).should().deleteById(any(Long.class));
     }
 
 

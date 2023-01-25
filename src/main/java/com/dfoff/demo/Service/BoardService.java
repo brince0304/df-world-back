@@ -79,25 +79,25 @@ public class BoardService {
             mapper.save(BoardHashtagMapper.of(board,hashtag_));
         }
     }
-    public Board.BoardDetailResponse getBoardDetail(Long id){
+    public Board.BoardDetailResponse getBoardDetailById(Long id){
         Board board_ = boardRepository.findBoardById(id);
         if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
         return Board.BoardDetailResponse.from(board_);
     }
 
-    public String getBoardAuthor(Long id){
+    public String getBoardAuthorById(Long id){
         Board board_ = boardRepository.findBoardById(id);
         if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
         return board_.getUserAccount().getUserId();
     }
 
-    public void increaseViewCount(Long Id){
+    public void increaseBoardViewCount(Long Id){
         Board board_ = boardRepository.findBoardById(Id);
         if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
         board_.setBoardViewCount(board_.getBoardViewCount()+1);
     }
 
-    public int increaseLikeCount(Long Id,String nickname){
+    public int increaseBoardLikeCount(Long Id, String nickname){
         if(nickname.equals("")){nickname ="비회원";}
         Board board_ = boardRepository.findBoardById(Id);
         if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
@@ -107,7 +107,7 @@ public class BoardService {
         return board_.getBoardLikeCount();
     }
 
-    public int decreaseLikeCount(Long Id, String nickname){
+    public int decreaseBoardLikeCount(Long Id, String nickname){
         if(nickname.equals("")){nickname ="비회원";}
         Board board_ = boardRepository.findBoardById(Id);
         if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
@@ -159,7 +159,7 @@ public class BoardService {
         return boardRepository.findAll(pageable).map(Board.BoardListResponse::from);
     }
 
-    public List<Board.BoardListResponse> getBestBoard(BoardType boardType){
+    public List<Board.BoardListResponse> getBestBoardByBoardType(BoardType boardType){
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime start = end.minusDays(10);
         if(boardType==null){

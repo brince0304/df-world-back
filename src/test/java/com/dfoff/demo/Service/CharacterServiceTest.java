@@ -52,10 +52,10 @@ class CharacterServiceTest {
 
 
     @Test
-    void getCharacterDTOsTest() {
+    void getCharacterDTOsTest() throws InterruptedException {
         //given
         //when
-        sut.getCharacterDTOs("all","test");
+        sut.getCharacterDtos("all","test");
         //then
         characterEntityRepository.saveAll(List.of());
     }
