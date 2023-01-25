@@ -929,8 +929,9 @@
                                                     </span>
                         </div>
                         <div class="row itemModal-row info-container item-options" style="">
-                                                    <span id="modal-itemOptions" ><label
-                                                            style="margin: 0; color: #8F8356; white-space: pre-line;" th:text="${characterEquipmentDetails.get(i.index).itemExplain}"  ></label><br><br><label
+                                                    <span id="modal-itemOptions" >
+                                                        <label th:if="${characterEquipmentDetails.get(i.index).itemExplainDetail!=null}"
+                                                                style="margin: 0; color: #8F8356; white-space: pre-line;" th:text="${characterEquipmentDetails.get(i.index).itemExplainDetail}"  ></label><br><label
                                                             style="margin: 0; color: #4AA356" th:if="${characterEquipmentDetails.get(i.index).itemBuff!=null}" >-버퍼 전용 옵션</label><br><label th:if="${characterEquipmentDetails.get(i.index).itemBuff!=null}"
                                                             style="margin: 0; color: #B3AA87" th:text="${characterEquipmentDetails.get(i.index).itemBuff.explain}">30레벨 버프 스킬 Lv +3<br>50레벨 액티브 스킬 Lv +4<br><br>장착 해제 시 자신이 시전한 30Lv 버프, 50Lv 액티브, 100Lv 액티브 스킬의 효과 삭제</label></span>
                         </div>
@@ -955,16 +956,16 @@
                                                             style="margin: 0; color: #4AA356">&lt;성장, 변환 옵션&gt;</label><br><label
                                                             style="margin: 0; color: #C1A437;" >1옵션 - Lv[[${equip.growInfo.options.get(0).level}]]</label><br><label
                                                             style="margin: 0; color: #8F8356;">피해 증가 +[[${equip.growInfo.options.get(0).damage}]], 버프력 +[[${equip.growInfo.options.get(0).buff}]]</label><br><label
-                                                            style="margin: 0; color: #BAB290;">- [[${equip.growInfo.options.get(0).explain}]], [[${equip.growInfo.options.get(0).explainDetail}]]</label><br><br><label
+                                                            style="margin: 0; color: #BAB290;">-  [[${equip.growInfo.options.get(0).explainDetail}]]</label><br><br><label
                                                             style="margin: 0; color: #C1A437;">2옵션 - Lv[[${equip.growInfo.options.get(1).level}]]</label><br><label
                                                             style="margin: 0; color: #8F8356;">피해 증가 +[[${equip.growInfo.options.get(1).damage}]], 버프력 +[[${equip.growInfo.options.get(1).buff}]]</label><br><label
-                                                            style="margin: 0; color: #BAB290;">- [[${equip.growInfo.options.get(1).explain}]], [[${equip.growInfo.options.get(1).explainDetail}]]</label><br><br><label
+                                                            style="margin: 0; color: #BAB290;">-  [[${equip.growInfo.options.get(1).explainDetail}]]</label><br><br><label
                                                             style="margin: 0; color: #C1A437;">3옵션 - Lv[[${equip.growInfo.options.get(2).level}]]</label><br><label
                                                             style="margin: 0; color: #8F8356;">피해 증가 +[[${equip.growInfo.options.get(2).damage}]], 버프력 +[[${equip.growInfo.options.get(2).buff}]]</label><br><label
-                                                            style="margin: 0; color: #BAB290;">- [[${equip.growInfo.options.get(2).explain}]], [[${equip.growInfo.options.get(2).explainDetail}]]</label><br><br><label
+                                                            style="margin: 0; color: #BAB290;">-  [[${equip.growInfo.options.get(2).explainDetail}]]</label><br><br><label
                                                             style="margin: 0; color: #C1A437;">4옵션 - Lv[[${equip.growInfo.options.get(3).level}]]</label><br><label
                                                             style="margin: 0; color: #8F8356;">피해 증가 +[[${equip.growInfo.options.get(3).damage}]], 버프력 +[[${equip.growInfo.options.get(3).buff}]]</label><br><label
-                                                            style="margin: 0; color: #BAB290;">- [[${equip.growInfo.options.get(3).explain}]], [[${equip.growInfo.options.get(3).explainDetail}]]</label></span>
+                                                            style="margin: 0; color: #BAB290;">-  [[${equip.growInfo.options.get(3).explainDetail}]]</label></span>
                         </div>
                         <div class="row itemModal-row info-container item-setName"
                              style="display: none;">
