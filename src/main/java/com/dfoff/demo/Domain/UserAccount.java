@@ -3,7 +3,7 @@ package com.dfoff.demo.Domain;
 import com.dfoff.demo.Domain.EnumType.UserAccount.SecurityRole;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
 import com.dfoff.demo.Util.FileUtil;
-import com.dfoff.demo.Util.OpenAPIUtil;
+import com.dfoff.demo.Util.RestTemplateUtil;
 import io.micrometer.core.lang.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -71,6 +71,9 @@ public class UserAccount extends AuditingFields {
     @Builder.Default
     private Boolean deleted= Boolean.FALSE;
 
+    @OneToOne(mappedBy = "userAccount", cascade = CascadeType.ALL)
+    private UserAdventure userAdventure;
+
     @OneToMany (mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
     private Set<Notification> notifications = new LinkedHashSet<>();
@@ -87,6 +90,7 @@ public class UserAccount extends AuditingFields {
         UserAccount that = (UserAccount) o;
         return userId.equals(that.userId);
     }
+
 
     @Override
     public int hashCode() {
@@ -105,7 +109,7 @@ public class UserAccount extends AuditingFields {
         private final String nickname;
         private final String email;
 
-        private final SaveFile.SaveFileDTO profileIcon;
+        private final SaveFile.SaveFileDto profileIcon;
 
         private final List<GrantedAuthority> authorities;
 
@@ -152,7 +156,7 @@ public class UserAccount extends AuditingFields {
 
     @Builder
     public record UserAccountDto(String userId, String password, String nickname, String email,
-                                 SaveFile.SaveFileDTO profileIcon,
+                                 SaveFile.SaveFileDto profileIcon,
                                   Set<SecurityRole> roles, LocalDateTime createdAt,
                                  String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
         public static UserAccountDto from(UserAccount userAccount) {
@@ -162,7 +166,7 @@ public class UserAccount extends AuditingFields {
                     .nickname(userAccount.getNickname())
                     .email(userAccount.getEmail())
                     .roles(userAccount.getRoles())
-                    .profileIcon(SaveFile.SaveFileDTO.from(userAccount.getProfileIcon()))
+                    .profileIcon(SaveFile.SaveFileDto.from(userAccount.getProfileIcon()))
                     .createdAt(userAccount.getCreatedAt())
                     .createdBy(userAccount.getCreatedBy())
                     .modifiedAt(userAccount.getModifiedAt())
@@ -317,7 +321,7 @@ public class UserAccount extends AuditingFields {
                     .jobGrowName(characterEntity.getJobGrowName())
                     .adventureFame(characterEntity.getAdventureFame())
                     .adventureName(characterEntity.getAdventureName())
-                    .characterImageUrl(OpenAPIUtil.getCharacterImgUrl(characterEntity.getServerId(),characterEntity.getCharacterId(),"2"))
+                    .characterImageUrl(RestTemplateUtil.getCharacterImgUri(characterEntity.getServerId(),characterEntity.getCharacterId(),"2"))
                     .build();
         }
 
@@ -340,6 +344,8 @@ public class UserAccount extends AuditingFields {
         private final LocalDateTime modifiedAt;
         private final String modifiedBy;
 
+        private final Set<CharacterUserAccountResponse> adventureCharacters;
+
 
 
         public static UserAccountMyPageResponse from(UserAccount userAccount) {
@@ -353,6 +359,7 @@ public class UserAccount extends AuditingFields {
                     .createdBy(userAccount.getCreatedBy())
                     .modifiedAt(userAccount.getModifiedAt())
                     .modifiedBy(userAccount.getModifiedBy())
+                    .adventureCharacters(userAccount.getUserAdventure() !=null ? userAccount.getUserAdventure().getCharacters().stream().map(CharacterUserAccountResponse::from).collect(Collectors.toSet()) : new HashSet<>())
                     .build();
         }
 

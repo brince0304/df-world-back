@@ -50,6 +50,9 @@ public interface CharacterEntityRepository  extends JpaRepository<CharacterEntit
     Long getCharacterCount();
 
 
+    List<CharacterEntity> findAllByAdventureName(String adventureName);
+
+
 
 
 
