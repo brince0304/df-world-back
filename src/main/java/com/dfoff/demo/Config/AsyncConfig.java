@@ -17,8 +17,8 @@ public class AsyncConfig {
     public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
         log.info("start asyncServiceExecutor");
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setMaxPoolSize(5);
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(10);
         executor.setQueueCapacity(500);
         executor.setThreadNamePrefix("API PARSING-");
         executor.setRejectedExecutionHandler(new ThreadPoolExecutor.AbortPolicy());

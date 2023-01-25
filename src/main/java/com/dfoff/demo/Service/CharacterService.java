@@ -4,6 +4,7 @@ package com.dfoff.demo.Service;
 import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.JsonDtos.*;
 import com.dfoff.demo.Repository.*;
+import com.dfoff.demo.Util.CharactersUtil;
 import com.dfoff.demo.Util.RestTemplateUtil;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
@@ -35,14 +36,15 @@ public class CharacterService {
 
     private final Gson gson = RestTemplateUtil.getGson();
 
-    public List<CharacterEntity.CharacterEntityDto> getCharacterDTOs(String serverId, String characterName) {
+    @Async
+    public CompletableFuture<List<CharacterEntity.CharacterEntityDto>> getCharacterDtos(String serverId, String characterName) throws InterruptedException {
         if (characterName == null || characterName.equals("")) {
-            return List.of();
+            return CompletableFuture.completedFuture(List.of());
         }
         List<CharacterDto> characterDtoList = parseJsonFromUri(RestTemplateUtil.getCharacterSearchUri(serverId, characterName), CharacterDto.CharacterJSONDto.class).toDto();
         List<CharacterEntity> characterEntityList = characterDtoList.stream().map(CharacterEntity.CharacterEntityDto::toEntity).filter(o->o.getLevel()>=75).collect(Collectors.toList());
         characterEntityRepository.saveAll(characterEntityList);
-        return characterEntityList.stream().map(CharacterEntity.CharacterEntityDto::from).collect(Collectors.toList());
+        return CompletableFuture.completedFuture(characterEntityList.stream().map(CharacterEntity.CharacterEntityDto::from).collect(Collectors.toList()));
     }
 
     public void saveSkillDetails(CharacterSkillStyleJsonDto style, CharacterSkillDetailJsonDto detail){
@@ -52,9 +54,7 @@ public class CharacterService {
 
 
 
-    public List<CharacterSkillDetail.CharacterSkillDetailDto> getCharacterSkillDetail(String serverId, String characterId) {
-        return getSkillDetails(parseJsonFromUri(RestTemplateUtil.getCharacterSkillUri(serverId, characterId), CharacterSkillStyleJsonDto.class));
-    }
+
 
     public String getRandomJobName(){
         long number = characterEntityRepository.count();
@@ -67,35 +67,40 @@ public class CharacterService {
         return timesAgo(characterEntityRepository.getReferenceById(characterId).getModifiedAt());
     }
 
-    public CharacterEntity.CharacterEntityDto getCharacter(String serverId,String characterId) {
+    @Async
+    public CompletableFuture<CharacterEntity.CharacterEntityDto> getCharacter(String serverId, String characterId) {
         if(characterId==null || characterId.equals("")){
-            return null;
+            return CompletableFuture.completedFuture(null);
         }
-        CharacterEntity characterEntity = characterEntityRepository.findById(characterId).orElseGet(()-> characterEntityRepository.save(CharacterAbilityDto.toEntity(parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto(),serverId)));
-        return CharacterEntity.CharacterEntityDto.from(characterEntity);
+        CharacterEntity characterEntity = characterEntityRepository.findById(characterId).orElseGet(()-> {
+            try {
+                return characterEntityRepository.save(CharacterAbilityDto.toEntity(parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto(),serverId));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        return CompletableFuture.completedFuture(CharacterEntity.CharacterEntityDto.from(characterEntity));
     }
 
-    public CharacterEquipmentJsonDto getCharacterEquipment(String serverId,String characterId) {
+    @Async
+    public CompletableFuture<CharacterEquipmentJsonDto> getCharacterEquipment(String serverId, String characterId) throws InterruptedException {
         if(characterId==null || characterId.equals("")){
-            return null;
+            return CompletableFuture.completedFuture(null);
         }
-        return parseJsonFromUri(RestTemplateUtil.getCharacterEquipmentUri(serverId, characterId), CharacterEquipmentJsonDto.class);
+        return CompletableFuture.completedFuture(parseJsonFromUri(RestTemplateUtil.getCharacterEquipmentUri(serverId, characterId), CharacterEquipmentJsonDto.class));
     }
 
-    public List<EquipmentDetailJsonDto> getEquipmentDetail(CharacterEquipmentJsonDto dto) {
-        List <EquipmentDetailJsonDto> list = new ArrayList<>();
-        for(CharacterEquipmentJsonDto.Equipment eq : dto.getEquipment()){
-               list.add(parseJsonFromUri(RestTemplateUtil.getEquipmentDetailUri(eq.getItemId()),EquipmentDetailJsonDto.class));
-        }
-        log.info("list size : {}",list.size());
-        return list;
+    @Async
+    public CompletableFuture<EquipmentDetailJsonDto> getEquipmentDetail(CharacterEquipmentJsonDto.Equipment eq) throws InterruptedException {
+        return CompletableFuture.completedFuture(parseJsonFromUri(RestTemplateUtil.getEquipmentDetailUri(eq.getItemId()),EquipmentDetailJsonDto.class));
     }
 
-    public CharacterBuffEquipmentJsonDto getCharacterBuffEquipment(String serverId,String characterId) {
+    @Async
+    public CompletableFuture<CharacterBuffEquipmentJsonDto> getCharacterBuffEquipment(String serverId, String characterId) throws InterruptedException {
         if(characterId==null || characterId.equals("")){
-            return null;
+            return CompletableFuture.completedFuture(null);
         }
-        return parseJsonFromUri(RestTemplateUtil.getCharacterBuffEquipmentUri(serverId, characterId), CharacterBuffEquipmentJsonDto.class);
+        return CompletableFuture.completedFuture(parseJsonFromUri(RestTemplateUtil.getCharacterBuffEquipmentUri(serverId, characterId), CharacterBuffEquipmentJsonDto.class));
     }
 
     public Page<CharacterEntity.CharacterEntityDto> getCharacterByAdventureName(String adventureName, Pageable pageable) {
@@ -103,7 +108,7 @@ public class CharacterService {
     }
 
     @Async
-    public CompletableFuture<CharacterEntity.CharacterEntityDto> getCharacterAbilityAsync(CharacterEntity.CharacterEntityDto dto) {
+    public CompletableFuture<CharacterEntity.CharacterEntityDto> getCharacterAbilityAsync(CharacterEntity.CharacterEntityDto dto) throws InterruptedException {
         CharacterEntity entity = characterEntityRepository.save(CharacterEntity.CharacterEntityDto.toEntity(dto));
         CharacterAbilityDto characterDto = parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(dto.getServerId(), dto.getCharacterId()), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
         entity.setAdventureFame(characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().isEmpty() ? "0" : characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().get().getValue());
@@ -112,12 +117,13 @@ public class CharacterService {
         return CompletableFuture.completedFuture(CharacterEntity.CharacterEntityDto.from(entity));
     }
 
-    public CharacterAbilityDto getCharacterAbility(String serverId, String characterId) {
+    public CompletableFuture<CharacterAbilityDto> getCharacterAbility(String serverId, String characterId) throws InterruptedException {
         CharacterAbilityDto characterDto = parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
         CharacterEntity character = characterEntityRepository.save(CharacterAbilityDto.toEntity(characterDto,serverId));
         character.setAdventureFame(characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().isEmpty() ? "0" : characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().get().getValue());
         characterDto.setAdventureName(character.getAdventureName());
-        return characterDto;
+        characterDto.setAdventureFame(character.getAdventureFame());
+        return CompletableFuture.completedFuture(characterDto);
     }
 
     public void addCharacter(UserAccount.UserAccountDto account, CharacterEntity.CharacterEntityDto character) { //캐릭터가 존재하지 않을 이유가 없음
@@ -129,9 +135,10 @@ public class CharacterService {
         }
     }
 
-    public List<CharacterTalismanJsonDto.Talisman> getCharacterTalisman(String serverId, String characterId) {
+    @Async
+    public CompletableFuture<List<CharacterTalismanJsonDto.Talisman>> getCharacterTalisman(String serverId, String characterId) throws InterruptedException {
         CharacterTalismanJsonDto dto = parseJsonFromUri(RestTemplateUtil.getCharacterTalismanUri(serverId, characterId), CharacterTalismanJsonDto.class);
-        return dto.getTalismans();
+        return CompletableFuture.completedFuture(dto.getTalismans());
     }
 
 
@@ -147,24 +154,26 @@ public class CharacterService {
         }
     }
 
-    public CharacterSkillStyleJsonDto.Style getCharacterSkillStyle(String serverId, String characterId) {
+    @Async
+    public CompletableFuture<CharacterSkillStyleJsonDto.Style> getCharacterSkillStyle(String serverId, String characterId) throws InterruptedException {
         CharacterSkillStyleJsonDto dto = parseJsonFromUri(RestTemplateUtil.getCharacterSkillUri(serverId, characterId), CharacterSkillStyleJsonDto.class);
-        return dto.getSkill().getStyle();
+        return CompletableFuture.completedFuture(dto.getSkill().getStyle());
     }
 
-    public List<CharacterSkillDetail.CharacterSkillDetailDto> getSkillDetails(CharacterSkillStyleJsonDto dto) {
-        List<CharacterSkillDetail> list = new ArrayList<>();
-        for(CharacterSkillStyleJsonDto.Active active : dto.getSkill().getStyle().getActive()){
-            log.info("jobID:{}, skillId:{}",dto.getJobId(),active.getSkillId());
-            if(active.getRequiredLevel()>=20){
-            characterSkillDetailRepository.getCharacterSkillDetailBySkillIdAndSkillLevel(active.getSkillId(),String.valueOf(active.getLevel())).ifPresentOrElse(list::add,()->{
-                CharacterSkillDetailJsonDto detail = parseJsonFromUri(RestTemplateUtil.getCharacterSkillDetailUri(dto.getJobId(),active.getSkillId()), CharacterSkillDetailJsonDto.class);
-                characterSkillDetailRepository.saveAll(CharacterSkillDetail.CharacterSkillDetailDto.toEntity(dto,detail));
+    public List<String> getSkillDetails(CharacterSkillStyleJsonDto.Style dto, String jobId) {
+        List<String> list = new ArrayList<>();
+
+        dto.getActive().forEach(o-> {
+            try {
+                if(o.getRequiredLevel()>=15) {
+                    list.add(CharactersUtil.getSkillFinalPercent(parseJsonFromUri(getCharacterSkillDetailUri(jobId, o.getSkillId()), CharacterSkillDetailJsonDto.class), o.getLevel()));
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
             }
-            );
-            }
-        }
-        return list.stream().map(CharacterSkillDetail.CharacterSkillDetailDto::from).collect(Collectors.toList());
+        });
+        log.info("skill details : {}",list);
+        return list;
     }
 
     public Long getCharacterCount(){
@@ -196,30 +205,33 @@ public class CharacterService {
     }
 
 
-
-    public CharacterBuffAvatarJsonDto getCharacterBuffAvatar(String serverId, String characterId) {
-        return parseJsonFromUri(RestTemplateUtil.getCharacterBuffAvatarUri(serverId, characterId), CharacterBuffAvatarJsonDto.class);
+    @Async
+    public CompletableFuture<CharacterBuffAvatarJsonDto> getCharacterBuffAvatar(String serverId, String characterId) throws InterruptedException {
+        return CompletableFuture.completedFuture(parseJsonFromUri(RestTemplateUtil.getCharacterBuffAvatarUri(serverId, characterId), CharacterBuffAvatarJsonDto.class));
     }
 
-    public CharacterBuffCreatureJsonDto getCharacterBuffCreature(String serverId, String characterId) {
-        return parseJsonFromUri(RestTemplateUtil.getCharacterBuffCreatureUri(serverId, characterId), CharacterBuffCreatureJsonDto.class);
+    @Async
+    public CompletableFuture<CharacterBuffCreatureJsonDto> getCharacterBuffCreature(String serverId, String characterId) throws InterruptedException {
+        return CompletableFuture.completedFuture(parseJsonFromUri(RestTemplateUtil.getCharacterBuffCreatureUri(serverId, characterId), CharacterBuffCreatureJsonDto.class));
     }
 
     public Page<CharacterEntity.CharacterEntityDto> getCharactersOrderByAdventureFame(Pageable pageable){
         return characterEntityRepository.findAll(pageable).map(CharacterEntity.CharacterEntityDto::from);
     }
 
-    public CharacterAvatarJsonDto getCharacterAvatar(String serverId, String characterId) {
-        return parseJsonFromUri(RestTemplateUtil.getCharacterAvatarUri(serverId, characterId), CharacterAvatarJsonDto.class);
+    @Async
+    public CompletableFuture<CharacterAvatarJsonDto> getCharacterAvatar(String serverId, String characterId) throws InterruptedException {
+        return CompletableFuture.completedFuture(parseJsonFromUri(RestTemplateUtil.getCharacterAvatarUri(serverId, characterId), CharacterAvatarJsonDto.class));
     }
 
 
-    public void getServerStatus() {
+
+    public void getServerStatus() throws InterruptedException {
         ServerDto.ServerJSONDto dfServerJSONDto = parseJsonFromUri(RestTemplateUtil.SERVER_LIST_URI, ServerDto.ServerJSONDto.class);
         dfServerJSONDto.toDTO();
     }
 
-    public void getJobList() {
+    public void getJobList() throws InterruptedException {
         JobDto.JobJSONDto jobJSONDTO = parseJsonFromUri(RestTemplateUtil.JOB_LIST_URI, JobDto.JobJSONDto.class);
         jobJSONDTO.toDTO();
     }
@@ -238,7 +250,7 @@ public class CharacterService {
         return randomString.toString();
     }
 
-    public boolean checkCharacterAdventure(UserAdventure.UserAdventureRequest request){
+    public boolean checkCharacterAdventure(UserAdventure.UserAdventureRequest request) throws InterruptedException {
         List<CharacterDto> dto = parseJsonFromUri(RestTemplateUtil.getCharacterSearchUri(request.getServerId(),request.getRandomString()), CharacterDto.CharacterJSONDto.class).toDto();
         if(dto.size()==0){
             return false;
