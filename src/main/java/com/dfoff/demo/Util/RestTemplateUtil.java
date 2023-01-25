@@ -4,15 +4,13 @@ package com.dfoff.demo.Util;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class RestTemplateUtil {
@@ -125,15 +123,23 @@ public class RestTemplateUtil {
                 .replace("<zoom>", zoom);
     }
 
-    public static <T> T parseJsonFromUri(String url, Class<T> clazz) {
+    public static <T> T parseJsonFromUri(String url, Class<T> clazz) throws InterruptedException {
         HashMap<String, String> result = new HashMap<>();
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders header = new HttpHeaders();
         HttpEntity<?> entity = new HttpEntity<>(header);
         UriComponents uri = UriComponentsBuilder.fromHttpUrl(url).build();
         ResponseEntity<?> response = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, String.class);
-        log.info("response: {}", response);
-        log.info("url: {}", url);
+        log.info("url : {}", url);
+        if(response.getStatusCode() == HttpStatus.BAD_REQUEST){
+            TimeUnit.MILLISECONDS.sleep(500);
+            return parseJsonFromUri(url, clazz);
+        }if(response.getStatusCode().is5xxServerError()){
+            throw new IllegalArgumentException("서버가 점검중이거나 장애가 발생하였습니다.");
+        }if(response.getStatusCode().is4xxClientError()){
+            log.info("response : {}", response);
+            throw new IllegalArgumentException("잘못된 요청입니다.");
+        }
         return gson.fromJson(Objects.requireNonNull(response.getBody()).toString(), clazz);
     }
 
