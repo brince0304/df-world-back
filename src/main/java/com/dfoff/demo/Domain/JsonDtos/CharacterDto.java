@@ -1,11 +1,11 @@
-package com.dfoff.demo.Domain.ForCharacter;
+package com.dfoff.demo.Domain.JsonDtos;
 
 
 import com.dfoff.demo.Domain.CharacterEntity;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
-import jakarta.persistence.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
 

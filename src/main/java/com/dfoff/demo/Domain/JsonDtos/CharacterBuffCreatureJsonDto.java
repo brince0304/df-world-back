@@ -1,5 +1,5 @@
 
-package com.dfoff.demo.Domain.ForCharacter;
+package com.dfoff.demo.Domain.JsonDtos;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
 import javax.annotation.processing.Generated;
 
 @Generated("jsonschema2pojo")
-public class CharacterSkillStyleJsonDto implements Serializable
+public class CharacterBuffCreatureJsonDto implements Serializable
 {
 
     @SerializedName("characterId")
@@ -46,13 +46,13 @@ public class CharacterSkillStyleJsonDto implements Serializable
     @SerializedName("skill")
     @Expose
     private Skill skill;
-    private final static long serialVersionUID = -4224881191893680388L;
+    private final static long serialVersionUID = 1438514166601753875L;
 
     /**
      * No args constructor for use in serialization
      * 
      */
-    public CharacterSkillStyleJsonDto() {
+    public CharacterBuffCreatureJsonDto() {
     }
 
     /**
@@ -69,7 +69,7 @@ public class CharacterSkillStyleJsonDto implements Serializable
      * @param guildId
      * @param guildName
      */
-    public CharacterSkillStyleJsonDto(String characterId, String characterName, Integer level, String jobId, String jobGrowId, String jobName, String jobGrowName, String adventureName, String guildId, String guildName, Skill skill) {
+    public CharacterBuffCreatureJsonDto(String characterId, String characterName, Integer level, String jobId, String jobGrowId, String jobName, String jobGrowName, String adventureName, String guildId, String guildName, Skill skill) {
         super();
         this.characterId = characterId;
         this.characterName = characterName;
@@ -92,22 +92,12 @@ public class CharacterSkillStyleJsonDto implements Serializable
         this.characterId = characterId;
     }
 
-    public CharacterSkillStyleJsonDto withCharacterId(String characterId) {
-        this.characterId = characterId;
-        return this;
-    }
-
     public String getCharacterName() {
         return characterName;
     }
 
     public void setCharacterName(String characterName) {
         this.characterName = characterName;
-    }
-
-    public CharacterSkillStyleJsonDto withCharacterName(String characterName) {
-        this.characterName = characterName;
-        return this;
     }
 
     public Integer getLevel() {
@@ -118,22 +108,12 @@ public class CharacterSkillStyleJsonDto implements Serializable
         this.level = level;
     }
 
-    public CharacterSkillStyleJsonDto withLevel(Integer level) {
-        this.level = level;
-        return this;
-    }
-
     public String getJobId() {
         return jobId;
     }
 
     public void setJobId(String jobId) {
         this.jobId = jobId;
-    }
-
-    public CharacterSkillStyleJsonDto withJobId(String jobId) {
-        this.jobId = jobId;
-        return this;
     }
 
     public String getJobGrowId() {
@@ -144,22 +124,12 @@ public class CharacterSkillStyleJsonDto implements Serializable
         this.jobGrowId = jobGrowId;
     }
 
-    public CharacterSkillStyleJsonDto withJobGrowId(String jobGrowId) {
-        this.jobGrowId = jobGrowId;
-        return this;
-    }
-
     public String getJobName() {
         return jobName;
     }
 
     public void setJobName(String jobName) {
         this.jobName = jobName;
-    }
-
-    public CharacterSkillStyleJsonDto withJobName(String jobName) {
-        this.jobName = jobName;
-        return this;
     }
 
     public String getJobGrowName() {
@@ -170,22 +140,12 @@ public class CharacterSkillStyleJsonDto implements Serializable
         this.jobGrowName = jobGrowName;
     }
 
-    public CharacterSkillStyleJsonDto withJobGrowName(String jobGrowName) {
-        this.jobGrowName = jobGrowName;
-        return this;
-    }
-
     public String getAdventureName() {
         return adventureName;
     }
 
     public void setAdventureName(String adventureName) {
         this.adventureName = adventureName;
-    }
-
-    public CharacterSkillStyleJsonDto withAdventureName(String adventureName) {
-        this.adventureName = adventureName;
-        return this;
     }
 
     public String getGuildId() {
@@ -196,22 +156,12 @@ public class CharacterSkillStyleJsonDto implements Serializable
         this.guildId = guildId;
     }
 
-    public CharacterSkillStyleJsonDto withGuildId(String guildId) {
-        this.guildId = guildId;
-        return this;
-    }
-
     public String getGuildName() {
         return guildName;
     }
 
     public void setGuildName(String guildName) {
         this.guildName = guildName;
-    }
-
-    public CharacterSkillStyleJsonDto withGuildName(String guildName) {
-        this.guildName = guildName;
-        return this;
     }
 
     public Skill getSkill() {
@@ -222,15 +172,10 @@ public class CharacterSkillStyleJsonDto implements Serializable
         this.skill = skill;
     }
 
-    public CharacterSkillStyleJsonDto withSkill(Skill skill) {
-        this.skill = skill;
-        return this;
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(CharacterSkillStyleJsonDto.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append(CharacterBuffCreatureJsonDto.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("characterId");
         sb.append('=');
         sb.append(((this.characterId == null)?"<null>":this.characterId));
@@ -284,72 +229,79 @@ public class CharacterSkillStyleJsonDto implements Serializable
     }
 
     @Generated("jsonschema2pojo")
-    public static class Style implements Serializable
+    public static class SkillInfo implements Serializable
     {
 
-        @SerializedName("active")
+        @SerializedName("skillId")
         @Expose
-        private List<Active> active = new ArrayList<Active>();
-        @SerializedName("passive")
+        private String skillId;
+        @SerializedName("name")
         @Expose
-        private List<Passive> passive = new ArrayList<Passive>();
-        private final static long serialVersionUID = 2616640876000014997L;
+        private String name;
+        @SerializedName("option")
+        @Expose
+        private Option option;
+        private final static long serialVersionUID = 4223788508441122492L;
 
         /**
          * No args constructor for use in serialization
          *
          */
-        public Style() {
+        public SkillInfo() {
         }
 
         /**
          *
-         * @param active
-         * @param passive
+         * @param skillId
+         * @param name
+         * @param option
          */
-        public Style(List<Active> active, List<Passive> passive) {
+        public SkillInfo(String skillId, String name, Option option) {
             super();
-            this.active = active;
-            this.passive = passive;
+            this.skillId = skillId;
+            this.name = name;
+            this.option = option;
         }
 
-        public List<Active> getActive() {
-            return active;
+        public String getSkillId() {
+            return skillId;
         }
 
-        public void setActive(List<Active> active) {
-            this.active = active;
+        public void setSkillId(String skillId) {
+            this.skillId = skillId;
         }
 
-        public Style withActive(List<Active> active) {
-            this.active = active;
-            return this;
+        public String getName() {
+            return name;
         }
 
-        public List<Passive> getPassive() {
-            return passive;
+        public void setName(String name) {
+            this.name = name;
         }
 
-        public void setPassive(List<Passive> passive) {
-            this.passive = passive;
+        public Option getOption() {
+            return option;
         }
 
-        public Style withPassive(List<Passive> passive) {
-            this.passive = passive;
-            return this;
+        public void setOption(Option option) {
+            this.option = option;
         }
 
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append(Style.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
-            sb.append("active");
+            sb.append(SkillInfo.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+            sb.append("skillId");
             sb.append('=');
-            sb.append(((this.active == null)?"<null>":this.active));
+            sb.append(((this.skillId == null)?"<null>":this.skillId));
             sb.append(',');
-            sb.append("passive");
+            sb.append("name");
             sb.append('=');
-            sb.append(((this.passive == null)?"<null>":this.passive));
+            sb.append(((this.name == null)?"<null>":this.name));
+            sb.append(',');
+            sb.append("option");
+            sb.append('=');
+            sb.append(((this.option == null)?"<null>":this.option));
             sb.append(',');
             if (sb.charAt((sb.length()- 1)) == ',') {
                 sb.setCharAt((sb.length()- 1), ']');
@@ -365,10 +317,10 @@ public class CharacterSkillStyleJsonDto implements Serializable
     public static class Skill implements Serializable
     {
 
-        @SerializedName("style")
+        @SerializedName("buff")
         @Expose
-        private Style style;
-        private final static long serialVersionUID = 467559882804617866L;
+        private Buff buff;
+        private final static long serialVersionUID = 212861324744037445L;
 
         /**
          * No args constructor for use in serialization
@@ -379,33 +331,28 @@ public class CharacterSkillStyleJsonDto implements Serializable
 
         /**
          *
-         * @param style
+         * @param buff
          */
-        public Skill(Style style) {
+        public Skill(Buff buff) {
             super();
-            this.style = style;
+            this.buff = buff;
         }
 
-        public Style getStyle() {
-            return style;
+        public Buff getBuff() {
+            return buff;
         }
 
-        public void setStyle(Style style) {
-            this.style = style;
-        }
-
-        public Skill withStyle(Style style) {
-            this.style = style;
-            return this;
+        public void setBuff(Buff buff) {
+            this.buff = buff;
         }
 
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
             sb.append(Skill.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
-            sb.append("style");
+            sb.append("buff");
             sb.append('=');
-            sb.append(((this.style == null)?"<null>":this.style));
+            sb.append(((this.buff == null)?"<null>":this.buff));
             sb.append(',');
             if (sb.charAt((sb.length()- 1)) == ',') {
                 sb.setCharAt((sb.length()- 1), ']');
@@ -418,69 +365,38 @@ public class CharacterSkillStyleJsonDto implements Serializable
     }
 
     @Generated("jsonschema2pojo")
-    public static class Passive implements Serializable
+    public static class Option implements Serializable
     {
 
-        @SerializedName("skillId")
-        @Expose
-        private String skillId;
-        @SerializedName("name")
-        @Expose
-        private String name;
         @SerializedName("level")
         @Expose
         private Integer level;
-        @SerializedName("requiredLevel")
+        @SerializedName("desc")
         @Expose
-        private Integer requiredLevel;
-        private final static long serialVersionUID = 579677923654723940L;
+        private String desc;
+        @SerializedName("values")
+        @Expose
+        private List<String> values = new ArrayList<String>();
+        private final static long serialVersionUID = -8888825476410179678L;
 
         /**
          * No args constructor for use in serialization
          *
          */
-        public Passive() {
+        public Option() {
         }
 
         /**
          *
-         * @param skillId
          * @param level
-         * @param requiredLevel
-         * @param name
+         * @param values
+         * @param desc
          */
-        public Passive(String skillId, String name, Integer level, Integer requiredLevel) {
+        public Option(Integer level, String desc, List<String> values) {
             super();
-            this.skillId = skillId;
-            this.name = name;
             this.level = level;
-            this.requiredLevel = requiredLevel;
-        }
-
-        public String getSkillId() {
-            return skillId;
-        }
-
-        public void setSkillId(String skillId) {
-            this.skillId = skillId;
-        }
-
-        public Passive withSkillId(String skillId) {
-            this.skillId = skillId;
-            return this;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public Passive withName(String name) {
-            this.name = name;
-            return this;
+            this.desc = desc;
+            this.values = values;
         }
 
         public Integer getLevel() {
@@ -491,43 +407,37 @@ public class CharacterSkillStyleJsonDto implements Serializable
             this.level = level;
         }
 
-        public Passive withLevel(Integer level) {
-            this.level = level;
-            return this;
+        public String getDesc() {
+            return desc;
         }
 
-        public Integer getRequiredLevel() {
-            return requiredLevel;
+        public void setDesc(String desc) {
+            this.desc = desc;
         }
 
-        public void setRequiredLevel(Integer requiredLevel) {
-            this.requiredLevel = requiredLevel;
+        public List<String> getValues() {
+            return values;
         }
 
-        public Passive withRequiredLevel(Integer requiredLevel) {
-            this.requiredLevel = requiredLevel;
-            return this;
+        public void setValues(List<String> values) {
+            this.values = values;
         }
 
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append(Passive.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
-            sb.append("skillId");
-            sb.append('=');
-            sb.append(((this.skillId == null)?"<null>":this.skillId));
-            sb.append(',');
-            sb.append("name");
-            sb.append('=');
-            sb.append(((this.name == null)?"<null>":this.name));
-            sb.append(',');
+            sb.append(Option.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
             sb.append("level");
             sb.append('=');
             sb.append(((this.level == null)?"<null>":this.level));
             sb.append(',');
-            sb.append("requiredLevel");
+            sb.append("desc");
             sb.append('=');
-            sb.append(((this.requiredLevel == null)?"<null>":this.requiredLevel));
+            sb.append(((this.desc == null)?"<null>":this.desc));
+            sb.append(',');
+            sb.append("values");
+            sb.append('=');
+            sb.append(((this.values == null)?"<null>":this.values));
             sb.append(',');
             if (sb.charAt((sb.length()- 1)) == ',') {
                 sb.setCharAt((sb.length()- 1), ']');
@@ -540,116 +450,164 @@ public class CharacterSkillStyleJsonDto implements Serializable
     }
 
     @Generated("jsonschema2pojo")
-    public static class Active implements Serializable
+    public static class Creature implements Serializable
     {
 
-        @SerializedName("skillId")
+        @SerializedName("itemId")
         @Expose
-        private String skillId;
-        @SerializedName("name")
+        private String itemId;
+        @SerializedName("itemName")
         @Expose
-        private String name;
-        @SerializedName("level")
+        private String itemName;
+        @SerializedName("itemRarity")
         @Expose
-        private Integer level;
-        @SerializedName("requiredLevel")
+        private String itemRarity;
+        @SerializedName("enchant")
         @Expose
-        private Integer requiredLevel;
-        private final static long serialVersionUID = 2259161861500823328L;
+        private Object enchant;
+        private final static long serialVersionUID = -7807103058193542738L;
 
         /**
          * No args constructor for use in serialization
          *
          */
-        public Active() {
+        public Creature() {
         }
 
         /**
          *
-         * @param skillId
-         * @param level
-         * @param requiredLevel
-         * @param name
+         * @param itemId
+         * @param itemName
+         * @param itemRarity
+         * @param enchant
          */
-        public Active(String skillId, String name, Integer level, Integer requiredLevel) {
+        public Creature(String itemId, String itemName, String itemRarity, Object enchant) {
             super();
-            this.skillId = skillId;
-            this.name = name;
-            this.level = level;
-            this.requiredLevel = requiredLevel;
+            this.itemId = itemId;
+            this.itemName = itemName;
+            this.itemRarity = itemRarity;
+            this.enchant = enchant;
         }
 
-        public String getSkillId() {
-            return skillId;
+        public String getItemId() {
+            return itemId;
         }
 
-        public void setSkillId(String skillId) {
-            this.skillId = skillId;
+        public void setItemId(String itemId) {
+            this.itemId = itemId;
         }
 
-        public Active withSkillId(String skillId) {
-            this.skillId = skillId;
-            return this;
+        public String getItemName() {
+            return itemName;
         }
 
-        public String getName() {
-            return name;
+        public void setItemName(String itemName) {
+            this.itemName = itemName;
         }
 
-        public void setName(String name) {
-            this.name = name;
+        public String getItemRarity() {
+            return itemRarity;
         }
 
-        public Active withName(String name) {
-            this.name = name;
-            return this;
+        public void setItemRarity(String itemRarity) {
+            this.itemRarity = itemRarity;
         }
 
-        public Integer getLevel() {
-            return level;
+        public Object getEnchant() {
+            return enchant;
         }
 
-        public void setLevel(Integer level) {
-            this.level = level;
-        }
-
-        public Active withLevel(Integer level) {
-            this.level = level;
-            return this;
-        }
-
-        public Integer getRequiredLevel() {
-            return requiredLevel;
-        }
-
-        public void setRequiredLevel(Integer requiredLevel) {
-            this.requiredLevel = requiredLevel;
-        }
-
-        public Active withRequiredLevel(Integer requiredLevel) {
-            this.requiredLevel = requiredLevel;
-            return this;
+        public void setEnchant(Object enchant) {
+            this.enchant = enchant;
         }
 
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append(Active.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
-            sb.append("skillId");
+            sb.append(Creature.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+            sb.append("itemId");
             sb.append('=');
-            sb.append(((this.skillId == null)?"<null>":this.skillId));
+            sb.append(((this.itemId == null)?"<null>":this.itemId));
             sb.append(',');
-            sb.append("name");
+            sb.append("itemName");
             sb.append('=');
-            sb.append(((this.name == null)?"<null>":this.name));
+            sb.append(((this.itemName == null)?"<null>":this.itemName));
             sb.append(',');
-            sb.append("level");
+            sb.append("itemRarity");
             sb.append('=');
-            sb.append(((this.level == null)?"<null>":this.level));
+            sb.append(((this.itemRarity == null)?"<null>":this.itemRarity));
             sb.append(',');
-            sb.append("requiredLevel");
+            sb.append("enchant");
             sb.append('=');
-            sb.append(((this.requiredLevel == null)?"<null>":this.requiredLevel));
+            sb.append(((this.enchant == null)?"<null>":this.enchant));
+            sb.append(',');
+            if (sb.charAt((sb.length()- 1)) == ',') {
+                sb.setCharAt((sb.length()- 1), ']');
+            } else {
+                sb.append(']');
+            }
+            return sb.toString();
+        }
+
+    }
+
+    @Generated("jsonschema2pojo")
+    public static class Buff implements Serializable
+    {
+
+        @SerializedName("skillInfo")
+        @Expose
+        private SkillInfo skillInfo;
+        @SerializedName("creature")
+        @Expose
+        private List<Creature> creature = new ArrayList<Creature>();
+        private final static long serialVersionUID = 2524075599940078202L;
+
+        /**
+         * No args constructor for use in serialization
+         *
+         */
+        public Buff() {
+        }
+
+        /**
+         *
+         * @param skillInfo
+         * @param creature
+         */
+        public Buff(SkillInfo skillInfo, List<Creature> creature) {
+            super();
+            this.skillInfo = skillInfo;
+            this.creature = creature;
+        }
+
+        public SkillInfo getSkillInfo() {
+            return skillInfo;
+        }
+
+        public void setSkillInfo(SkillInfo skillInfo) {
+            this.skillInfo = skillInfo;
+        }
+
+        public List<Creature> getCreature() {
+            return creature;
+        }
+
+        public void setCreature(List<Creature> creature) {
+            this.creature = creature;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(Buff.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+            sb.append("skillInfo");
+            sb.append('=');
+            sb.append(((this.skillInfo == null)?"<null>":this.skillInfo));
+            sb.append(',');
+            sb.append("creature");
+            sb.append('=');
+            sb.append(((this.creature == null)?"<null>":this.creature));
             sb.append(',');
             if (sb.charAt((sb.length()- 1)) == ',') {
                 sb.setCharAt((sb.length()- 1), ']');

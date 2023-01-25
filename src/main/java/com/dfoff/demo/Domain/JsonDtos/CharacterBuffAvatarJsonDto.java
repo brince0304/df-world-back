@@ -1,5 +1,5 @@
 
-package com.dfoff.demo.Domain.ForCharacter;
+package com.dfoff.demo.Domain.JsonDtos;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
 import javax.annotation.processing.Generated;
 
 @Generated("jsonschema2pojo")
-public class CharacterBuffCreatureJsonDto implements Serializable
+public class CharacterBuffAvatarJsonDto implements Serializable
 {
 
     @SerializedName("characterId")
@@ -52,7 +52,7 @@ public class CharacterBuffCreatureJsonDto implements Serializable
      * No args constructor for use in serialization
      * 
      */
-    public CharacterBuffCreatureJsonDto() {
+    public CharacterBuffAvatarJsonDto() {
     }
 
     /**
@@ -69,7 +69,7 @@ public class CharacterBuffCreatureJsonDto implements Serializable
      * @param guildId
      * @param guildName
      */
-    public CharacterBuffCreatureJsonDto(String characterId, String characterName, Integer level, String jobId, String jobGrowId, String jobName, String jobGrowName, String adventureName, String guildId, String guildName, Skill skill) {
+    public CharacterBuffAvatarJsonDto(String characterId, String characterName, Integer level, String jobId, String jobGrowId, String jobName, String jobGrowName, String adventureName, String guildId, String guildName, Skill skill) {
         super();
         this.characterId = characterId;
         this.characterName = characterName;
@@ -175,7 +175,7 @@ public class CharacterBuffCreatureJsonDto implements Serializable
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(CharacterBuffCreatureJsonDto.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+        sb.append(CharacterBuffAvatarJsonDto.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
         sb.append("characterId");
         sb.append('=');
         sb.append(((this.characterId == null)?"<null>":this.characterId));
@@ -365,6 +365,108 @@ public class CharacterBuffCreatureJsonDto implements Serializable
     }
 
     @Generated("jsonschema2pojo")
+    public static class Emblem implements Serializable
+    {
+
+        @SerializedName("slotNo")
+        @Expose
+        private Integer slotNo;
+        @SerializedName("slotColor")
+        @Expose
+        private String slotColor;
+        @SerializedName("itemName")
+        @Expose
+        private String itemName;
+        @SerializedName("itemRarity")
+        @Expose
+        private String itemRarity;
+        private final static long serialVersionUID = -550031267239752649L;
+
+        /**
+         * No args constructor for use in serialization
+         *
+         */
+        public Emblem() {
+        }
+
+        /**
+         *
+         * @param itemName
+         * @param slotColor
+         * @param itemRarity
+         * @param slotNo
+         */
+        public Emblem(Integer slotNo, String slotColor, String itemName, String itemRarity) {
+            super();
+            this.slotNo = slotNo;
+            this.slotColor = slotColor;
+            this.itemName = itemName;
+            this.itemRarity = itemRarity;
+        }
+
+        public Integer getSlotNo() {
+            return slotNo;
+        }
+
+        public void setSlotNo(Integer slotNo) {
+            this.slotNo = slotNo;
+        }
+
+        public String getSlotColor() {
+            return slotColor;
+        }
+
+        public void setSlotColor(String slotColor) {
+            this.slotColor = slotColor;
+        }
+
+        public String getItemName() {
+            return itemName;
+        }
+
+        public void setItemName(String itemName) {
+            this.itemName = itemName;
+        }
+
+        public String getItemRarity() {
+            return itemRarity;
+        }
+
+        public void setItemRarity(String itemRarity) {
+            this.itemRarity = itemRarity;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(Emblem.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+            sb.append("slotNo");
+            sb.append('=');
+            sb.append(((this.slotNo == null)?"<null>":this.slotNo));
+            sb.append(',');
+            sb.append("slotColor");
+            sb.append('=');
+            sb.append(((this.slotColor == null)?"<null>":this.slotColor));
+            sb.append(',');
+            sb.append("itemName");
+            sb.append('=');
+            sb.append(((this.itemName == null)?"<null>":this.itemName));
+            sb.append(',');
+            sb.append("itemRarity");
+            sb.append('=');
+            sb.append(((this.itemRarity == null)?"<null>":this.itemRarity));
+            sb.append(',');
+            if (sb.charAt((sb.length()- 1)) == ',') {
+                sb.setCharAt((sb.length()- 1), ']');
+            } else {
+                sb.append(']');
+            }
+            return sb.toString();
+        }
+
+    }
+
+    @Generated("jsonschema2pojo")
     public static class Option implements Serializable
     {
 
@@ -450,9 +552,83 @@ public class CharacterBuffCreatureJsonDto implements Serializable
     }
 
     @Generated("jsonschema2pojo")
-    public static class Creature implements Serializable
+    public static class Buff implements Serializable
     {
 
+        @SerializedName("skillInfo")
+        @Expose
+        private SkillInfo skillInfo;
+        @SerializedName("avatar")
+        @Expose
+        private List<Avatar> avatar = new ArrayList<Avatar>();
+        private final static long serialVersionUID = -4136574692864666982L;
+
+        /**
+         * No args constructor for use in serialization
+         *
+         */
+        public Buff() {
+        }
+
+        /**
+         *
+         * @param skillInfo
+         * @param avatar
+         */
+        public Buff(SkillInfo skillInfo, List<Avatar> avatar) {
+            super();
+            this.skillInfo = skillInfo;
+            this.avatar = avatar;
+        }
+
+        public SkillInfo getSkillInfo() {
+            return skillInfo;
+        }
+
+        public void setSkillInfo(SkillInfo skillInfo) {
+            this.skillInfo = skillInfo;
+        }
+
+        public List<Avatar> getAvatar() {
+            return avatar;
+        }
+
+        public void setAvatar(List<Avatar> avatar) {
+            this.avatar = avatar;
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(Buff.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+            sb.append("skillInfo");
+            sb.append('=');
+            sb.append(((this.skillInfo == null)?"<null>":this.skillInfo));
+            sb.append(',');
+            sb.append("avatar");
+            sb.append('=');
+            sb.append(((this.avatar == null)?"<null>":this.avatar));
+            sb.append(',');
+            if (sb.charAt((sb.length()- 1)) == ',') {
+                sb.setCharAt((sb.length()- 1), ']');
+            } else {
+                sb.append(']');
+            }
+            return sb.toString();
+        }
+
+    }
+
+    @Generated("jsonschema2pojo")
+    public static class Avatar implements Serializable
+    {
+
+        @SerializedName("slotId")
+        @Expose
+        private String slotId;
+        @SerializedName("slotName")
+        @Expose
+        private String slotName;
         @SerializedName("itemId")
         @Expose
         private String itemId;
@@ -462,31 +638,61 @@ public class CharacterBuffCreatureJsonDto implements Serializable
         @SerializedName("itemRarity")
         @Expose
         private String itemRarity;
-        @SerializedName("enchant")
+        @SerializedName("cloneAvatarName")
         @Expose
-        private Object enchant;
-        private final static long serialVersionUID = -7807103058193542738L;
+        private Object cloneAvatarName;
+        @SerializedName("optionAbility")
+        @Expose
+        private String optionAbility;
+        @SerializedName("emblems")
+        @Expose
+        private List<Emblem> emblems = new ArrayList<Emblem>();
+        private final static long serialVersionUID = 72814255570746408L;
 
         /**
          * No args constructor for use in serialization
          *
          */
-        public Creature() {
+        public Avatar() {
         }
 
         /**
          *
+         * @param slotName
+         * @param cloneAvatarName
          * @param itemId
          * @param itemName
+         * @param emblems
+         * @param optionAbility
          * @param itemRarity
-         * @param enchant
+         * @param slotId
          */
-        public Creature(String itemId, String itemName, String itemRarity, Object enchant) {
+        public Avatar(String slotId, String slotName, String itemId, String itemName, String itemRarity, Object cloneAvatarName, String optionAbility, List<Emblem> emblems) {
             super();
+            this.slotId = slotId;
+            this.slotName = slotName;
             this.itemId = itemId;
             this.itemName = itemName;
             this.itemRarity = itemRarity;
-            this.enchant = enchant;
+            this.cloneAvatarName = cloneAvatarName;
+            this.optionAbility = optionAbility;
+            this.emblems = emblems;
+        }
+
+        public String getSlotId() {
+            return slotId;
+        }
+
+        public void setSlotId(String slotId) {
+            this.slotId = slotId;
+        }
+
+        public String getSlotName() {
+            return slotName;
+        }
+
+        public void setSlotName(String slotName) {
+            this.slotName = slotName;
         }
 
         public String getItemId() {
@@ -513,18 +719,42 @@ public class CharacterBuffCreatureJsonDto implements Serializable
             this.itemRarity = itemRarity;
         }
 
-        public Object getEnchant() {
-            return enchant;
+        public Object getCloneAvatarName() {
+            return cloneAvatarName;
         }
 
-        public void setEnchant(Object enchant) {
-            this.enchant = enchant;
+        public void setCloneAvatarName(Object cloneAvatarName) {
+            this.cloneAvatarName = cloneAvatarName;
+        }
+
+        public String getOptionAbility() {
+            return optionAbility;
+        }
+
+        public void setOptionAbility(String optionAbility) {
+            this.optionAbility = optionAbility;
+        }
+
+        public List<Emblem> getEmblems() {
+            return emblems;
+        }
+
+        public void setEmblems(List<Emblem> emblems) {
+            this.emblems = emblems;
         }
 
         @Override
         public String toString() {
             StringBuilder sb = new StringBuilder();
-            sb.append(Creature.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+            sb.append(Avatar.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
+            sb.append("slotId");
+            sb.append('=');
+            sb.append(((this.slotId == null)?"<null>":this.slotId));
+            sb.append(',');
+            sb.append("slotName");
+            sb.append('=');
+            sb.append(((this.slotName == null)?"<null>":this.slotName));
+            sb.append(',');
             sb.append("itemId");
             sb.append('=');
             sb.append(((this.itemId == null)?"<null>":this.itemId));
@@ -537,77 +767,17 @@ public class CharacterBuffCreatureJsonDto implements Serializable
             sb.append('=');
             sb.append(((this.itemRarity == null)?"<null>":this.itemRarity));
             sb.append(',');
-            sb.append("enchant");
+            sb.append("cloneAvatarName");
             sb.append('=');
-            sb.append(((this.enchant == null)?"<null>":this.enchant));
+            sb.append(((this.cloneAvatarName == null)?"<null>":this.cloneAvatarName));
             sb.append(',');
-            if (sb.charAt((sb.length()- 1)) == ',') {
-                sb.setCharAt((sb.length()- 1), ']');
-            } else {
-                sb.append(']');
-            }
-            return sb.toString();
-        }
-
-    }
-
-    @Generated("jsonschema2pojo")
-    public static class Buff implements Serializable
-    {
-
-        @SerializedName("skillInfo")
-        @Expose
-        private SkillInfo skillInfo;
-        @SerializedName("creature")
-        @Expose
-        private List<Creature> creature = new ArrayList<Creature>();
-        private final static long serialVersionUID = 2524075599940078202L;
-
-        /**
-         * No args constructor for use in serialization
-         *
-         */
-        public Buff() {
-        }
-
-        /**
-         *
-         * @param skillInfo
-         * @param creature
-         */
-        public Buff(SkillInfo skillInfo, List<Creature> creature) {
-            super();
-            this.skillInfo = skillInfo;
-            this.creature = creature;
-        }
-
-        public SkillInfo getSkillInfo() {
-            return skillInfo;
-        }
-
-        public void setSkillInfo(SkillInfo skillInfo) {
-            this.skillInfo = skillInfo;
-        }
-
-        public List<Creature> getCreature() {
-            return creature;
-        }
-
-        public void setCreature(List<Creature> creature) {
-            this.creature = creature;
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append(Buff.class.getName()).append('@').append(Integer.toHexString(System.identityHashCode(this))).append('[');
-            sb.append("skillInfo");
+            sb.append("optionAbility");
             sb.append('=');
-            sb.append(((this.skillInfo == null)?"<null>":this.skillInfo));
+            sb.append(((this.optionAbility == null)?"<null>":this.optionAbility));
             sb.append(',');
-            sb.append("creature");
+            sb.append("emblems");
             sb.append('=');
-            sb.append(((this.creature == null)?"<null>":this.creature));
+            sb.append(((this.emblems == null)?"<null>":this.emblems));
             sb.append(',');
             if (sb.charAt((sb.length()- 1)) == ',') {
                 sb.setCharAt((sb.length()- 1), ']');

@@ -1,5 +1,5 @@
 
-package com.dfoff.demo.Domain.ForCharacter;
+package com.dfoff.demo.Domain.JsonDtos;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;

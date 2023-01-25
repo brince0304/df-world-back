@@ -1,4 +1,4 @@
-package com.dfoff.demo.Domain.ForCharacter;
+package com.dfoff.demo.Domain.JsonDtos;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
