@@ -3,24 +3,22 @@ package com.dfoff.demo.Domain;
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
 import com.dfoff.demo.Util.FileUtil;
-import com.dfoff.demo.Util.OpenAPIUtil;
+import com.dfoff.demo.Util.RestTemplateUtil;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.dfoff.demo.Domain.Board.Chrono.timesAgo;
-import static com.dfoff.demo.Domain.Board.Chrono.timesAgo;
 import static com.dfoff.demo.Util.BoardUtil.converter;
+import static com.dfoff.demo.Util.CharactersUtil.timesAgo;
 
 @Entity
 @Getter
@@ -28,6 +26,7 @@ import static com.dfoff.demo.Util.BoardUtil.converter;
 @Builder
 @AllArgsConstructor (access = AccessLevel.PRIVATE)
 @NoArgsConstructor (access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE board SET deleted = true , deleted_at = now() WHERE id = ?")
 public class Board extends AuditingFields {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,7 +54,7 @@ public class Board extends AuditingFields {
     @Setter
     @Column(nullable = false)
     @Builder.Default
-    private String isDeleted = "N";
+    private Boolean deleted = Boolean.FALSE;
     @Setter
     @Builder.Default
     private Integer boardViewCount = 0;
@@ -63,18 +62,18 @@ public class Board extends AuditingFields {
     @Builder.Default
     private Integer boardLikeCount = 0;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     @JoinColumn(name = "board_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     private final Set<SaveFile> boardFiles = new LinkedHashSet<>();
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     @ToString.Exclude
     private final Set<BoardComment> boardComments = new LinkedHashSet<>();
 
 
-    @OneToMany(mappedBy = "board")
+    @OneToMany(mappedBy = "board", fetch = FetchType.LAZY)
     @Builder.Default
     @ToString.Exclude
     private final Set<BoardHashtagMapper> hashtags = new LinkedHashSet<>();
@@ -83,6 +82,8 @@ public class Board extends AuditingFields {
     @JoinColumn(name = "character_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     @Setter
     private CharacterEntity character;
+
+    private LocalDateTime deletedAt;
 
 
     @Override
@@ -112,7 +113,7 @@ public class Board extends AuditingFields {
         private final String boardTitle;
         private final String boardContent;
         private final UserAccount.UserAccountDto userAccount;
-        private final String isDeleted;
+
         private final Integer boardViewCount;
         private final Integer boardLikeCount;
 
@@ -128,7 +129,6 @@ public class Board extends AuditingFields {
                     .boardTitle(board.getBoardTitle())
                     .boardContent(board.getBoardContent())
                     .userAccount(UserAccount.UserAccountDto.from(board.getUserAccount()))
-                    .isDeleted(board.getIsDeleted())
                     .boardViewCount(board.getBoardViewCount())
                     .boardLikeCount(board.getBoardLikeCount())
                     .build();
@@ -199,7 +199,7 @@ public class Board extends AuditingFields {
                     .jobName(characterEntity.getJobName())
                     .adventureName(characterEntity.getAdventureName() == null ? "갱신필요" : characterEntity.getAdventureName())
                     .adventureFame(characterEntity.getAdventureFame() == null ? "0" : characterEntity.getAdventureFame())
-                    .characterImageUrl(OpenAPIUtil.getCharacterImgUrl(characterEntity.getServerId(), characterEntity.getCharacterId(), "1"))
+                    .characterImageUrl(RestTemplateUtil.getCharacterImgUri(characterEntity.getServerId(), characterEntity.getCharacterId(), "1"))
                     .imgStyleClassName(getStyleClassName(characterEntity.getJobName()))
                     .build();
         }
@@ -219,7 +219,6 @@ public class Board extends AuditingFields {
         private final BoardType boardType;
         private final String boardTitle;
         private final String boardContent;
-        private final String isDeleted;
         private final Integer boardViewCount;
         private final Integer boardLikeCount;
         private final String commentCount;
@@ -263,7 +262,6 @@ public class Board extends AuditingFields {
                     .boardType(board.getBoardType())
                     .boardTitle(board.getBoardTitle())
                     .boardContent(board.getBoardContent())
-                    .isDeleted(board.getIsDeleted())
                     .boardViewCount(board.getBoardViewCount())
                     .boardLikeCount(board.getBoardLikeCount())
                     .commentCount(String.valueOf(board.getBoardComments().size()))
@@ -277,37 +275,7 @@ public class Board extends AuditingFields {
     }
 
 
-    public static class Chrono {
 
-        public static long dPlus(LocalDateTime dayBefore) {
-            return ChronoUnit.DAYS.between(dayBefore, LocalDateTime.now());
-        }
-
-        public static long dMinus(LocalDateTime dayAfter) {
-            return ChronoUnit.DAYS.between(dayAfter, LocalDateTime.now());
-        }
-
-        public static String timesAgo(LocalDateTime dayBefore) {
-            long gap = ChronoUnit.MINUTES.between(dayBefore, LocalDateTime.now());
-            String word;
-            if (gap == 0) {
-                word = "방금 전";
-            } else if (gap < 60) {
-                word = gap + "분 전";
-            } else if (gap < 60 * 24) {
-                word = (gap / 60) + "시간 전";
-            } else if (gap < 60 * 24 * 10) {
-                word = (gap / 60 / 24) + "일 전";
-            } else {
-                word = dayBefore.format(DateTimeFormatter.ofPattern("MM월 dd일"));
-            }
-            return word;
-        }
-
-        public static String customForm(LocalDateTime date) {
-            return date.format(DateTimeFormatter.ofPattern("MM월 dd일"));
-        }
-    }
 
     @Data
     @Builder
@@ -320,7 +288,7 @@ public class Board extends AuditingFields {
         private final BoardType boardType;
         private final String boardTitle;
         private final String boardContent;
-        private final String isDeleted;
+        private Boolean deleted;
         private final Integer boardViewCount;
         private final Integer boardLikeCount;
         private final String commentCount;
@@ -360,7 +328,7 @@ public class Board extends AuditingFields {
                     .createdAt(timesAgo(board.getCreatedAt()))
                     .createdBy(board.getCreatedBy())
                     .id(board.getId())
-                    .isDeleted(board.getIsDeleted())
+                    .deleted(board.getDeleted())
                     .modifiedAt(timesAgo(board.getModifiedAt()))
                     .modifiedBy(board.getModifiedBy())
                     .character(board.getCharacter() == null ? null : CharacterBoardResponse.from(board.getCharacter()))
@@ -414,13 +382,12 @@ public class Board extends AuditingFields {
         private final String modifiedBy;
         private final Long id;
         private final BoardType boardType;
-        @NotNull
-        @Length(min = 1, max = 100)
+
         private final String boardTitle;
-        @NotNull
-        @Length(min = 1, max = 10000)
+
         private final String boardContent;
-        private final String isDeleted;
+
+        private Boolean deleted;
         private final Integer boardViewCount;
         private final Integer boardLikeCount;
 
@@ -464,7 +431,7 @@ public class Board extends AuditingFields {
                     .boardType(board.getBoardType())
                     .boardTitle(board.getBoardTitle())
                     .boardContent(board.getBoardContent())
-                    .isDeleted(board.getIsDeleted())
+                    .deleted(board.getDeleted())
                     .boardViewCount(board.getBoardViewCount())
                     .boardLikeCount(board.getBoardLikeCount())
                     .character(board.getCharacter() == null ? null : CharacterBoardResponse.from(board.getCharacter()))

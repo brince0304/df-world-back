@@ -40,8 +40,10 @@ public class SecurityConfig {
                 .loginPage("/users/login")
                         .usernameParameter("username").passwordParameter("password")
                 .permitAll()
-                .defaultSuccessUrl("/", true)
-                .failureUrl("/users/login?error")
+                .failureHandler((request, response, exception) -> {
+                    log.info("login fail");
+                    response.sendError(401, "로그인에 실패하였습니다.");
+                })
         )
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/users/logout"))

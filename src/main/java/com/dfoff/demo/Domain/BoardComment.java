@@ -7,6 +7,9 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
@@ -15,8 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.dfoff.demo.Domain.Board.Chrono.timesAgo;
-import static com.dfoff.demo.Domain.Board.Chrono.timesAgo;
+import static com.dfoff.demo.Util.CharactersUtil.timesAgo;
 
 
 @Table (indexes=@Index(name = "idx_createdAt" , columnList = "createdAt"))
@@ -26,6 +28,7 @@ import static com.dfoff.demo.Domain.Board.Chrono.timesAgo;
 @NoArgsConstructor (access = AccessLevel.PROTECTED)
 @AllArgsConstructor (access = AccessLevel.PRIVATE)
 @Builder
+@SQLDelete(sql = "UPDATE board_comment SET deleted = true, deleted_at = now() WHERE id = ?")
 public class BoardComment extends AuditingFields {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -45,21 +48,25 @@ public class BoardComment extends AuditingFields {
     private Integer commentLikeCount = 0;
     @Setter
     @Builder.Default
-    private String isDeleted = "N";
+    private Boolean deleted = Boolean.FALSE;
     @Setter
     @Builder.Default
-    private String isParent = "Y";
+    private Boolean isParent = Boolean.TRUE;
 
-    @OneToMany (mappedBy = "parentComment",fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany (mappedBy = "parentComment",fetch = FetchType.LAZY)
     @ToString.Exclude
     @Builder.Default
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private final Set<BoardComment> childrenComments = new LinkedHashSet<>();
 
-    @ManyToOne (fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne (fetch = FetchType.LAZY)
     @ToString.Exclude
     @JoinColumn (name = "parent_id")
     @Setter
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private BoardComment parentComment;
+
+    private LocalDateTime deletedAt;
 
 
     /**
@@ -79,8 +86,7 @@ public class BoardComment extends AuditingFields {
 
         private final String userNickname;
         private final Integer commentLikeCount;
-        private final String isDeleted;
-        private final String isParent;
+        private final Boolean isParent;
 
         private final String userProfileImgUrl;
         private final Set<BoardCommentResponse> childrenComments;
@@ -113,7 +119,6 @@ public class BoardComment extends AuditingFields {
                     .userId(boardComment.getUserAccount().getUserId())
                     .userNickname(boardComment.getUserAccount().getNickname())
                     .commentLikeCount(boardComment.getCommentLikeCount())
-                    .isDeleted(boardComment.getIsDeleted())
                     .isParent(boardComment.getIsParent())
                     .childrenComments(boardComment.getChildrenComments().stream().map(BoardCommentResponse::from).collect(Collectors.toSet()))
                     .userProfileImgUrl(FileUtil.getProfileIconPath(boardComment.getUserAccount().getProfileIcon().getFileName()))
@@ -136,8 +141,8 @@ public class BoardComment extends AuditingFields {
 
 
         private final Integer commentLikeCount;
-        private final String isDeleted;
-        private final String isParent;
+        private final Boolean deleted;
+        private final Boolean isParent;
 
 
         private final String childrenCommentsSize;
@@ -168,7 +173,7 @@ public class BoardComment extends AuditingFields {
                     .commentContent(boardComment.getCommentContent())
                     .boardId(boardComment.getBoard().getId().toString())
                     .commentLikeCount(boardComment.getCommentLikeCount())
-                    .isDeleted(boardComment.getIsDeleted())
+                    .deleted(boardComment.getDeleted())
                     .isParent(boardComment.getIsParent())
                     .childrenCommentsSize(boardComment.getChildrenComments().size()+"")
                     .boardType(boardComment.getBoard().getBoardType())

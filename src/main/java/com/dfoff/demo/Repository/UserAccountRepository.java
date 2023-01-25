@@ -20,11 +20,11 @@ public interface UserAccountRepository  extends JpaRepository<UserAccount, Strin
     boolean existsByNickname(String nickname);
 
     @Modifying
-    @Query("update Board b set b.isDeleted='Y'  where b.userAccount.userId=:id ")
+    @Query("update Board b set b.deleted=true  where b.userAccount.userId=:id ")
     void deleteBoardByUserAccountId(@Param("id") String id);
 
     @Modifying
-    @Query("update BoardComment b set b.isDeleted='Y' where b.userAccount.userId=:id")
+    @Query("update BoardComment b set b.deleted=true where b.userAccount.userId=:id")
     void deleteBoardCommentByUserAccountId(@Param("id") String id);
 
 
@@ -39,7 +39,7 @@ public interface UserAccountRepository  extends JpaRepository<UserAccount, Strin
 
     @Query("select  b from UserAccount c join Board b on b.userAccount.userId = c.userId  join  BoardComment bc on bc.board.id= b.id where c.userId=:id group by bc.id  order by count(bc.id) desc")
     Page<Board> findBoardsByUserIdOrderByCommentCount(@Param("id") String id, Pageable pageable);
-    @Query("select b from UserAccount c join BoardComment b on b.userAccount.userId = c.userId where c.userId=:id order by b.createdAt desc")
+    @Query("select b from UserAccount c join BoardComment b on b.userAccount.userId = c.userId  where c.userId=:id  order by b.createdAt desc")
     Page<BoardComment> findBoardCommentsByUserId(@Param("id") String id, Pageable pageable);
     @Query("select b from UserAccount c join BoardComment b on b.userAccount.userId = c.userId where c.userId=:id order by b.commentLikeCount desc")
     Page<BoardComment> findBoardCommentsByUserIdOrderByLikeCount(@Param("id") String id, Pageable pageable);

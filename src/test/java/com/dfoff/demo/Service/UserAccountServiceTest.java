@@ -12,8 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 import java.util.Optional;
@@ -21,7 +19,6 @@ import java.util.Optional;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 
@@ -52,7 +49,7 @@ class UserAccountServiceTest {
         account.setProfileIcon(saveFile);
         given(userAccountRepository.save(any())).willReturn(account);
         //when&then
-        sut.createAccount(createUserAccountSignUpRequest(), SaveFile.SaveFileDTO.builder().build());
+        sut.createAccount(createUserAccountSignUpRequest(), SaveFile.SaveFileDto.builder().build());
         then(userAccountRepository).should().save(account);
     }
 
@@ -106,7 +103,7 @@ class UserAccountServiceTest {
         account.setProfileIcon(saveFile);
         given(userAccountRepository.existsByUserId(account.getUserId())).willReturn(true);
         //when&then
-        Throwable throwable = catchThrowable(() -> sut.createAccount(createUserAccountSignUpRequest(), SaveFile.SaveFileDTO.builder().build()));
+        Throwable throwable = catchThrowable(() -> sut.createAccount(createUserAccountSignUpRequest(), SaveFile.SaveFileDto.builder().build()));
         assertThat(throwable).isInstanceOf(EntityExistsException.class);
     }
 
@@ -217,7 +214,7 @@ class UserAccountServiceTest {
                 filePath("test").
                 build();
         //when
-        sut.changeProfileIcon(UserAccount.UserAccountDto.from(createUserAccount()), SaveFile.SaveFileDTO.from(saveFile));
+        sut.changeProfileIcon(UserAccount.UserAccountDto.from(createUserAccount()), SaveFile.SaveFileDto.from(saveFile));
 
         //then
         then(userAccountRepository).should().findById(any());

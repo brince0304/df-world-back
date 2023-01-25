@@ -1,4 +1,4 @@
-package com.dfoff.demo.Domain.ForCharacter;
+package com.dfoff.demo.Domain.JsonDtos;
 
 
 import com.dfoff.demo.Domain.CharacterEntity;
@@ -6,6 +6,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -39,9 +40,9 @@ public class CharacterAbilityDto {
 
         private String adventureFame;
 
-        private List<Buff> buff = null;
+        private List<Buff> buff = new ArrayList<>();
 
-        private List<Status__1> status = null;
+        private List<Status__1> status = new ArrayList<>();
 
 
 
@@ -75,6 +76,8 @@ public class CharacterAbilityDto {
                     .adventureFame(dto.getAdventureFame())
                     .adventureName(dto.getAdventureName())
                     .serverId(ServerId)
+                    .guildId(dto.getGuildId())
+                    .guildName(dto.getGuildName())
                     .build();
         }
 
@@ -372,7 +375,7 @@ public class CharacterAbilityDto {
         private Integer level;
         @SerializedName("status")
         @Expose
-        private List<Status> status = null;
+        private List<Status> status = new ArrayList<>();
 
         /**
          * No args constructor for use in serialization

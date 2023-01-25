@@ -284,9 +284,10 @@
                                   th:text="${article.character.characterName}" style="margin-left: -9px; color:black"> 캐릭터</span></a>
                         <div class="board-character" th:if="${article.character!=null}"
                              >
-                            <img th:src="${article.character.characterImageUrl}"
+                            <a style="text-decoration-line: none" th:href="@{/characters/detail(characterId=${article.character.characterId},serverId=${article.character.serverId})}">
+                            <img  th:src="${article.character.characterImageUrl}"
                                  src=""
-                            >
+                            ></a>
                         </div>
                         <div class="board-character" th:if="${article.character==null}"
                              >
@@ -461,7 +462,7 @@
             success: function (data) {
                 $('#'+id+'-replyFormBtnBest').html("<i class='fa fa-comments-o' style='margin-right:10%' aria-hidden='true'></i>답글 : " + data.comments.length + "개");
                 $(data.comments).each(function(){
-                    if(this.isParent==='N'){
+                    if(this.isParent===false){
                         html += "<div style='padding:10px; width:95%; margin-left:4%'>";
                         html += "<div style='margin-left:4%;'>";
                         html += "<a style='color:#898989'><img class='boardIcon' style='border:1px solid #BDBDBD;border-radius:20px;' width='30px' height='30px' src='"+this.userProfileImgUrl+"'/>";
@@ -748,7 +749,7 @@
             success: function (data) {
                  count = data.comments.length;
                 $(data.comments).each(function () {
-                    if (this.isParent === 'Y') {
+                    if (this.isParent === true) {
                         count += this.childrenComments.length;
                         html += "<div style='padding:10px; width:95%'>";
                         html += "<div style='margin-left:4%;'>";
@@ -839,7 +840,7 @@
                     html3 += this.createdAt
                     html3 += "</a>";
                     html3 += "</span>";
-                    if(this.isParent==='Y') {
+                    if(this.isParent===true) {
                         html3 += "<span style=' margin-top:5px; cursor:pointer' class='badge bg-transparent text-black' onclick='commentReplyFormBest(" + this.id + ")'  id='" + this.id + "-replyFormBtnBest'>";
                         html3 += "<i class='fa fa-comments-o' style='margin-right:10%' aria-hidden='true'></i>"
                         html3 += " 답글 : " + this.childrenComments.length + "개";
@@ -961,7 +962,7 @@
             success: function (data) {
                 $('#'+id+'-replyFormBtn').html("<i class='fa fa-comments-o' style='margin-right:10%' aria-hidden='true'></i>답글 : " + data.comments.length + "개");
                 $(data.comments).each(function(){
-                    if(this.isParent==='N'){
+                    if(this.isParent===false){
                         html += "<div style='padding:10px; width:95%'>";
                         html += "<div style='margin-left:4%;'>";
                         html += "<a style='color:#898989'><img class='boardIcon' style='border:1px solid #BDBDBD;border-radius:20px;' width='30px' height='30px' src='" + this.userProfileImgUrl + "'/>";

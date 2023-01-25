@@ -29,7 +29,7 @@ public class FileUtil {
         return file;
     }
 
-    public static File getFileFromSaveFile(SaveFile.SaveFileDTO saveFileDto) {
+    public static File getFileFromSaveFile(SaveFile.SaveFileDto saveFileDto) {
         return new File(saveFileDto.filePath());
     }
 
@@ -38,17 +38,17 @@ public class FileUtil {
     }
 
 
-    public static void deleteFile(SaveFile.SaveFileDTO profileImg) {
+    public static void deleteFile(SaveFile.SaveFileDto profileImg) {
         File file = getFileFromSaveFile(profileImg);
         if (file.exists()) {
             file.delete();
         }
     }
-    public static SaveFile.SaveFileDTO getFileDtoFromMultiPartFile(MultipartFile multipartFile) throws IOException {
+    public static SaveFile.SaveFileDto getFileDtoFromMultiPartFile(MultipartFile multipartFile) throws IOException {
         String fileName = getMultipartFileToFile(multipartFile).getName();
         String fileType = getExtension(Objects.requireNonNull(multipartFile.getOriginalFilename()));
         Long fileSize = multipartFile.getSize();
-        return SaveFile.SaveFileDTO.builder()
+        return SaveFile.SaveFileDto.builder()
                 .fileName(fileName)
                 .filePath(uploadPath+fileName)
                 .fileType(fileType)

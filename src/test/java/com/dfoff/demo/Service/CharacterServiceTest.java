@@ -6,7 +6,7 @@ import com.dfoff.demo.Repository.CharacterEntityRepository;
 import com.dfoff.demo.Repository.UserAccountCharacterMapperRepository;
 import com.dfoff.demo.Repository.UserAccountRepository;
 import com.dfoff.demo.Domain.UserAccountCharacterMapper;
-import com.dfoff.demo.Util.OpenAPIUtil;
+import com.dfoff.demo.Util.RestTemplateUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,7 +39,7 @@ class CharacterServiceTest {
     UserAccountCharacterMapperRepository mapperRepository;
 
     @Mock
-    OpenAPIUtil openAPIUtil;
+    RestTemplateUtil restTemplateUtil;
 
     @BeforeEach
     void setUp() {
@@ -52,10 +52,10 @@ class CharacterServiceTest {
 
 
     @Test
-    void getCharacterDTOsTest() {
+    void getCharacterDTOsTest() throws InterruptedException {
         //given
         //when
-        sut.getCharacterDTOs("all","test");
+        sut.getCharacterDtos("all","test");
         //then
         characterEntityRepository.saveAll(List.of());
     }
@@ -85,7 +85,7 @@ class CharacterServiceTest {
         //given
         given(characterEntityRepository.save(any())).willReturn(CharacterEntity.builder().characterId("3bf7c8c99a0389acc0e66f4ff230d0acs").serverId("casillas").build());
         //when
-        sut.getCharacterAbilityThenSaveAsync(CharacterEntity.CharacterEntityDto.builder().characterId("3bf7c8c99a0389acc0e66f4ff230d0ac").serverId("casillas").build());
+        sut.getCharacterAbilityAsync(CharacterEntity.CharacterEntityDto.builder().characterId("3bf7c8c99a0389acc0e66f4ff230d0ac").serverId("casillas").build());
         //then
         then(characterEntityRepository).should().save(any());
     }

@@ -1,0 +1,1811 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="https://kit.fontawesome.com/1d4d31d2f3.js" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <link href="https://fonts.googleapis.com/css?family=Poppins" rel="stylesheet"/>
+    <link href="/css/searchForm.css" rel="stylesheet"/>
+    <link href="/Login/assets/css/bootstrap.css" rel="stylesheet"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="/Login/assets/css/login-register.css" rel="stylesheet"/>
+    <link href="/Login/assets/css/main.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet">
+    <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/css/util.css">
+    <link rel="stylesheet" href="/fonts/fonts/icomoon/style.css">
+
+
+    <link rel="stylesheet" href="/css/characterTabAnimate.css">
+
+    <!-- Bootstrap CSS -->
+
+    <!-- Style -->
+    <link rel="stylesheet" href="/css/characterTab.css">
+
+    <link rel="stylesheet" href="/header/fonts/icomoon/style.css">
+    <link rel="stylesheet" href="/css/characterTabOwl.css">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/header/css/bootstrap.min.css">
+    <!-- Style -->
+    <link rel="stylesheet" href="/header/css/style.css">
+    <link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <script src="/Login/assets/js/bootstrap.js" type="text/javascript"></script>
+    <script src="/Login/assets/js/login-register.js" type="text/javascript"></script>
+    <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css'>
+    <title>던파모아 온오프</title>
+    <style>
+
+        .dmgTable, .styleTable {
+            margin-top: 3px;
+            padding: 5px;
+            background-color: white;
+            display: inline-flex;
+            width: 100%;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .dmgTable-left {
+            display: inline-block;
+            width: 100%;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+
+        .dmgRow {
+            display: inline-block;
+            text-align: right;
+            margin-top: auto;
+            margin-bottom: auto;
+            padding-right: 5px;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -0.3px;
+        }
+
+        .style-req {
+            display: block;
+            font-size: small;
+            color: gray;
+        }
+
+        .style-name {
+            display: block;
+            font-size: larger;
+            color: black;
+        }
+
+        @media (min-width: 1200px) {
+            .container {
+                max-width: 60%;
+            }
+        }
+
+        .shinhwa {
+            background-image: url("/images/icons/ora_myth.png");
+        }
+
+        .upgraded {
+            background-image: url("/images/icons/siroco.gif");
+            left: 0;
+            opacity: 0.5;
+        }
+
+
+        @-ms-viewport {
+            width: device-width;
+        }
+
+        @-o-viewport {
+            width: device-width;
+        }
+
+        @viewport {
+            width: device-width;
+        }
+
+        html {
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+        }
+
+        body {
+            min-height: 1000px;
+            overflow-x: hidden !important;
+            overflow-y: hidden !important;
+        }
+
+        @media (max-width: 360px) {
+            body {
+                width: 360px !important;
+                position: absolute;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .col-sm-0, .col-md-0 {
+                display: none;
+            }
+        }
+
+        @media (min-width: 993px) {
+            .col-sm-0, .col-md-0 {
+                display: block;
+            }
+        }
+
+        .pagination-outer {
+            text-align: center;
+        }
+
+        .pagination {
+            font-family: 'Ubuntu', sans-serif;
+            display: inline-flex;
+            position: relative;
+        }
+
+        .pagination li a.page-link {
+            color: #000;
+            background: transparent;
+            font-size: 20px;
+            font-weight: 600;
+            line-height: 39px;
+            height: 40px;
+            width: 40px;
+            padding: 0;
+            margin: 0 6px;
+            border: none;
+            border-radius: 0;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease 0s;
+        }
+
+        .pagination li a.page-link:hover,
+        .pagination li a.page-link:focus,
+        .pagination li.active a.page-link:hover,
+        .pagination li.active a.page-link {
+            color: #fff;
+            background: #08b8e0;
+        }
+
+        .pagination li a.page-link:before {
+            content: '';
+            background: linear-gradient(#029fbc, #08b8e0);
+            height: 100%;
+            width: 100%;
+            border-radius: 50%;
+            opacity: 0;
+            position: absolute;
+            left: 0;
+            top: 0;
+            z-index: -1;
+            transition: all 0.3s ease 0s;
+        }
+
+        .pagination li:first-child a.page-link:before {
+            background: linear-gradient(to right, #029fbc, #08b8e0);
+        }
+
+        .pagination li:last-child a.page-link:before {
+            background: linear-gradient(to left, #029fbc, #08b8e0);
+        }
+
+        .pagination li a.page-link:hover:before,
+        .pagination li a.page-link:focus:before,
+        .pagination li.active a.page-link:hover:before,
+        .pagination li.active a.page-link:before {
+            opacity: 1;
+            top: -50%;
+        }
+
+        .pagination li:first-child a.page-link:hover:before,
+        .pagination li:first-child a.page-link:focus:before,
+        .pagination li.active:first-child a.page-link:hover:before,
+        .pagination li.active:first-child a.page-link:before {
+            top: 0;
+            left: -50%;
+        }
+
+        .pagination li:last-child a.page-link:hover:before,
+        .pagination li:last-child a.page-link:focus:before,
+        .pagination li.active:last-child a.page-link:hover:before,
+        .pagination li.active:last-child a.page-link:before {
+            top: 0;
+            left: 50%;
+        }
+        .itemModal-row{padding-right:10px!important;padding-left:10px!important}.fa-rotate-90{-ms-transform:rotate(90deg);-webkit-transform:rotate(90deg);transform:rotate(90deg)}.itemModal>.row{margin:0;width:100%;padding-right:0;padding-left:0}.modal-body{max-height:500px;overflow:auto}.modal-body>.row{margin:0;width:100%}.info-container{margin:0;width:100%;font-size:13px;padding:0}.info-container>.col{padding:0}.item-info{border-bottom:1px solid #252627;padding:5px 10px!important}.item-info>.row{padding:0!important}.itemModal>.modal-dialog{overflow-y:visible}.itemModal>.modal-dialog>.modal-content>.modal-header{padding:0;border-bottom:1px solid #252627}.itemModal>.modal-dialog>.modal-content>.modal-body{padding:0}.itemModal>.modal-dialog>.modal-content{border:0;border-radius:0;background-color:rgba(0,0,0,.9)}.itemModal>.modal-dialog>.modal-content>.modal-header>.close{position:absolute;right:5px;top:5px;margin:0;color:#fff}.itemModal{overflow-y:auto}.itemModal>.modal-dialog{max-height:80%;overflow-y:visible}.item-header{margin:0;display:flex;width:100%;height:61px}.modal-itemImg-container{width:40px;height:40px;display:inherit;margin-top:auto;margin-bottom:auto}.modal-itemImg{width:40px;height:40px;background-size:40px;padding:2px}.modal-itemImg-effect{position:absolute;--width:40px;top:10px}.item-name-container{margin:0;flex:1;padding:10px!important;display:inline-grid;text-align:left}.modal-itemName{font-weight:500;font-size:15px;margin-top:auto;margin-bottom:auto}.modal-itemName-sub{font-weight:500;font-size:13px;color:green}.modal-itemName-sub>.fas{margin-left:5px;margin-right:5px}.align-left{text-align:left}.align-right{text-align:right}#model-itemGradeName{padding-left:10px}#modal-itemAvailableLevel{color:#937739}#modal-itemTypeDetail{color:#c1a437}.item-status{padding:5px 10px!important;border-bottom:1px solid #252627;text-align:left}.item-enchant{padding:5px 10px!important;border-bottom:1px solid #252627;text-align:left}.item-options{padding:5px 10px!important;border-bottom:1px solid #252627;text-align:left}.item-myth{padding:5px 10px!important;border-bottom:1px solid #252627;text-align:left}.item-siroco{padding:5px 10px!important;border-bottom:1px solid #252627;text-align:left}.item-setName{padding:5px 10px!important;text-align:left}.item-trans-opt{padding:5px 10px!important;border-bottom:1px solid #252627;text-align:left}.item-remodel-opt{padding:5px 10px!important;border-bottom:1px solid #252627;text-align:left}.item-growth-info{padding:5px 10px!important;border-bottom:1px solid #252627;text-align:left}
+
+        @media (max-width: 410px) {
+            .tvitemName {
+                font-size: 14px;
+            }
+        }
+
+        @media (min-width: 411px) {
+            .tvitemName {
+                font-size: 15px;
+            }
+
+        }
+
+
+        @media only screen and (max-width: 480px) {
+            .pagination {
+                font-size: 0;
+                display: inline-block;
+            }
+
+            .pagination li {
+                display: inline-block;
+                vertical-align: top;
+                margin: 0 0 22px;
+            }
+
+        }
+
+        .itemText {
+            position: absolute;
+            left: 16px;
+            font-size: 0.5em;
+            padding-left: 3px;
+            padding-right: 3px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+        }
+
+        .itemRows {
+            height: 45px;
+        }
+
+        .itemRows > td {
+            display: inline-flex;
+            width: 100%;
+            padding: 0px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+            padding-left: 5px;
+        }
+
+        .itemimg {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 40px;
+            height: 40px;
+            font-size: 40px;
+            color: #eaeaea;
+            padding: 2px;
+            background-size: 40px;
+        }
+
+        .slot-badge {
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 0.5em;
+            padding-left: 1px;
+            padding-right: 1px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            border-radius: 5px;
+        }
+
+        .item-icon-view {
+            width: 40px;
+            height: 40px;
+            position: relative;
+            margin-bottom: auto;
+        }
+
+        .avatar-text {
+            display: block;
+            font-size: 12px;
+        }
+
+        .sirocoText {
+            top: -3px;
+            position: relative;
+            height: 13px;
+            color: #4c9d17;
+            font-size: 12px;
+        }
+
+        .item-info-view {
+            display: inline-block;
+            width: calc(100% - 45px);
+            padding-left: 5px;
+            margin-top: -2px;
+        }
+
+        .item-info-left {
+            font-size: 15px;
+            width: 100%;
+            display: inline-flex;
+        }
+
+        .tvitemName {
+            width: 100%;
+            font-weight: 500;
+            font-size: 15px;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        .reinforce-name {
+            font-size: 13px;
+            margin-top: auto;
+            margin-bottom: auto;
+            white-space: nowrap;
+        }
+
+        .refine-name {
+            color: #B36BFF;
+            font-size: 13px;
+            margin-top: auto;
+            margin-bottom: auto;
+            white-space: nowrap;
+            margin-left: 5px;
+        }
+
+        .sirocoText {
+            top: -3px;
+            position: relative;
+            height: 13px;
+        }
+
+        #nav_view {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .nav_u {
+            margin-left: 0px;
+            display: table;
+            width: 100%;
+            height: 53px;
+            padding: 0 12px;
+            white-space: nowrap;
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        .nav_l {
+            display: table-cell;
+            width: 400px;
+            white-space: nowrap;
+            padding: 0px 0px;
+            cursor: pointer;
+        }
+
+        .nav_a {
+            display: inline-block;
+            position: relative;
+            height: 53px;
+            padding: 0 15px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #898989;
+            text-shadow: 0 -1px 1px rgba(255, 255, 255, .7);
+            line-height: 54px;
+        }
+
+        .nav_lon > .nav_a {
+            height: 51px;
+            color: #202020;
+        }
+
+        .blind {
+            position: absolute;
+            clip: rect(0 0 0 0);
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+        }
+
+        .nav_btn_more {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 51px;
+            height: 53px;
+            border: 0;
+            border-bottom: 1px solid #e5e5e5;
+            border-left: 1px solid #e5e5e5;
+            background-color: #fff;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .dmg-info-menu {
+            background-color: white;
+            display: block;
+            padding: 0;
+            overflow-y: hidden;
+            overflow-x: auto;
+            box-shadow: 0 5px 10px 0px #d8cece;
+        }
+
+        .nav_u > li {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        @media (max-width: 852px) {
+            .dmg-info-menu {
+                -ms-overflow-style: inherit;
+                scrollbar-width: inherit;
+            }
+        }
+
+        .myth-text {
+            color: #cc70db !important;
+            background: -webkit-linear-gradient(top, rgb(255, 180, 0), rgb(255, 0, 255));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        @CHARSET "UTF-8";
+
+        .charView {
+            background-color: #050709;
+        }
+
+        .character-bg {
+            position: absolute;
+            background-repeat: no-repeat;
+            background-size: cover;
+            opacity: 0.7;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+        }
+
+        .row {
+            margin-right: auto;
+            margin-left: auto;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
+
+        #userimg {
+            position: absolute;
+        }
+
+        #backgroundImg {
+            background-image: url(https://cdn.df.nexon.com/img/web/char/bg_char.jpg);
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
+            width: 220px !important;
+            height: 250px !important;
+            display: inline-block;
+        }
+
+        #char_server {
+            color: black;
+            font-size: 14px;
+        }
+
+        #char_name {
+            color: black;
+            font-weight: bold;
+            font-size: xx-large;
+        }
+
+        #char_guild {
+            color: black;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        #char_adventure {
+            color: black;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        #char_rank {
+            color: black;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        #char_buff {
+            color: black;
+            font-weight: 500;
+            font-size: 14px;
+            text-align: center;
+            position: relative;
+            padding-left: 3px;
+            top: 3px;
+        }
+
+        #char_fame {
+            color: black;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .col-lg-9 {
+            padding-top: 1rem !important;
+            padding-bottom: 1rem !important;
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+
+        #c_gray {
+            font-size: 13px;
+            color: black;
+            width: 52px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .rank-text {
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        #char_main_buff {
+            width: 20px;
+        }
+
+        .text-center {
+            text-align: center !important;
+            position: relative;
+        }
+
+        .veiwWrap {
+            height: 250px;
+        }
+
+        .disable_raid {
+            padding: 10px;
+            padding-left: 0;
+            padding-right: 0;
+            color: white;
+            z-index: 1;
+            top: 25%;
+            text-align: center;
+            width: 100%;
+            position: absolute;
+        }
+
+        .charData {
+            padding-top: 15px !important;
+        }
+
+        @media (max-width: 575px) {
+            #raidView {
+                text-align: center;
+            }
+
+            #char_settle {
+                padding-top: 5px;
+            }
+
+            #userimg {
+                width: 400px;
+                height: 460px;
+                top: -100px;
+                right: -120px;
+            }
+
+            .char-header {
+                padding: 18px 30px 10px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .viewWrap {
+                height: auto !important;
+            }
+
+            .userWrap {
+                margin-bottom: 10px;
+            }
+
+            #userimg {
+                width: 400px;
+                height: 460px;
+                top: -100px;
+                right: -120px;
+            }
+
+            .char-header {
+                padding: 18px 30px 10px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            #raidView {
+                text-align: unset;
+            }
+
+            #userimg {
+                width: 600px;
+                height: 690px;
+                top: -200px;
+                right: 0;
+            }
+
+            .char-header {
+                padding: 18px 10% 10px;
+            }
+        }
+
+        @media (min-width: 993px) {
+            #userimg {
+                width: 600px;
+                height: 690px;
+                top: -200px;
+                right: 120px;
+            }
+
+            .char-header {
+                padding: 18px 10% 10px;
+            }
+        }
+
+        .refresh-view {
+            padding-bottom: 8px;
+            color: white;
+            font-size: 13px;
+        }
+
+        #refresh-button {
+            border: 1px solid #eaeaea;
+            padding: 8px;
+            margin-right: 5px;
+            background-color: transparent;
+            cursor: pointer;
+        }
+
+        #refresh-button:hover {
+            background-color: dimgray;
+        }
+
+        .char-header-fame {
+            color: black;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .char-header-top-server, .char-header-top-jobGrowName, .char-header-top-level, .char-header-top-card {
+            display: inline-block;
+            padding: 5px 8px;
+            font-size: 12px;
+            color: black;
+            border: 1px solid black;
+            line-height: 1;
+            text-decoration: none;
+        }
+
+        .status-character {
+            background-image: url("/images/icon_char/bg_char.jpeg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+            float: right;
+            display: inline-block;
+            border-radius: 60%;
+            border: 1.5px solid #898989;
+
+        }
+
+        .status-character img {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -1030%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .char-header-top-card:hover {
+            color: black;
+            background-color: black;
+            text-decoration: none;
+        }
+
+        .usrSimple {
+            font-size: 12px;
+            color: #d0d0d0;
+            cursor: pointer;
+        }
+
+        .d-boss {
+            color: white;
+            font-size: 14px;
+        }
+
+        .boss-icon {
+            width: 20px;
+        }
+
+        .d-boss-name {
+            color: white;
+            margin-left: 1%;
+            margin-right: 1%;
+        }
+
+        .icon-fame {
+            width: 15px;
+            margin-right: 5px;
+        }
+
+
+    </style>
+</head>
+<body>
+<header id="header">
+    헤더
+</header>
+<div class="container" style="margin-top : 92px;">
+    <div class="card mt-5 border-5 pt-2 active" style="padding-bottom:0.5rem; padding-left: 0; padding-right: 0;">
+
+        <div class="char-header"
+             style="color: #fff; line-height: 1;  position: relative; overflow: hidden;">
+            <div class="status-character">
+                <img th:src="@{'https://img-api.neople.co.kr/df/servers/'+${characterAbility.serverId}+'/characters/'+${characterAbility.characterId}+'?zoom=1'}">
+            </div>
+            <div class="char-header-top" style="margin-bottom: 14px; position: inherit;">
+
+                <div class="char-header-top-server serverId-cain" th:text="${characterAbility.serverName}">카인</div>
+                <div class="char-header-top-jobGrowName" id="char_info" th:text="${characterAbility.jobGrowName}">
+
+
+                    眞 인챈트리스
+                </div>
+                <div class="char-header-top-level">Lv.[[${characterAbility.level}]]</div>
+
+            </div>
+            <div class="char-header-profile" style="display: inline-block; vertical-align: top; position: inherit;">
+                <div class="mb-2" id="char_name" th:data-id="${characterId}"
+                     th:text="${characterAbility.characterName}">
+                    소라
+                </div>
+
+
+                <div class="mb-1" id="char_rank">
+                    <a id="c_gray">전체명성랭킹</a>
+                    <span class="rank-text">[[${characterRank}]]위 / [[${characterCount}]]명</span>
+                    <span class="rank-text badge rounded-pill bg-warning text-dark">상위 [[${characterPercent}]]%</span>
+                </div>
+                <div class="mb-1" id="char_rank">
+                    <a id="c_gray">직업명성랭킹</a>
+                    <span class="rank-text">[[${characterRankByJobName}]]위 / [[${characterCountByJobName}]]명</span>
+                    <span class="rank-text badge rounded-pill bg-success">상위 [[${characterPercentByJobName}]]%</span>
+                </div>
+
+
+                <div class="mb-1" id="char_guild">
+                    <a id="c_gray">길드 </a>
+                    <span>
+                             [[${characterAbility.guildName}]]
+
+
+			</span>
+                </div>
+                <div class="mb-1" id="char_adventure">
+                    <a id="c_gray">모험단</a>
+                    <span>
+
+					[[${characterAbility.adventureName}]]
+
+
+			</span>
+                </div>
+
+                <div class="mb-1" th:if="${buffStatus.size()>1}">
+                    <a id="char_buff">Lv.[[${buffStatus.get(1)}]] [[${buffStatus.get(0)}]] +
+                        [[${buffStatus.get(2)}]]</a>
+
+                </div>
+
+
+                <div class="mb-1">
+                    <img class="lazy icon-fame" src="/images/icon_char/icon_status_fame.png" style="">
+                    <span class="char-header-fame">[[${characterAbility.adventureFame}]]</span>
+                </div>
+                <div class="mb-1">
+                    <span class="char-header-fame">언급된 횟수 :[[${boardCount}]]</span>
+                </div>
+                <div class="mb-1">
+                    <span class="char-header-fame">마지막 갱신 :[[${lastUpdated}]]</span>
+                </div>
+            </div>
+        </div>
+        <div class="card-body " style="display: inherit">
+        </div>
+        <div class="card-footer bg-white px-0 " style="border-top:0px">
+            <div class="d-flex carousel-nav">
+                <div id="nav_view" style="padding: 0px; margin: 0px;box-shadow: 0 5px 10px 0px #8c8c8c;">
+                    <div id="nav" class="dmg-info-menu">
+                        <ul class="nav_u">
+                            <li id="equip" class="nav_l nav_lon"><a href="#" class="nav_a active">
+                                장비<span class="blind"></span>
+                            </a></li>
+
+
+                            <li id="buff_reinforce" class="nav_l"><a href="#" class="nav_a"
+                                                                     onclick="getCharacterBuff()">
+                                버프강화<span class="blind"></span>
+                            </a></li>
+                            <li id="avail" class="nav_l"><a href="#" class="nav_a">
+                                능력치<span class="blind"></span>
+                            </a></li>
+                            <li id="avartar" class="nav_l"><a href="#" class="nav_a">
+                                아바타<span class="blind"></span>
+                            </a></li>
+                            <li id="talisman" class="nav_l"><a href="#" class="nav_a">
+                                탈리스만<span class="blind"></span>
+                            </a></li>
+                            <li id="skillStyle" class="nav_l"><a href="#" class="nav_a">
+                                스킬스타일<span class="blind"></span>
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div
+                th:each="equip,i : ${characterEquipment.equipment}"  class="modal itemModal fade" th:id="${equip.slotName+'-modal'}" tabindex="-1"
+             role="dialog" aria-labelledby="itemModal"  data-backdrop="false"
+            >
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="row itemModal-row item-header" style="padding-top: 0px; padding-bottom: 0px;">
+                            <div class="modal-itemImg-container">
+
+                                <img class="modal-itemImg"
+                                     th:src="@{'https://img-api.neople.co.kr/df/items/'+${equip.itemId}}">
+                                <img class="modal-itemImg-effect" style="display: none;">
+                            </div>
+                            <div class="row itemModal-row item-name-container" >
+                                <span class="modal-itemName itemRarity"  th:data-rarity="${equip.itemRarity}" style="color: rgb(255, 180, 0);">+[[${equip.getReinforce()}]]([[${equip.getRefine()}]]) [[${equip.getItemName()}]]</span>
+                                <span class="modal-itemName-sub" style="display: none;"><i
+                                        class="fas fa-rotate-90 fa-level-up-alt"></i></span>
+                            </div>
+                        </div>
+                        <span class="p-3" data-dismiss="modal" aria-hidden="true" aria-label="Close">
+          <i class="fas fa-times-circle"></i>
+        </span>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row itemModal-row info-container item-info">
+                            <div class="row itemModal-row info-container">
+                                <div class="col align-left"><span id="modal-itemGradeName" class="itemRarity" th:data-rarity="${equip.itemRarity}"
+                                                                  style="color: rgb(255, 180, 0);">[[${equip.getItemGradeName()}]]</span>
+                                </div>
+                                <div class="col align-right"><span id="modal-itemRarity" class="itemRarity" th:data-rarity="${equip.itemRarity}"
+                                                                   style="color: rgb(255, 180, 0);">[[${equip.getItemRarity()}]]</span>
+                                </div>
+                            </div>
+                            <div class="row itemModal-row info-container">
+                                <div class="col align-left"><span></span></div>
+                                <div class="col align-right"><span
+                                        id="modal-itemAvailableLevel">레벨제한 [[${equip.getItemAvailableLevel()}]]</span>
+                                </div>
+                            </div>
+                            <div class="row itemModal-row info-container">
+                                <div class="col align-left"><span></span></div>
+                                <div class="col align-right"><span id="modal-itemTypeDetail">[[${equip.getItemTypeDetail()}]]</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row itemModal-row info-container item-status" style="">
+                                                    <span id="modal-itemStatus"><label
+                                                            style="margin: 0; color: #6AD5ED;">+[[${equip.getReinforce()}]] 강화</label><label
+                                                            style="margin: 0; color: #86794F;">/</label><label
+                                                            style="margin: 0; color: #FF00FF;" >증폭([[${equip.amplificationName}]])</label><label
+                                                            style="margin: 0; color: #6AD5ED;">,⠀</label><label
+                                                            style="margin: 0; color: #B464FF;">+[[${equip.refine}]] 재련</label><label
+                                                            style="margin: 0; color: #C1A437;">⠀성능 적용</label><br>
+                                                       <span th:each="status :${characterEquipmentDetails.get(i.index).getItemStatus()}"> <label th:if="${characterEquipmentDetails.get(i.index).getItemStatus()!=null}"
+                                                               style="margin: 0; color: #8F8356" >[[${status.name}]]⠀[[${status.value}]] </label> <br> </span></span>
+                        </div>
+                        <div class="row itemModal-row info-container item-enchant" style="" th:if="${equip.enchant!=null && equip.enchant.status.size()>0}">
+                                                    <span id="modal-itemEnchant" th:each="enchant:${equip.enchant.status}"><label
+                                                            style="margin: 0; color: #84F0A8;" >[[${enchant.name}]] +[[${enchant.value}]]  </label> <br>
+                                                    </span>
+                        </div>
+                        <div class="row itemModal-row info-container item-options" style="">
+                                                    <span id="modal-itemOptions" >
+                                                        <label th:if="${characterEquipmentDetails.get(i.index).itemExplainDetail!=null}"
+                                                                style="margin: 0; color: #8F8356; white-space: pre-line;" th:text="${characterEquipmentDetails.get(i.index).itemExplainDetail}"  ></label><br><label
+                                                            style="margin: 0; color: #4AA356" th:if="${characterEquipmentDetails.get(i.index).itemBuff!=null}" >-버퍼 전용 옵션</label><br><label th:if="${characterEquipmentDetails.get(i.index).itemBuff!=null}"
+                                                            style="margin: 0; color: #B3AA87" th:text="${characterEquipmentDetails.get(i.index).itemBuff.explain}">30레벨 버프 스킬 Lv +3<br>50레벨 액티브 스킬 Lv +4<br><br>장착 해제 시 자신이 시전한 30Lv 버프, 50Lv 액티브, 100Lv 액티브 스킬의 효과 삭제</label></span>
+                        </div>
+                        <div class="row itemModal-row info-container item-trans-opt"
+                             style="display: none;">
+                            <span id="modal-itemTransOpt"></span>
+                        </div>
+                        <div class="row itemModal-row info-container item-remodel-opt"
+                             style="display: none;">
+                            <span id="modal-itemRemodelOpt"></span>
+                        </div>
+                        <div class="row itemModal-row info-container item-myth"
+                             style="display: none;">
+                            <span id="modal-itemMyth"></span>
+                        </div>
+                        <div class="row itemModal-row info-container item-siroco"
+                             style="display: none;">
+                            <span id="modal-itemSiroco"></span>
+                        </div>
+                        <div class="row itemModal-row info-container item-growth-info" style="">
+                                                    <span id="modal-growth-info" th:if="${equip.growInfo!=null}"><label
+                                                            style="margin: 0; color: #4AA356">&lt;성장, 변환 옵션&gt;</label><br><label
+                                                            style="margin: 0; color: #C1A437;" >1옵션 - Lv[[${equip.growInfo.options.get(0).level}]]</label><br><label
+                                                            style="margin: 0; color: #8F8356;">피해 증가 +[[${equip.growInfo.options.get(0).damage}]], 버프력 +[[${equip.growInfo.options.get(0).buff}]]</label><br><label
+                                                            style="margin: 0; color: #BAB290;">-  [[${equip.growInfo.options.get(0).explainDetail}]]</label><br><br><label
+                                                            style="margin: 0; color: #C1A437;">2옵션 - Lv[[${equip.growInfo.options.get(1).level}]]</label><br><label
+                                                            style="margin: 0; color: #8F8356;">피해 증가 +[[${equip.growInfo.options.get(1).damage}]], 버프력 +[[${equip.growInfo.options.get(1).buff}]]</label><br><label
+                                                            style="margin: 0; color: #BAB290;">-  [[${equip.growInfo.options.get(1).explainDetail}]]</label><br><br><label
+                                                            style="margin: 0; color: #C1A437;">3옵션 - Lv[[${equip.growInfo.options.get(2).level}]]</label><br><label
+                                                            style="margin: 0; color: #8F8356;">피해 증가 +[[${equip.growInfo.options.get(2).damage}]], 버프력 +[[${equip.growInfo.options.get(2).buff}]]</label><br><label
+                                                            style="margin: 0; color: #BAB290;">-  [[${equip.growInfo.options.get(2).explainDetail}]]</label><br><br><label
+                                                            style="margin: 0; color: #C1A437;">4옵션 - Lv[[${equip.growInfo.options.get(3).level}]]</label><br><label
+                                                            style="margin: 0; color: #8F8356;">피해 증가 +[[${equip.growInfo.options.get(3).damage}]], 버프력 +[[${equip.growInfo.options.get(3).buff}]]</label><br><label
+                                                            style="margin: 0; color: #BAB290;">-  [[${equip.growInfo.options.get(3).explainDetail}]]</label></span>
+                        </div>
+                        <div class="row itemModal-row info-container item-setName"
+                             style="display: none;">
+                            <span id="modal-itemSetName"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="owl-carousel owl-1">
+
+            <div class="media-29101 d-md-flex w-100">
+                <div id="equipTableView" style="padding: 10px; width:100%">
+                    <table id="equipTable" style="width: 100%; border-spacing: 0 5px;">
+
+                        <tr class="itemRows" th:if="${characterEquipment.equipment!=null}"
+                            th:each="equip,i : ${characterEquipment.equipment}" >
+                            <td>
+                                <a href="#" th:data-target="${'#'+equip.slotName+'-modal'}" data-toggle="modal">
+                                <div class="item-icon-view">
+                                    <div th:switch="${equip.itemRarity}">
+                                    </div>
+                                    <img class="itemimg lazy" th:data-slot="${equip.slotId}"
+                                         th:data-id="${equip.itemId}" data-level="317"
+                                         th:data-rarity="${equip.itemRarity}"
+                                         th:src="@{'https://img-api.neople.co.kr/df/items/'+${equip.itemId}}"
+                                    />
+
+
+                                    <span class="slot-badge" th:text="${equip.slotName}">무기</span>
+                                </div>
+                                <div class="item-info-view">
+                                    <div class="item-info-left">
+
+
+                                        <a class="tvitemName itemRarity" th:data-rarity="${equip.itemRarity}"
+                                           style="color: #FFB400;" th:text="${equip.itemName}">
+
+                                            결전의 빗자루 - 인챈트리스
+                                        </a>
+
+
+                                        <a class="reinforce-name" style="color: #FF00FF;"
+                                           th:text="'+'+${equip.reinforce}+'증폭'">+13증폭</a>
+
+
+                                        <a class="refine-name" th:if="${equip.refine!=0}"
+                                           th:text="'('+${equip.refine}+')'"> (8)</a>
+
+
+                                    </div>
+
+                                    <div class="sirocoText" th:if="${equip.upgradeInfo!=null}">
+
+                                        <i class="fas fa-rotate-90 fa-level-up-alt"
+                                           style="margin-left: 5px;margin-right: 5px;"></i>
+                                        <span th:text="${equip.upgradeInfo.itemName}">마지막 불의 숨결 : 빗자루</span>
+                                    </div>
+                                    <div style="display: inline-flex" th:if="${equip.enchant!=null}"><a
+                                            style="font-size: 11px; display: block;"
+                                            th:each="status:${equip.enchant.status}"
+                                            th:text="${status.getName()+' +'+status.getValue()}+' '">지능 +100</a></div>
+                                    <div style="display: inline-flex" th:if="${equip.enchant!=null}"><a
+                                            style="font-size: 11px; display: block;"
+                                            th:each="skill:${equip.enchant.reinforceSkill}"
+                                            th:text="${skill.skills.get(0).name+' +'+skill.skills.get(0).value}">지능
+                                        +100</a></div>
+                                    <br><span th:if="${equip.growInfo!=null}"
+                                              style="font-size: 11px; background-color: #EAEAEA; display: inline-block; padding: 0 6px;">
+																			<i class="fas fa-star-of-life"
+                                                                               style="margin-right: 2px; color: #d39500;"></i>
+                                                                        <span th:each="level :${equip.growInfo.options}"
+                                                                              th:text="${level.level+'/'}"></span>
+                                                                        <span th:text="${equip.growInfo.total.level}"></span>
+																		</span>
+
+                                </div>
+
+                                </a>
+                            </td>
+
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="media-29101 d-md-flex w-100">
+                <div class="contantsView" id="buff_reinforce_list" data-id="true" style="min-height: 500px; width:100%">
+                    <span class="nav-link equip-nav-style active" style="font-weight: bold;">장비</span>
+                    <div class="buff-item-equip">
+                        <div th:if="${buffEquipment.skill.buff==null}">
+                            <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+                                <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
+                                <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">버프강화
+                                    장비가 존재하지 않습니다.
+                                </div>
+                            </div>
+                        </div>
+                        <table class="buff-item-equip-table" style="width: 100%; border-spacing: 0 5px;">
+                            <tbody th:if="${buffEquipment.skill.buff!=null}">
+                            <tr class="itemRows" th:each="buffEquip:${buffEquipment.skill.buff.equipment}">
+                                <td>
+                                    <div class="item-icon-view"><img class="itemimg" th:data-slot="${buffEquip.slotId}"
+                                                                     th:data-id="${buffEquip.itemId}"
+                                                                     th:src="@{'https://img-api.neople.co.kr/df/items/'+${buffEquip.itemId}}"><span
+                                            class="slot-badge" th:text="${buffEquip.slotName}">무기</span></div>
+                                    <div class="item-info-view">
+                                        <div class="item-info-left"><a class="tvitemName itemRarity"
+                                                                       style="color: #FF00FF;"
+                                                                       th:data-rarity="${buffEquip.itemRarity}"
+                                                                       th:text="${buffEquip.itemName}">짙은 심연의
+                                            편린 빔소드 : 오버드라이브</a></div>
+                                        <div th:if="${buffEquip.enchant!=null}" style="display: inline-flex">
+                                            <span th:each="buffEquipStatus:${buffEquip.enchant.status}"
+                                                  th:text="${buffEquipStatus.getName()+' +'+buffEquipStatus.getValue()+' '}"
+                                                  style="font-size: 11px; display: block;"></span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <span class="nav-link equip-nav-style active" style="font-weight: bold;">아바타</span>
+                    <div class="buff-item-avator">
+                        <div th:if="${buffAvatar.skill.buff==null}">
+                            <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+                                <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
+                                <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">버프강화
+                                    아바타가 존재하지 않습니다.
+                                </div>
+                            </div>
+                        </div>
+                        <table class="buff-item-avatar-table" style="width: 100%; border-spacing: 0 5px;">
+                            <tbody th:if="${buffAvatar.skill.buff!=null}">
+                            <tr class="itemRows" th:each="buffAvatar:${buffAvatar.skill.buff.avatar}">
+                                <td>
+                                    <div class="item-icon-view"><img class="itemimg" th:data-slot="${buffAvatar.slotId}"
+                                                                     th:data-id="${buffAvatar.itemId}"
+                                                                     th:src="@{'https://img-api.neople.co.kr/df/items/'+${buffAvatar.itemId}}"><span
+                                            class="slot-badge" th:text="${buffAvatar.slotName}">상의</span></div>
+                                    <div class="item-info-view">
+                                        <div class="item-info-left"><a class="tvitemName itemRarity"
+                                                                       style="color: #B36BFF;"
+                                                                       th:data-rarity="${buffAvatar.itemRarity}"
+                                                                       th:text="${buffAvatar.itemName}">레어 상의
+                                            클론 아바타</a></div>
+                                        <span class="avatar-text" th:if="${buffAvatar.optionAbility!=null}"
+                                              th:text="${buffAvatar.optionAbility}">오버드라이브 스킬Lv +1</span>
+                                        <div th:if="${buffAvatar.emblems.size()>0}"
+                                             th:each="emblem:${buffAvatar.emblems}">
+                                <span class="avatar-text itemRarity" style="color: #FF7800;"
+                                      th:data-rarity="${emblem.itemRarity}"
+                                ><i class="far fa-gem itemRarity" th:data-rarity="${emblem.itemRarity}"></i> [[${emblem.itemName}]]</span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <span class="nav-link equip-nav-style active" style="font-weight: bold;">크리처</span>
+                    <div class="buff-item-creature">
+                        <div th:if="${buffCreature.skill.buff==null || buffCreature.skill.buff.creature==null}">
+                            <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+                                <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
+                                <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">버프강화
+                                    크리쳐가 존재하지 않습니다.
+                                </div>
+                            </div>
+                        </div>
+                        <table class="buff-item-creature-table" style="width: 100%; border-spacing: 0 5px;">
+                            <tbody>
+                            <tr class="itemRows"
+                                th:if="${buffCreature.skill.buff!=null && buffCreature.skill.buff.creature!=null}">
+                                <td th:if="${buffCreature.skill.buff.creature.size()>0}">
+                                    <div class="item-icon-view"><img class="itemimg" data-slot="CREATURE"
+                                                                     th:data-id="${buffCreature.skill.buff.creature.get(0).itemId}"
+                                                                     th:src="@{'https://img-api.neople.co.kr/df/items/'+${buffCreature.skill.buff.creature.get(0).itemId}}"><span
+                                            class="slot-badge">크리처</span></div>
+                                    <div class="item-info-view">
+                                        <div class="item-info-left"><a class="tvitemName itemRarity"
+                                                                       th:data-rarity="${buffCreature.skill.buff.creature.get(0).itemRarity}"
+                                                                       style="color: #B36BFF;"
+                                                                       th:text="${buffCreature.skill.buff.creature.get(0).itemName}">NEW
+                                            쁘띠
+                                            토그</a></div>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div> <!-- .item -->
+            <div class="media-29101 d-md-flex w-100">
+                <div class="contantsView" id="availtable" style="width: 100%;">
+                    <div th:if="${characterAbility.status==null|| characterAbility.status.size()<44}">
+                        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+                            <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
+                            <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">능력치를 조회할 수
+                                없습니다.
+                            </div>
+                        </div>치
+                    </div>
+                    <table class="table" id="statusTable" style="table-layout: fixed;"
+                           th:if="${characterAbility.status.size()>45}">
+                        <tr>
+                            <td id="HP_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(0).name}"><img class="status_img"
+                                                                                      src="/resources/images/status/icon_status_hp.png"
+                                                                                      style="margin-right: 5px;">HP
+                            </td>
+                            <td id="HP_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(0).value}">145,361
+                            </td>
+                            <td id="MP_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(1).name}"><img class="status_img"
+                                                                                      src="/resources/images/status/icon_status_mp.png"
+                                                                                      style="margin-right: 5px;">MP
+                            </td>
+                            <td id="MP_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(1).value}">109,266
+                            </td>
+                        </tr>
+                        <tr style="border-top-style: ridge;">
+                            <td id="힘_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(4).name}"
+                                class="highlight-status">
+                                <img class="status_img" src="/resources/images/status/icon_status_str.png"
+                                     style="margin-right: 5px;">힘
+                            </td>
+                            <td id="힘_Val" style="text-align: right; white-space: nowrap;" class="highlight-status"
+                                th:text="${characterAbility.status.get(4).value}">
+                                5,784
+                            </td>
+                            <td id="지능_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(5).name}"><img class="status_img"
+                                                                                      src="/resources/images/status/icon_status_int.png"
+                                                                                      style="margin-right: 5px;">지능
+                            </td>
+                            <td id="지능_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(5).value}">3,520
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="체력_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(6).name}"><img class="status_img"
+                                                                                      src="/resources/images/status/icon_status_heal.png"
+                                                                                      style="margin-right: 5px;">체력
+                            </td>
+                            <td id="체력_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(6).value}">3,610
+                            </td>
+                            <td id="정신력_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(7).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_mental.png"
+                                    style="margin-right: 5px;">정신력
+                            </td>
+                            <td id="정신력_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(7).value}">3,513
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="물리공격_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(8).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">물리
+                                공격
+                            </td>
+                            <td id="물리공격_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(8).value}">3,680
+                            </td>
+                            <td id="마법공격_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(9).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_magic_attack.png"
+                                    style="margin-right: 5px;">마법
+                                공격
+                            </td>
+                            <td id="마법공격_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(9).value}">3,046
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="물리크리티컬_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(10).name}"
+                                class="highlight-status"><img class="status_img"
+                                                              src="/resources/images/status/icon_status_attack_critical.png"
+                                                              style="margin-right: 5px;">물리 크리티컬
+                            </td>
+                            <td id="물리크리티컬_Val" style="text-align: right; white-space: nowrap;"
+                                class="highlight-status" th:text="${characterAbility.status.get(10).value}">
+                                +65%
+                            </td>
+                            <td id="마법크리티컬_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(11).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_magic_critical.png"
+                                    style="margin-right: 5px;">마법
+                                크리티컬
+                            </td>
+                            <td id="마법크리티컬_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(11).value}">+47%
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="독립공격_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(12).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_doc_attack.png"
+                                    style="margin-right: 5px;">독립
+                                공격
+                            </td>
+                            <td id="독립공격_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(12).value}">2,158
+                            </td>
+                        </tr>
+                        <tr style="border-top-style: ridge;">
+                            <td id="공격속도_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(13).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_attack_speed.png"
+                                    style="margin-right: 5px;">공격
+                                속도
+                            </td>
+                            <td id="공격속도_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(13).value}">+58%
+                            </td>
+                            <td id="캐스팅속도_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(14).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_cast_speed.png"
+                                    style="margin-right: 5px;">캐스팅
+                                속도
+                            </td>
+                            <td id="캐스팅속도_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(14).value}">+20%
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="이동속도_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(15).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_run_speed.png"
+                                    style="margin-right: 5px;">이동
+                                속도
+                            </td>
+                            <td id="이동속도_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(15).value}">+54%
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="물리방어_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(31).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_attack_despence.png"
+                                    style="margin-right: 5px;">물리
+                                방어
+                            </td>
+                            <td id="물리방어_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(31).value}">56,126
+                            </td>
+                            <td id="마법방어_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(32).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_magic_depense.png"
+                                    style="margin-right: 5px;">마법
+                                방어
+                            </td>
+                            <td id="마법방어_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(32).value}">63,999
+                            </td>
+                        </tr>
+                        <tr style="border-top-style: ridge;">
+                            <td id="화속성강화_Val"><img src="/resources/images/status/icon_status_fire_reinforce.png"
+                                                    style="margin-right: 5px;"><span
+                                    th:text="${'화('+characterAbility.status.get(23).value+')'}">화(206)</span></td>
+                            <td id="수속성강화_Val"><img src="/resources/images/status/icon_status_water_reinforce.png"
+                                                    style="margin-right: 5px;"><span
+                                    th:text="${'수('+characterAbility.status.get(25).value+')'}">수(311)</span></td>
+                            <td id="명속성강화_Val"><img src="/resources/images/status/icon_status_lihgt_reinforce.png"
+                                                    style="margin-right: 5px;"><span
+                                    th:text="${'명('+characterAbility.status.get(27).value+')'}">명(206)</span></td>
+                            <td id="암속성강화_Val" class="highlight-status"><img
+                                    src="/resources/images/status/icon_status_dark_reinforce.png"
+                                    style="margin-right: 5px;"><span
+                                    th:text="${'암('+characterAbility.status.get(29).value+')'}">암(339)</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="4" style="background: lightgray; padding: .5rem;">추가 정보</td>
+                        </tr>
+                        <tr>
+                            <td id="물리방어율_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(2).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">물리
+                                방어율
+                            </td>
+                            <td id="물리방어율_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(2).value}">36
+                            </td>
+                            <td id="마법방어율_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(3).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">마법
+                                방어율
+                            </td>
+                            <td id="마법방어율_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(3).value}">39
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="적중률_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(17).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_attack_rate.png"
+                                    style="margin-right: 5px;">적중률
+                            </td>
+                            <td id="적중률_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(17).value}">21
+                            </td>
+                            <td id="HP회복량_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(19).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_hp_recovery.png"
+                                    style="margin-right: 5px;">HP
+                                회복량
+                            </td>
+                            <td id="HP회복량_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(19).value}">1,389
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="경직도_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(21).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_rigidity_rate.png"
+                                    style="margin-right: 5px;">경직도
+                            </td>
+                            <td id="경직도_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(21).value}">0
+                            </td>
+                            <td id="암속성저항_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(30).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_dark_resist.png"
+                                    style="margin-right: 5px;">암속성
+                                저항
+                            </td>
+                            <td id="암속성저항_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(30).value}">101
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="피해증가_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(33).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">피해
+                                증가
+                            </td>
+                            <td id="피해증가_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(33).value}">184,027
+                            </td>
+                            <td id="버프력_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(34).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">버프력
+                            </td>
+                            <td id="버프력_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(34).value}">0
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="데미지증가_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(35).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">데미지
+                                증가
+                            </td>
+                            <td id="데미지증가_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(35).value}">0
+                            </td>
+                            <td id="크리티컬데미지 증가_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(36).name}"><img
+                                    class="status_img" src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">크리티컬 데미지 증가
+                            </td>
+                            <td id="크리티컬데미지 증가_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(36).value}">0
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="추가데미지 증가_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(37).name}"><img
+                                    class="status_img" src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">추가 데미지 증가
+                            </td>
+                            <td id="추가데미지 증가_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(37).value}">0
+                            </td>
+                            <td id="모든공격력 증가_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(38).name}"><img
+                                    class="status_img" src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">모든 공격력 증가
+                            </td>
+                            <td id="모든공격력 증가_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(38).value}">0
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="스킬공격력 증가_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(39).name}"><img
+                                    class="status_img" src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">스킬 공격력 증가
+                            </td>
+                            <td id="스킬공격력 증가_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(39).value}">0
+                            </td>
+                            <td id="물리공격력 증가_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(40).name}"><img
+                                    class="status_img" src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">물리 공격력 증가
+                            </td>
+                            <td id="물리공격력 증가_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(40).value}">0
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="마법공격력 증가_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(41).name}"><img
+                                    class="status_img" src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">마법 공격력 증가
+                            </td>
+                            <td id="마법공격력 증가_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(41).value}">0
+                            </td>
+                            <td id="독립공격력 증가_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(42).name}"><img
+                                    class="status_img" src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">독립 공격력 증가
+                            </td>
+                            <td id="독립공격력 증가_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(42).value}">0
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="힘증가_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(43).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">힘
+                                증가
+                            </td>
+                            <td id="힘증가_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(43).value}">0
+                            </td>
+                            <td id="지능증가_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(44).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">지능
+                                증가
+                            </td>
+                            <td id="지능증가_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(44).value}">0
+                            </td>
+                        </tr>
+                        <tr>
+                            <td id="지속피해_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(45).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">지속피해
+                            </td>
+                            <td id="지속피해_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(45).value}">0
+                            </td>
+                            <td id="쿨타임감소_Nm" style="text-overflow: ellipsis; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(46).name}"><img
+                                    class="status_img"
+                                    src="/resources/images/status/icon_status_physical_attack.png"
+                                    style="margin-right: 5px;">쿨타임
+                                감소
+                            </td>
+                            <td id="쿨타임감소_Val" style="text-align: right; white-space: nowrap;"
+                                th:text="${characterAbility.status.get(46).value}">0
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="media-29101 d-md-flex w-100">
+                <div class="contantsView" id="avatartable" data-id="true" style="padding: 10px; width:100%">
+                    <div th:if="${characterAvatar.avatar.size()==0}">
+                        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+                            <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
+                            <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">아바타가 존재하지
+                                않습니다.
+                            </div>
+                        </div>
+                    </div>
+                    <table style="width:100%">
+                        <tr class="itemRows" th:if="${characterAvatar.avatar.size()>0}"
+                            th:each="avatar:${characterAvatar.avatar}">
+                            <td>
+                                <div class="item-icon-view"><img class="itemimg" th:data-slot="${avatar.slotId}"
+                                                                 th:src="@{'https://img-api.neople.co.kr/df/items/'+${avatar.itemId}}"><span
+                                        class="slot-badge" th:text="${avatar.slotName}">모자</span></div>
+                                <div class="item-info-view">
+                                    <div class="item-info-left"><a class="tvitemName itemRarity"
+                                                                   th:data-rarity="${avatar.itemRarity}"
+                                                                   th:text="${avatar.itemName}" style="color: #B36BFF;">레어
+                                        모자 클론 아바타</a>
+                                    </div>
+                                    <span class="avatar-text" th:if="${avatar.optionAbility!=null}"
+                                          th:text="${avatar.optionAbility}">오버드라이브 스킬Lv +1</span>
+                                    <div th:if="${avatar.emblems.size()>0}" th:each="emblem:${avatar.emblems}">
+                                <span class="avatar-text itemRarity" style="color: #FF7800;"
+                                      th:data-rarity="${emblem.itemRarity}"
+                                ><i class="far fa-gem itemRarity" th:data-rarity="${emblem.itemRarity}"></i> [[${emblem.itemName}]]</span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="media-29101 d-md-flex w-100">
+                <div class="contantsView" id="talismantable" data-id="true" style="padding: 10px; width:100%">
+                    <div th:if="${characterTalisman==null}">
+                        <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">
+                            <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>
+                            <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">탈리스만이 존재하지
+                                않습니다.
+                            </div>
+                        </div>
+                    </div>
+                    <table class="" id="t_table" style="width: 100%">
+                        <tbody>
+                        <tr class="itemRows" th:if="${characterTalisman.size()>0}"
+                            th:each="talisman : ${characterTalisman}">
+                            <td>
+                                <div class="item-icon-view"><img class="itemimg" data-slot="TALISMAN"
+                                                                 th:data-id="${talisman.talisman.itemId}"
+                                                                 th:src="@{'https://img-api.neople.co.kr/df/items/'+${talisman.talisman.itemId}}"><span
+                                        class="slot-badge">탈리스만</span></div>
+                                <div class="item-info-view">
+                                    <div class="item-info-left"><a class="tvitemName talismanName"
+                                                                   style="color: #FF00FF;"
+                                                                   th:text="${talisman.talisman.itemName}"
+                                                                   th:data-talismanName="${talisman.talisman.itemName}">카펠라의
+                                        성흔 :
+                                        마녀의 정원</a></div>
+                                    <div th:if="${talisman.runes.size()>0}" th:each="rune :${talisman.runes}">
+                                    <span class="avatar-text runeName" style="color: #FF00FF;"
+                                          th:data-item="${rune.itemName}"><i class="far fa-circle talismanColor"
+                                                                             th:data-item="${rune.itemName}"
+                                                                             style="font-weight: bold;"></i>[[${rune.itemName}]]</span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="media-29101 d-md-flex w-100">
+                <div class="contantsView" id="skilltable" data-id="true" style="padding: 10px; min-height: 500px;">
+                    <div style="display: flex;">
+                        <div class="btn-group" role="group" style="font-weight: bold; width: 100%;">
+                            <input type="radio" data-target="#activeskill" class="btn-check" name="styleRadio"
+                                   id="activebutton" autocomplete="off"
+                                   checked="" style="background-color: rgb(189, 189, 189); color: white;"> <label
+                                class="btn btn-outline-dark" for="activebutton">액티브</label> <input type="radio"
+                                                                                                   class="btn-check"
+                                                                                                   name="styleRadio"
+                                                                                                   id="passivebutton"
+                                                                                                   autocomplete="off"
+                                                                                                   data-target="#passiveskill"
+                                                                                                   style="background-color: white; color: rgb(189, 189, 189);">
+                            <label class="btn btn-outline-dark" for="passivebutton">패시브</label>
+                        </div>
+                    </div>
+                    <br>
+                    <div id="activeskill" style="">
+                        <div class="styleTable" th:each="active : ${characterSkillStyle.active}">
+                            <div class="dmgTable-left"><span
+                                    class="style-req">Req. [[${active.requiredLevel}]]</span><span
+                                    class="style-name">[[${active.name}]]</span></div>
+                            <div class="dmgRow"><b>[[${active.level}]]</b></div>
+                        </div>
+                    </div>
+
+                    <div id="passiveskill" style="display: none;">
+                        <div class="styleTable" th:each="passive : ${characterSkillStyle.passive}">
+                            <div class="dmgTable-left"><span
+                                    class="style-req">Req. [[${passive.requiredLevel}]]</span><span class="style-name">[[${passive.name}]]</span>
+                            </div>
+                            <div class="dmgRow"><b>[[${passive.level}]]</b></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<footer id="footer">
+    푸터
+</footer>
+<script src="/header/js/jquery.sticky.js"></script>
+<script src="/header/js/main.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.1.js"></script>
+<!-- Popper JS -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js'></script>
+<!-- Bootstrap JS -->
+<script src='https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js'></script>
+<script src="/js/scriptfile.js"></script>
+<script src="/js/choices.js"></script>
+<script src="/js/characterTab.js"></script>
+<script src="/js/characterJs.js"></script>
+
+</body>
+<script>
+    $(document).ready(function () {
+        $('.itemRarity').each(function () {
+            var rarity = $(this).attr('data-rarity');
+            $(this).css('color', getColor(rarity));
+        });
+    })
+    $(document).ready(function () {
+        $('.talismanColor').each(function () {
+            var itemName = $(this).attr('data-item');
+            $(this).css('color', getTalismanColor(itemName));
+        });
+    })
+
+    $(document).ready(function () {
+        $('.talismanName').each(function () {
+            var itemName = $(this).attr('data-talismanName');
+            $(this).css('color', getTalismanNameColor(itemName));
+        });
+    })
+
+    $(document).ready(function () {
+        $('.runeName').each(function () {
+            var itemName = $(this).attr('data-item');
+            $(this).css('color', getRuneColor(itemName));
+        });
+    })
+
+
+    $(document).ready(function () {
+        $('input[name="styleRadio"]').click(function () {
+            $(this).tab('show');
+            $(this).removeClass('active');
+        });
+    })
+    let characterBuffBoolean = false;
+
+
+    function getColor(itemRarity) {
+        if (itemRarity === "언커먼") {
+            return "#68D5ED";
+        } else if (itemRarity === "커먼") {
+            return "#8e8e93";
+        } else if (itemRarity === "레어") {
+            return "#B36BFF";
+        } else if (itemRarity === "유니크") {
+            return "#FF00FF";
+        } else if (itemRarity === "크로니클") {
+            return "#FF6666";
+        } else if (itemRarity === "레전더리") {
+            return "#FF7800";
+        } else if (itemRarity === "에픽") {
+            return "#FFB400";
+        } else if (itemRarity==="신화"){
+            return "#cc70db";
+        }
+    }
+
+    function getRuneColor(itemRarity) {
+        if (itemRarity.includes("빛바")) {
+            return "#68D5ED";
+        } else if (itemRarity.includes("갈라진")) {
+            return "#8e8e93";
+        } else if (itemRarity.includes("선명한")) {
+            return "#B36BFF";
+        } else if (itemRarity.includes("화려한")) {
+            return "#FF00FF";
+        }
+    }
+
+
+    function getTalismanNameColor(itemRarity) {
+        if (itemRarity.includes("빛바랜")) {
+            return "#68D5ED";
+        } else if (itemRarity.includes("갈라진")) {
+            return "#8e8e93";
+        } else if (itemRarity.includes("온전한")) {
+            return "#B36BFF";
+        } else if (itemRarity.includes("성흔의")) {
+            return "#B36BFF";
+        } else if (itemRarity.includes("카펠라")) {
+            return "#FF00FF";
+        } else {
+            return "#FF00FF";
+        }
+    }
+
+
+    function getTalismanColor(itemName) {
+        if (itemName.indexOf('세컨드 팩트') > -1) {
+            return "#FF0000";
+        } else if (itemName.indexOf('수호자들') > -1) {
+            return "#00D8FF";
+        } else if (itemName.indexOf('테라코타') > -1) {
+            return "#5F00FF";
+        } else if (itemName.indexOf('서클 메이지') > -1) {
+            return "#1DDB16";
+        } else if (itemName.indexOf('고대 도서관') > -1) {
+            return "#FFE400";
+        } else {
+            return "#000";
+        }
+    }
+
+
+</script>
+</html>

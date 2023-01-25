@@ -10,13 +10,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -58,7 +56,7 @@ class BoardServiceTest {
 
     }
 
-    private Set<SaveFile.SaveFileDTO> createSaveFileDto() {
+    private Set<SaveFile.SaveFileDto> createSaveFileDto() {
         return new HashSet<>();
     }
 
@@ -68,7 +66,7 @@ class BoardServiceTest {
         given(boardRepository.findBoardById(any(Long.class))).willReturn(createBoardDto().toEntity());
 
         //when
-        sut.getBoardDetail(1L);
+        sut.getBoardDetailById(1L);
 
         //then
         then(boardRepository).should().findBoardById(any(Long.class));
@@ -93,7 +91,7 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
         given(boardRepository.findBoardById(any(Long.class))).willReturn(null);
 
         //when
-        Throwable throwable = catchThrowable(() -> sut.getBoardDetail(1L));
+        Throwable throwable = catchThrowable(() -> sut.getBoardDetailById(1L));
 
         //then
         then(boardRepository).should().findBoardById(any(Long.class));
@@ -112,7 +110,7 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
 
         //then
         then(boardRepository).should().findBoardById(any(Long.class));
-        then(boardRepository).should().deleteBoardById(any(Long.class));
+        then(boardRepository).should().deleteById(any(Long.class));
     }
 
     @Test
@@ -149,7 +147,7 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
         given(boardRepository.findBoardById(any(Long.class))).willReturn(board);
 
         //when
-        sut.increaseViewCount(any(Long.class));
+        sut.increaseBoardViewCount(any(Long.class));
 
         //then
         then(boardRepository).should().findBoardById(any(Long.class));
@@ -163,7 +161,7 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
         given(boardRepository.findBoardById(any(Long.class))).willReturn(board);
 
         //when
-        sut.increaseLikeCount(any(Long.class),"");
+        sut.increaseBoardLikeCount(any(Long.class),"");
 
         //then
         then(boardRepository).should().findBoardById(any(Long.class));
@@ -178,7 +176,7 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
         given(boardRepository.findBoardById(any(Long.class))).willReturn(board);
 
         //when
-        sut.decreaseLikeCount(any(Long.class),"");
+        sut.decreaseBoardLikeCount(any(Long.class),"");
 
         //then
         then(boardRepository).should().findBoardById(any(Long.class));

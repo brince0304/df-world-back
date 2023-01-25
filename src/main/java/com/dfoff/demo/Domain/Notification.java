@@ -5,7 +5,8 @@ import com.dfoff.demo.JpaAuditing.AuditingFields;
 import jakarta.persistence.*;
 import lombok.*;
 
-import static com.dfoff.demo.Domain.Board.Chrono.timesAgo;
+import static com.dfoff.demo.Util.CharactersUtil.timesAgo;
+
 
 @Entity
 @Builder
@@ -29,7 +30,7 @@ public class Notification extends AuditingFields {
 
     @Setter
     @Builder.Default
-    private String isChecked = "N";
+    private Boolean checked = Boolean.FALSE;
 
 
     @Setter
@@ -63,7 +64,7 @@ public class Notification extends AuditingFields {
 
         private final String logType;
 
-        private final String isChecked;
+        private final Boolean checked;
 
         private final String createdDate;
 
@@ -75,7 +76,7 @@ public class Notification extends AuditingFields {
                     .id(notification.getId())
                     .boardId(notification.getBoardId())
                     .logType(notification.getLogType().toString())
-                    .isChecked(notification.getIsChecked())
+                    .checked(notification.getChecked())
                     .createdDate(timesAgo(notification.getCreatedAt()))
                     .logContent(notification.getLogContent())
                     .build();

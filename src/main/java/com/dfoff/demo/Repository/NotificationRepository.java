@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface NotificationRepository extends JpaRepository<Notification, Long>{
 
 
-    @Query("select count(l) from Notification l where l.userAccount.userId = :userId and l.isChecked = 'N'")
+    @Query("select count(l) from Notification l where l.userAccount.userId = :userId and l.checked = false")
     Long getUnCheckedLogCount(String userId);
 
     Page<Notification> getUserLogByUserAccount_UserId(String userId, Pageable pageable);

@@ -1,8 +1,10 @@
 package com.dfoff.demo.Service;
 
 import com.dfoff.demo.Domain.*;
+import com.dfoff.demo.Repository.CharacterEntityRepository;
 import com.dfoff.demo.Repository.UserAccountRepository;
 import com.dfoff.demo.Repository.NotificationRepository;
+import com.dfoff.demo.Repository.UserAdventureRepository;
 import com.dfoff.demo.Util.Bcrypt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,15 +24,18 @@ import jakarta.persistence.*;
 @Slf4j
 @Transactional
 public class UserAccountService {
+    private final CharacterEntityRepository characterEntityRepository;
     private final UserAccountRepository userAccountRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final Bcrypt bcrypt;
 
     private final NotificationRepository notificationRepository;
 
+    private final UserAdventureRepository userAdventureRepository;
 
 
-    public boolean createAccount(UserAccount.UserAccountSignUpRequest account, SaveFile.SaveFileDTO profileIcon) {
+
+    public boolean createAccount(UserAccount.UserAccountSignUpRequest account, SaveFile.SaveFileDto profileIcon) {
         if (userAccountRepository.existsByUserId(account.getUserId())) {
             throw new EntityExistsException("이미 존재하는 아이디입니다.");
         }
@@ -80,9 +85,18 @@ public class UserAccountService {
         }
     }
 
+    public void refreshUserAdventure(UserAccount.UserAccountDto dto){
+if(!userAdventureRepository.existsByUserAccount_UserId(dto.userId())){
+            throw new EntityNotFoundException("모험단이 등록되지 않았습니다.");
+        }
+       UserAccount userAccount = userAccountRepository.findById(dto.userId()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
+userAccount.getUserAdventure().getCharacters().addAll(characterEntityRepository.findAllByAdventureName(userAccount.getUserAdventure().getAdventureName()));
+    }
 
 
-    public boolean changeProfileIcon (UserAccount.UserAccountDto dto, SaveFile.SaveFileDTO iconDto){
+
+
+    public boolean changeProfileIcon (UserAccount.UserAccountDto dto, SaveFile.SaveFileDto iconDto){
         UserAccount account = userAccountRepository.findById(dto.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         account.setProfileIcon(iconDto.toEntity());
         return true;
@@ -90,7 +104,7 @@ public class UserAccountService {
 
     public Page<Notification.UserLogResponse> getUserLog(String userId, Pageable pageable) {
         Page<Notification> userLog = notificationRepository.getUserLogByUserAccount_UserId(userId, pageable);
-        userLog.forEach(o-> o.setIsChecked("Y"));
+        userLog.forEach(o-> o.setChecked(Boolean.TRUE));
         return userLog.map(Notification.UserLogResponse::from);
     }
 
@@ -107,6 +121,26 @@ public class UserAccountService {
         }
         return null;
     }
+
+
+    public void saveUserAdventure(UserAdventure.UserAdventureRequest request, UserAccount.UserAccountDto userAccount, CharacterEntity.CharacterEntityDto character){
+        if(userAdventureRepository.existsById(request.getAdventureName())){
+            throw new EntityExistsException("이미 등록된 모험단 입니다.");
+        }if(userAdventureRepository.existsByRepresentCharacter_CharacterId(request.getRepresentCharacterId())){
+            throw new EntityExistsException("이미 등록된 대표 캐릭터 입니다.");
+        }
+         UserAdventure adventure = userAdventureRepository.save(request.toEntity(userAccount, character));
+        adventure.getCharacters().addAll(characterEntityRepository.findAllByAdventureName(request.getAdventureName()));
+    }
+
+
+
+
+
+
+
+
+
 
 
     @Transactional(readOnly = true)
