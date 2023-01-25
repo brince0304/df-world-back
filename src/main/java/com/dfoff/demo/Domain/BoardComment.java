@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import static com.dfoff.demo.Util.CharactersUtil.timesAgo;
 
 
-@Table (indexes=@Index(name = "idx_createdAt" , columnList = "createdAt"))
+@Table (indexes=@Index(columnList = "createdAt"))
 @Entity
 @Getter
 @ToString

@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -46,10 +44,10 @@ public class BoardCommentController {
         } else {
             comments = commentService.findBoardCommentsByParentId(boardId, commentId);
         }
-        return getResponseEntity(req, boardId, map, likeMap, comments, bestComments);
+        return getCommentResponse(req, boardId, map, likeMap, comments, bestComments);
     }
 
-    private ResponseEntity<?> getResponseEntity(HttpServletRequest req, @RequestParam(required = false) Long boardId, Map<String, Object> map, Map<String, Boolean> likeMap, List<BoardComment.BoardCommentResponse> comments
+    private ResponseEntity<?> getCommentResponse(HttpServletRequest req, @RequestParam(required = false) Long boardId, Map<String, Object> map, Map<String, Boolean> likeMap, List<BoardComment.BoardCommentResponse> comments
             , List<BoardComment.BoardCommentResponse> bestComments) {
         map.put("comments", comments);
         comments.forEach(o -> {

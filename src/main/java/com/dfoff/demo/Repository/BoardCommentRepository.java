@@ -7,11 +7,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 public interface BoardCommentRepository extends JpaRepository<BoardComment, Long> {
     @Query("select b from BoardComment b where b.id=:id and b.deleted=false")
-    BoardComment findBoardCommentById(Long id);
+    Optional<BoardComment> findBoardCommentById(Long id);
 
     @Query("select b from BoardComment b where b.deleted=false and b.isParent = true  and b.board.id=:boardId order by b.createdAt asc")
     List<BoardComment> findBoardCommentByBoardId(@Param("boardId") Long id);

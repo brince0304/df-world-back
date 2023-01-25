@@ -15,6 +15,10 @@ import java.util.Objects;
 @NoArgsConstructor (access = AccessLevel.PROTECTED)
 @AllArgsConstructor (access = AccessLevel.PRIVATE)
 @Builder
+@Table(indexes = {
+        @Index(columnList = "createdAt"),
+        @Index(columnList = "fileName"),
+})
 @SQLDelete(sql = "UPDATE save_file SET deleted = true, deleted_at = now() WHERE id = ?")
 public class SaveFile extends AuditingFields {
     @Id

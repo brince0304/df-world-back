@@ -21,7 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-import static com.dfoff.demo.Controller.UserAccountController.getResponseEntity;
+import static com.dfoff.demo.Controller.UserAccountController.getCharacterResponse;
 
 @RestController
 @Slf4j
@@ -56,7 +56,7 @@ public class BoardController {
         return mav;
     }
     @PostMapping ("/boards/like-board")
-    public ResponseEntity<?> likeBoard(@RequestParam Long boardId, HttpServletRequest req, @AuthenticationPrincipal UserAccount.PrincipalDto principal) {
+    public ResponseEntity<?> likeBoardById(@RequestParam Long boardId, HttpServletRequest req, @AuthenticationPrincipal UserAccount.PrincipalDto principal) {
         if(principal==null) {
             if (redisService.checkBoardLikeLog(req.getRemoteAddr(), boardId)) {
                 redisService.deleteBoardLikeLog(req.getRemoteAddr(), boardId);
@@ -82,8 +82,8 @@ public class BoardController {
 
 
     @GetMapping("/boards/{boardId}")
-    public ModelAndView getBoardDetails(@PathVariable Long boardId,
-                                        HttpServletRequest req) {
+    public ModelAndView getBoardDetail(@PathVariable Long boardId,
+                                       HttpServletRequest req) {
             ModelAndView mav = new ModelAndView("/board/boardDetails");
             if(!redisService.checkBoardViewLog(req.getRemoteAddr(),boardId)){
                 redisService.saveBoardViewLog(req.getRemoteAddr(),boardId);
@@ -149,10 +149,10 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
         }
 
     @GetMapping("/boards/characters/")
-    public ResponseEntity<?> searchChar(@RequestParam(required = false) String serverId,
-                                        @RequestParam(required = false) String characterName,
-                                        @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable,
-                                        @AuthenticationPrincipal UserAccount.PrincipalDto principal) throws InterruptedException {
+    public ResponseEntity<?> searchCharacterForBoard(@RequestParam(required = false) String serverId,
+                                                     @RequestParam(required = false) String characterName,
+                                                     @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable,
+                                                     @AuthenticationPrincipal UserAccount.PrincipalDto principal) throws InterruptedException {
         if (principal == null) {
             throw new SecurityException("로그인이 필요합니다.");
         }
@@ -164,7 +164,7 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
         }
         List<CompletableFuture<CharacterEntity.CharacterEntityDto>> dtos = new ArrayList<>();
         List<CharacterEntity.CharacterEntityDto> dtos1 = characterService.getCharacterDtos(serverId, characterName).join();
-        return getResponseEntity(dtos, dtos1, characterService);
+        return getCharacterResponse(dtos, dtos1, characterService);
     }
 
 

@@ -185,7 +185,7 @@ userAccount.getUserAdventure().getCharacters().addAll(characterEntityRepository.
     }
 
     @Transactional(readOnly = true)
-    public Page<Board.BoardListMyPageResponse> getBoardsByUserIdOrderByComentCount(String userId, Pageable pageable) {
+    public Page<Board.BoardListMyPageResponse> getBoardsByUserIdOrderByCommentCount(String userId, Pageable pageable) {
         if(userAccountRepository.existsByUserId(userId)){
             return userAccountRepository.findBoardsByUserIdOrderByCommentCount(userId, pageable).map(Board.BoardListMyPageResponse::from);
         }

@@ -80,27 +80,23 @@ public class BoardService {
         }
     }
     public Board.BoardDetailResponse getBoardDetailById(Long id){
-        Board board_ = boardRepository.findBoardById(id);
-        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+        Board board_ = boardRepository.findBoardById(id).orElseThrow(()-> new EntityNotFoundException("해당 게시글이 존재하지 않습니다."));
         return Board.BoardDetailResponse.from(board_);
     }
 
     public String getBoardAuthorById(Long id){
-        Board board_ = boardRepository.findBoardById(id);
-        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+        Board board_ = boardRepository.findBoardById(id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
         return board_.getUserAccount().getUserId();
     }
 
     public void increaseBoardViewCount(Long Id){
-        Board board_ = boardRepository.findBoardById(Id);
-        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+        Board board_ = boardRepository.findBoardById(Id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
         board_.setBoardViewCount(board_.getBoardViewCount()+1);
     }
 
     public int increaseBoardLikeCount(Long Id, String nickname){
         if(nickname.equals("")){nickname ="비회원";}
-        Board board_ = boardRepository.findBoardById(Id);
-        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+        Board board_ = boardRepository.findBoardById(Id).orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
         board_.setBoardLikeCount(board_.getBoardLikeCount()+1);
         if(!board_.getUserAccount().getNickname().equals(nickname)){
             board_.getUserAccount().getNotifications().add(Notification.of(board_.getUserAccount(),board_, BOARD_UNLIKE, UserLogUtil.getLogContent(BOARD_LIKE.name(),nickname)));}
@@ -109,8 +105,7 @@ public class BoardService {
 
     public int decreaseBoardLikeCount(Long Id, String nickname){
         if(nickname.equals("")){nickname ="비회원";}
-        Board board_ = boardRepository.findBoardById(Id);
-        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+        Board board_ = boardRepository.findBoardById(Id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
         board_.setBoardLikeCount(board_.getBoardLikeCount()-1);
         if(!board_.getUserAccount().getNickname().equals(nickname)){
         board_.getUserAccount().getNotifications().add(Notification.of(board_.getUserAccount(),board_, BOARD_UNLIKE, UserLogUtil.getLogContent(BOARD_UNLIKE.name(),nickname)));}
@@ -170,14 +165,12 @@ public class BoardService {
     }
     @Transactional (readOnly = true)
     public Board.BoardDto getBoardDto(Long id){
-        Board board_ = boardRepository.findBoardById(id);
-        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+        Board board_ = boardRepository.findBoardById(id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
         return Board.BoardDto.from(board_);
     }
 
     public Long updateBoard(Long id, Board.BoardRequest request, Set<SaveFile.SaveFileDto> fileDtos, CharacterEntity.CharacterEntityDto character) {
-       Board board_ =  boardRepository.findBoardById(id);
-       if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+       Board board_ =  boardRepository.findBoardById(id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
        if(request != null){
            if(createHashtag(request.getHashtag()).size()>5){throw new IllegalArgumentException("해시태그는 5개까지만 등록 가능합니다.");}
            updateHashtagAndBoard(board_,createHashtag(request.getHashtag()));
@@ -200,7 +193,7 @@ public class BoardService {
     }
 
     public void deleteBoardById(Long id){
-        Board board_ = boardRepository.findBoardById(id);
+        Board board_ = boardRepository.findBoardById(id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
         for(BoardHashtagMapper mapper_ : board_.getHashtags()){
             mapper_.setBoard(null);
             mapper_.setHashtag(null);
@@ -215,8 +208,7 @@ public class BoardService {
     }
     @Transactional (readOnly = true)
     public Set<SaveFile.SaveFileDto> getBoardSaveFile(Long id){
-        Board board_ = boardRepository.findBoardById(id);
-        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+        Board board_ = boardRepository.findBoardById(id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
         return board_.getBoardFiles().stream().map(SaveFile.SaveFileDto::from).collect(Collectors.toSet());
     }
 }
