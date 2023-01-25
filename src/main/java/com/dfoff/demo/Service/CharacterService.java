@@ -2,9 +2,9 @@ package com.dfoff.demo.Service;
 
 
 import com.dfoff.demo.Domain.*;
-import com.dfoff.demo.Domain.ForCharacter.*;
+import com.dfoff.demo.Domain.JsonDtos.*;
 import com.dfoff.demo.Repository.*;
-import com.dfoff.demo.Util.OpenAPIUtil;
+import com.dfoff.demo.Util.RestTemplateUtil;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +18,8 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-import static com.dfoff.demo.Util.OpenAPIUtil.*;
-import static com.dfoff.demo.Util.SearchPageUtil.timesAgo;
+import static com.dfoff.demo.Util.RestTemplateUtil.*;
+import static com.dfoff.demo.Util.CharactersUtil.timesAgo;
 
 @Service
 @RequiredArgsConstructor
@@ -33,14 +33,14 @@ public class CharacterService {
     private final UserAccountCharacterMapperRepository mapperRepository;
 
 
-    private final Gson gson = OpenAPIUtil.getGson();
+    private final Gson gson = RestTemplateUtil.getGson();
 
     public List<CharacterEntity.CharacterEntityDto> getCharacterDTOs(String serverId, String characterName) {
         if (characterName == null || characterName.equals("")) {
             return List.of();
         }
-        List<CharacterDto> characterDtoList = parseUtil(OpenAPIUtil.getCharacterSearchUrl(serverId, characterName), CharacterDto.CharacterJSONDto.class).toDto();
-        List<CharacterEntity> characterEntityList = characterDtoList.stream().map(CharacterEntity.CharacterEntityDto::toEntity).collect(Collectors.toList());
+        List<CharacterDto> characterDtoList = parseJsonFromUri(RestTemplateUtil.getCharacterSearchUri(serverId, characterName), CharacterDto.CharacterJSONDto.class).toDto();
+        List<CharacterEntity> characterEntityList = characterDtoList.stream().map(CharacterEntity.CharacterEntityDto::toEntity).filter(o->o.getLevel()>=75).collect(Collectors.toList());
         characterEntityRepository.saveAll(characterEntityList);
         return characterEntityList.stream().map(CharacterEntity.CharacterEntityDto::from).collect(Collectors.toList());
     }
@@ -53,7 +53,14 @@ public class CharacterService {
 
 
     public List<CharacterSkillDetail.CharacterSkillDetailDto> getCharacterSkillDetail(String serverId, String characterId) {
-        return getSkillDetails(parseUtil(OpenAPIUtil.getCharacterSkillUrl(serverId, characterId), CharacterSkillStyleJsonDto.class));
+        return getSkillDetails(parseJsonFromUri(RestTemplateUtil.getCharacterSkillUri(serverId, characterId), CharacterSkillStyleJsonDto.class));
+    }
+
+    public String getRandomJobName(){
+        long number = characterEntityRepository.count();
+        Random random = new Random();
+        int randomInt = random.nextInt((int) number);
+        return characterEntityRepository.findAll().get(randomInt).getJobName();
     }
 
     public String getLastUpdatedByCharacterId(String characterId) {
@@ -64,7 +71,7 @@ public class CharacterService {
         if(characterId==null || characterId.equals("")){
             return null;
         }
-        CharacterEntity characterEntity = characterEntityRepository.findById(characterId).orElseGet(()-> characterEntityRepository.save(CharacterAbilityDto.toEntity(parseUtil(OpenAPIUtil.getCharacterAbilityUrl(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto(),serverId)));
+        CharacterEntity characterEntity = characterEntityRepository.findById(characterId).orElseGet(()-> characterEntityRepository.save(CharacterAbilityDto.toEntity(parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto(),serverId)));
         return CharacterEntity.CharacterEntityDto.from(characterEntity);
     }
 
@@ -72,13 +79,13 @@ public class CharacterService {
         if(characterId==null || characterId.equals("")){
             return null;
         }
-        return parseUtil(OpenAPIUtil.getCharacterEquipmentUrl(serverId, characterId), CharacterEquipmentJsonDto.class);
+        return parseJsonFromUri(RestTemplateUtil.getCharacterEquipmentUri(serverId, characterId), CharacterEquipmentJsonDto.class);
     }
 
     public List<EquipmentDetailJsonDto> getEquipmentDetail(CharacterEquipmentJsonDto dto) {
         List <EquipmentDetailJsonDto> list = new ArrayList<>();
         for(CharacterEquipmentJsonDto.Equipment eq : dto.getEquipment()){
-               list.add(parseUtil(OpenAPIUtil.getEquipmentDetailUrl(eq.getItemId()),EquipmentDetailJsonDto.class));
+               list.add(parseJsonFromUri(RestTemplateUtil.getEquipmentDetailUri(eq.getItemId()),EquipmentDetailJsonDto.class));
         }
         log.info("list size : {}",list.size());
         return list;
@@ -88,7 +95,7 @@ public class CharacterService {
         if(characterId==null || characterId.equals("")){
             return null;
         }
-        return parseUtil(OpenAPIUtil.getCharacterBuffEquipmentUrl(serverId, characterId), CharacterBuffEquipmentJsonDto.class);
+        return parseJsonFromUri(RestTemplateUtil.getCharacterBuffEquipmentUri(serverId, characterId), CharacterBuffEquipmentJsonDto.class);
     }
 
     public Page<CharacterEntity.CharacterEntityDto> getCharacterByAdventureName(String adventureName, Pageable pageable) {
@@ -96,9 +103,9 @@ public class CharacterService {
     }
 
     @Async
-    public CompletableFuture<CharacterEntity.CharacterEntityDto> getCharacterAbilityThenSaveAsync(CharacterEntity.CharacterEntityDto dto) {
+    public CompletableFuture<CharacterEntity.CharacterEntityDto> getCharacterAbilityAsync(CharacterEntity.CharacterEntityDto dto) {
         CharacterEntity entity = characterEntityRepository.save(CharacterEntity.CharacterEntityDto.toEntity(dto));
-        CharacterAbilityDto characterDto = parseUtil(OpenAPIUtil.getCharacterAbilityUrl(dto.getServerId(), dto.getCharacterId()), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
+        CharacterAbilityDto characterDto = parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(dto.getServerId(), dto.getCharacterId()), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
         entity.setAdventureFame(characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().isEmpty() ? "0" : characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().get().getValue());
         entity.setAdventureName(characterDto.getAdventureName());
         entity.setServerId(dto.getServerId());
@@ -106,10 +113,10 @@ public class CharacterService {
     }
 
     public CharacterAbilityDto getCharacterAbility(String serverId, String characterId) {
-        CharacterAbilityDto characterDto = parseUtil(OpenAPIUtil.getCharacterAbilityUrl(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
+        CharacterAbilityDto characterDto = parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
         CharacterEntity character = characterEntityRepository.save(CharacterAbilityDto.toEntity(characterDto,serverId));
         character.setAdventureFame(characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().isEmpty() ? "0" : characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().get().getValue());
-        characterDto.setAdventureFame(character.getAdventureFame());
+        characterDto.setAdventureName(character.getAdventureName());
         return characterDto;
     }
 
@@ -123,7 +130,7 @@ public class CharacterService {
     }
 
     public List<CharacterTalismanJsonDto.Talisman> getCharacterTalisman(String serverId, String characterId) {
-        CharacterTalismanJsonDto dto = parseUtil(OpenAPIUtil.getCharacterTalismanUrl(serverId, characterId), CharacterTalismanJsonDto.class);
+        CharacterTalismanJsonDto dto = parseJsonFromUri(RestTemplateUtil.getCharacterTalismanUri(serverId, characterId), CharacterTalismanJsonDto.class);
         return dto.getTalismans();
     }
 
@@ -141,7 +148,7 @@ public class CharacterService {
     }
 
     public CharacterSkillStyleJsonDto.Style getCharacterSkillStyle(String serverId, String characterId) {
-        CharacterSkillStyleJsonDto dto = parseUtil(OpenAPIUtil.getCharacterSkillUrl(serverId, characterId), CharacterSkillStyleJsonDto.class);
+        CharacterSkillStyleJsonDto dto = parseJsonFromUri(RestTemplateUtil.getCharacterSkillUri(serverId, characterId), CharacterSkillStyleJsonDto.class);
         return dto.getSkill().getStyle();
     }
 
@@ -151,7 +158,7 @@ public class CharacterService {
             log.info("jobID:{}, skillId:{}",dto.getJobId(),active.getSkillId());
             if(active.getRequiredLevel()>=20){
             characterSkillDetailRepository.getCharacterSkillDetailBySkillIdAndSkillLevel(active.getSkillId(),String.valueOf(active.getLevel())).ifPresentOrElse(list::add,()->{
-                CharacterSkillDetailJsonDto detail = parseUtil(OpenAPIUtil.getCharacterSkillDetailUrl(dto.getJobId(),active.getSkillId()), CharacterSkillDetailJsonDto.class);
+                CharacterSkillDetailJsonDto detail = parseJsonFromUri(RestTemplateUtil.getCharacterSkillDetailUri(dto.getJobId(),active.getSkillId()), CharacterSkillDetailJsonDto.class);
                 characterSkillDetailRepository.saveAll(CharacterSkillDetail.CharacterSkillDetailDto.toEntity(dto,detail));
             }
             );
@@ -191,13 +198,11 @@ public class CharacterService {
 
 
     public CharacterBuffAvatarJsonDto getCharacterBuffAvatar(String serverId, String characterId) {
-        CharacterBuffAvatarJsonDto dto = parseUtil(OpenAPIUtil.getCharacterBuffAvatarUrl(serverId, characterId), CharacterBuffAvatarJsonDto.class);
-       return dto;
+        return parseJsonFromUri(RestTemplateUtil.getCharacterBuffAvatarUri(serverId, characterId), CharacterBuffAvatarJsonDto.class);
     }
 
     public CharacterBuffCreatureJsonDto getCharacterBuffCreature(String serverId, String characterId) {
-        CharacterBuffCreatureJsonDto dto = parseUtil(OpenAPIUtil.getCharacterBuffCreatureUrl(serverId, characterId), CharacterBuffCreatureJsonDto.class);
-        return dto;
+        return parseJsonFromUri(RestTemplateUtil.getCharacterBuffCreatureUri(serverId, characterId), CharacterBuffCreatureJsonDto.class);
     }
 
     public Page<CharacterEntity.CharacterEntityDto> getCharactersOrderByAdventureFame(Pageable pageable){
@@ -205,20 +210,44 @@ public class CharacterService {
     }
 
     public CharacterAvatarJsonDto getCharacterAvatar(String serverId, String characterId) {
-        CharacterAvatarJsonDto dto = parseUtil(OpenAPIUtil.getCharacterAvatarUrl(serverId, characterId), CharacterAvatarJsonDto.class);
-        return dto;
+        return parseJsonFromUri(RestTemplateUtil.getCharacterAvatarUri(serverId, characterId), CharacterAvatarJsonDto.class);
     }
 
 
     public void getServerStatus() {
-        ServerDto.ServerJSONDto dfServerJSONDto = parseUtil(OpenAPIUtil.SERVER_LIST_URL, ServerDto.ServerJSONDto.class);
+        ServerDto.ServerJSONDto dfServerJSONDto = parseJsonFromUri(RestTemplateUtil.SERVER_LIST_URI, ServerDto.ServerJSONDto.class);
         dfServerJSONDto.toDTO();
     }
 
     public void getJobList() {
-        JobDto.JobJSONDto jobJSONDTO = parseUtil(OpenAPIUtil.JOB_LIST_URL, JobDto.JobJSONDto.class);
+        JobDto.JobJSONDto jobJSONDTO = parseJsonFromUri(RestTemplateUtil.JOB_LIST_URI, JobDto.JobJSONDto.class);
         jobJSONDTO.toDTO();
     }
 
 
+    public String getRandomString() {
+        StringBuilder randomString = new StringBuilder();
+        for (int i = 0; i < 10; i++) {
+            int index = (int) (Math.random() * 3);
+            switch (index) {
+                case 0 -> randomString.append((char) ((int) (Math.random() * 26) + 97));
+                case 1 -> randomString.append((char) ((int) (Math.random() * 26) + 65));
+                case 2 -> randomString.append((int) (Math.random() * 10));
+            }
+        }
+        return randomString.toString();
+    }
+
+    public boolean checkCharacterAdventure(UserAdventure.UserAdventureRequest request){
+        List<CharacterDto> dto = parseJsonFromUri(RestTemplateUtil.getCharacterSearchUri(request.getServerId(),request.getRandomString()), CharacterDto.CharacterJSONDto.class).toDto();
+        if(dto.size()==0){
+            return false;
+        }
+CharacterDto characterDto = dto.get(0);
+        CharacterAbilityDto dto_ = RestTemplateUtil.parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(request.getServerId(), characterDto.getCharacterId()), CharacterAbilityDto.class);
+        log.info("jobName:{}, dtoJobName:{}",request.getRandomJobName(),dto_.getJobName());
+        log.info("characterName:{}, dtoCharacterName:{}",request.getRandomString(),dto_.getCharacterName());
+        log.info("adventure name:{}, dtoAdventureName:{}",request.getAdventureName(),dto_.getAdventureName());
+        return dto_.getJobName().equals(request.getRandomJobName()) && dto_.getAdventureName().equals(request.getAdventureName());
+    }
 }
