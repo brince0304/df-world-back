@@ -1,11 +1,8 @@
 package com.dfoff.demo.Util;
 
-import com.dfoff.demo.Domain.CharacterSkillDetail;
-import com.dfoff.demo.Domain.ForCharacter.CharacterBuffEquipmentJsonDto;
-import com.dfoff.demo.Domain.ForCharacter.CharacterEquipmentJsonDto;
-import com.dfoff.demo.Domain.ForCharacter.CharacterSkillDetailJsonDto;
-import com.dfoff.demo.Domain.ForCharacter.EquipmentDetailJsonDto;
-import lombok.experimental.UtilityClass;
+import com.dfoff.demo.Domain.JsonDtos.CharacterBuffEquipmentJsonDto;
+import com.dfoff.demo.Domain.JsonDtos.CharacterSkillDetailJsonDto;
+import com.dfoff.demo.Domain.JsonDtos.EquipmentDetailJsonDto;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDateTime;
@@ -17,7 +14,7 @@ import java.util.Objects;
 import java.util.StringTokenizer;
 
 @Slf4j
-public class SearchPageUtil {
+public class CharactersUtil {
 
     public static List<String> getBuffPercent(CharacterBuffEquipmentJsonDto dto, List<EquipmentDetailJsonDto> equipment){
         List<String> list = new ArrayList<>();
@@ -65,58 +62,28 @@ public class SearchPageUtil {
 
             } else if(dto.getSkill().getBuff()!=null && levelPlus>0){
                 list.add(dto.getSkill().getBuff().getSkillInfo().getName());
-                CharacterSkillDetailJsonDto skill = OpenAPIUtil.parseUtil(OpenAPIUtil.getCharacterSkillDetailUrl(dto.getJobId(),dto.getSkill().getBuff().getSkillInfo().getSkillId()), CharacterSkillDetailJsonDto.class);
+                CharacterSkillDetailJsonDto skill = RestTemplateUtil.parseJsonFromUri(RestTemplateUtil.getCharacterSkillDetailUri(dto.getJobId(),dto.getSkill().getBuff().getSkillInfo().getSkillId()), CharacterSkillDetailJsonDto.class);
                 String desc = skill.getLevelInfo().getOptionDesc();
                 Integer level = dto.getSkill().getBuff().getSkillInfo().getOption().getLevel()+levelPlus;
+                list.add(level + "");
                 CharacterSkillDetailJsonDto.OptionValue val = skill.getLevelInfo().getRows().stream().filter(o-> Objects.equals(o.getLevel(), level)).findFirst().get().getOptionValue();
                 StringTokenizer st = new StringTokenizer(desc,"\n");
                 while(st.hasMoreTokens()){
                     String token = st.nextToken();
                     if(token.contains("스킬") || token.contains("데미지")||token.contains("무기")){
                         log.info("token : {}",token);
-
                         String num = token.substring(token.length()-3,token.length()-2);
                         switch (Integer.parseInt(num)-1) {
-                            case 0 -> {
-                                list.add(level + "");
-                                list.add(val.getValue1() + "%");
-                            }
-                            case 1 -> {
-                                list.add(level + "");
-                                list.add(val.getValue2() + "%");
-                            }
-                            case 2 -> {
-                                list.add(level + "");
-                                list.add(val.getValue3() + "%");
-                            }
-                            case 3 -> {
-                                list.add(level + "");
-                                list.add(val.getValue4() + "%");
-                            }
-                            case 4 -> {
-                                list.add(level + "");
-                                list.add(val.getValue5() + "%");
-                            }
-                            case 5 -> {
-                                list.add(level + "");
-                                list.add(val.getValue6() + "%");
-                            }
-                            case 6 -> {
-                                list.add(level + "");
-                                list.add(val.getValue7() + "%");
-                            }
-                            case 7 -> {
-                                list.add(level + "");
-                                list.add(val.getValue8() + "%");
-                            }
-                            case 8 -> {
-                                list.add(level + "");
-                                list.add(val.getValue9() + "%");
-                            }
-                            case 9 -> {
-                                list.add(level + "");
-                                list.add(val.getValue10() + "%");
-                            }
+                            case 0 -> list.add(val.getValue1() + "%");
+                            case 1 -> list.add(val.getValue2() + "%");
+                            case 2 -> list.add(val.getValue3() + "%");
+                            case 3 -> list.add(val.getValue4() + "%");
+                            case 4 -> list.add(val.getValue5() + "%");
+                            case 5 -> list.add(val.getValue6() + "%");
+                            case 6 -> list.add(val.getValue7() + "%");
+                            case 7 -> list.add(val.getValue8() + "%");
+                            case 8 -> list.add(val.getValue9() + "%");
+                            case 9 -> list.add(val.getValue10() + "%");
                         }
                         log.info("스킬버프 : "+list);
                         return list;
