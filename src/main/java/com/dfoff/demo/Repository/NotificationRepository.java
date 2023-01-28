@@ -17,7 +17,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
 
 
-    Boolean existsByLogContentContainingIgnoreCaseAndBoardIdAndNotificationType (String  logContent, Long boardId, NotificationType notificationType);
+    Boolean existsByNotificationContentContainingIgnoreCaseAndBoardIdAndNotificationType (String  logContent, Long boardId, NotificationType notificationType);
 
 
 }

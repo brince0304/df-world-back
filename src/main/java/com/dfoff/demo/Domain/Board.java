@@ -62,7 +62,7 @@ public class Board extends AuditingFields {
     @Builder.Default
     private Integer boardLikeCount = 0;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY)
     @Builder.Default
     @JoinColumn(name = "board_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     private final Set<SaveFile> boardFiles = new LinkedHashSet<>();
