@@ -210,4 +210,47 @@ public class BoardComment extends AuditingFields {
         private final Long parentId;
         private final String commentContent;
     }
+
+    @Data
+    @Builder
+    public static class BoardCommentDto implements Serializable {
+        private final Long id;
+        private final String commentContent;
+        private final Long boardId;
+        private final String userId;
+        private final String userNickname;
+        private final Boolean isParent;
+        private final BoardType boardType;
+
+        private final String commentLikeCount;
+
+        private final Board.BoardDto boardDto;
+
+        private final UserAccount.UserAccountDto userAccountDto;
+
+        public static BoardCommentDto from (BoardComment boardComment) {
+            return BoardCommentDto.builder()
+                    .id(boardComment.getId())
+                    .commentContent(boardComment.getCommentContent())
+                    .boardId(boardComment.getBoard().getId())
+                    .userId(boardComment.getUserAccount().getUserId())
+                    .userNickname(boardComment.getUserAccount().getNickname())
+                    .isParent(boardComment.getIsParent())
+                    .boardType(boardComment.getBoard().getBoardType())
+                    .boardDto(Board.BoardDto.from(boardComment.getBoard()))
+                    .userAccountDto(UserAccount.UserAccountDto.from(boardComment.getUserAccount()))
+                    .commentLikeCount(boardComment.getCommentLikeCount()+"")
+                    .build();
+
+        }
+
+        public BoardComment toEntity(){
+            return BoardComment.builder()
+                    .id(this.id)
+                    .commentContent(this.commentContent)
+                    .board(this.boardDto!=null?this.boardDto.toEntity():null)
+                    .userAccount(this.userAccountDto!=null?this.userAccountDto.toEntity():null)
+                    .build();
+        }
+    }
 }

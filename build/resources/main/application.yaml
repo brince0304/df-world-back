@@ -37,6 +37,8 @@ spring:
     remote:
       restart:
         enabled: true
+  freemarker:
+    expose-session-attributes: true
 
 com:
   example:
