@@ -4,6 +4,7 @@ import com.dfoff.demo.Domain.CharacterEntity;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Domain.UserAdventure;
 import com.dfoff.demo.Service.CharacterService;
+import com.dfoff.demo.Service.NotificationService;
 import com.dfoff.demo.Service.SaveFileService;
 import com.dfoff.demo.Service.UserAccountService;
 import com.dfoff.demo.Util.Bcrypt;
@@ -32,6 +33,8 @@ public class UserAccountController {
     private final SaveFileService saveFileService;
 
     private final CharacterService characterService;
+
+    private final NotificationService notificationService;
 
 
     private final Bcrypt bcrypt;
@@ -181,7 +184,7 @@ public class UserAccountController {
         ModelAndView mav = new ModelAndView("/mypage/mypage");
         UserAccount.UserAccountMyPageResponse response = userAccountService.getUserAccountById(principal.getUsername());
         mav.addObject("user", response);
-        mav.addObject("uncheckedLogCount", userAccountService.getUncheckedLogCount(principal.getUsername()));
+        mav.addObject("uncheckedLogCount", notificationService.getUncheckedNotificationCount(principal.getUsername()));
         return mav;
     }
 
@@ -211,7 +214,7 @@ public class UserAccountController {
             return new ResponseEntity<>(userAccountService.getCommentsByUserId(principal.getUsername(), pageable), HttpStatus.OK);
         }
         if(type.equals("log")){
-            return new ResponseEntity<>(userAccountService.getUserLog(principal.getUsername(), pageable), HttpStatus.OK);
+            return new ResponseEntity<>(notificationService.getUserNotifications(principal.getUsername(), pageable), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
