@@ -2,20 +2,22 @@ package com.dfoff.demo.Service;
 
 import com.dfoff.demo.Domain.Board;
 import com.dfoff.demo.Domain.BoardComment;
-import com.dfoff.demo.Domain.EnumType.UserAccount.LogType;
+import com.dfoff.demo.Domain.EnumType.UserAccount.NotificationType;
 import com.dfoff.demo.Domain.Notification;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Repository.BoardCommentRepository;
 import com.dfoff.demo.Repository.NotificationRepository;
-import com.dfoff.demo.Util.UserLogUtil;
+import com.dfoff.demo.Util.NotificationUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +25,6 @@ import java.util.Objects;
 @Transactional
 public class BoardCommentService {
     private final BoardCommentRepository commentRepository;
-    private final NotificationRepository notificationRepository;
 
 
 
@@ -37,18 +38,15 @@ public class BoardCommentService {
         return commentRepository.findBoardCommentByBoardId(id).stream().map(BoardComment.BoardCommentResponse::from).toList();
     }
 
-    public void createBoardComment(BoardComment.BoardCommentRequest request, UserAccount.UserAccountDto account, Board.BoardDto board){
+    public BoardComment.BoardCommentDto createBoardComment(BoardComment.BoardCommentRequest request, UserAccount.UserAccountDto account, Board.BoardDto board){
         if(account ==null || board ==null){
             throw new IllegalArgumentException("로그인이 필요합니다.");
         }
         if(request.getCommentContent() == null || request.getCommentContent().equals("")){
             throw new IllegalArgumentException("댓글 내용을 입력해주세요.");
         }
-
         BoardComment comment_ = commentRepository.save(request.toEntity(account, board));
-        if(!account.userId().equals(board.getUserAccount().userId())) {
-            notificationRepository.save(Notification.of(comment_.getBoard().getUserAccount(), comment_.getBoard(), LogType.COMMENT, UserLogUtil.getLogContent(LogType.COMMENT.name(), account.nickname())));
-        }
+        return BoardComment.BoardCommentDto.from(comment_);
     }
 
     public List<BoardComment.BoardCommentResponse> findBoardCommentsByParentId(Long boardId, Long parentId){
@@ -56,15 +54,12 @@ public class BoardCommentService {
     }
 
     public void deleteBoardComment(Long id){
-        commentRepository.findById(id).ifPresent(comment -> {
-            comment.getChildrenComments().forEach(child -> {
-                if(!Objects.equals(comment.getUserAccount().getUserId(), child.getUserAccount().getUserId())) {
-                    comment.getBoard().getUserAccount().getNotifications().add(Notification.of(comment.getUserAccount(), child, LogType.DELETE_CHILDREN_COMMENT, UserLogUtil.getLogContent(LogType.DELETE_CHILDREN_COMMENT.name(), comment.getUserAccount().getNickname())));
-                }
-            });
-        });
         commentRepository.deleteById(id);
+    }
 
+    public List<BoardComment.BoardCommentDto> getChildrenComments(Long parentId){
+        BoardComment comment_ = commentRepository.findBoardCommentById(parentId).orElseThrow(()-> new EntityNotFoundException("댓글이 존재하지 않습니다."));
+        return comment_.getChildrenComments().stream().map(BoardComment.BoardCommentDto::from).toList();
     }
 
     public void updateBoardComment(Long id, BoardComment.BoardCommentRequest request,String username){
@@ -75,29 +70,21 @@ public class BoardCommentService {
         boardComment_.setCommentContent(request.getCommentContent());
     }
 
-    public Integer updateBoardCommentLike(Long id,String nickname){
-        if(nickname.equals("")){nickname="비회원";}
+    public BoardComment.BoardCommentDto updateBoardCommentLike(Long id){
         BoardComment boardComment_ = commentRepository.findBoardCommentById(id).orElseThrow(()-> new EntityNotFoundException("댓글이 존재하지 않습니다."));
         boardComment_.setCommentLikeCount(boardComment_.getCommentLikeCount()+1);
-        if(!boardComment_.getUserAccount().getUserId().equals(nickname)) {
-            boardComment_.getBoard().getUserAccount().getNotifications().add(Notification.of(boardComment_.getUserAccount(), boardComment_, LogType.COMMENT_LIKE, UserLogUtil.getLogContent(LogType.COMMENT_LIKE.name(), nickname)));
-        }
-        return boardComment_.getCommentLikeCount();
+        return BoardComment.BoardCommentDto.from(boardComment_);
     }
 
-    public Integer updateBoardCommentDisLike(Long id,String nickname){
-        if(nickname.equals("")){nickname="비회원";}
+    public BoardComment.BoardCommentDto updateBoardCommentDisLike(Long id){
         BoardComment boardComment_ = commentRepository.findBoardCommentById(id).orElseThrow(()-> new EntityNotFoundException("댓글이 존재하지 않습니다."));
         boardComment_.setCommentLikeCount(boardComment_.getCommentLikeCount()-1);
-        if(!boardComment_.getUserAccount().getUserId().equals(nickname)) {
-            boardComment_.getBoard().getUserAccount().getNotifications().add(Notification.of(boardComment_.getUserAccount(), boardComment_, LogType.COMMENT_UNLIKE, UserLogUtil.getLogContent(LogType.COMMENT_UNLIKE.name(), nickname)));
-        }
-        return boardComment_.getCommentLikeCount();
+        return BoardComment.BoardCommentDto.from(boardComment_);
     }
 
 
 
-    public void createChildrenComment(Long parentId, BoardComment.BoardCommentRequest request, UserAccount.UserAccountDto account, Board.BoardDto board) {
+    public BoardComment.BoardCommentDto createChildrenComment(Long parentId, BoardComment.BoardCommentRequest request, UserAccount.UserAccountDto account, Board.BoardDto board) {
         BoardComment boardComment_ = commentRepository.findBoardCommentById(parentId).orElseThrow(()-> new EntityNotFoundException("댓글이 존재하지 않습니다."));
         if(boardComment_== null){
             throw new EntityNotFoundException("해당 댓글이 존재하지 않습니다.");
@@ -108,9 +95,7 @@ public class BoardCommentService {
         children.setIsParent(Boolean.FALSE);
         children.setParentComment(boardComment_);
         commentRepository.save(children);
-        if(!account.userId().equals(board.getUserAccount().userId())) {
-            notificationRepository.save(Notification.of(boardComment_.getUserAccount(),children, LogType.CHILDREN_COMMENT,UserLogUtil.getLogContent(LogType.CHILDREN_COMMENT.name(),account.nickname())));
-        }
+        return BoardComment.BoardCommentDto.from(children);
     }
 
     public List<BoardComment.BoardCommentResponse> findBestBoardCommentByBoardId(Long boardId) {

@@ -102,15 +102,7 @@ userAccount.getUserAdventure().getCharacters().addAll(characterEntityRepository.
         return true;
     }
 
-    public Page<Notification.UserLogResponse> getUserLog(String userId, Pageable pageable) {
-        Page<Notification> userLog = notificationRepository.getUserLogByUserAccount_UserId(userId, pageable);
-        userLog.forEach(o-> o.setChecked(Boolean.TRUE));
-        return userLog.map(Notification.UserLogResponse::from);
-    }
 
-    public Long getUncheckedLogCount(String userId) {
-        return notificationRepository.getUnCheckedLogCount(userId);
-    }
 
 
 
