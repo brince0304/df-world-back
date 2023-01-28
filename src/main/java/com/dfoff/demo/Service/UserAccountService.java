@@ -102,15 +102,7 @@ userAccount.getUserAdventure().getCharacters().addAll(characterEntityRepository.
         return true;
     }
 
-    public Page<Notification.UserLogResponse> getUserLog(String userId, Pageable pageable) {
-        Page<Notification> userLog = notificationRepository.getUserLogByUserAccount_UserId(userId, pageable);
-        userLog.forEach(o-> o.setChecked(Boolean.TRUE));
-        return userLog.map(Notification.UserLogResponse::from);
-    }
 
-    public Long getUncheckedLogCount(String userId) {
-        return notificationRepository.getUnCheckedLogCount(userId);
-    }
 
 
 
@@ -185,7 +177,7 @@ userAccount.getUserAdventure().getCharacters().addAll(characterEntityRepository.
     }
 
     @Transactional(readOnly = true)
-    public Page<Board.BoardListMyPageResponse> getBoardsByUserIdOrderByComentCount(String userId, Pageable pageable) {
+    public Page<Board.BoardListMyPageResponse> getBoardsByUserIdOrderByCommentCount(String userId, Pageable pageable) {
         if(userAccountRepository.existsByUserId(userId)){
             return userAccountRepository.findBoardsByUserIdOrderByCommentCount(userId, pageable).map(Board.BoardListMyPageResponse::from);
         }

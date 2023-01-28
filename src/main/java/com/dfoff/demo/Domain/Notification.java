@@ -1,9 +1,11 @@
 package com.dfoff.demo.Domain;
 
-import com.dfoff.demo.Domain.EnumType.UserAccount.LogType;
+import com.dfoff.demo.Domain.EnumType.UserAccount.NotificationType;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.Objects;
 
 import static com.dfoff.demo.Util.CharactersUtil.timesAgo;
 
@@ -26,7 +28,7 @@ public class Notification extends AuditingFields {
 
     @Setter
     @Enumerated
-    private LogType logType;
+    private NotificationType notificationType;
 
     @Setter
     @Builder.Default
@@ -34,25 +36,39 @@ public class Notification extends AuditingFields {
 
 
     @Setter
-    private String logContent;
+    private String notificationContent;
 
-    public static Notification of(UserAccount userAccount, Board board, LogType type, String logContent){
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Notification that)) return false;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    public static Notification of(UserAccount userAccount, Board board, NotificationType type, String logContent){
         return Notification.builder()
                 .boardId(board.getId())
                 .userAccount(userAccount)
-                .logType(type)
-                .logContent(logContent)
+                .notificationType(type)
+                .notificationContent(logContent)
                 .build();
     }
 
-    public static Notification of(UserAccount userAccount, BoardComment comment, LogType type, String logContent){
+    public static Notification of(UserAccount userAccount, BoardComment comment, NotificationType type, String logContent){
         return Notification.builder()
                 .boardId(comment.getBoard().getId())
                 .userAccount(userAccount)
-                .logType(type)
-                .logContent(logContent)
+                .notificationType(type)
+                .notificationContent(logContent)
                 .build();
     }
+
+
 
     @Data
     @Builder
@@ -62,23 +78,23 @@ public class Notification extends AuditingFields {
         private final Long boardId;
 
 
-        private final String logType;
+        private final String notificationType;
 
         private final Boolean checked;
 
         private final String createdDate;
 
-        private final String logContent;
+        private final String notificationContent;
 
 
         public static UserLogResponse from(Notification notification) {
             return UserLogResponse.builder()
                     .id(notification.getId())
                     .boardId(notification.getBoardId())
-                    .logType(notification.getLogType().toString())
+                    .notificationType(notification.getNotificationType().toString())
                     .checked(notification.getChecked())
                     .createdDate(timesAgo(notification.getCreatedAt()))
-                    .logContent(notification.getLogContent())
+                    .notificationContent(notification.getNotificationContent())
                     .build();
         }
 

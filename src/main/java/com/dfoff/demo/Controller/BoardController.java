@@ -2,6 +2,7 @@ package com.dfoff.demo.Controller;
 
 import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.EnumType.BoardType;
+import com.dfoff.demo.Domain.EnumType.UserAccount.NotificationType;
 import com.dfoff.demo.Service.*;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-import static com.dfoff.demo.Controller.UserAccountController.getResponseEntity;
+import static com.dfoff.demo.Controller.UserAccountController.getCharacterResponse;
 
 @RestController
 @Slf4j
@@ -34,6 +35,8 @@ public class BoardController {
     private final SaveFileService saveFileService;
 
     private final CharacterService characterService;
+
+    private final NotificationService notificationService;
 
     private final RedisService redisService;
 
@@ -56,34 +59,26 @@ public class BoardController {
         return mav;
     }
     @PostMapping ("/boards/like-board")
-    public ResponseEntity<?> likeBoard(@RequestParam Long boardId, HttpServletRequest req, @AuthenticationPrincipal UserAccount.PrincipalDto principal) {
-        if(principal==null) {
+    public ResponseEntity<?> likeBoardById(@RequestParam Long boardId, HttpServletRequest req, @AuthenticationPrincipal UserAccount.PrincipalDto principal) {
             if (redisService.checkBoardLikeLog(req.getRemoteAddr(), boardId)) {
                 redisService.deleteBoardLikeLog(req.getRemoteAddr(), boardId);
-                return new ResponseEntity<>(boardService.decreaseBoardLikeCount(boardId,""), HttpStatus.OK);
+
+                return new ResponseEntity<>(boardService.decreaseBoardLikeCount(boardId).getBoardLikeCount(), HttpStatus.OK);
 
             } else {
                 redisService.saveBoardLikeLog(req.getRemoteAddr(), boardId);
-                return new ResponseEntity<>(boardService.increaseBoardLikeCount(boardId,""), HttpStatus.OK);
+                Board.BoardDto dto = boardService.increaseBoardLikeCount(boardId);
+                if(principal!=null && !principal.getUsername().equals(dto.getUserAccount().userId())){
+                    notificationService.saveBoardNotification(dto.getUserAccount(),dto , "", NotificationType.BOARD_LIKE);}
+                return new ResponseEntity<>(dto.getBoardLikeCount(), HttpStatus.OK);
             }
-        }else{
-
-            if(redisService.checkBoardLikeLog(req.getRemoteAddr(),boardId)) {
-                redisService.deleteBoardLikeLog(req.getRemoteAddr(),boardId);
-                return new ResponseEntity<>(boardService.decreaseBoardLikeCount(boardId, principal.getNickname()),HttpStatus.OK);
-
-            }else{
-                redisService.saveBoardLikeLog(req.getRemoteAddr(),boardId);
-                return new ResponseEntity<>(boardService.increaseBoardLikeCount(boardId,principal.getNickname()),HttpStatus.OK);
-            }
-        }
     }
 
 
 
     @GetMapping("/boards/{boardId}")
-    public ModelAndView getBoardDetails(@PathVariable Long boardId,
-                                        HttpServletRequest req) {
+    public ModelAndView getBoardDetail(@PathVariable Long boardId,
+                                       HttpServletRequest req) {
             ModelAndView mav = new ModelAndView("/board/boardDetails");
             if(!redisService.checkBoardViewLog(req.getRemoteAddr(),boardId)){
                 redisService.saveBoardViewLog(req.getRemoteAddr(),boardId);
@@ -134,7 +129,7 @@ public class BoardController {
 
     @DeleteMapping("/boards")
 public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
-                                      @RequestParam (required = true) Long id) {
+                                      @RequestParam  Long id) {
 
             String writer = boardService.getBoardAuthorById(id);
             if (principalDto == null || !writer.equals(principalDto.getUsername())) {
@@ -144,15 +139,18 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
                 log.info("saveFile : {}", saveFile);
                 saveFileService.deleteFile(saveFile.id());
             });
+            boardService.getBoardCommentsByBoardId(id).stream().filter(o-> !o.getUserId().equals(principalDto.getUsername())).forEach(o->{
+                notificationService.saveBoardCommentNotification(o.getUserAccountDto(),o, principalDto.getNickname(), NotificationType.DELETE_COMMENT);
+            });
             boardService.deleteBoardById(id);
             return new ResponseEntity<>(HttpStatus.OK);
         }
 
     @GetMapping("/boards/characters/")
-    public ResponseEntity<?> searchChar(@RequestParam(required = false) String serverId,
-                                        @RequestParam(required = false) String characterName,
-                                        @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable,
-                                        @AuthenticationPrincipal UserAccount.PrincipalDto principal) throws InterruptedException {
+    public ResponseEntity<?> searchCharacterForBoard(@RequestParam(required = false) String serverId,
+                                                     @RequestParam(required = false) String characterName,
+                                                     @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable,
+                                                     @AuthenticationPrincipal UserAccount.PrincipalDto principal) throws InterruptedException {
         if (principal == null) {
             throw new SecurityException("로그인이 필요합니다.");
         }
@@ -164,7 +162,7 @@ public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.Princi
         }
         List<CompletableFuture<CharacterEntity.CharacterEntityDto>> dtos = new ArrayList<>();
         List<CharacterEntity.CharacterEntityDto> dtos1 = characterService.getCharacterDtos(serverId, characterName).join();
-        return getResponseEntity(dtos, dtos1, characterService);
+        return getCharacterResponse(dtos, dtos1, characterService);
     }
 
 

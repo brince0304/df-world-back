@@ -4,6 +4,7 @@ import com.dfoff.demo.Domain.CharacterEntity;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Domain.UserAdventure;
 import com.dfoff.demo.Service.CharacterService;
+import com.dfoff.demo.Service.NotificationService;
 import com.dfoff.demo.Service.SaveFileService;
 import com.dfoff.demo.Service.UserAccountService;
 import com.dfoff.demo.Util.Bcrypt;
@@ -32,6 +33,8 @@ public class UserAccountController {
     private final SaveFileService saveFileService;
 
     private final CharacterService characterService;
+
+    private final NotificationService notificationService;
 
 
     private final Bcrypt bcrypt;
@@ -108,10 +111,10 @@ public class UserAccountController {
 
 
     @GetMapping("/users/characters/")
-    public ResponseEntity<?> searchChar(@RequestParam(required = false) String serverId,
-                                        @RequestParam(required = false) String characterName,
-                                        @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable,
-                                        @AuthenticationPrincipal UserAccount.PrincipalDto principal) throws InterruptedException {
+    public ResponseEntity<?> searchCharacterForUserAccount(@RequestParam(required = false) String serverId,
+                                                           @RequestParam(required = false) String characterName,
+                                                           @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable,
+                                                           @AuthenticationPrincipal UserAccount.PrincipalDto principal) throws InterruptedException {
             if (principal == null) {
                 throw new SecurityException("로그인이 필요합니다.");
             }
@@ -123,10 +126,10 @@ public class UserAccountController {
             }
             List<CompletableFuture<CharacterEntity.CharacterEntityDto>> dtos = new ArrayList<>();
             List<CharacterEntity.CharacterEntityDto> dtos1 = characterService.getCharacterDtos(serverId, characterName).join();
-        return getResponseEntity(dtos, dtos1, characterService);
+        return getCharacterResponse(dtos, dtos1, characterService);
     }
 
-    static ResponseEntity<?> getResponseEntity(List<CompletableFuture<CharacterEntity.CharacterEntityDto>> dtos, List<CharacterEntity.CharacterEntityDto> dtos1, CharacterService characterService) throws InterruptedException {
+    static ResponseEntity<?> getCharacterResponse(List<CompletableFuture<CharacterEntity.CharacterEntityDto>> dtos, List<CharacterEntity.CharacterEntityDto> dtos1, CharacterService characterService) throws InterruptedException {
         for (CharacterEntity.CharacterEntityDto dto : dtos1.subList(0, Math.min(dtos1.size(), 15))) {
             if (dto.getLevel() >= 100) {
                 dtos.add(characterService.getCharacterAbilityAsync(dto));
@@ -149,7 +152,7 @@ public class UserAccountController {
     }
 
     @PostMapping("/users/characters")
-    public ResponseEntity<?> addCharacter(
+    public ResponseEntity<?> addCharacterToUserAccount(
                                           @RequestParam(required = false) String serverId,
                                           @RequestParam(required = false) String characterId,
                                           @AuthenticationPrincipal UserAccount.PrincipalDto principal) throws InterruptedException {
@@ -181,7 +184,7 @@ public class UserAccountController {
         ModelAndView mav = new ModelAndView("/mypage/mypage");
         UserAccount.UserAccountMyPageResponse response = userAccountService.getUserAccountById(principal.getUsername());
         mav.addObject("user", response);
-        mav.addObject("uncheckedLogCount", userAccountService.getUncheckedLogCount(principal.getUsername()));
+        mav.addObject("uncheckedLogCount", notificationService.getUncheckedNotificationCount(principal.getUsername()));
         return mav;
     }
 
@@ -198,7 +201,7 @@ public class UserAccountController {
                 case "like" ->
                         new ResponseEntity<>(userAccountService.getBoardsByUserIdOrderByLikeCount(principal.getUsername(), pageable), HttpStatus.OK);
                 case "commentCount" ->
-                        new ResponseEntity<>(userAccountService.getBoardsByUserIdOrderByComentCount(principal.getUsername(), pageable), HttpStatus.OK);
+                        new ResponseEntity<>(userAccountService.getBoardsByUserIdOrderByCommentCount(principal.getUsername(), pageable), HttpStatus.OK);
                 case "view" ->
                         new ResponseEntity<>(userAccountService.getBoardsByUserIdOrderByViewCount(principal.getUsername(), pageable), HttpStatus.OK);
                 default ->
@@ -211,7 +214,7 @@ public class UserAccountController {
             return new ResponseEntity<>(userAccountService.getCommentsByUserId(principal.getUsername(), pageable), HttpStatus.OK);
         }
         if(type.equals("log")){
-            return new ResponseEntity<>(userAccountService.getUserLog(principal.getUsername(), pageable), HttpStatus.OK);
+            return new ResponseEntity<>(notificationService.getUserNotifications(principal.getUsername(), pageable), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }

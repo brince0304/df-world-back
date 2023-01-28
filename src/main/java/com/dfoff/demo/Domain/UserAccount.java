@@ -103,7 +103,7 @@ public class UserAccount extends AuditingFields {
     @Builder
     @Setter
     @ToString
-    public static class PrincipalDto implements UserDetails {
+    public static class PrincipalDto implements UserDetails, Serializable {
         private final String username;
         private final String password;
         private final String nickname;

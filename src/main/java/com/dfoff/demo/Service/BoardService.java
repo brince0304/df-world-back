@@ -2,11 +2,9 @@ package com.dfoff.demo.Service;
 
 import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.EnumType.BoardType;
-import com.dfoff.demo.Domain.EnumType.UserAccount.LogType;
 import com.dfoff.demo.Repository.BoardHashtagMapperRepository;
 import com.dfoff.demo.Repository.BoardRepository;
 import com.dfoff.demo.Repository.HashtagRepository;
-import com.dfoff.demo.Util.UserLogUtil;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +20,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.dfoff.demo.Domain.EnumType.UserAccount.LogType.BOARD_LIKE;
-import static com.dfoff.demo.Domain.EnumType.UserAccount.LogType.BOARD_UNLIKE;
 
 @Service
 @RequiredArgsConstructor
@@ -80,41 +76,30 @@ public class BoardService {
         }
     }
     public Board.BoardDetailResponse getBoardDetailById(Long id){
-        Board board_ = boardRepository.findBoardById(id);
-        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+        Board board_ = boardRepository.findBoardById(id).orElseThrow(()-> new EntityNotFoundException("해당 게시글이 존재하지 않습니다."));
         return Board.BoardDetailResponse.from(board_);
     }
 
     public String getBoardAuthorById(Long id){
-        Board board_ = boardRepository.findBoardById(id);
-        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+        Board board_ = boardRepository.findBoardById(id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
         return board_.getUserAccount().getUserId();
     }
 
     public void increaseBoardViewCount(Long Id){
-        Board board_ = boardRepository.findBoardById(Id);
-        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+        Board board_ = boardRepository.findBoardById(Id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
         board_.setBoardViewCount(board_.getBoardViewCount()+1);
     }
 
-    public int increaseBoardLikeCount(Long Id, String nickname){
-        if(nickname.equals("")){nickname ="비회원";}
-        Board board_ = boardRepository.findBoardById(Id);
-        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+    public Board.BoardDto increaseBoardLikeCount(Long Id){
+        Board board_ = boardRepository.findBoardById(Id).orElseThrow(() -> new EntityNotFoundException("게시글이 존재하지 않습니다."));
         board_.setBoardLikeCount(board_.getBoardLikeCount()+1);
-        if(!board_.getUserAccount().getNickname().equals(nickname)){
-            board_.getUserAccount().getNotifications().add(Notification.of(board_.getUserAccount(),board_, BOARD_UNLIKE, UserLogUtil.getLogContent(BOARD_LIKE.name(),nickname)));}
-        return board_.getBoardLikeCount();
+        return Board.BoardDto.from(board_);
     }
 
-    public int decreaseBoardLikeCount(Long Id, String nickname){
-        if(nickname.equals("")){nickname ="비회원";}
-        Board board_ = boardRepository.findBoardById(Id);
-        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+    public Board.BoardDto decreaseBoardLikeCount(Long Id){
+        Board board_ = boardRepository.findBoardById(Id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
         board_.setBoardLikeCount(board_.getBoardLikeCount()-1);
-        if(!board_.getUserAccount().getNickname().equals(nickname)){
-        board_.getUserAccount().getNotifications().add(Notification.of(board_.getUserAccount(),board_, BOARD_UNLIKE, UserLogUtil.getLogContent(BOARD_UNLIKE.name(),nickname)));}
-        return board_.getBoardLikeCount();
+        return Board.BoardDto.from(board_);
     }
 
 
@@ -170,14 +155,12 @@ public class BoardService {
     }
     @Transactional (readOnly = true)
     public Board.BoardDto getBoardDto(Long id){
-        Board board_ = boardRepository.findBoardById(id);
-        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+        Board board_ = boardRepository.findBoardById(id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
         return Board.BoardDto.from(board_);
     }
 
     public Long updateBoard(Long id, Board.BoardRequest request, Set<SaveFile.SaveFileDto> fileDtos, CharacterEntity.CharacterEntityDto character) {
-       Board board_ =  boardRepository.findBoardById(id);
-       if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+       Board board_ =  boardRepository.findBoardById(id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
        if(request != null){
            if(createHashtag(request.getHashtag()).size()>5){throw new IllegalArgumentException("해시태그는 5개까지만 등록 가능합니다.");}
            updateHashtagAndBoard(board_,createHashtag(request.getHashtag()));
@@ -200,23 +183,21 @@ public class BoardService {
     }
 
     public void deleteBoardById(Long id){
-        Board board_ = boardRepository.findBoardById(id);
+        Board board_ = boardRepository.findBoardById(id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
         for(BoardHashtagMapper mapper_ : board_.getHashtags()){
             mapper_.setBoard(null);
             mapper_.setHashtag(null);
         }
-        board_.getBoardComments().forEach(o-> {
-            if(!o.getUserAccount().getUserId().equals(board_.getUserAccount().getUserId())){
-                o.getUserAccount().getNotifications().add(Notification.of(o.getUserAccount(),board_,LogType.DELETE_COMMENT,UserLogUtil.getLogContent(LogType.DELETE_COMMENT.name(),board_.getUserAccount().getNickname())));
-            }
-        });
         board_.setCharacter(null);
         boardRepository.deleteById(id);
     }
+    public List<BoardComment.BoardCommentDto> getBoardCommentsByBoardId(Long id){
+        Board board_ = boardRepository.findBoardById(id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
+        return board_.getBoardComments().stream().map(BoardComment.BoardCommentDto::from).toList();
+    }
     @Transactional (readOnly = true)
     public Set<SaveFile.SaveFileDto> getBoardSaveFile(Long id){
-        Board board_ = boardRepository.findBoardById(id);
-        if(board_==null){throw new EntityNotFoundException("게시글이 존재하지 않습니다.");}
+        Board board_ = boardRepository.findBoardById(id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
         return board_.getBoardFiles().stream().map(SaveFile.SaveFileDto::from).collect(Collectors.toSet());
     }
 }

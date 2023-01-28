@@ -21,7 +21,6 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class SaveFileController {
     private final SaveFileService saveFileService;
-    private final BoardService boardService;
 
     @PostMapping("/files")
     public ResponseEntity<?> uploadFile(@RequestPart("file") MultipartFile file) throws IOException {

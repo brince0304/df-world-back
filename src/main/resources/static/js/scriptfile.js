@@ -1,3 +1,5 @@
+
+
 $(window).scroll(function() {
     if ($(document).scrollTop() > 50) {
         $('.nav').addClass('affix');
@@ -5,6 +7,49 @@ $(window).scroll(function() {
         $('.nav').removeClass('affix');
     }
 });
+let subscribeUrl = "http://localhost:8080/sub";
+$(document).ready(function() {
+    if ($('#session').val()!=='anonymousUser') {
+        let userId = $('#session').val()
+        let eventSource = new EventSource(subscribeUrl + "?userId=" + userId);
+        console.log("eventSource : " + eventSource);
+        console.log("userId : " + userId);
+        eventSource.addEventListener("event", function(event) {
+            var myToastEl = document.getElementById('liveToast')
+            var myToast = bootstrap.Toast.getOrCreateInstance(myToastEl)
+            if(myToast._isShown){
+                myToast.hide();
+            }
+            let message = event.data;
+
+           $('.toast-body').text(message);
+            myToast.show();
+        })
+
+        eventSource.addEventListener("notificationId", function(event) {
+            $('.toast-link').attr('data-id', event.data);
+        })
+
+        eventSource.addEventListener("error", function(event) {
+            eventSource.close()
+        })
+    }
+})
+
+function checkNotification(){
+    let notificationId = $('.toast-link').attr('data-id');
+    $.ajax({
+        url: '/notifications/'+notificationId,
+        type: 'GET',
+        success: function(data){
+            location.href=data;
+        },
+        error: function(data){
+            alert('알림을 확인할 수 없습니다.');
+        }
+    })
+}
+
 
 
 

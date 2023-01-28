@@ -1,6 +1,7 @@
 package com.dfoff.demo.SecurityConfig;
 
 import com.dfoff.demo.Util.Bcrypt;
+import jakarta.servlet.http.HttpSession;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.security.config.annotation.web.HttpSecurityBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -39,6 +41,7 @@ public class SecurityConfig {
         return http.formLogin(form -> form
                 .loginPage("/users/login")
                         .usernameParameter("username").passwordParameter("password")
+                        .successHandler(new LoginSuccessHandlerCustom())
                 .permitAll()
                 .failureHandler((request, response, exception) -> {
                     log.info("login fail");

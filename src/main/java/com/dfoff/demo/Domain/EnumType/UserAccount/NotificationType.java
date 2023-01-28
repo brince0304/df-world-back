@@ -1,6 +1,6 @@
 package com.dfoff.demo.Domain.EnumType.UserAccount;
 
-public enum LogType {
+public enum NotificationType {
     COMMENT_LIKE("좋아요"),
     BOARD_LIKE("좋아요"),
     COMMENT_UNLIKE("좋아요 취소"),
@@ -11,7 +11,7 @@ public enum LogType {
     DELETE_CHILDREN_COMMENT("대댓글 삭제"),
     ;
 
-    LogType(String description) {
+    NotificationType(String description) {
     }
     public String getDescription() {
         return this.name();

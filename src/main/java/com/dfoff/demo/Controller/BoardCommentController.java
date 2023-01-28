@@ -2,9 +2,11 @@ package com.dfoff.demo.Controller;
 
 import com.dfoff.demo.Domain.Board;
 import com.dfoff.demo.Domain.BoardComment;
+import com.dfoff.demo.Domain.EnumType.UserAccount.NotificationType;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Service.BoardCommentService;
 import com.dfoff.demo.Service.BoardService;
+import com.dfoff.demo.Service.NotificationService;
 import com.dfoff.demo.Service.RedisService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -20,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -31,6 +32,8 @@ public class BoardCommentController {
 
     private final RedisService redisService;
     private final BoardService boardService;
+
+    private final NotificationService notificationService;
 
     @GetMapping("/comments/")
     public ResponseEntity<?> getBoardComments(HttpServletRequest req,
@@ -46,10 +49,10 @@ public class BoardCommentController {
         } else {
             comments = commentService.findBoardCommentsByParentId(boardId, commentId);
         }
-        return getResponseEntity(req, boardId, map, likeMap, comments, bestComments);
+        return getCommentResponse(req, boardId, map, likeMap, comments, bestComments);
     }
 
-    private ResponseEntity<?> getResponseEntity(HttpServletRequest req, @RequestParam(required = false) Long boardId, Map<String, Object> map, Map<String, Boolean> likeMap, List<BoardComment.BoardCommentResponse> comments
+    private ResponseEntity<?> getCommentResponse(HttpServletRequest req, @RequestParam(required = false) Long boardId, Map<String, Object> map, Map<String, Boolean> likeMap, List<BoardComment.BoardCommentResponse> comments
             , List<BoardComment.BoardCommentResponse> bestComments) {
         map.put("comments", comments);
         comments.forEach(o -> {
@@ -63,26 +66,18 @@ public class BoardCommentController {
     }
 
     @PostMapping("/comments/like-comment")
-    public ResponseEntity<?> likeComment(@RequestParam Long commentId, @RequestParam Long boardId, HttpServletRequest req, @AuthenticationPrincipal UserAccount.PrincipalDto principal) {
-        if(principal!=null) {
+    public ResponseEntity<?> likeComment(@RequestParam Long commentId, @RequestParam Long boardId, HttpServletRequest req,@AuthenticationPrincipal UserAccount.PrincipalDto principal) {
             if (redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId)) {
                 redisService.deleteBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId);
-                return new ResponseEntity<>(commentService.updateBoardCommentDisLike(commentId, principal.getNickname()), HttpStatus.OK);
+                return new ResponseEntity<>(commentService.updateBoardCommentDisLike(commentId).getCommentLikeCount(), HttpStatus.OK);
 
             } else {
                 redisService.saveBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId);
-                return new ResponseEntity<>(commentService.updateBoardCommentLike(commentId, principal.getNickname()), HttpStatus.OK);
+                BoardComment.BoardCommentDto dto = commentService.updateBoardCommentLike(commentId);
+                if(principal!=null && !principal.getUsername().equals(dto.getUserId())){
+                notificationService.saveBoardCommentNotification(dto.getUserAccountDto(), dto, "",NotificationType.COMMENT_LIKE);}
+                return new ResponseEntity<>(dto.getCommentLikeCount(), HttpStatus.OK);
             }
-        }else{
-            if (redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId)) {
-                redisService.deleteBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId);
-                return new ResponseEntity<>(commentService.updateBoardCommentDisLike(commentId, ""), HttpStatus.OK);
-
-            } else {
-                redisService.saveBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId);
-                return new ResponseEntity<>(commentService.updateBoardCommentLike(commentId, ""), HttpStatus.OK);
-            }
-        }
     }
 
     @PostMapping("/comments")
@@ -96,10 +91,16 @@ public class BoardCommentController {
         }
         Board.BoardDto boardDto = boardService.getBoardDto(request.getBoardId());
         if (mode != null && mode.equals("children")) {
-            commentService.createChildrenComment(request.getCommentId(), request, UserAccount.UserAccountDto.from(principalDto), boardDto);
+            BoardComment.BoardCommentDto commentDto =commentService.createChildrenComment(request.getCommentId(), request, UserAccount.UserAccountDto.from(principalDto), boardDto);
+            if(!commentDto.getBoardDto().getUserAccount().userId().equals(principalDto.getUsername())){
+                notificationService.saveBoardCommentNotification(commentDto.getBoardDto().getUserAccount(), commentDto, principalDto.getNickname(),NotificationType.CHILDREN_COMMENT);
+            }
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
-            commentService.createBoardComment(request, UserAccount.UserAccountDto.from(principalDto), boardDto);
+            BoardComment.BoardCommentDto commentDto = commentService.createBoardComment(request, UserAccount.UserAccountDto.from(principalDto), boardDto);
+            if(!commentDto.getBoardDto().getUserAccount().userId().equals(principalDto.getUsername())){
+                notificationService.saveBoardCommentNotification(commentDto.getBoardDto().getUserAccount(), commentDto, principalDto.getNickname(),NotificationType.COMMENT);
+            }
             return new ResponseEntity<>("success", HttpStatus.OK);
         }
     }
@@ -111,6 +112,8 @@ public class BoardCommentController {
         if (dto == null || !id.equals(dto.getUsername())) {
             return new ResponseEntity<>("권한이 없습니다.", HttpStatus.UNAUTHORIZED);
         }
+        List<BoardComment.BoardCommentDto> children = commentService.getChildrenComments(commentId);
+        children.stream().filter(o-> !Objects.equals(o.getUserId(), dto.getUsername())).forEach(o-> notificationService.saveBoardCommentNotification(o.getUserAccountDto(), o, dto.getNickname(),NotificationType.DELETE_CHILDREN_COMMENT));
         commentService.deleteBoardComment(commentId);
         return new ResponseEntity<>("success", HttpStatus.OK);
     }

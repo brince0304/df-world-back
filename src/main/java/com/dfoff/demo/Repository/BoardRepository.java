@@ -13,10 +13,11 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("select b from Board b where b.id=:id and b.deleted=false")
-    Board findBoardById(@Param("id") Long id);
+    Optional<Board> findBoardById(@Param("id") Long id);
     @Query("select b from Board b where b.deleted=false ")
     Page<Board> findAll(Pageable pageable);
     @Query("select b from Board b where b.boardType=:boardType and b.deleted=false and b.boardContent like lower (concat('%',:keyword,'%'))")
