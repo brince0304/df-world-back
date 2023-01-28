@@ -1,0 +1,253 @@
+// Based on: https://github.com/jboesch/Gritter (last updated: 13 Sep 2013)
+// Bootstrap 4.3.1 — KonKon Theme (Updated: 12 Jun 2019)
+
+// Bootstrap 4 SCSS
+$white:                     #fff !default;
+$gray-900:                  #212529 !default;
+$yiq-text-dark:             $gray-900 !default;
+$yiq-text-light:            #fff !default;
+$yiq-contrasted-threshold:  150 !default;
+
+// Color contrast
+@function color-yiq($color, $dark: $yiq-text-dark, $light: $yiq-text-light) {
+  $r: red($color);
+  $g: green($color);
+  $b: blue($color);
+
+  $yiq: (($r * 299) + ($g * 587) + ($b * 114)) / 1000;
+
+  @if ($yiq >= $yiq-contrasted-threshold) {
+    @return $dark;
+  } @else {
+    @return $light;
+  }
+}
+
+$dark-color:		      #343b42;
+$black-color:           #24292e;
+$light-color:           #ffffff;
+
+small, .small
+{
+  font-size: 85%;
+}
+
+//
+// Our code begins
+//
+
+$notification-width:    360px;
+$notification-y:	      20px;
+$notification-x:	      20px;
+$icons-font:            "Material-Design-Iconic-Font";
+
+.toast-wrapper
+{
+  display: inline-block;
+  width: $notification-width;
+  top: $notification-y;
+  right: $notification-x;
+  position: fixed;
+  z-index: 9999;
+  margin: 0;
+
+  &.top-left {
+    left: $notification-x;
+    right: auto;
+  }
+
+  &.bottom-right {
+    top: auto;
+    left: auto;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  &.bottom-left {
+    top: auto;
+    right: auto;
+    bottom: 20px;
+    left: 20px;
+  }
+
+  > .toast
+  {
+    max-width: 100%; // Fixes right auto margin issue
+  }
+}
+
+.toast
+{
+  position: relative;
+
+  .toast-img-container
+  {
+    display: table-cell;
+    width: 26%;
+    vertical-align: middle;
+    text-align: center;
+    background-color: darken($dark-color, 5%);
+
+    .toast-image
+    {
+      width: 48px;
+      height: 48px;
+    }
+  }
+
+  .toast-content
+  {
+    width: auto;
+
+    &.toast-with-image,
+    &.toast-without-image
+    {
+      display: table-cell;
+      padding: 15px 35px 17px 15px;
+    }
+
+    &.toast-with-image
+    {
+      width: 267px;
+    }
+
+    &.toast-without-image
+    {
+      border-left: 0;
+    }
+
+    .toast-close
+    {
+      display: block;
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: auto;
+      height: 30px;
+      width: 30px;
+      cursor: pointer;
+      font-size: 0;
+      background: 0 0;
+      text-indent: inherit;
+      opacity: 0.7;
+
+      &:hover
+      {
+        opacity: 1;
+      }
+
+      &:after
+      {
+        content: '\f136';
+        font-family: $icons-font;
+        color: $light-color;
+        font-size: 1.538rem;
+        text-shadow: none;
+        line-height: 35px;
+        margin-left: 7px;
+        color: #222;
+      }
+    }
+
+    .toast-title
+    {
+      display: block;
+      font-size: 1.308rem;
+      padding: 0 0 7px 0;
+    }
+
+    p
+    {
+      padding: 0;
+      margin: 0;
+      font-size: .9231rem;
+      line-height: 19px;
+    }
+  }
+}
+
+
+
+
+
+// ---
+
+// Social colours
+$facebook:       #5d82d1;
+$twitter:        #50bff5;
+$google-plus:    #eb5e4c;
+$dribbble:       #f7659c;
+$youtube:        #ef4e41;
+$flickr:         #0063dc;
+$linkedin:       #238cc8;
+$pinterest:      #e13138;
+$github:         $black-color;
+$tumblr:		     #426d9b;
+$evernote:       #2DBE60;
+$dropbox:        #007EE5;
+$stack-overflow: #fe7a15;
+$codepen:        #24292e;
+
+$social-colors: ();
+$social-colors: map-merge(
+                (
+                        "facebook":       $facebook,
+                        "twitter":        $twitter,
+                        "google-plus":    $google-plus,
+                        "dribbble":       $dribbble,
+                        "youtube":        $youtube,
+                        "flickr":         $flickr,
+                        "linkedin":       $linkedin,
+                        "pinterest":      $pinterest,
+                        "github":         $github,
+                        "tumblr":         $tumblr,
+                        "evernote":       $evernote,
+                        "dropbox":        $dropbox,
+                        "stack-overflow": $stack-overflow,
+                        "codepen":        $codepen,
+                        "konkon":        #fe669e
+                ),
+                $social-colors
+);
+
+@mixin toast-colour($parent, $bg-color, $text-color: null)
+{
+  .toast#{$parent}
+  {
+    background-color: $bg-color;
+
+    .toast-img-container
+    {
+      background-color: darken($bg-color, 3%);
+    }
+
+    // Prevent generating unnecessary rules and save space by using inherited text color
+    @if not($text-color) and color-yiq($bg-color, #000000, #ffffff) == #ffffff
+    {
+      .toast-content,
+      .toast-close:after
+      {
+        color: #fff;
+      }
+    }
+    @else if $text-color != null
+    {
+      .toast-content,
+      .toast-close:after
+      {
+        color: $text-color;
+      }
+    }
+  }
+}
+
+
+@include toast-colour(".toast-youtube", map-get($social-colors, "youtube"));
+@include toast-colour(".toast-twitter", map-get($social-colors, "twitter"), #fff);
+@include toast-colour(".toast-facebook", map-get($social-colors, "facebook"));
+@include toast-colour(".toast-konkon", map-get($social-colors, "konkon"), #fff);
+
+//@each $social-colors, $social-color in $social-colors
+//{
+//   @include toast-colour(".toast-#{$social-colors}", $social-color);
+//}

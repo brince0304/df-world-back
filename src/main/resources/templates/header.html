@@ -19,6 +19,7 @@
 </head>
 <body>
 <header id="header">
+    <input type="hidden" th:value="${#authentication.name}" id="session">
     <div class="container" style="z-index : -1">
 
         <div id="logo" class="pull-left">
@@ -31,8 +32,8 @@
             <ul class="nav-menu">
                 <li ><a th:href="@{/main}">메인화면</a></li>
                 <li><a th:href="@{/characters/}">캐릭터 검색</a></li>
-                <li><a sec:authorize="!isAuthenticated()" data-toggle="modal" href="#"
-                       data-target="#loginModal">로그인</a>
+                <li><a sec:authorize="!isAuthenticated()" data-bs-toggle="modal" href="#"
+                       data-bs-target="#loginModal">로그인</a>
                     <a sec:authorize="isAuthenticated()" href="javascript: logoutAlert();"
                        th:if="${#authentication!=null}">로그아웃</a></li>
                 <li><a  sec:authorize="isAuthenticated()"
@@ -57,19 +58,19 @@
 
     </div>
 
-    <div class="modal fade login" id="loginModal" data-backdrop="false" style="  position: fixed;
+    <div class="modal fade login" id="loginModal" data-bs-backdrop="false" style="  position: fixed;
   top:0; left: 0; bottom: 0; right: 0;
   background: rgba(0, 0, 0, 0.8); --bs-modal-margin: 7rem;">
         <div class="modal-dialog login animated">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" id="closeButton"><img
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-hidden="true" id="closeButton"><img
                             src="/header/images/close.png" alt="닫기" style="width:20px ; height:20px"></button>
                 </div>
                 <h4 class="modal-title" style="text-align: center">소셜 로그인</h4>
                 <div class="modal-body">
                     <div class="box">
-                        <div class="content">
+                        <div>
                             <div class="social">
                                 <a class="circle github" href="#">
                                     <i class="fa fa-github fa-fw"></i>
@@ -102,7 +103,7 @@
                     <div class="box">
                         <div class="content registerBox" style="display:none;">
                             <div class="form">
-                                <form html="{:multipart=>true}" id="signupForm"  data-remote="true" action="" accept-charset="UTF-8">
+                                <form html="{:multipart=>true}" id="signupForm"  data-bs-remote="true" action="" accept-charset="UTF-8">
                                     <input id="usernameRegister" class="input-lg form-control" type="text"
                                            placeholder="아이디" name="username">
                                     <div class="row">
@@ -173,9 +174,19 @@
             </div>
         </div>
     </div>
-
-
-
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+            <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true" >
+                <div class="toast-header">
+                    <i class="fa fa-exclamation"></i>
+                    <strong class="me-auto"> 알림</strong>
+                    <small>방금 전</small>
+                    <span type="button" class="badge bg-transparent text-black toast-link" data-bs-dismiss="toast" aria-label="Close" onclick="checkNotification()" data-id="">바로가기</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                </div>
+                <div class="toast-body">
+                </div>
+            </div>
+        </div>
 </header>
 
 
