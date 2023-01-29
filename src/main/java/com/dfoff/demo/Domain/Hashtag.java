@@ -98,6 +98,23 @@ public class Hashtag extends AuditingFields {
 
 
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class HashtagRequest{
+        private String value;
+        public String getValue() {
+            return value;
+        }
+
+
+
+
+    }
+
+
 }
 
 

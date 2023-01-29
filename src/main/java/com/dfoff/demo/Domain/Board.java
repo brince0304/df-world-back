@@ -351,7 +351,7 @@ public class Board extends AuditingFields {
         private final String boardTitle;
         @Size(min = 12, max = 5000, message = "내용은 5자 이상 5000자 이하로 입력해주세요.")
         private final String boardContent;
-        private final String hashtag;
+        private final List<Hashtag.HashtagRequest> hashtag;
 
         private final String boardFiles;
         private final String characterId;
