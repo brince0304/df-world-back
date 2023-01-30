@@ -53,6 +53,12 @@ public class CharacterEntity extends AuditingFields {
     private String adventureName;
 
     @Setter
+    private String buffPower;
+
+    @Setter
+    private String damageIncrease;
+
+    @Setter
     private String guildId;
 
     @Setter
