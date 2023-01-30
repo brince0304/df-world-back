@@ -35,6 +35,167 @@
             max-width: 700px;
         }
 
+        .board-character {
+            background-image: url("/images/icon_char/bg_char.jpeg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+
+            width: 30px;
+            height: 30px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            border-radius: 50%;
+            border: 1.5px solid #898989;
+            margin-left:10px;
+
+        }
+        .board-character .f-mage  {
+            position: absolute;
+            left: -980%;
+            right: -1010%;
+            top: -1050%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+
+        .board-character .default  {
+            position: absolute;
+            left: -980%;
+            right: -1010%;
+            top: -1030%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .board-character .m-gunner  {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -700%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .board-character .f-gunner  {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -850%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .board-character .m-fighter  {
+            position: absolute;
+            left: -1000%;
+            right: -1030%;
+            top: -850%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .board-character .f-thief {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -870%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+        .board-character .f-fighter {
+            position: absolute;
+            left: -980%;
+            right: -990%;
+            top: -960%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+
+
+        .board-character .m-warrior {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -900%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .board-character .f-warrior {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -930%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .board-character .f-priest {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -930%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+        .board-character .m-priest {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -760%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .board-character .m-lancer {
+            position: absolute;
+            left: -1000%;
+            right: -1050%;
+            top: -840%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+        .board-character .m-gunwarrior {
+            position: absolute;
+            left: -1000%;
+            right: -1010%;
+            top: -810%;
+            bottom: -1020%;
+            margin: auto;
+            min-height: 100%;
+            min-width: 100%;
+        }
+
+
         .tags-look .tagify__dropdown__item{
             display: inline-block;
             border-radius: 3px;
@@ -55,34 +216,11 @@
             background: lightyellow;
             border-color: gold;
         }
-        .board-character {
-            background-image: url("/images/icon_char/bg_char.jpeg");
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: center;
-
-            width: 80px;
-            height: 80px;
-            overflow: hidden;
-            position: relative;
-            float: right;
-            display: inline-block;
-            border-radius: 40%;
-            border: 1.5px solid #898989;
-
-
+        #characterDelete span :hover{
+            color: black;
         }
 
-        .board-character img {
-            position: absolute;
-            left: -1000%;
-            right: -1010%;
-            top: -1000%;
-            bottom: -1020%;
-            margin: auto;
-            min-height: 100%;
-            min-width: 100%;
-        }
+
     </style>
 </head>
 <body>
@@ -130,30 +268,29 @@
                 <input type="hidden" name="content" id="updateContent" th:if="${requestType.equals('update') }" th:value="${boardResponse.convert(boardResponse.boardContent)}">
                 <div id="editor1"></div>
                 <span style="font-size: 12px; color: #999999; margin-left: 10px" id="contentWarning">5자이상 입력해주세요.</span>
-                <div class="board-character" th:if="${ requestType.equals('update') && boardResponse.character==null}" style="margin-right: 20px; margin-top:20px; float:right">
-                    <img id="charThumb" src="" >
-                    <div style="font-size: 20px; font-weight: 500; color: #999999; margin-left:22px"></div>
-                </div>
-                <div class="board-character" th:if="${ requestType.equals('update') && boardResponse.character!=null}" style="margin-right: 20px; margin-top:20px; float:right">
-
-                    <img id="charThumb" th:src="${boardResponse.character.characterImageUrl}" >
-                    <div style="font-size: 20px; font-weight: 500; color: #999999; margin-left:22px"></div>
-                </div>
-
-                <div class="board-character" th:if="${ requestType.equals('add')}"
-                     style="margin-right: 20px; margin-top:20px; float:right">
-                    <img id="charThumb" src="" >
-                    <div style="font-size: 20px; font-weight: 500; color: #999999; margin-left:22px"></div>
-                </div>
                 <br>
-                <a style="text-decoration-line: none;cursor:pointer" onclick="characterDelete()" ><span style="float:right; display: inline-block; margin-right:10px; margin-top:-5px" class="badge bg-danger" id="characterDelete"  >X</span></a>
+                <button type="button" onclick="uploadArticle()" class="btn btn-outline-dark my-2" th:if="${requestType.equals('add')}">등록</button>
+                <button type="button" onclick="updateArticle()" class="btn btn-outline-dark my-2" th:if="${requestType.equals('update')}">수정</button>
+                <button type="button" id="characterStatus" class="btn btn-outline-dark" style="display: inline-block; margin-left:10px"  data-bs-toggle="modal"
+                        data-bs-target="#charSearchModal">캐릭터 등록</button>
+                <div class="board-character" th:if="${ requestType.equals('update') && boardResponse.character!=null}">
+                    <img th:class="${boardResponse.character.imgStyleClassName}" id="charThumb" th:src="${boardResponse.character.characterImageUrl}" >
+                </div>
+                <div class="board-character" th:if="${ requestType.equals('update') && boardResponse.character==null}">
+                    <img id="charThumb" >
+                </div>
+                <div class="board-character" th:if="${ requestType.equals('add')}">
+                    <img id="charThumb" >
+                </div>
+                <span  style="cursor:pointer; margin-left:-1%; margin-right:-1%  " class="text-danger badge bg-transparent deleteButton characterDelete"  id="characterDelete" onclick="characterDelete()">삭제 </span><i  class="fas fa-minus-circle characterDelete" style="scale:0.8; margin-top:-5px; color:darkred; " onclick="characterDelete()"></i>
+
+
 
 
             </div>
             <input type="hidden" name="content" id="requestId" th:if="${requestType.equals('update') }" th:value="${boardResponse.getId()}">
-
-            <button type="button" id="characterStatus" class="btn btn-outline-dark" style="display: inline-block; float: right; margin-right:10px"  data-bs-toggle="modal"
-                    data-bs-target="#charSearchModal">캐릭터 등록</button>
+            <br>
+            <br>
             <input type="hidden" name="characterId" id="characterIdInput"  >
             <input type="hidden" name="characterId" id="serverIdInput"  >
             <input type="hidden" id="characterExist" th:value="${characterExist}" >
@@ -162,8 +299,7 @@
             <input type="hidden" id="characterNameResponse" th:value="${characterName}" >
 
 
-            <button type="button" onclick="uploadArticle()" class="btn btn-outline-dark my-2" th:if="${requestType.equals('add')}">등록</button>
-            <button type="button" onclick="updateArticle()" class="btn btn-outline-dark my-2" th:if="${requestType.equals('update')}">수정</button>
+
         </form>
         </div>
 
@@ -188,7 +324,7 @@
                             <option value="anton">안톤</option>
                             <option value="bakal">바칼</option>
                         </select>
-                        <input type="text" placeholder="입력" class="form-control" id="characterName"
+                        <input type="text" placeholder="입력" class="form-control" id="characterName" style="height: 100%"
                                name="characterName">
                         <button type="button" class="btn btn-info" style="height:39px;" id="btn-search" href="#"
                                 onclick="searchCharacter()">검색
@@ -264,55 +400,86 @@
         },
 
     });
-
+    var globalTimeout = null;
     hashtag.on('input',function (e) {
+        if(e.detail.value.length<2){
+            return;
+        }
         hashtag.loading(true);
         var value = e.detail.value;
-        $.ajax({
-            url: '/hashtags/',
-            type: 'GET',
-            data: {
-                query: value
-            },
-            success: function (data) {
-                hashtag.settings.whitelist = data;
-                hashtag.loading(false);
-                hashtag.dropdown.show.call(hashtag, value);
+            hashtag.whitelist = null; // reset current whitelist
+            hashtag.loading(true) // show the loader animation
+            if (globalTimeout != null) {
+                clearTimeout(globalTimeout);
             }
-        })
-    });
+            globalTimeout = setTimeout(function() {
+                globalTimeout =
+                    $.ajax({
+                        url: '/hashtags/',
+                        type: 'GET',
+                        data: {
+                            query: value
+                        },
+                        success: function (res) {
+                            hashtag.whitelist = res;
+                            hashtag.loading(false);
+                            hashtag.dropdown.show.call(hashtag, value); // render the suggestions dropdown
+                        }
+                    });
+
+                //ajax code
+
+            }, 500);
+        }
+    );
+
 
 
     updateHashtag.on('input',function (e) {
+        if(e.detail.value.length<2){
+            return;
+        }
         updateHashtag.loading(true);
         var value = e.detail.value;
-        $.ajax({
-            url: '/hashtags/',
-            type: 'GET',
-            data: {
-                query: value
-            },
-            success: function (data) {
-                updateHashtag.settings.whitelist = data;
-                updateHashtag.loading(false);
-                updateHashtag.dropdown.show.call(updateHashtag, value);
-            }
-        })
-    });
+        updateHashtag.whitelist = null; // reset current whitelist
+        updateHashtag.loading(true) // show the loader animation
+        if (globalTimeout != null) {
+            clearTimeout(globalTimeout);
+        }
+        globalTimeout = setTimeout(function() {
+            globalTimeout =
+                $.ajax({
+                    url: '/hashtags/',
+                    type: 'GET',
+                    data: {
+                        query: value
+                    },
+                    success: function (res) {
+                        updateHashtag.whitelist = res;
+                        updateHashtag.loading(false);
+                        updateHashtag.dropdown.show.call(updateHashtag, value); // render the suggestions dropdown
+                    }
+                });
+
+            //ajax code
+
+        }, 500);
+    }
+    );
+
 
 
 
 
     $(document).ready(function(){
         if($('#characterExist').val() === 'true'){
-            $('#characterStatus').text($('#characterNameResponse').val());
-            $('#characterStatus').removeClass('btn-outline-dark');
-            $('#characterStatus').addClass('btn-success');
-            $('#characterDelete').show();
+            $('.characterDelete').show();
+            $('#characterDelete').text($('#characterNameResponse').val());
             $('#characterIdInput').val($('#characterIdResponse').val());
             $('#serverIdInput').val($('#serverIdResponse').val());
         }else {
-            $('#characterDelete').hide()
+            $('.characterDelete').hide()
+            $('.board-character').hide();
         }
 
         fileIds ="";
@@ -511,7 +678,7 @@
             html += '<td>직업</td></tr></thead>';
             html += '<tbody>';
             for (var i = 0; i < list.length; i++) {
-                html += ' <tr class="search-item" data-server="' + list[i].serverId + '" data-id="' + list[i].characterId + '" data-name="' + list[i].characterName + '" onclick="setBoardCharacter(\'' + list[i].serverId + '\',\'' + list[i].characterId + '\',\'' + list[i].characterName+ '\')">';
+                html += ' <tr class="search-item" data-server="' + list[i].serverId + '" data-id="' + list[i].characterId + '" data-name="' + list[i].characterName + '" onclick="setBoardCharacter(\'' + list[i].serverId + '\',\'' + list[i].characterId + '\',\'' + list[i].characterName+ '\',\'' + list[i].jobName+ '\')">';
                 html += '<td>' + getServerName(list[i].serverId) + "</td>";
                 html += '<td>' + list[i].characterName + "</td>";
                 if (list[i].level != undefined) {
@@ -528,26 +695,43 @@
             $('#boardSearchBody').html(html);
         }
     }
-    function setBoardCharacter(serverId,characterId,characterName) {
+    function setBoardCharacter(serverId,characterId,characterName,characterJobName) {
         if(confirm(characterName+"(으)로 설정하시겠습니까?")){
             $('#charSearchModal').modal('hide');
-            $('#characterDelete').show();
+            $('.characterDelete').show();
             $('#characterIdInput').val(characterId);
-            $('#characterStatus').removeClass('btn-outline-dark');
-            $('#characterStatus').addClass('btn-success');
              $('#serverIdInput').val(serverId);
-            $('#characterStatus').text(characterName);
+            $('#characterDelete').text(characterName);
             $('#charThumb').attr('src','https://img-api.neople.co.kr/df/servers/'+serverId+'/characters/'+characterId+'?zoom=1');
+            $('#charThumb').addClass(getClassName(characterJobName));
+            $('.board-character').show();
         }
     }
 
     function characterDelete(){
         $('#serverIdInput').val("");
         $('#characterIdInput').val('');
-        $('#characterDelete').hide();
-        $('#characterStatus').text('캐릭터 등록');
-        $('#characterStatus').removeClass('bg-success');
+        $('.characterDelete').hide();
         $('#charThumb').attr('src','');
+        $('#charThumb').removeClass()
+        $('.board-character').hide();
+    }
+
+    function getClassName(jobName){
+         switch (jobName) {
+             case "격투가(남)" : return "m-fighter";
+            case "격투가(여)" : return "f-fighter";
+            case "마법사(여)" : return "f-mage";
+            case "거너(남)" : return "m-gunner";
+            case "거너(여)" : return "f-gunner";
+            case "마창사" : return "m-lancer";
+            case "귀검사(남)" : return "m-warrior";
+            case "귀검사(여)" : return "f-warrior";
+            case "총검사" : return "m-gunwarrior";
+            case "프리스트(남)" : return "m-priest";
+            case "프리스트(여)" : return "f-priest";
+             default : return "default";
+        };
     }
 
 
