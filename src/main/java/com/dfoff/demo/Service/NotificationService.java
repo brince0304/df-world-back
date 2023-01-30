@@ -49,6 +49,8 @@ public class NotificationService {
             SseEmitter sseEmitter = sseEmitters.get(dto.userId());
             try {
                 sseEmitter.send(SseEmitter.event().name("event").data(notification.getNotificationContent()));
+                sseEmitter.send(SseEmitter.event().name("notificationId").data(notification.getId()));
+
             } catch (Exception e) {
                 sseEmitters.remove(dto.userId());
             }
