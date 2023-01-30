@@ -112,15 +112,20 @@ public class CharacterService {
         CharacterEntity entity = characterEntityRepository.save(CharacterEntity.CharacterEntityDto.toEntity(dto));
         CharacterAbilityDto characterDto = parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(dto.getServerId(), dto.getCharacterId()), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
         entity.setAdventureFame(characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().isEmpty() ? "0" : characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().get().getValue());
+        entity.setDamageIncrease(characterDto.getStatus().stream().filter(o -> o.getName().equals("피해 증가")).findFirst().isEmpty() ? "0" : characterDto.getStatus().stream().filter(o -> o.getName().equals("피해 증가")).findFirst().get().getValue());
+        entity.setBuffPower(characterDto.getStatus().stream().filter(o -> o.getName().equals("버프력")).findFirst().isEmpty() ? "0" : characterDto.getStatus().stream().filter(o -> o.getName().equals("버프력")).findFirst().get().getValue());
         entity.setAdventureName(characterDto.getAdventureName());
         entity.setServerId(dto.getServerId());
         return CompletableFuture.completedFuture(CharacterEntity.CharacterEntityDto.from(entity));
     }
 
+    @Async
     public CompletableFuture<CharacterAbilityDto> getCharacterAbility(String serverId, String characterId) throws InterruptedException {
         CharacterAbilityDto characterDto = parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
         CharacterEntity character = characterEntityRepository.save(CharacterAbilityDto.toEntity(characterDto,serverId));
         character.setAdventureFame(characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().isEmpty() ? "0" : characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().get().getValue());
+        character.setDamageIncrease(characterDto.getStatus().stream().filter(o -> o.getName().equals("피해 증가")).findFirst().isEmpty() ? "0" : characterDto.getStatus().stream().filter(o -> o.getName().equals("피해 증가")).findFirst().get().getValue());
+        character.setBuffPower(characterDto.getStatus().stream().filter(o -> o.getName().equals("버프력")).findFirst().isEmpty() ? "0" : characterDto.getStatus().stream().filter(o -> o.getName().equals("버프력")).findFirst().get().getValue());
         characterDto.setAdventureName(character.getAdventureName());
         characterDto.setAdventureFame(character.getAdventureFame());
         return CompletableFuture.completedFuture(characterDto);

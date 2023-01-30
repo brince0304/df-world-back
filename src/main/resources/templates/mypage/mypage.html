@@ -23,6 +23,10 @@
     <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css'>
     <title>던파모아온오프</title>
     <style>
+        .dropdown-menu a{
+            color: black;
+            text-decoration-line: none;
+        }
         .getMoreBtn {
             display: inline-flex;
             padding-right: 30%;
@@ -423,7 +427,7 @@
                                 <option value="anton">안톤</option>
                                 <option value="bakal">바칼</option>
                             </select>
-                            <input type="text" placeholder="입력" class="form-control" id="characterName"
+                            <input type="text" placeholder="입력" class="form-control" id="characterName" style="height: 100%"
                                    name="characterName">
                             <button type="button" class="btn btn-info" style="height:39px;" id="btn-search" href="#"
                                     onclick="searchCharacter()">검색
@@ -462,7 +466,7 @@
                                 <option value="anton">안톤</option>
                                 <option value="bakal">바칼</option>
                             </select>
-                            <input type="text" placeholder="입력" class="form-control" id="characterNameAdventure"
+                            <input type="text" placeholder="입력" class="form-control" id="characterNameAdventure" style="height: 100%"
                                    name="characterName">
                             <button type="button" class="btn btn-info" style="height:39px;" id="btn-search-adventure" href="#"
                                     onclick="searchCharacterForAddAdventure()">검색
@@ -525,7 +529,7 @@
                                     <a class="dropdown-item" onclick="getUserBoardLogs('view')"><span
                                             class="fa fa-eye"></span> 조회수순</a>
                                     <a class="dropdown-item" onclick="getUserBoardLogs('commentCount')"><span
-                                            class="fa fa-comments-o"></span> 댓글갯수순</a>
+                                            class="fa fa-comments-o"></span> 코멘트순</a>
                                     <a class="dropdown-item" onclick="getUserBoardLogs('date')"><span
                                             class="fa fa-calendar-o"></span> 최신순</a>
                                 </div>
@@ -630,11 +634,11 @@
                     </div>
                     <label for="passwordUpdate" style="color: #898989;">비밀번호</label>
                     <div class="input-group mb-3" id="passwordUpdateForm">
-                        <input type="text" class="form-control" id="passwordUpdate" placeholder="새로운 비밀번호를 입력해주세요.">
+                        <input type="password" class="form-control" id="passwordUpdate" placeholder="새로운 비밀번호를 입력해주세요.">
                     </div>
                     <label for="passwordCheckUpdate" style="color: #898989;">비밀번호 확인</label>
                     <div class="input-group mb-3" id="passwordUpdateForm">
-                        <input type="text" class="form-control" id="passwordCheckUpdate" placeholder="비밀번호를 재입력 해주세요.">
+                        <input type="password" class="form-control" id="passwordCheckUpdate" placeholder="비밀번호를 재입력 해주세요.">
                         <button class="btn btn-outline-secondary" type="button" id="passwordUpdateBtn"
                                 onclick="updatePassword()">변경
                         </button>

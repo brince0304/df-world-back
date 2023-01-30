@@ -14,10 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -38,10 +35,10 @@ public class BoardService {
     public Long createBoard(Board.BoardRequest request, Set<SaveFile.SaveFileDto> saveFile, UserAccount.UserAccountDto dto, CharacterEntity.CharacterEntityDto character) {
         Board board_ = boardRepository.save(request.toEntity(dto.toEntity()));
         saveFile.stream().map(SaveFile.SaveFileDto::toEntity).forEach(o-> board_.getBoardFiles().add(o));
-        if(createHashtag(request.getHashtag()).size()>5){
+        if(request.getHashtag().size()>5){
             throw new IllegalArgumentException("해시태그는 5개까지만 등록 가능합니다.");
         }
-        saveHashtagAndBoard(board_,createHashtag(request.getHashtag()));
+        saveHashtagAndBoard(board_,request.getHashtag());
         if(character!=null){
             board_.setCharacter(CharacterEntity.CharacterEntityDto.toEntity(character));
         }
@@ -54,24 +51,24 @@ public class BoardService {
 
 
 
-    public void saveHashtagAndBoard(Board board , List<String> hashtags){
-        for (String hashtag : hashtags) {
-            if(hashtag.length()>7) {
+    public void saveHashtagAndBoard(Board board , List<Hashtag.HashtagRequest> hashtags){
+        for (Hashtag.HashtagRequest hashtag : hashtags) {
+            if(hashtag.getValue().length()>7) {
                 throw new IllegalArgumentException("해시태그는 7자 이하로 등록 가능합니다.");
             }
-            Hashtag hashtag_ = hashtagRepository.findById(hashtag).orElseGet(()-> hashtagRepository.save(Hashtag.builder().name(hashtag).build()));
+            Hashtag hashtag_ = hashtagRepository.findById(hashtag.getValue()).orElseGet(()-> hashtagRepository.save(Hashtag.builder().name(hashtag.getValue()).build()));
             mapper.save(BoardHashtagMapper.of(board,hashtag_));
         }
     }
 
-    public void updateHashtagAndBoard(Board board , List<String> hashtags){
+    public void updateHashtagAndBoard(Board board , List<Hashtag.HashtagRequest> hashtags){
         board.getHashtags().forEach(o->{
             o.setBoard(null);
             o.setHashtag(null);
         });
 
-        for (String hashtag : hashtags) {
-            Hashtag hashtag_ = hashtagRepository.findById(hashtag).orElseGet(()-> hashtagRepository.save(Hashtag.builder().name(hashtag).build()));
+        for (Hashtag.HashtagRequest hashtag : hashtags) {
+            Hashtag hashtag_ = hashtagRepository.findById(hashtag.getValue()).orElseGet(()-> hashtagRepository.save(Hashtag.builder().name(hashtag.getValue()).build()));
             mapper.save(BoardHashtagMapper.of(board,hashtag_));
         }
     }
@@ -162,8 +159,8 @@ public class BoardService {
     public Long updateBoard(Long id, Board.BoardRequest request, Set<SaveFile.SaveFileDto> fileDtos, CharacterEntity.CharacterEntityDto character) {
        Board board_ =  boardRepository.findBoardById(id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
        if(request != null){
-           if(createHashtag(request.getHashtag()).size()>5){throw new IllegalArgumentException("해시태그는 5개까지만 등록 가능합니다.");}
-           updateHashtagAndBoard(board_,createHashtag(request.getHashtag()));
+           if(request.getHashtag().size()>5){throw new IllegalArgumentException("해시태그는 5개까지만 등록 가능합니다.");}
+           updateHashtagAndBoard(board_,(request.getHashtag()));
            if(request.getBoardTitle()!=null){
                board_.setBoardTitle(request.getBoardTitle());
            }
@@ -199,5 +196,9 @@ public class BoardService {
     public Set<SaveFile.SaveFileDto> getBoardSaveFile(Long id){
         Board board_ = boardRepository.findBoardById(id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
         return board_.getBoardFiles().stream().map(SaveFile.SaveFileDto::from).collect(Collectors.toSet());
+    }
+
+    public List<String> findHashtags(String query) {
+        return hashtagRepository.findAllByNameContainingIgnoreCase(query).stream().map(Hashtag::getName).toList();
     }
 }
