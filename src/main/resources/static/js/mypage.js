@@ -453,7 +453,10 @@ function setSearchModalResult(list) {
         html += "</table>";
         $('#searchBody').html(html);
     } else {
-        html = '<h3 style="text-align: center;">검색 결과가 없습니다.</h3>';
+        html = '                                <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">' +
+            '                                            <i class="fa-solid fa-skull-crossbones" style="font-size: 60px"></i>' +
+            '                                            <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">캐릭터가 존재하지 않습니다.</div>' +
+            '                                        </div>';
         $('#searchBody').html(html);
     }
 }
@@ -567,7 +570,10 @@ function getUserLogs(page) {
                 });
                 $('#notification').html(html);
             } else {
-                html = '<h3 style="text-align: center;">알림이 존재하지 않습니다.</h3>';
+                html = '                                <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">' +
+                    '                                            <i class="fa-solid fa-bell-slash" style="font-size: 60px"></i>' +
+                    '                                            <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">알림이 존재하지 않습니다.</div>' +
+                    '                                        </div>';
                 $('#notification').html(html);
             }
             if (data.last === true) {
@@ -584,8 +590,6 @@ function getUserLogs(page) {
             } else {
                 $("#prevUserLogBtn").attr('onclick', 'getUserLog(-1)');
                 $('#prevUserLogBtn').removeClass('text-secondary');
-                $('#nextUserLogBtn').removeClass('text-secondary');
-                $("#nextUserLogBtn").attr('onclick', 'getUserLog(1)');
             }
             $('#userLogPage').text(logPage + 1);
         }, error: function (request, status, error) {
@@ -680,7 +684,10 @@ function getUserCommentLogs(page) {
                 });
                 $('#commentLog').html(html);
             } else {
-                html = '<h3 style="text-align: center;">댓글이 존재하지 않습니다.</h3>';
+                html = '                                <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">' +
+                    '                                            <i class="fa-solid fa-comment-slash" style="font-size: 60px"></i>' +
+                    '                                            <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">댓글이 존재하지 않습니다.</div>' +
+                    '                                        </div>';
                 $('#commentLog').html(html);
             }
             if (data.last === true) {
@@ -697,8 +704,6 @@ function getUserCommentLogs(page) {
             } else {
                 $("#prevCommentsBtn").attr('onclick', 'getUserCommentLogs(-1)');
                 $('#prevCommentsBtn').removeClass('text-secondary');
-                $('#nextCommentsBtn').removeClass('text-secondary');
-                $("#nextCommentsBtn").attr('onclick', 'getUserCommentLogs(1)');
             }
             $('#commentPage').text(commentPage + 1);
         }, error: function (request, status, error) {
@@ -724,7 +729,7 @@ function getUserBoardLogs(page) {
     if (page === 'like') {
         boardSortBy = "like";
         boardPage = 0;
-        $('#sortByBoard').text(' 좋아요');
+        $('#sortByBoard').text(' 좋아요순');
         $('#sortByBoard').removeClass('fa fa-calendar-o');
         $('#sortByBoard').removeClass('fa fa-eye');
         $('#sortByBoard').removeClass('fa fa-comments-o');
@@ -840,7 +845,10 @@ function getUserBoardLogs(page) {
 
                 $('#boardLog').html(html);
             } else {
-                html = '<h3 style="text-align: center;">게시글이 존재하지 않습니다.</h3>';
+                html = '                                <div style="text-align: center; margin-top: 50px; margin-bottom: 50px">' +
+                    '                                            <i class="fa-solid fa-paperclip" style="font-size: 60px"></i>' +
+                    '                                            <div style="font-size: 20px; font-weight: 500; color: #999999; margin-top: 20px">게시글이 존재하지 않습니다.</div>' +
+                    '                                        </div>';
                 $('#boardLog').html(html);
             }
             if (data.last === true) {
@@ -854,11 +862,9 @@ function getUserBoardLogs(page) {
             if (data.number === 0) {
                 $("#prevBoardssBtn").attr('onclick', '');
                 $('#prevBoardssBtn').addClass('text-secondary');
-            } else {
+            }else{
                 $("#prevBoardssBtn").attr('onclick', 'getUserBoardLogs(-1)');
                 $('#prevBoardssBtn').removeClass('text-secondary');
-                $('#nextBoardsBtn').removeClass('text-secondary');
-                $("#nextBoardsBtn").attr('onclick', 'getUserBoardLogs(1)');
             }
             $('#boardPage').text(boardPage + 1);
         }, error: function (request, status, error) {
