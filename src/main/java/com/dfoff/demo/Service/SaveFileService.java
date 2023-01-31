@@ -43,9 +43,9 @@ public class SaveFileService {
             throw new EntityNotFoundException("파일이 없습니다 - fileId: " + fileId);
         }
         log.info("deleteFile() fileId: {}", fileId);
+            saveFileRepository.deleteById(fileId);
         File file = new File(saveFileRepository.getReferenceById(fileId).getFilePath());
         if (file.exists()) {
-            saveFileRepository.deleteById(fileId);
             if (file.delete()) {
                 log.info("파일삭제 성공");
             }
@@ -59,7 +59,7 @@ public class SaveFileService {
     }
 
 
-    public void deleteUnuploadedFilesFromBoardContent(String content,String fileIds){
+    public void deleteNotUploadedFilesFromBoardContent(String content, String fileIds){
         if(Objects.isNull(content) || Objects.isNull(fileIds) || fileIds.equals("")){
             return;
         }
@@ -70,8 +70,8 @@ public class SaveFileService {
         }
     }
 
-    public Set<SaveFile.SaveFileDto> getFileDtosFromRequestsFileIds(Board.BoardRequest dto) {
-        deleteUnuploadedFilesFromBoardContent(dto.getBoardContent(),dto.getBoardFiles());
+    public Set<SaveFile.SaveFileDto> getFileDtosFromRequestFileIds(Board.BoardRequest dto) {
+        deleteNotUploadedFilesFromBoardContent(dto.getBoardContent(),dto.getBoardFiles());
         String[] fileIdArr = Objects.requireNonNull(dto.getBoardFiles()).split(",");
         Set<SaveFile.SaveFileDto> saveFileDtos = new HashSet<>();
         for (String fileId : fileIdArr) {

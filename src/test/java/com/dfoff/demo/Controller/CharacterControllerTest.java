@@ -32,7 +32,19 @@ class CharacterControllerTest {
 
     @Test
     void searchCharacter() throws Exception {
-        mvc.perform(get("/character/search.df?characterName=테스트&serverId=all"))
+        mvc.perform(get("/characters/?characterName=테스트&serverId=all"))
                 .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML));
+    }
+
+    @Test
+    void getCharacterDetailsTest() throws Exception {
+        mvc.perform((get("/characters/detail/").param("serverId", "cain")).param("characterId","0695392fe27139764fac5856796375c9"))
+                .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML));
+    }
+
+    @Test
+    void getCharacterDetailsExceptionTest() throws Exception {
+        mvc.perform((get("/characters/detail/").param("serverId", "cain")).param("characterId","0695392fe2"))
+                .andExpect(status().isNotFound());
     }
 }

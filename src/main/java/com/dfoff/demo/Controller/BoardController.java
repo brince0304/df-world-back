@@ -178,7 +178,7 @@ public class BoardController {
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
         }
-        Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestsFileIds(boardRequest);
+        Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestFileIds(boardRequest);
         if (boardRequest.getServerId().equals("")) {
             return new ResponseEntity<>(boardService.createBoard(boardRequest, set, UserAccount.UserAccountDto.from(principalDto), null), HttpStatus.OK);
         }
@@ -197,7 +197,7 @@ public class BoardController {
         if (bindingResult.hasErrors()) {
             return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
         }
-        Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestsFileIds(updateRequest);
+        Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestFileIds(updateRequest);
         CharacterEntity.CharacterEntityDto character = characterService.getCharacter(updateRequest.getServerId(), updateRequest.getCharacterId()).join();
         return new ResponseEntity<>(boardService.updateBoard(updateRequest.getId(), updateRequest, set, character), HttpStatus.OK);
     }

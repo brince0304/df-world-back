@@ -52,7 +52,7 @@ class CharacterServiceTest {
 
 
     @Test
-    void getCharacterDTOsTest() throws InterruptedException {
+    void getCharacterDTOs() throws InterruptedException {
         //given
         //when
         sut.getCharacterDtos("all","test");
@@ -61,7 +61,7 @@ class CharacterServiceTest {
     }
 
     @Test
-    void getCharacterTest(){
+    void getCharacter(){
         //given
         given(characterEntityRepository.findById(any())).willReturn(Optional.ofNullable(CharacterEntity.builder().characterId("test").build()));
         //when
@@ -70,7 +70,7 @@ class CharacterServiceTest {
         characterEntityRepository.findById("77dae44a87261743386852bb3979c03a");
     }
     @Test
-    void getCharacterByAdventureNameTest(){
+    void getCharacterByAdventureName(){
         //given
         given(characterEntityRepository.findAllByAdventureNameContaining("test",Pageable.ofSize(10))).willReturn(Page.empty());
 
@@ -81,7 +81,7 @@ class CharacterServiceTest {
         then(characterEntityRepository).should().findAllByAdventureNameContaining("test",Pageable.ofSize(10));
     }
     @Test
-    void getCharacterAbilityThenSaveAsyncTest(){
+    void getCharacterAbilityThenSaveAsync() throws InterruptedException {
         //given
         given(characterEntityRepository.save(any())).willReturn(CharacterEntity.builder().characterId("3bf7c8c99a0389acc0e66f4ff230d0acs").serverId("casillas").build());
         //when
@@ -90,7 +90,7 @@ class CharacterServiceTest {
         then(characterEntityRepository).should().save(any());
     }
     @Test
-    void addCharacterTest(){
+    void addCharacter(){
         //given
         given(userAccountRepository.existsByUserId(any())).willReturn(true);
         given(characterEntityRepository.findById(any())).willReturn(Optional.ofNullable(CharacterEntity.builder().characterId("test").build()));
@@ -104,7 +104,7 @@ class CharacterServiceTest {
     }
 
     @Test
-    void deleteCharacterTest(){
+    void deleteCharacter(){
         //given
         given(userAccountRepository.existsByUserId(any())).willReturn(true);
         given(characterEntityRepository.findById(any())).willReturn(Optional.ofNullable(CharacterEntity.builder().characterId("test").build()));

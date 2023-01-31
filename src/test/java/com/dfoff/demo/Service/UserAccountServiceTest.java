@@ -28,14 +28,13 @@ class UserAccountServiceTest {
     UserAccountService sut;
     @Mock
     UserAccountRepository userAccountRepository;
-    @Mock
-    SaveFileRepository saveFileRepository;
+
     @Mock
     Bcrypt bcrypt;
 
     @Test
-    @DisplayName("createAccount() - 계정생성 테스트")
-    void givenNothing_whenCreatingAccount_thenCreateAccount() {
+    @DisplayName("계정생성 테스트")
+    void createAccountTest() {
         UserAccount account = UserAccount.builder().
                 userId("test").
                 password("test").
@@ -54,7 +53,8 @@ class UserAccountServiceTest {
     }
 
     @Test
-    void givenUserId_whenValidateUserId_thenReturnBoolean() {
+    @DisplayName("아이디 중복확인 테스트")
+    void existsByUserIdTest() {
         //given
         given(userAccountRepository.existsByUserId(any())).willReturn(true);
         //when
@@ -65,7 +65,8 @@ class UserAccountServiceTest {
     }
 
     @Test
-    void givenNickname_whenValidateUserId_thenReturnBoolean() {
+    @DisplayName("닉네임 중복확인 테스트")
+    void existsByNicknameTest() {
         //given
         given(userAccountRepository.existsByNickname(any())).willReturn(true);
         //when
@@ -76,7 +77,8 @@ class UserAccountServiceTest {
     }
 
     @Test
-    void givenEmail_whenValidateUserId_thenReturnBoolean() {
+    @DisplayName("이메일 중복확인 테스트")
+    void existsByEmailTest() {
         //given
         given(userAccountRepository.existsByEmail(any())).willReturn(true);
         //when
@@ -87,8 +89,8 @@ class UserAccountServiceTest {
     }
 
     @Test
-    @DisplayName("createAccount() - 계정생성 테스트 예외 - 이미 존재하는 아이디")
-    void givenExistsAccountId_whenCreatingUserAccount_thenDoNotCreateAccount() {
+    @DisplayName("계정생성 테스트 예외 - 이미 존재하는 아이디")
+    void createAccountExceptionTest() {
         //given
         UserAccount account = UserAccount.builder().
                 userId("test").
@@ -108,8 +110,8 @@ class UserAccountServiceTest {
     }
 
     @Test
-    @DisplayName("getUserAccountById() - 계정조회 테스트")
-    void givenUserAccountId_whenGettingUserAccount_thenGetsUserAccount() {
+    @DisplayName("계정조회 테스트")
+    void getUserAccountByIdTest() {
         //given
         UserAccount account = UserAccount.builder().
                 userId("test").
@@ -132,8 +134,8 @@ class UserAccountServiceTest {
     }
 
     @Test
-    @DisplayName("getUserAccountById() - 계정조회 테스트 예외 - 존재하지 않는 계정 조회")
-    void givenUserAccountId_whenGettingUserAccountButNotExists_thenGetsNullDto() {
+    @DisplayName("계정조회 테스트 예외 - 존재하지 않는 계정 조회")
+    void getUserAccountByIdExceptionTest() {
         //given
         UserAccount account = UserAccount.builder().
                 userId("test2").
@@ -156,8 +158,8 @@ class UserAccountServiceTest {
     }
 
     @Test
-    @DisplayName("updateAccountDetails() - 계정 업데이트 테스트")
-    void givenUserAccount_whenUpdatingUserDetails_thenUpdateUserDetail() {
+    @DisplayName("계정 업데이트 테스트")
+    void updateAccountDetailsTest() {
         UserAccount.UserAccountUpdateRequest account = UserAccount.UserAccountUpdateRequest.builder().
                 password("test2").passwordCheck("test2").
                 email("test2").
@@ -177,8 +179,8 @@ class UserAccountServiceTest {
 
 
     @Test
-    @DisplayName("deleteUserAccountById() - 계정 삭제 테스트")
-    void givenUserAccountId_whenDeletingUserAccount_thenDeletesUserAccount() {
+    @DisplayName("계정 삭제 테스트")
+    void deleteUserAccountByIdTest() {
         //given
         String userId = "test";
         given(userAccountRepository.existsByUserId(userId)).willReturn(true);
@@ -192,8 +194,8 @@ class UserAccountServiceTest {
     }
 
     @Test
-    @DisplayName("deleteUserAccountById() - 계정 삭제 테스트 예외 - 존재하지 않는 계정 삭제")
-    void givenUserAccountId_whenDeletingUserAccountButNotExists_thenDoNothing() {
+    @DisplayName("계정 삭제 테스트 예외 - 존재하지 않는 계정 삭제")
+    void deleteUserAccountByIdExceptionTest() {
         //given
         String userId = "test";
         given(userAccountRepository.existsByUserId(userId)).willReturn(false);
@@ -206,7 +208,8 @@ class UserAccountServiceTest {
     }
 
     @Test
-    void givenUserAccountAndProfileIcon_whenChangeProfilIcon_thenChangesProfileIcon() {
+    @DisplayName("계정 프로필 아이콘 변경 테스트")
+    void changeProfileIconTest() {
         //given
         given(userAccountRepository.findById(any())).willReturn(Optional.of(createUserAccount()));
         SaveFile saveFile = SaveFile.builder().id(1L).

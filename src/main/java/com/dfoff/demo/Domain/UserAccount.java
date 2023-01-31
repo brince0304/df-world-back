@@ -71,6 +71,7 @@ public class UserAccount extends AuditingFields {
     @Builder.Default
     private Boolean deleted= Boolean.FALSE;
 
+    @Setter
     @OneToOne(mappedBy = "userAccount", cascade = CascadeType.ALL)
     private UserAdventure userAdventure;
 

@@ -4,15 +4,22 @@ import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.Repository.BoardCommentRepository;
 import com.dfoff.demo.Repository.NotificationRepository;
+import com.dfoff.demo.Util.CharactersUtil;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.annotation.Bean;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
+import static com.dfoff.demo.Service.BoardServiceTest.charactersUtilMockedStatic;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
@@ -28,25 +35,34 @@ class BoardCommentServiceTest {
     @Mock
     BoardCommentRepository boardCommentRepository;
 
-    @Mock
-    NotificationRepository notificationRepository;
+
+
+
+
+
+
+
+
+
 
     @Test
-    void findBoardCommentById() {
+    @DisplayName("댓글 단건 조회 성공")
+    void findBoardCommentByIdTest() {
         //given
 
-        given(boardCommentRepository.existsById(anyLong())).willReturn(true);
-        given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(createBoardComment0());
+        given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(Optional.ofNullable(createBoardComment0()));
 
         //when
         BoardComment.BoardCommentResponse dto = sut.findBoardCommentById(1L);
+        charactersUtilMockedStatic.when(()-> CharactersUtil.timesAgo(any())).thenReturn("1분전");
 
         //then
         then(boardCommentRepository).should().findBoardCommentById(any(Long.class));
     }
 
     @Test
-    void findBoardCommentByBoardId() {
+    @DisplayName("댓글 리스트 조회 성공")
+    void findBoardCommentByBoardIdTest() {
         //given
         given(boardCommentRepository.findBoardCommentByBoardId(any(Long.class))).willReturn(List.of());
 
@@ -58,9 +74,10 @@ class BoardCommentServiceTest {
     }
 
     @Test
-    void createBoardComment() {
+    @DisplayName("댓글 등록 성공")
+    void createBoardCommentTest() {
         //given
-        given(boardCommentRepository.save(any(BoardComment.class))).willReturn(any());
+        given(boardCommentRepository.save(any(BoardComment.class))).willReturn(createBoardComment0());
 
         //when
         sut.createBoardComment(createBoardCommentRequestDto(), UserAccount.UserAccountDto.from(createUserAccount()),createBoardDto());
@@ -70,7 +87,8 @@ class BoardCommentServiceTest {
     }
 
     @Test
-    void createBoardCommentException() {
+    @DisplayName("댓글 등록 실패 - 댓글 내용이 없을때 ")
+    void createBoardCommentExceptionTest() {
         //given
 
         //when
@@ -80,19 +98,10 @@ class BoardCommentServiceTest {
         assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
     }
 
-    @Test
-    void createBoardCommentAccountNotException() {
-        //given
-
-        //when
-        Throwable throwable = catchThrowable(()-> sut.createBoardComment(createBoardCommentRequestDto(),null,createBoardDto()));
-
-        //then
-        assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
-    }
 
     @Test
-    void findBoardCommentsByParentId() {
+    @DisplayName("자식댓글 조회 성공")
+    void findBoardCommentsByParentIdTest() {
         //given
         given(boardCommentRepository.findBoardCommentByParentCommentId(any(Long.class),any(Long.class))).willReturn(List.of());
 
@@ -104,9 +113,9 @@ class BoardCommentServiceTest {
     }
 
     @Test
-    void deleteBoardComment() {
+    @DisplayName("댓글 삭제 성공")
+    void deleteBoardCommentTest() {
         //given
-        given(boardCommentRepository.existsById(any(Long.class))).willReturn(true);
         //when
         sut.deleteBoardComment(anyLong());
 
@@ -117,9 +126,10 @@ class BoardCommentServiceTest {
 
 
     @Test
-    void updateBoardCommentException() {
+    @DisplayName("댓글 수정 실패 - 댓글을 수정할 권한이 없습니다")
+    void updateBoardCommentExceptionTest() {
         //given
-        given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(createBoardComment0());
+        given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(Optional.ofNullable(createBoardComment0()));
         //when
         Throwable throwable=catchThrowable(()->sut.updateBoardComment(anyLong(),createBoardCommentRequestDto(),null ));
 
@@ -129,33 +139,36 @@ class BoardCommentServiceTest {
     }
 
     @Test
-    void updateBoardCommentLike() {
+    @DisplayName("댓글 좋아요 성공")
+    void updateBoardCommentLikeTest() {
         //given
-        given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(createBoardComment0());
+        given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(Optional.ofNullable(createBoardComment0()));
 
         //when
-        sut.updateBoardCommentLike(eq(1L),"" );
+        sut.updateBoardCommentLike(eq(1L));
 
         //then
         then(boardCommentRepository).should().findBoardCommentById(anyLong());
     }
 
     @Test
-    void updateBoardCommentDisLike() {
+    @DisplayName("댓글 좋아요 취소 성공")
+    void updateBoardCommentDisLikeTest() {
         //given
-        given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(createBoardComment0());
+        given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(Optional.ofNullable(createBoardComment0()));
 
         //when
-        sut.updateBoardCommentDisLike(eq(1L),"");
+        sut.updateBoardCommentDisLike(eq(1L));
 
         //then
         then(boardCommentRepository).should().findBoardCommentById(anyLong());
     }
 
     @Test
-    void createChildrenComment() {
+    @DisplayName("대댓글 작성 성공")
+    void createChildrenCommentTest() {
         //given
-        given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(createBoardComment0());
+        given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(Optional.ofNullable(createBoardComment0()));
 
         //when
         sut.createChildrenComment(eq(1L), createBoardCommentChildrenRequestDto(), UserAccount.UserAccountDto.from(createUserAccount()),createBoardDto());
@@ -164,23 +177,12 @@ class BoardCommentServiceTest {
         then(boardCommentRepository).should().findBoardCommentById(anyLong());
     }
 
-    @Test
-    void createNotificationTest(){
-        //given
-        given(boardCommentRepository.save(any())).willReturn(createBoardComment0());
-
-        //when
-        sut.createBoardComment(createBoardCommentRequestDto(), UserAccount.UserAccountDto.from(createUserAccoun0()),createBoardDto());
-
-        //then
-        then(boardCommentRepository).should().save(any());
-        assertThat(createUserAccoun0().getNotifications().size()).isEqualTo(1);
-    }
 
 
 
     @Test
-    void findBestBoardCommentByBoardId() {
+    @DisplayName("게시글 아이디로 베댓 조회 성공")
+    void findBestBoardCommentByBoardIdTest() {
         //given
         given(boardCommentRepository.findBoardCommentByLikeCount(any(Long.class))).willReturn(List.of());
 
@@ -205,6 +207,7 @@ class BoardCommentServiceTest {
     private BoardComment.BoardCommentRequest createBoardCommentChildrenRequestDto(){
         return BoardComment.BoardCommentRequest.builder()
                 .commentId(1L)
+                .boardId(1L)
                 .commentContent("content")
                 .build();
     }
@@ -287,6 +290,7 @@ class BoardCommentServiceTest {
 
     private BoardComment createBoardComment0(){
         return BoardComment.builder()
+                .id(1L)
                 .userAccount(createUserAccount())
                 .board(createBoard())
                 .commentContent("test")
@@ -303,6 +307,7 @@ class BoardCommentServiceTest {
 
     private Board createBoard(){
         return Board.builder()
+                .id(1L)
                 .boardTitle("test")
                 .boardContent("test")
                 .boardType(BoardType.FREE)

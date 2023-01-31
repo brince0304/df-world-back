@@ -94,8 +94,8 @@ public class UserAccountController {
         String randomJobName = characterService.getRandomJobName();
         String randomString = characterService.getRandomString();
         HashMap<String,String> map = new HashMap<>();
-        map.put("randomJobName", "마법사(여)");
-        map.put("randomString", "슈비_");
+        map.put("randomJobName", randomJobName);
+        map.put("randomString", randomString);
         return new ResponseEntity<>(map,HttpStatus.OK);
     }
 

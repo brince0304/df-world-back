@@ -90,7 +90,7 @@ if(!userAdventureRepository.existsByUserAccount_UserId(dto.userId())){
             throw new EntityNotFoundException("모험단이 등록되지 않았습니다.");
         }
        UserAccount userAccount = userAccountRepository.findById(dto.userId()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
-userAccount.getUserAdventure().getCharacters().addAll(characterEntityRepository.findAllByAdventureName(userAccount.getUserAdventure().getAdventureName()));
+        userAccount.getUserAdventure().getCharacters().addAll(characterEntityRepository.findAllByAdventureName(userAccount.getUserAdventure().getAdventureName()));
     }
 
 
