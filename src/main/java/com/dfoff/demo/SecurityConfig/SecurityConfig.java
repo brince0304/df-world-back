@@ -50,7 +50,8 @@ public class SecurityConfig {
         )
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/users/logout"))
-                        .logoutSuccessUrl("/")
+                        .logoutSuccessHandler(new LogoutSuccessHandlerCustom())
+                        .deleteCookies("JSESSIONID")
                 ).csrf().disable()
                 .authorizeHttpRequests(authorize -> authorize.requestMatchers("/**").permitAll()
                         .anyRequest().authenticated()
