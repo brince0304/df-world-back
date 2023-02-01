@@ -1,6 +1,5 @@
 package com.dfoff.demo.Controller;
 
-import com.dfoff.demo.Annotation.WithMockCustomUser;
 import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Domain.UserAdventure;
@@ -122,7 +121,13 @@ class UserAccountControllerTest {
     @DisplayName("[view] [POST] /api/user - 회원가입 시도")
     void createUserAccountTest() throws Exception {
         mvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(new UserAccount.UserAccountSignUpRequest("test1234", "test", "test", "test1234", "test1234@email.com"))))
+                        .contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(UserAccount.UserAccountSignUpRequest.builder()
+                                .userId("testr21r")
+                                .password("Tjrgus97!@")
+                                .passwordCheck("Tjrgus97!@")
+                                .nickname("test512512")
+                                .email("test521@emwqebqnw.com")
+                                .build())))
                 .andExpect(status().isOk());
     }
 

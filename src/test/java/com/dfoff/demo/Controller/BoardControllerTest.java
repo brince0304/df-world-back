@@ -1,6 +1,5 @@
 package com.dfoff.demo.Controller;
 
-import com.dfoff.demo.Annotation.WithMockCustomUser;
 import com.dfoff.demo.Domain.Board;
 import com.dfoff.demo.Domain.BoardComment;
 import com.dfoff.demo.Domain.EnumType.BoardType;
