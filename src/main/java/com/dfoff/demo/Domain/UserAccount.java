@@ -2,6 +2,7 @@ package com.dfoff.demo.Domain;
 
 import com.dfoff.demo.Domain.EnumType.UserAccount.SecurityRole;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
+import com.dfoff.demo.Util.Bcrypt;
 import com.dfoff.demo.Util.FileUtil;
 import com.dfoff.demo.Util.RestTemplateUtil;
 import io.micrometer.core.lang.Nullable;
@@ -71,16 +72,21 @@ public class UserAccount extends AuditingFields {
     @Builder.Default
     private Boolean deleted= Boolean.FALSE;
 
+    @Setter
     @OneToOne(mappedBy = "userAccount", cascade = CascadeType.ALL)
     private UserAdventure userAdventure;
 
     @OneToMany (mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
+    @ToString.Exclude
     private Set<Notification> notifications = new LinkedHashSet<>();
 
 
     private LocalDateTime deletedAt;
 
+    public void setNotifications(Set<Notification> notifications) {
+        this.notifications = notifications;
+    }
 
 
     @Override
@@ -236,7 +242,8 @@ public class UserAccount extends AuditingFields {
     @EqualsAndHashCode
     public static class UserAccountSignUpRequest {
         private final String userId;
-        private final String password;
+        @Setter
+        private  String password;
         private final String passwordCheck;
         private final String nickname;
         private final String email;

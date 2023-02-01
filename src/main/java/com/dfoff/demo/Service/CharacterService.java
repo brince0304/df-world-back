@@ -57,6 +57,9 @@ public class CharacterService {
 
 
     public String getRandomJobName(){
+        if(characterEntityRepository.count() == 0){
+            return "귀검사(남)";
+        }
         long number = characterEntityRepository.count();
         Random random = new Random();
         int randomInt = random.nextInt((int) number);
@@ -177,7 +180,6 @@ public class CharacterService {
                 throw new RuntimeException(e);
             }
         });
-        log.info("skill details : {}",list);
         return list;
     }
 
@@ -262,9 +264,6 @@ public class CharacterService {
         }
 CharacterDto characterDto = dto.get(0);
         CharacterAbilityDto dto_ = RestTemplateUtil.parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(request.getServerId(), characterDto.getCharacterId()), CharacterAbilityDto.class);
-        log.info("jobName:{}, dtoJobName:{}",request.getRandomJobName(),dto_.getJobName());
-        log.info("characterName:{}, dtoCharacterName:{}",request.getRandomString(),dto_.getCharacterName());
-        log.info("adventure name:{}, dtoAdventureName:{}",request.getAdventureName(),dto_.getAdventureName());
         return dto_.getJobName().equals(request.getRandomJobName()) && dto_.getAdventureName().equals(request.getAdventureName());
     }
 }

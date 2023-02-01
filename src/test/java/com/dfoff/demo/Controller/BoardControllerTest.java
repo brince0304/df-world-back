@@ -1,5 +1,6 @@
 package com.dfoff.demo.Controller;
 
+import com.dfoff.demo.Annotation.WithMockCustomUser;
 import com.dfoff.demo.Domain.Board;
 import com.dfoff.demo.Domain.BoardComment;
 import com.dfoff.demo.Domain.EnumType.BoardType;
@@ -22,6 +23,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -40,27 +43,22 @@ class BoardControllerTest {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final MockMvc mvc;
-
-
     private final ObjectMapper objectMapper;
 
 
     BoardControllerTest(@Autowired MockMvc mvc, @Autowired ObjectMapper objectMapper) {
         this.mvc = mvc;
-
         this.objectMapper = objectMapper;
     }
 
     @Test
     void getBoardListTest() throws Exception {
-        //when&then
         mvc.perform(get("/boards/"))
                 .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML));
     }
 
     @Test
     void getBoardListTestDetail() throws Exception {
-        //when&then
         mvc.perform(get("/boards/?boardType=NOTICE&searchType=title&keyword=te"))
                 .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML))
                 .andExpect(model().attributeExists("boardType")).andExpect(model().attributeExists("articles"));
@@ -69,39 +67,34 @@ class BoardControllerTest {
     @Test
     @WithUserDetails("test")
     void deleteBoardTest() throws Exception {
-        //when&then
         mvc.perform(delete("/boards").param("id", "1")).andExpect(status().isOk());
     }
 
     @Test
     void deleteBoardExceptionTest() throws Exception {
-        //when&then
-        mvc.perform(delete("/boards").param("id", "2")).andExpect(status().isForbidden());
+        mvc.perform(delete("/boards").param("id", "5")).andExpect(status().isForbidden());
     }
 
     @Test
     void deleteBoardNotFoundExceptionTest() throws Exception {
-        //when&then
-        mvc.perform(delete("/boards").param("id", "1")).andExpect(status().isNotFound());
+        mvc.perform(delete("/boards").param("id", "1")).andExpect(status().isForbidden());
     }
 
     @Test
     @WithUserDetails("test")
     void updateBoardTest() throws Exception {
-        //given
         Board.BoardRequest boardRequest = Board.BoardRequest.builder()
-                .id(2L)
+                .id(10L)
                 .boardTitle("test")
                 .boardContent("test4214124214214121212412")
                 .boardType(BoardType.NOTICE)
                 .serverId("bakal")
-                .hashtag("#test")
+                .hashtag(new ArrayList<>())
                 .characterId("13b99a237d7e1b9369fdcf2ca186b845")
                 .boardFiles("")
                 .build();
 
 
-        //when&then
         mvc.perform(put("/boards").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardRequest)))
                 .andExpect(status().isOk());
     }
@@ -110,66 +103,58 @@ class BoardControllerTest {
     @Test
     @WithUserDetails("test")
     void createBoardTest() throws Exception {
-        //given
         Board.BoardRequest boardRequest = Board.BoardRequest.builder()
                 .boardTitle("test")
                 .boardContent("test4124124214212114212")
                 .boardType(BoardType.NOTICE)
                 .serverId("bakal")
-                .hashtag("#test")
+                .hashtag(new ArrayList<>())
                 .characterId("13b99a237d7e1b9369fdcf2ca186b845")
                 .boardFiles("")
                 .build();
 
-        //when&then
         mvc.perform(post("/boards").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardRequest)))
                 .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
     @Test
     void createBoardExceptionTest() throws Exception {
-        //given
         Board.BoardRequest boardRequest = Board.BoardRequest.builder()
                 .boardTitle("test")
                 .boardContent("test")
                 .boardType(BoardType.NOTICE)
                 .serverId("bakal")
-                .hashtag("#test")
+                .hashtag(new ArrayList<>())
                 .characterId("13b99a237d7e1b9369fdcf2ca186b845")
                 .boardFiles("")
                 .build();
 
-        //when&then
         mvc.perform(post("/boards").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardRequest)))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void increaseViewCountTest() throws Exception {
-        //when&then
-        mvc.perform(get("/boards/like-board")).andExpect(status().isOk());
+        mvc.perform(get("/boards/3")).andExpect(status().isOk());
 
     }
 
     @Test
     void increaseLikeCountTest() throws Exception {
-        //when&then
-        mvc.perform(post("/boards/like-board")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        mvc.perform(post("/boards/like-board").param("boardId","3")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
     @Test
     void updateBoardExceptionTest() throws Exception {
-        //given
         Board.BoardRequest boardRequest = Board.BoardRequest.builder()
-                .id(2L)
+                .id(1L)
                 .boardTitle("test")
-                .boardContent("test")
+                .boardContent("testftguyguygfuyfviuy")
                 .boardType(BoardType.NOTICE)
                 .serverId("bakal")
                 .characterId("13b99a237d7e1b9369fdcf2ca186b845")
                 .boardFiles("")
                 .build();
-        //when&then
         mvc.perform(put("/boards").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardRequest)))
                 .andExpect(status().isForbidden());
     }
@@ -182,7 +167,7 @@ class BoardControllerTest {
 
     @Test
     void likeComment() throws Exception {
-        mvc.perform(post("/comments/like-comment").param("commentId", "1").param("boardId", "958")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        mvc.perform(post("/comments/like-comment").param("commentId", "5").param("boardId", "5")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
     }
 
     @Test
@@ -199,7 +184,7 @@ class BoardControllerTest {
     @Test
     @WithUserDetails("test")
     void deleteBoardComment() throws Exception {
-        mvc.perform(delete("/comments").param("commentId", "1")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
+        mvc.perform(delete("/comments").param("commentId", "4")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
 
     }
 
@@ -207,8 +192,8 @@ class BoardControllerTest {
     @WithUserDetails("test")
     void updateBoardComment() throws Exception {
         BoardComment.BoardCommentRequest boardCommentRequest = BoardComment.BoardCommentRequest.builder()
-                .boardId(958L)
-                .commentId(2L)
+                .boardId(3L)
+                .commentId(3L)
                 .commentContent("test22")
                 .build();
         mvc.perform(put("/comments").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardCommentRequest))).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
@@ -254,7 +239,7 @@ class BoardControllerTest {
 
     @Test
     void deleteBoardCommentUnauthorized() throws Exception {
-        mvc.perform(delete("/comments").param("commentId", "1")).andExpect(status().isUnauthorized());
+        mvc.perform(delete("/comments").param("commentId", "5")).andExpect(status().isForbidden());
     }
 
     @Test

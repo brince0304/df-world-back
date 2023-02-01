@@ -1,5 +1,7 @@
 package com.dfoff.demo.Controller;
 
+import com.dfoff.demo.Annotation.Auth;
+import com.dfoff.demo.Annotation.BindingErrorCheck;
 import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.Domain.EnumType.UserAccount.NotificationType;
@@ -92,16 +94,11 @@ public class BoardController {
     }
 
 
+    @Auth
     @GetMapping("/boards/insert")
-    public ModelAndView getBoardInsert(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
-                                       @RequestParam(required = true) String request,
+    public ModelAndView getBoardInsert(@AuthenticationPrincipal UserAccount.PrincipalDto principal,@RequestParam String request,
                                        @RequestParam(required = false) String id,
                                        Board.BoardRequest boardRequest) {
-        if (principalDto == null) {
-            throw new EntityNotFoundException("로그인이 필요합니다.");
-        } else if (request == null) {
-            throw new IllegalArgumentException("잘못된 접근입니다.");
-        }
         ModelAndView mav = new ModelAndView("/board/boardInsert");
         if (request.equals("add")) {
             mav.addObject("boardRequest", boardRequest);
@@ -124,42 +121,33 @@ public class BoardController {
         }
         return mav;
     }
-
+    @Auth
     @GetMapping("/hashtags/")
-    public List<String> getHashtags(@RequestParam String query) {
+    public List<String> getHashtags(@AuthenticationPrincipal UserAccount.PrincipalDto principal, @RequestParam String query) {
         return boardService.findHashtags(query);
     }
-
+    @Auth
     @DeleteMapping("/boards")
     public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
                                          @RequestParam Long id) {
 
         String writer = boardService.getBoardAuthorById(id);
-        if (principalDto == null || !writer.equals(principalDto.getUsername())) {
+        if (!writer.equals(principalDto.getUsername())) {
             throw new SecurityException("권한이 없습니다.");
         }
-        boardService.getBoardSaveFile(id).forEach(saveFile -> {
-            log.info("saveFile : {}", saveFile);
-            saveFileService.deleteFile(saveFile.id());
-        });
+        boardService.getBoardSaveFile(id).forEach(saveFile -> saveFileService.deleteFile(saveFile.id()));
         boardService.getBoardCommentsByBoardId(id).stream().filter(o -> !o.getUserId().equals(principalDto.getUsername())).forEach(o -> {
             notificationService.saveBoardCommentNotification(o.getUserAccountDto(), o, principalDto.getNickname(), NotificationType.DELETE_COMMENT);
         });
         boardService.deleteBoardById(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
+    @Auth
     @GetMapping("/boards/characters/")
-    public ResponseEntity<?> searchCharacterForBoard(@RequestParam(required = false) String serverId,
-                                                     @RequestParam(required = false) String characterName,
-                                                     @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable,
-                                                     @AuthenticationPrincipal UserAccount.PrincipalDto principal) throws InterruptedException {
-        if (principal == null) {
-            throw new SecurityException("로그인이 필요합니다.");
-        }
-        if (serverId == null || characterName == null) {
-            throw new IllegalArgumentException("서버 아이디, 캐릭터 아이디는 필수입니다.");
-        }
+    public ResponseEntity<?> searchCharacterForBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principal,@RequestParam String serverId,
+                                                     @RequestParam String characterName,
+                                                     @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable
+                                                    ) throws InterruptedException {
         if (serverId.equals("adventure")) {
             return new ResponseEntity<>(characterService.getCharacterByAdventureName(characterName, pageable).map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).toList(), HttpStatus.OK);
         }
@@ -168,17 +156,12 @@ public class BoardController {
         return getCharacterResponse(dtos, dtos1, characterService);
     }
 
-
+    @Auth
+    @BindingErrorCheck
     @PostMapping("/boards")
     public ResponseEntity<?> saveBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody @Valid Board.BoardRequest boardRequest, BindingResult bindingResult) {
 
-        if (principalDto == null) {
-            throw new SecurityException("권한이 없습니다.");
-        }
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
-        }
-        Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestsFileIds(boardRequest);
+        Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestFileIds(boardRequest);
         if (boardRequest.getServerId().equals("")) {
             return new ResponseEntity<>(boardService.createBoard(boardRequest, set, UserAccount.UserAccountDto.from(principalDto), null), HttpStatus.OK);
         }
@@ -186,18 +169,15 @@ public class BoardController {
         return new ResponseEntity<>(boardService.createBoard(boardRequest, set, UserAccount.UserAccountDto.from(principalDto), character), HttpStatus.OK);
     }
 
-
+    @Auth
+    @BindingErrorCheck
     @PutMapping("/boards")
     public ResponseEntity<?> updateBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody @Valid Board.BoardRequest updateRequest, BindingResult bindingResult) {
-
         String writer = boardService.getBoardAuthorById(updateRequest.getId());
-        if (principalDto == null || !writer.equals(principalDto.getUsername())) {
+        if (!writer.equals(principalDto.getUsername())) {
             throw new SecurityException("권한이 없습니다.");
         }
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
-        }
-        Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestsFileIds(updateRequest);
+        Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestFileIds(updateRequest);
         CharacterEntity.CharacterEntityDto character = characterService.getCharacter(updateRequest.getServerId(), updateRequest.getCharacterId()).join();
         return new ResponseEntity<>(boardService.updateBoard(updateRequest.getId(), updateRequest, set, character), HttpStatus.OK);
     }

@@ -18,24 +18,24 @@ import org.springframework.web.servlet.ModelAndView;
 public class BasicControllerAdvice {
     @ExceptionHandler(EntityNotFoundException.class)
     public ModelAndView handleEntityNotFoundException(EntityNotFoundException exception) {
-        exception.getMessage();
+        log.error(exception.getMessage());
         return new ModelAndView ("errorPage/404",HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(HttpClientErrorException.class)
-    public ModelAndView handleEntityNotFoundException(HttpClientErrorException exception) {
-        exception.getMessage();
+    public ModelAndView handleHttpClientErrorException(HttpClientErrorException exception) {
+        log.error(exception.getMessage());
         return new ModelAndView (exception.getMessage(),HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentExceptionException(IllegalArgumentException exception) {
-        exception.getMessage();
+        log.error(exception.getMessage());
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SecurityException.class)
     public ModelAndView handleSecurityExceptionException(SecurityException exception) {
-        exception.getMessage();
+        log.error(exception.getMessage());
         return new ModelAndView("errorPage/403", HttpStatus.FORBIDDEN);
     }
 
@@ -43,7 +43,7 @@ public class BasicControllerAdvice {
     public ModelAndView handleMissingServletRequestParameterException
             (MissingServletRequestParameterException
                      exception) {
-        exception.getMessage();
+        log.error(exception.getMessage());
         return new ModelAndView("errorPage/404", HttpStatus.NOT_FOUND);
     }
 

@@ -4,17 +4,21 @@ import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.Repository.BoardRepository;
 import com.dfoff.demo.Repository.NotificationRepository;
+import com.dfoff.demo.Util.CharactersUtil;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -30,6 +34,19 @@ class BoardServiceTest {
     BoardRepository boardRepository;
     @Mock
     NotificationRepository notificationRepository;
+
+
+    static MockedStatic<CharactersUtil> charactersUtilMockedStatic;
+
+    @BeforeAll
+    static void beforeAll() {
+        charactersUtilMockedStatic = org.mockito.Mockito.mockStatic(CharactersUtil.class);
+    }
+
+
+
+
+
 
 
     @Test
@@ -63,10 +80,11 @@ class BoardServiceTest {
     @Test
     void getArticleTest() {
         //given
-        given(boardRepository.findBoardById(any(Long.class))).willReturn(createBoardDto().toEntity());
+        given(boardRepository.findBoardById(any(Long.class))).willReturn(Optional.ofNullable(createBoardDto().toEntity()));
 
         //when
         sut.getBoardDetailById(1L);
+        charactersUtilMockedStatic.when(()-> CharactersUtil.timesAgo(any())).thenReturn("1분전");
 
         //then
         then(boardRepository).should().findBoardById(any(Long.class));
@@ -88,7 +106,7 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
     @Test
     void getArticleEntityNotFoundExceptionTest() {
         //given
-        given(boardRepository.findBoardById(any(Long.class))).willReturn(null);
+        given(boardRepository.findBoardById(any(Long.class))).willThrow(EntityNotFoundException.class);
 
         //when
         Throwable throwable = catchThrowable(() -> sut.getBoardDetailById(1L));
@@ -103,7 +121,7 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
     void deleteArticleByIdTest() {
         //given
         Board board = createBoardDto().toEntity();
-        given(boardRepository.findBoardById(any(Long.class))).willReturn(board);
+        given(boardRepository.findBoardById(any(Long.class))).willReturn(Optional.ofNullable(board));
 
         //when
         sut.deleteBoardById(any(Long.class));
@@ -118,7 +136,7 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
         //given
         Board board = createBoardDto().toEntity();
         board.setBoardTitle("test00");
-        given(boardRepository.findBoardById(any(Long.class))).willReturn(board);
+        given(boardRepository.findBoardById(any(Long.class))).willReturn(Optional.of(board));
 
         //when
         sut.updateBoard(eq(1L),createBoardRequestDto2(),createSaveFileDto(),null);
@@ -131,7 +149,7 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
     @Test
     void updateArticleEntityNotFoundExceptionTest() {
         //given
-        given(boardRepository.findBoardById(anyLong())).willReturn(null);
+        given(boardRepository.findBoardById(anyLong())).willThrow(EntityNotFoundException.class);
 
         //when
         Throwable throwable = catchThrowable(()->sut.updateBoard(anyLong(),createBoardRequestDto2(),createSaveFileDto(),createCharacterEntityDto()));
@@ -144,7 +162,7 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
     void increaseViewCountTest(){
         //given
         Board board = createBoardDto().toEntity();
-        given(boardRepository.findBoardById(any(Long.class))).willReturn(board);
+        given(boardRepository.findBoardById(any(Long.class))).willReturn(Optional.ofNullable(board));
 
         //when
         sut.increaseBoardViewCount(any(Long.class));
@@ -158,10 +176,10 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
     void increaseLikeCountTest(){
         //given
         Board board = createBoardDto().toEntity();
-        given(boardRepository.findBoardById(any(Long.class))).willReturn(board);
+        given(boardRepository.findBoardById(any(Long.class))).willReturn(Optional.ofNullable(board));
 
         //when
-        sut.increaseBoardLikeCount(any(Long.class),"");
+        sut.increaseBoardLikeCount(any(Long.class));
 
         //then
         then(boardRepository).should().findBoardById(any(Long.class));
@@ -173,10 +191,10 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
     void decreaseLikeCountTest(){
         //given
         Board board = createBoardDto().toEntity();
-        given(boardRepository.findBoardById(any(Long.class))).willReturn(board);
+        given(boardRepository.findBoardById(any(Long.class))).willReturn(Optional.ofNullable(board));
 
         //when
-        sut.decreaseBoardLikeCount(any(Long.class),"");
+        sut.decreaseBoardLikeCount(any(Long.class));
 
         //then
         then(boardRepository).should().findBoardById(any(Long.class));

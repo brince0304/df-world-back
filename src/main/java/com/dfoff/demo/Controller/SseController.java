@@ -1,5 +1,6 @@
 package com.dfoff.demo.Controller;
 
+import com.dfoff.demo.Annotation.Auth;
 import com.dfoff.demo.Domain.UserAccount;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ public class SseController {
     public static Map<String, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
 
     @CrossOrigin
+    @Auth
     @GetMapping(value = "/sub", consumes = MediaType.ALL_VALUE)
     public SseEmitter subscribe( @RequestParam String userId) {
         if(userId.equals("anonymousUser")) {

@@ -5,15 +5,11 @@ import com.dfoff.demo.Repository.CharacterEntityRepository;
 import com.dfoff.demo.Repository.UserAccountRepository;
 import com.dfoff.demo.Repository.NotificationRepository;
 import com.dfoff.demo.Repository.UserAdventureRepository;
-import com.dfoff.demo.Util.Bcrypt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +23,6 @@ public class UserAccountService {
     private final CharacterEntityRepository characterEntityRepository;
     private final UserAccountRepository userAccountRepository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
-    private final Bcrypt bcrypt;
 
     private final NotificationRepository notificationRepository;
 
@@ -35,7 +30,7 @@ public class UserAccountService {
 
 
 
-    public boolean createAccount(UserAccount.UserAccountSignUpRequest account, SaveFile.SaveFileDto profileIcon) {
+    public void createAccount(UserAccount.UserAccountSignUpRequest account, SaveFile.SaveFileDto profileIcon) {
         if (userAccountRepository.existsByUserId(account.getUserId())) {
             throw new EntityExistsException("이미 존재하는 아이디입니다.");
         }
@@ -45,11 +40,8 @@ public class UserAccountService {
         if (userAccountRepository.existsByNickname(account.getNickname())) {
             throw new EntityExistsException("이미 존재하는 닉네임입니다.");
         }
-        log.info("account: {}", account);
         UserAccount account0 = userAccountRepository.save(account.toEntity());
-        account0.setPassword(bcrypt.encode(account0.getPassword()));
         account0.setProfileIcon(profileIcon.toEntity());
-        return true;
     }
 
 
@@ -70,11 +62,9 @@ public class UserAccountService {
     public void updateAccountDetails(UserAccount.UserAccountDto request) {
         UserAccount account = userAccountRepository.findById(request.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         if (userAccountRepository.existsByEmail(request.email())) {
-            log.info("이미 존재하는 이메일입니다.");
             return;
         }
         if (userAccountRepository.existsByNickname(request.nickname())) {
-            log.info("이미 존재하는 닉네임입니다.");
             return;
         }
         if(request.email() != null) {
@@ -90,7 +80,7 @@ if(!userAdventureRepository.existsByUserAccount_UserId(dto.userId())){
             throw new EntityNotFoundException("모험단이 등록되지 않았습니다.");
         }
        UserAccount userAccount = userAccountRepository.findById(dto.userId()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
-userAccount.getUserAdventure().getCharacters().addAll(characterEntityRepository.findAllByAdventureName(userAccount.getUserAdventure().getAdventureName()));
+        userAccount.getUserAdventure().getCharacters().addAll(characterEntityRepository.findAllByAdventureName(userAccount.getUserAdventure().getAdventureName()));
     }
 
 
@@ -170,7 +160,6 @@ userAccount.getUserAdventure().getCharacters().addAll(characterEntityRepository.
     @Transactional(readOnly = true)
     public Page<Board.BoardListMyPageResponse> getBoardsByUserIdOrderByViewCount(String userId, Pageable pageable) {
         if(userAccountRepository.existsByUserId(userId)){
-            log.info("userId: {}", userId);
             return userAccountRepository.findBoardsByUserIdOrderByViewCount(userId, pageable).map(Board.BoardListMyPageResponse::from);
         }
         return Page.empty();
@@ -192,19 +181,8 @@ userAccount.getUserAdventure().getCharacters().addAll(characterEntityRepository.
             userAccountRepository.deleteById(userId);
         }
     }
-
-    public UserAccount.UserAccountDto loginByUserId(UserAccount.LoginDto dto) {
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(dto.getUsername(), dto.getPassword());
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(token);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        log.info("authentication: {}", SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-        return UserAccount.UserAccountDto.builder().build();
-    }
-
-
-    public boolean chagePassword(UserAccount.UserAccountDto accountDTO, String password) {
+    public boolean changePassword(UserAccount.UserAccountDto accountDTO, String password) {
         UserAccount account = userAccountRepository.findById(accountDTO.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
-        account.setPassword(bcrypt.encode(password));
         return true;
     }
 

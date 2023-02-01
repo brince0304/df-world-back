@@ -1,5 +1,7 @@
 package com.dfoff.demo.Controller;
 
+import com.dfoff.demo.Annotation.Auth;
+import com.dfoff.demo.Annotation.BindingErrorCheck;
 import com.dfoff.demo.Domain.Board;
 import com.dfoff.demo.Domain.BoardComment;
 import com.dfoff.demo.Domain.EnumType.UserAccount.NotificationType;
@@ -66,7 +68,7 @@ public class BoardCommentController {
     }
 
     @PostMapping("/comments/like-comment")
-    public ResponseEntity<?> likeComment(@RequestParam Long commentId, @RequestParam Long boardId, HttpServletRequest req,@AuthenticationPrincipal UserAccount.PrincipalDto principal) {
+    public ResponseEntity<?> likeComment(@AuthenticationPrincipal UserAccount.PrincipalDto principal,@RequestParam Long commentId, @RequestParam Long boardId, HttpServletRequest req) {
             if (redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId)) {
                 redisService.deleteBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId);
                 return new ResponseEntity<>(commentService.updateBoardCommentDisLike(commentId).getCommentLikeCount(), HttpStatus.OK);
@@ -80,55 +82,47 @@ public class BoardCommentController {
             }
     }
 
+    @Auth
+    @BindingErrorCheck
     @PostMapping("/comments")
-    public ResponseEntity<?> createBoardComment(@RequestBody @Valid BoardComment.BoardCommentRequest request, BindingResult bindingResult, @AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
+    public ResponseEntity<?> createBoardComment(@AuthenticationPrincipal UserAccount.PrincipalDto principal,@RequestBody @Valid BoardComment.BoardCommentRequest request, BindingResult bindingResult,
                                                 @RequestParam(required = false) String mode) {
-        if (principalDto == null) {
-            throw new SecurityException("로그인이 필요합니다.");
-        }
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
-        }
         Board.BoardDto boardDto = boardService.getBoardDto(request.getBoardId());
         if (mode != null && mode.equals("children")) {
-            BoardComment.BoardCommentDto commentDto =commentService.createChildrenComment(request.getCommentId(), request, UserAccount.UserAccountDto.from(principalDto), boardDto);
-            if(!commentDto.getBoardDto().getUserAccount().userId().equals(principalDto.getUsername())){
-                notificationService.saveBoardCommentNotification(commentDto.getBoardDto().getUserAccount(), commentDto, principalDto.getNickname(),NotificationType.CHILDREN_COMMENT);
+            BoardComment.BoardCommentDto commentDto =commentService.createChildrenComment(request.getCommentId(), request, UserAccount.UserAccountDto.from(principal), boardDto);
+            if(!commentDto.getBoardDto().getUserAccount().userId().equals(principal.getUsername())){
+                notificationService.saveBoardCommentNotification(commentDto.getBoardDto().getUserAccount(), commentDto, principal.getNickname(),NotificationType.CHILDREN_COMMENT);
             }
             return new ResponseEntity<>(HttpStatus.OK);
         } else {
-            BoardComment.BoardCommentDto commentDto = commentService.createBoardComment(request, UserAccount.UserAccountDto.from(principalDto), boardDto);
-            if(!commentDto.getBoardDto().getUserAccount().userId().equals(principalDto.getUsername())){
-                notificationService.saveBoardCommentNotification(commentDto.getBoardDto().getUserAccount(), commentDto, principalDto.getNickname(),NotificationType.COMMENT);
+            BoardComment.BoardCommentDto commentDto = commentService.createBoardComment(request, UserAccount.UserAccountDto.from(principal), boardDto);
+            if(!commentDto.getBoardDto().getUserAccount().userId().equals(principal.getUsername())){
+                notificationService.saveBoardCommentNotification(commentDto.getBoardDto().getUserAccount(), commentDto, principal.getNickname(),NotificationType.COMMENT);
             }
             return new ResponseEntity<>("success", HttpStatus.OK);
         }
     }
 
 
+    @Auth
     @DeleteMapping("/comments")
-    public ResponseEntity<?> deleteBoardComment(@AuthenticationPrincipal UserAccount.PrincipalDto dto, @RequestParam Long commentId) {
+    public ResponseEntity<?> deleteBoardComment(@AuthenticationPrincipal UserAccount.PrincipalDto principal, @RequestParam Long commentId) {
         String id = commentService.getCommentAuthor(commentId);
-        if (dto == null || !id.equals(dto.getUsername())) {
+        if (!id.equals(principal.getUsername())) {
             return new ResponseEntity<>("권한이 없습니다.", HttpStatus.UNAUTHORIZED);
         }
         List<BoardComment.BoardCommentDto> children = commentService.getChildrenComments(commentId);
-        children.stream().filter(o-> !Objects.equals(o.getUserId(), dto.getUsername())).forEach(o-> notificationService.saveBoardCommentNotification(o.getUserAccountDto(), o, dto.getNickname(),NotificationType.DELETE_CHILDREN_COMMENT));
+        children.stream().filter(o-> !Objects.equals(o.getUserId(), principal.getUsername())).forEach(o-> notificationService.saveBoardCommentNotification(o.getUserAccountDto(), o, principal.getNickname(),NotificationType.DELETE_CHILDREN_COMMENT));
         commentService.deleteBoardComment(commentId);
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
 
+    @Auth
+    @BindingErrorCheck
     @PutMapping("/comments")
-    public ResponseEntity<?> updateBoardComment(@RequestBody @Valid BoardComment.BoardCommentRequest request, BindingResult bindingResult, @AuthenticationPrincipal UserAccount.PrincipalDto principalDto) {
-
-        if (principalDto == null) {
-            throw new SecurityException("로그인이 필요합니다.");
-        }
-        if (bindingResult.hasErrors()) {
-            return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(), HttpStatus.BAD_REQUEST);
-        }
-        commentService.updateBoardComment(request.getCommentId(), request, principalDto.getUsername());
+    public ResponseEntity<?> updateBoardComment(@AuthenticationPrincipal UserAccount.PrincipalDto principal,@RequestBody @Valid BoardComment.BoardCommentRequest request, BindingResult bindingResult) {
+        commentService.updateBoardComment(request.getCommentId(), request, principal.getUsername());
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
