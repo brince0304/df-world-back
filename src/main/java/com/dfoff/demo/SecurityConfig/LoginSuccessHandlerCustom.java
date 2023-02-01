@@ -11,12 +11,9 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import java.io.IOException;
 
 public class LoginSuccessHandlerCustom implements AuthenticationSuccessHandler {
-
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        HttpSession session = request.getSession();
-        session.setAttribute("AUTHENTICATE", authentication);
     }
 
 }
