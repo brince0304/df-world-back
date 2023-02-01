@@ -21,26 +21,26 @@ import java.util.stream.Collectors;
 import static com.dfoff.demo.Util.CharactersUtil.timesAgo;
 
 
-@Table (indexes=@Index(columnList = "createdAt"))
+@Table(indexes = @Index(columnList = "createdAt"))
 @Entity
 @Getter
 @ToString
-@NoArgsConstructor (access = AccessLevel.PROTECTED)
-@AllArgsConstructor (access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 @SQLDelete(sql = "UPDATE board_comment SET deleted = true, deleted_at = now() WHERE id = ?")
 public class BoardComment extends AuditingFields {
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Setter
-    @Length (min = 1, max = 1000)
+    @Length(min = 1, max = 1000)
     private String commentContent;
-    @ManyToOne (fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private Board board;
 
-    @ManyToOne (fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private UserAccount userAccount;
     @Setter
@@ -53,15 +53,15 @@ public class BoardComment extends AuditingFields {
     @Builder.Default
     private Boolean isParent = Boolean.TRUE;
 
-    @OneToMany (mappedBy = "parentComment",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "parentComment", fetch = FetchType.LAZY)
     @ToString.Exclude
     @Builder.Default
     @OnDelete(action = OnDeleteAction.CASCADE)
     private final Set<BoardComment> childrenComments = new LinkedHashSet<>();
 
-    @ManyToOne (fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
-    @JoinColumn (name = "parent_id")
+    @JoinColumn(name = "parent_id")
     @Setter
     @OnDelete(action = OnDeleteAction.CASCADE)
     private BoardComment parentComment;
@@ -93,8 +93,8 @@ public class BoardComment extends AuditingFields {
 
         private final BoardType boardType;
 
-        public String getBoardType(BoardType type){
-            if(type==null){
+        public String getBoardType(BoardType type) {
+            if (type == null) {
                 return null;
             }
             return switch (type) {
@@ -107,7 +107,7 @@ public class BoardComment extends AuditingFields {
             };
         }
 
-        public static BoardCommentResponse from (BoardComment boardComment) {
+        public static BoardCommentResponse from(BoardComment boardComment) {
             return BoardCommentResponse.builder()
                     .createdAt(timesAgo(boardComment.getCreatedAt()))
                     .createdBy(boardComment.getCreatedBy())
@@ -149,8 +149,8 @@ public class BoardComment extends AuditingFields {
 
         private final BoardType boardType;
 
-        public String getBoardType(BoardType type){
-            if(type==null){
+        public String getBoardType(BoardType type) {
+            if (type == null) {
                 return null;
             }
             return switch (type) {
@@ -163,7 +163,7 @@ public class BoardComment extends AuditingFields {
             };
         }
 
-        public static BoardCommentMyPageResponse from (BoardComment boardComment) {
+        public static BoardCommentMyPageResponse from(BoardComment boardComment) {
             return BoardCommentMyPageResponse.builder()
                     .createdAt(timesAgo(boardComment.getCreatedAt()))
                     .createdBy(boardComment.getCreatedBy())
@@ -175,7 +175,7 @@ public class BoardComment extends AuditingFields {
                     .commentLikeCount(boardComment.getCommentLikeCount())
                     .deleted(boardComment.getDeleted())
                     .isParent(boardComment.getIsParent())
-                    .childrenCommentsSize(boardComment.getChildrenComments().size()+"")
+                    .childrenCommentsSize(boardComment.getChildrenComments().size() + "")
                     .boardType(boardComment.getBoard().getBoardType())
                     .build();
 
@@ -185,14 +185,14 @@ public class BoardComment extends AuditingFields {
     /**
      * A DTO for the {@link BoardComment} entity
      */
-    @Data
     @Builder
-    @AllArgsConstructor
-    public static class BoardCommentRequest implements Serializable {
-        private final Long boardId;
-        private final Long commentId;
-        @Size (min = 1, max = 1000, message = "댓글은 1자 이상 1000자 이하로 작성해주세요.")
-        private final String commentContent;
+    public record BoardCommentRequest(
+            Long boardId,
+            Long commentId,
+            @Size(min = 1, max = 1000, message = "댓글은 1자 이상 1000자 이하로 작성해주세요.")
+            String commentContent
+    ) implements Serializable {
+
 
         public BoardComment toEntity(UserAccount.UserAccountDto dto, Board.BoardDto boardDto) {
             return BoardComment.builder()
@@ -228,7 +228,7 @@ public class BoardComment extends AuditingFields {
 
         private final UserAccount.UserAccountDto userAccountDto;
 
-        public static BoardCommentDto from (BoardComment boardComment) {
+        public static BoardCommentDto from(BoardComment boardComment) {
             return BoardCommentDto.builder()
                     .id(boardComment.getId())
                     .commentContent(boardComment.getCommentContent())
@@ -239,17 +239,17 @@ public class BoardComment extends AuditingFields {
                     .boardType(boardComment.getBoard().getBoardType())
                     .boardDto(Board.BoardDto.from(boardComment.getBoard()))
                     .userAccountDto(UserAccount.UserAccountDto.from(boardComment.getUserAccount()))
-                    .commentLikeCount(boardComment.getCommentLikeCount()+"")
+                    .commentLikeCount(boardComment.getCommentLikeCount() + "")
                     .build();
 
         }
 
-        public BoardComment toEntity(){
+        public BoardComment toEntity() {
             return BoardComment.builder()
                     .id(this.id)
                     .commentContent(this.commentContent)
-                    .board(this.boardDto!=null?this.boardDto.toEntity():null)
-                    .userAccount(this.userAccountDto!=null?this.userAccountDto.toEntity():null)
+                    .board(this.boardDto != null ? this.boardDto.toEntity() : null)
+                    .userAccount(this.userAccountDto != null ? this.userAccountDto.toEntity() : null)
                     .build();
         }
     }

@@ -44,6 +44,8 @@ public class UserAdventure extends AuditingFields {
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class UserAdventureRequest{
         private String adventureName;
 

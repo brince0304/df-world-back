@@ -149,7 +149,7 @@ public class BoardController {
                                                      @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable
                                                     ) throws InterruptedException {
         if (serverId.equals("adventure")) {
-            return new ResponseEntity<>(characterService.getCharacterByAdventureName(characterName, pageable).map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).toList(), HttpStatus.OK);
+            return new ResponseEntity<>(characterService.getCharacterByAdventureName(characterName, pageable), HttpStatus.OK);
         }
         List<CompletableFuture<CharacterEntity.CharacterEntityDto>> dtos = new ArrayList<>();
         List<CharacterEntity.CharacterEntityDto> dtos1 = characterService.getCharacterDtos(serverId, characterName).join();
@@ -162,10 +162,10 @@ public class BoardController {
     public ResponseEntity<?> saveBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody @Valid Board.BoardRequest boardRequest, BindingResult bindingResult) {
 
         Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestFileIds(boardRequest);
-        if (boardRequest.getServerId().equals("")) {
+        if (boardRequest.serverId().equals("")) {
             return new ResponseEntity<>(boardService.createBoard(boardRequest, set, UserAccount.UserAccountDto.from(principalDto), null), HttpStatus.OK);
         }
-        CharacterEntity.CharacterEntityDto character = characterService.getCharacter(boardRequest.getServerId(), boardRequest.getCharacterId()).join();
+        CharacterEntity.CharacterEntityDto character = characterService.getCharacter(boardRequest.serverId(), boardRequest.characterId()).join();
         return new ResponseEntity<>(boardService.createBoard(boardRequest, set, UserAccount.UserAccountDto.from(principalDto), character), HttpStatus.OK);
     }
 
@@ -173,12 +173,12 @@ public class BoardController {
     @BindingErrorCheck
     @PutMapping("/boards")
     public ResponseEntity<?> updateBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody @Valid Board.BoardRequest updateRequest, BindingResult bindingResult) {
-        String writer = boardService.getBoardAuthorById(updateRequest.getId());
+        String writer = boardService.getBoardAuthorById(updateRequest.id());
         if (!writer.equals(principalDto.getUsername())) {
             throw new SecurityException("권한이 없습니다.");
         }
         Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestFileIds(updateRequest);
-        CharacterEntity.CharacterEntityDto character = characterService.getCharacter(updateRequest.getServerId(), updateRequest.getCharacterId()).join();
-        return new ResponseEntity<>(boardService.updateBoard(updateRequest.getId(), updateRequest, set, character), HttpStatus.OK);
+        CharacterEntity.CharacterEntityDto character = characterService.getCharacter(updateRequest.serverId(), updateRequest.characterId()).join();
+        return new ResponseEntity<>(boardService.updateBoard(updateRequest.id(), updateRequest, set, character), HttpStatus.OK);
     }
 }

@@ -105,7 +105,7 @@ public class UserAccountController {
                                                            @RequestParam  String characterName,
                                                            @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable) throws InterruptedException {
             if (serverId.equals("adventure")) {
-                return new ResponseEntity<>(characterService.getCharacterByAdventureName(characterName, pageable).map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).toList(), HttpStatus.OK);
+                return new ResponseEntity<>(characterService.getCharacterByAdventureName(characterName, pageable), HttpStatus.OK);
             }
             List<CompletableFuture<CharacterEntity.CharacterEntityDto>> dtos = new ArrayList<>();
             List<CharacterEntity.CharacterEntityDto> dtos1 = characterService.getCharacterDtos(serverId, characterName).join();

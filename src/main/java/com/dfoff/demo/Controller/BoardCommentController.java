@@ -87,9 +87,9 @@ public class BoardCommentController {
     @PostMapping("/comments")
     public ResponseEntity<?> createBoardComment(@AuthenticationPrincipal UserAccount.PrincipalDto principal,@RequestBody @Valid BoardComment.BoardCommentRequest request, BindingResult bindingResult,
                                                 @RequestParam(required = false) String mode) {
-        Board.BoardDto boardDto = boardService.getBoardDto(request.getBoardId());
+        Board.BoardDto boardDto = boardService.getBoardDto(request.boardId());
         if (mode != null && mode.equals("children")) {
-            BoardComment.BoardCommentDto commentDto =commentService.createChildrenComment(request.getCommentId(), request, UserAccount.UserAccountDto.from(principal), boardDto);
+            BoardComment.BoardCommentDto commentDto =commentService.createChildrenComment(request.commentId(), request, UserAccount.UserAccountDto.from(principal), boardDto);
             if(!commentDto.getBoardDto().getUserAccount().userId().equals(principal.getUsername())){
                 notificationService.saveBoardCommentNotification(commentDto.getBoardDto().getUserAccount(), commentDto, principal.getNickname(),NotificationType.CHILDREN_COMMENT);
             }
@@ -122,7 +122,7 @@ public class BoardCommentController {
     @BindingErrorCheck
     @PutMapping("/comments")
     public ResponseEntity<?> updateBoardComment(@AuthenticationPrincipal UserAccount.PrincipalDto principal,@RequestBody @Valid BoardComment.BoardCommentRequest request, BindingResult bindingResult) {
-        commentService.updateBoardComment(request.getCommentId(), request, principal.getUsername());
+        commentService.updateBoardComment(request.commentId(), request, principal.getUsername());
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 

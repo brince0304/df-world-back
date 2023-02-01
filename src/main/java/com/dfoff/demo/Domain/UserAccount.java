@@ -239,16 +239,16 @@ public class UserAccount extends AuditingFields {
     @Getter
     @AllArgsConstructor
     @ToString
-    @EqualsAndHashCode
+    @NoArgsConstructor
     public static class UserAccountSignUpRequest {
-        private final String userId;
+        private  String userId;
         @Setter
         private  String password;
-        private final String passwordCheck;
-        private final String nickname;
-        private final String email;
+        private String passwordCheck;
+        private  String nickname;
+        private  String email;
 
-        private final Set<SecurityRole> roles = Set.of(SecurityRole.ROLE_USER);
+        private  Set<SecurityRole> roles = Set.of(SecurityRole.ROLE_USER);
 
 
         public UserAccountDto toDto() {
@@ -292,7 +292,7 @@ public class UserAccount extends AuditingFields {
         private final String characterName;
         private final Integer level;
         private final String jobGrowName;
-        private final String adventureFame;
+        private final Integer adventureFame;
         private final String adventureName;
 
         private final String characterImageUrl;

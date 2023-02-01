@@ -2,8 +2,10 @@ package com.dfoff.demo.Domain;
 
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
+import com.dfoff.demo.Util.CharactersUtil;
 import com.dfoff.demo.Util.FileUtil;
 import com.dfoff.demo.Util.RestTemplateUtil;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -22,10 +24,10 @@ import static com.dfoff.demo.Util.CharactersUtil.timesAgo;
 
 @Entity
 @Getter
-@Table (indexes={@Index(columnList = "createdAt")})
+@Table(indexes = {@Index(columnList = "createdAt")})
 @Builder
-@AllArgsConstructor (access = AccessLevel.PRIVATE)
-@NoArgsConstructor (access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @SQLDelete(sql = "UPDATE board SET deleted = true , deleted_at = now() WHERE id = ?")
 public class Board extends AuditingFields {
     @Id
@@ -172,24 +174,9 @@ public class Board extends AuditingFields {
 
         private final String adventureName;
 
-        private final String adventureFame;
+        private final Integer adventureFame;
 
-        public static String getStyleClassName(String jobName){
-            return switch (jobName) {
-                case "격투가(남)" -> "m-fighter";
-                case "격투가(여)" -> "f-fighter";
-                case "마법사(여)" -> "f-mage";
-                case "거너(남)" -> "m-gunner";
-                case "거너(여)" -> "f-gunner";
-                case "마창사" -> "m-lancer";
-                case "귀검사(남)" -> "m-warrior";
-                case "귀검사(여)" -> "f-warrior";
-                case "총검사" -> "m-gunwarrior";
-                case "프리스트(남)" -> "m-priest";
-                case "프리스트(여)" -> "f-priest";
-                default -> "default";
-            };
-        }
+
 
         public static CharacterBoardResponse from(CharacterEntity characterEntity) {
             return CharacterBoardResponse.builder()
@@ -198,9 +185,9 @@ public class Board extends AuditingFields {
                     .serverId(characterEntity.getServerId())
                     .jobName(characterEntity.getJobName())
                     .adventureName(characterEntity.getAdventureName() == null ? "갱신필요" : characterEntity.getAdventureName())
-                    .adventureFame(characterEntity.getAdventureFame() == null ? "0" : characterEntity.getAdventureFame())
+                    .adventureFame(characterEntity.getAdventureFame() == null ? 0 : characterEntity.getAdventureFame())
                     .characterImageUrl(RestTemplateUtil.getCharacterImgUri(characterEntity.getServerId(), characterEntity.getCharacterId(), "1"))
-                    .imgStyleClassName(getStyleClassName(characterEntity.getJobName()))
+                    .imgStyleClassName(CharactersUtil.getStyleClassName(characterEntity.getJobName()))
                     .build();
         }
     }
@@ -275,8 +262,6 @@ public class Board extends AuditingFields {
     }
 
 
-
-
     @Data
     @Builder
     public static class BoardListMyPageResponse implements Serializable {
@@ -342,21 +327,23 @@ public class Board extends AuditingFields {
     /**
      * A DTO for the {@link Board} entity
      */
-    @Data
     @Builder
-    public static class BoardRequest implements Serializable {
-        private final Long id;
-        private final BoardType boardType;
-        @Size(min = 2, max = 50, message = "제목은 2자 이상 50자 이하로 입력해주세요.")
-        private final String boardTitle;
-        @Size(min = 12, max = 5000, message = "내용은 5자 이상 5000자 이하로 입력해주세요.")
-        private final String boardContent;
-        private final List<Hashtag.HashtagRequest> hashtag;
+    public record BoardRequest(
+            Long id,
+            BoardType boardType,
+            @Size(min = 2, max = 50, message = "제목은 2자 이상 50자 이하로 입력해주세요.")
+            String boardTitle,
+            @Size(min = 12, max = 5000, message = "내용은 5자 이상 5000자 이하로 입력해주세요.")
+            String boardContent,
+            List<Hashtag.HashtagRequest> hashtag,
 
-        private final String boardFiles;
-        private final String characterId;
+            String boardFiles,
+            String characterId,
 
-        private final String serverId;
+            String serverId
+
+    ) implements Serializable {
+
 
         public Board toEntity(UserAccount userAccount) {
             return Board.builder()
