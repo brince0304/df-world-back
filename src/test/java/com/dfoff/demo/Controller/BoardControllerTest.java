@@ -1,5 +1,6 @@
 package com.dfoff.demo.Controller;
 
+import com.dfoff.demo.Annotation.WithMockCustomUser;
 import com.dfoff.demo.Domain.Board;
 import com.dfoff.demo.Domain.BoardComment;
 import com.dfoff.demo.Domain.EnumType.BoardType;
@@ -76,7 +77,7 @@ class BoardControllerTest {
 
     @Test
     void deleteBoardNotFoundExceptionTest() throws Exception {
-        mvc.perform(delete("/boards").param("id", "1")).andExpect(status().isNotFound());
+        mvc.perform(delete("/boards").param("id", "1")).andExpect(status().isForbidden());
     }
 
     @Test
@@ -238,7 +239,7 @@ class BoardControllerTest {
 
     @Test
     void deleteBoardCommentUnauthorized() throws Exception {
-        mvc.perform(delete("/comments").param("commentId", "5")).andExpect(status().isUnauthorized());
+        mvc.perform(delete("/comments").param("commentId", "5")).andExpect(status().isForbidden());
     }
 
     @Test

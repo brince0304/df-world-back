@@ -38,7 +38,7 @@ class CharacterControllerTest {
 
     @Test
     void getCharacterDetailsTest() throws Exception {
-        mvc.perform((get("/characters/detail/").param("serverId", "cain")).param("characterId","0695392fe27139764fac5856796375c9"))
+        mvc.perform((get("/characters/detail").param("serverId", "cain")).param("characterId","0695392fe27139764fac5856796375c9"))
                 .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML));
     }
 

@@ -1,5 +1,6 @@
 package com.dfoff.demo.Controller;
 
+import com.dfoff.demo.Annotation.WithMockCustomUser;
 import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
 import com.dfoff.demo.Domain.UserAdventure;
@@ -22,9 +23,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.Collection;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -87,6 +93,7 @@ class UserAccountControllerTest {
                 .build();
        mvc.perform(post("/users/adventure").content(mapper.writeValueAsString(userAdventureRequest)).contentType(MediaType.APPLICATION_JSON));
     }
+
 
     @Test
     @DisplayName("[view] [POST] 아이디 중복검사")
