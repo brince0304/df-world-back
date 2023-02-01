@@ -275,10 +275,10 @@
                 <header class="sectionHeader">
                     <b>전체랭킹</b>
 
-                    <a id="fameRank" style="margin-left:2%;font-size:13px;font-weight: bold;cursor: pointer;">명성</a>
-                    <a id="damageRank"
+                    <a id="rankAdventureFame" style="margin-left:2%;font-size:13px;font-weight: bold;cursor: pointer;">명성</a>
+                    <a id="rankDamageIncrease"
                        style="margin-left:2%;font-size:13px;font-weight: bold;color:#BDBDBD;cursor: pointer;">피해증가</a>
-                    <a id="buffRank"
+                    <a id="rankBuffPower"
                        style="margin-left:2%;font-size:13px;font-weight: bold;color:#BDBDBD;cursor: pointer;">버프력</a>
                     <a id="adventureRank"
                        style="margin-left:2%;font-size:13px;font-weight: bold;color:#BDBDBD;cursor: pointer;">모험단</a>
@@ -286,9 +286,9 @@
                 </header>
                 <hr>
                 <div style="padding-right: 10px;padding-left: 10px;padding-bottom: 10px;">
-                    <table class="table" id="noticetable" style="margin:0;">
+                    <table class="table" id="rankAdventureFameTable" style="margin:0;">
                         <tbody>
-                        <tr class="notice_tr" th:each="character,i :${adventureFameRanking}">
+                        <tr class="rank-adventure-fame" th:each="character,i :${adventureFameRanking}">
                             <td style="border-top:none;display: inline-flex; width: 100%;" >
                             <div class="rank-header" th:switch="${i.index}"  >
                                     <i class="fa fa-crown" style="color:gold;"  th:case="0"></i>
@@ -325,55 +325,77 @@
 
 
 
-                        <tr class="test_notice_tr" style="display: none;">
-                            <td style="border-top:none;"><a
-                                    data-name="notice_b"
-                                    data-id="http://df.nexon.com/df/testinfo/notice?p=web&mode=view&no=2762843">1월 11일 퍼스트서버 업데이트 안내</a>
+                        <tr class="rank-damage-increase" th:each="character,i :${damageIncreaseRanking}">
+                            <td style="border-top:none;display: inline-flex; width: 100%;" >
+                                <div class="rank-header" th:switch="${i.index}"  >
+                                    <i class="fa fa-crown" style="color:gold;"  th:case="0"></i>
+                                    <i class="fa fa-crown" style="color:silver;"  th:case="1"></i>
+                                    <i class="fa fa-crown" style="color:brown;"  th:case="2"></i>
+                                    <i class="fa-solid fa-4" style="color:black; margin-left:-20%"  th:case="3"></i>
+                                    <i class="fa-solid fa-5" style="color:black; margin-left:-20%"  th:case="4"></i>
+                                </div>
+                                <div class="board-character" >
+                                    <img  th:class="${character.imgStyleClassName}" th:src="${character.characterImgUrl}" src="" >
+                                </div>
+                                <div class="rank-title" >
+                                    <span class="badge bg-transparent text-black">
+                                        [[${character.characterName}]]
+                                    </span>
+                                </div>
+                                <div class="rank-body" style=" display: inline-flex;">
+
+                                    <div class="rank-server">
+                                        <span  class="badge bg-transparent text-secondary"><i class="fa fa-globe"></i> [[${character.serverName}]]</span>
+                                    </div>
+                                    <div class="rank-jobname" style="margin-left:-5%">
+                                        <span class="badge bg-transparent text-secondary">[[${character.jobGrowName}]]</span>
+                                    </div>
+                                </div>
+
+                                <div class="rank-footer"  >
+                                    <span class="badge bg-transparent text-secondary">
+                                        <i class="fa fa-facebook"></i>
+                                        피해증가: <span class="text-black">[[${character.damageIncrease}]]</span></span>
+                                </div>
                             </td>
                         </tr>
 
 
 
-                        <tr class="dunoff_notice_tr"
-                            style="display: none;">
-                            <td style="border-top:none;"><a
-                                    data-name="notice_c"
-                                    data-id="41">[공지] 2022.06.06 업데이트 안내</a>
+                        <tr class="rank-buff-power" th:each="character,i :${buffPowerRanking}">
+                            <td style="border-top:none;display: inline-flex; width: 100%;" >
+                                <div class="rank-header" th:switch="${i.index}"  >
+                                    <i class="fa fa-crown" style="color:gold;"  th:case="0"></i>
+                                    <i class="fa fa-crown" style="color:silver;"  th:case="1"></i>
+                                    <i class="fa fa-crown" style="color:brown;"  th:case="2"></i>
+                                    <i class="fa-solid fa-4" style="color:black; margin-left:-20%"  th:case="3"></i>
+                                    <i class="fa-solid fa-5" style="color:black; margin-left:-20%"  th:case="4"></i>
+                                </div>
+                                <div class="board-character" >
+                                    <img  th:class="${character.imgStyleClassName}" th:src="${character.characterImgUrl}" src="" >
+                                </div>
+                                <div class="rank-title" >
+                                    <span class="badge bg-transparent text-black">
+                                        [[${character.characterName}]]
+                                    </span>
+                                </div>
+                                <div class="rank-body" style=" display: inline-flex;">
+
+                                    <div class="rank-server">
+                                        <span  class="badge bg-transparent text-secondary"><i class="fa fa-globe"></i> [[${character.serverName}]]</span>
+                                    </div>
+                                    <div class="rank-jobname" style="margin-left:-5%">
+                                        <span class="badge bg-transparent text-secondary">[[${character.jobGrowName}]]</span>
+                                    </div>
+                                </div>
+
+                                <div class="rank-footer"  >
+                                    <span class="badge bg-transparent text-secondary">
+                                        <i class="fa fa-facebook"></i>
+                                        버프력: <span class="text-black">[[${character.buffPower}]]</span></span>
+                                </div>
                             </td>
                         </tr>
-
-                        <tr class="dunoff_notice_tr"
-                            style="display: none;">
-                            <td style=""><a
-                                    data-name="notice_c"
-                                    data-id="40">[공지] 2022.02.17 업데이트 안내</a>
-                            </td>
-                        </tr>
-
-                        <tr class="dunoff_notice_tr"
-                            style="display: none;">
-                            <td style=""><a
-                                    data-name="notice_c"
-                                    data-id="39">[공지] 21.08.05 업데이트 안내</a>
-                            </td>
-                        </tr>
-
-                        <tr class="dunoff_notice_tr"
-                            style="display: none;">
-                            <td style=""><a
-                                    data-name="notice_c"
-                                    data-id="38">오즈마 관련 딜표 수정</a>
-                            </td>
-                        </tr>
-
-                        <tr class="dunoff_notice_tr"
-                            style="display: none;">
-                            <td style=""><a
-                                    data-name="notice_c"
-                                    data-id="37">[필독] 연옥 옵션 변환 기능 미노출 관련</a>
-                            </td>
-                        </tr>
-
                         </tbody>
                     </table>
                 </div>
@@ -456,6 +478,62 @@
 <script src="/js/scriptfile.js"></script>
 <script src="/js/choices.js"></script>
 <script src="https://kit.fontawesome.com/1d4d31d2f3.js" crossorigin="anonymous"></script>
+<script>
+$(document).ready(function(){
+    $(".rank-damage-increase").hide();
+    $(".rank-buff-power").hide();
+}
+);
+
+        $('#rankingTable > tbody > tr > td > a').on({
+
+            'mouseover': function () {
+                $(this).css('cursor', 'pointer');
+            },
+
+            'click': function () {
+                if ($(this).attr('data-name') !== 'notice_c') {
+                    window.open($(this).attr('data-id'), "width=300,height=300");
+                } else {
+                    location.href = "FAQ.df?page=notice&id=" + $(this).attr('data-id');
+                }
+
+            }
+
+        });
+
+        $('#rankAdventureFame').on('click', function () {
+            $(this).css('color', 'black');
+            $('#rankDamageIncrease').css('color', '#BDBDBD');
+            $('#rankBuffPower').css('color', '#BDBDBD');
+            $('.rank-damage-increase').css('display', 'none');
+            $('.rank-buff-power').css('display', 'none');
+            $('.rank-adventure-fame').show();
+        });
+
+        $('#rankDamageIncrease').on('click', function () {
+            $(this).css('color', 'black');
+            $('#rankAdventureFame').css('color', '#BDBDBD');
+            $('#rankBuffPower').css('color', '#BDBDBD');
+            $('.rank-adventure-fame').css('display', 'none');
+            $('.rank-buff-power').css('display', 'none');
+            $('.rank-damage-increase').show();
+        });
+
+        $('#rankBuffPower').on('click', function () {
+            $(this).css('color', 'black');
+            $('#rankAdventureFame').css('color', '#BDBDBD');
+            $('#rankDamageIncrease').css('color', '#BDBDBD');
+            $('.rank-adventure-fame').css('display', 'none');
+            $('.rank-damage-increase').css('display', 'none');
+            $('.rank-buff-power').show();
+        });
+
+
+
+
+
+</script>
 </body>
 
 </html>
