@@ -6,12 +6,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long>{
 
 
     @Query("select count(l) from Notification l where l.userAccount.userId = :userId and l.checked = false")
-    Long getUnCheckedNotificationCountByUserId(String userId);
+    Long getUnCheckedNotificationCountByUserId(@Param("userId") String userId);
 
     Page<Notification> getNotificationsByUserAccount_UserId(String userId, Pageable pageable);
 

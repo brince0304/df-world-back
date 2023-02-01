@@ -12,7 +12,7 @@ import java.util.Set;
 
 public interface BoardCommentRepository extends JpaRepository<BoardComment, Long> {
     @Query("select b from BoardComment b where b.id=:id and b.deleted=false")
-    Optional<BoardComment> findBoardCommentById(Long id);
+    Optional<BoardComment> findBoardCommentById(@Param("id") Long id);
 
     @Query("select b from BoardComment b where b.deleted=false and b.isParent = true  and b.board.id=:boardId order by b.createdAt asc")
     List<BoardComment> findBoardCommentByBoardId(@Param("boardId") Long id);
@@ -20,7 +20,7 @@ public interface BoardCommentRepository extends JpaRepository<BoardComment, Long
     List<BoardComment> findBoardCommentByUserAccount_UserId(String userAccountId);
 
     @Query ("select b  from BoardComment b where b.parentComment.id =:parentCommentId and b.deleted=false and b.board.id=:boardId order by b.createdAt asc")
-    List<BoardComment> findBoardCommentByParentCommentId(Long boardId, Long parentCommentId);
+    List<BoardComment> findBoardCommentByParentCommentId(@Param("boardId") Long boardId,@Param("parentCommentId")  Long parentCommentId);
 
     @Query ("select b from BoardComment b where b.board.id=:boardId and b.deleted=false and b.commentLikeCount >= 10 order by b.commentLikeCount desc limit 3")
     List<BoardComment> findBoardCommentByLikeCount(@Param("boardId") Long boardId);
