@@ -180,7 +180,6 @@ public class CharacterService {
                 throw new RuntimeException(e);
             }
         });
-        log.info("skill details : {}",list);
         return list;
     }
 

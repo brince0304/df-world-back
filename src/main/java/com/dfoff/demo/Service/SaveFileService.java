@@ -23,13 +23,11 @@ public class SaveFileService {
 
     @Transactional(readOnly = true)
     public SaveFile.SaveFileDto getFile(Long fileId) {
-        log.info("getFile() fileId: {}", fileId);
         return saveFileRepository.findById(fileId).map(SaveFile.SaveFileDto::from).orElseThrow(()-> new EntityNotFoundException("파일이 없습니다 - fileId: " + fileId));
     }
 
     @Transactional(readOnly = true)
     public SaveFile.SaveFileDto getFileByFileName(String fileName) {
-        log.info("getFileByFileName() fileId: {}", fileName);
         if(Objects.isNull(fileName)) {
             throw new IllegalArgumentException("파일 이름이 없습니다");
         }
@@ -42,7 +40,6 @@ public class SaveFileService {
         if (!saveFileRepository.existsById(fileId)) {
             throw new EntityNotFoundException("파일이 없습니다 - fileId: " + fileId);
         }
-        log.info("deleteFile() fileId: {}", fileId);
             saveFileRepository.deleteById(fileId);
         File file = new File(saveFileRepository.getReferenceById(fileId).getFilePath());
         if (file.exists()) {
@@ -54,7 +51,6 @@ public class SaveFileService {
 
     public SaveFile.SaveFileDto saveFile(SaveFile.SaveFileDto saveFile) {
         if(saveFile == null){throw new IllegalArgumentException("파일이 없습니다");}
-        log.info("saveFile() saveFile: {}", saveFile);
         return SaveFile.SaveFileDto.from(saveFileRepository.save(saveFile.toEntity()));
     }
 
