@@ -42,7 +42,7 @@ public class CharacterController {
         mav.addObject("serverId", serverId);
         mav.addObject("characterName", characterName);
         if (serverId.equals("adventure")) {
-            mav.addObject("characters", characterService.getCharacterByAdventureName(characterName, pageable).map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from));
+            mav.addObject("characters", characterService.getCharacterByAdventureName(characterName, pageable));
             return mav;
         }
         List<CharacterEntity.CharacterEntityDto> characters = characterService.getCharacterDtos(serverId, characterName).join();

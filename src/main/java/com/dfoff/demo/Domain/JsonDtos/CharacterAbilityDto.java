@@ -38,7 +38,7 @@ public class CharacterAbilityDto {
 
         private String guildName;
 
-        private String adventureFame;
+        private Integer adventureFame;
 
         private List<Buff> buff = new ArrayList<>();
 

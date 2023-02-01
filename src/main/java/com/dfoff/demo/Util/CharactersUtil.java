@@ -142,4 +142,20 @@ public class CharactersUtil {
         public static String customForm(LocalDateTime date) {
             return date.format(DateTimeFormatter.ofPattern("MM월 dd일"));
         }
+    public static String getStyleClassName(String jobName) {
+        return switch (jobName) {
+            case "격투가(남)" -> "m-fighter";
+            case "격투가(여)" -> "f-fighter";
+            case "마법사(여)" -> "f-mage";
+            case "거너(남)" -> "m-gunner";
+            case "거너(여)" -> "f-gunner";
+            case "마창사" -> "m-lancer";
+            case "귀검사(남)" -> "m-warrior";
+            case "귀검사(여)" -> "f-warrior";
+            case "총검사" -> "m-gunwarrior";
+            case "프리스트(남)" -> "m-priest";
+            case "프리스트(여)" -> "f-priest";
+            default -> "default";
+        };
+    }
 }
