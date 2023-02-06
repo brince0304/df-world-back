@@ -33,10 +33,16 @@ public class BasicControllerAdvice {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+
+    @ExceptionHandler(IllegalAccessException.class)
+    public ModelAndView handleIllegalAccessException(IllegalAccessException exception) {
+        log.error(exception.getMessage());
+        return new ModelAndView("errorPage/403", HttpStatus.FORBIDDEN);
+    }
     @ExceptionHandler(SecurityException.class)
     public ModelAndView handleSecurityExceptionException(SecurityException exception) {
         log.error(exception.getMessage());
-        return new ModelAndView("errorPage/403", HttpStatus.FORBIDDEN);
+        return new ModelAndView("errorPage/401", HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)

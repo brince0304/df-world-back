@@ -2,6 +2,7 @@ package com.dfoff.demo.Controller;
 
 import com.dfoff.demo.Annotation.Auth;
 import com.dfoff.demo.Annotation.BindingErrorCheck;
+import com.dfoff.demo.Annotation.CommentCheck;
 import com.dfoff.demo.Domain.Board;
 import com.dfoff.demo.Domain.BoardComment;
 import com.dfoff.demo.Domain.EnumType.UserAccount.NotificationType;
@@ -105,12 +106,9 @@ public class BoardCommentController {
 
 
     @Auth
+    @CommentCheck
     @DeleteMapping("/comments")
     public ResponseEntity<?> deleteBoardComment(@AuthenticationPrincipal UserAccount.PrincipalDto principal, @RequestParam Long commentId) {
-        String id = commentService.getCommentAuthor(commentId);
-        if (!id.equals(principal.getUsername())) {
-            return new ResponseEntity<>("권한이 없습니다.", HttpStatus.UNAUTHORIZED);
-        }
         List<BoardComment.BoardCommentDto> children = commentService.getChildrenComments(commentId);
         children.stream().filter(o-> !Objects.equals(o.getUserId(), principal.getUsername())).forEach(o-> notificationService.saveBoardCommentNotification(o.getUserAccountDto(), o, principal.getNickname(),NotificationType.DELETE_CHILDREN_COMMENT));
         commentService.deleteBoardComment(commentId);
@@ -120,9 +118,10 @@ public class BoardCommentController {
 
     @Auth
     @BindingErrorCheck
+    @CommentCheck
     @PutMapping("/comments")
     public ResponseEntity<?> updateBoardComment(@AuthenticationPrincipal UserAccount.PrincipalDto principal,@RequestBody @Valid BoardComment.BoardCommentRequest request, BindingResult bindingResult) {
-        commentService.updateBoardComment(request.commentId(), request, principal.getUsername());
+        commentService.updateBoardComment(request.commentId(), request);
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
