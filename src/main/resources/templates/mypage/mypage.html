@@ -23,6 +23,23 @@
     <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css'>
     <title>던파모아온오프</title>
     <style>
+        .td-footer {
+            /* display: inline-block; */
+            /* float: right; */
+            padding-left: 0;
+            padding-right: 0;
+            scale:0.9;
+        }
+
+        .td-body{
+        /* display: block; */
+        padding-left: 0;
+        width: 40%;
+    }
+        .td-header{
+            width: 27%;
+            padding-right: 0;
+        }
         .dropdown-menu a{
             color: black;
             text-decoration-line: none;
@@ -486,7 +503,7 @@
     </div>
 
 
-    <div class="modal fade notification" id="userLogModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"
+    <div class="modal fade notification col-sm-12 col-md-12 col-lg-6 col-xl-6" id="userLogModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"
          style="margin-left:2%"
          aria-hidden="true">
         <div class="modal-dialog" style="max-width:500px" role="document">
@@ -534,7 +551,9 @@
                                             class="fa fa-calendar-o"></span> 최신순</a>
                                 </div>
                             </div>
-                            <div id="boardLog"></div>
+                            <table class="table" style="table-layout: fixed;"><tbody id="boardLog">
+
+                            </tbody></table>
                             <div style="display: inline-flex; margin-left:10px">
                                 <div id="prevBoardssBtn" style=" cursor:pointer" onclick="getUserBoardLogs(-1)"
                                      disabled>
@@ -565,8 +584,9 @@
                                             class="fa fa-calendar-o"></span> 최신순</a>
                                 </div>
                             </div>
-                            <div id="commentLog">
-                            </div>
+                            <table class="table" style="table-layout: fixed" >
+                                <tbody id="commentLog"></tbody>
+                            </table>
                             <div style="display: inline-flex; margin-left:10px">
                                 <div id="prevCommentsBtn" style=" cursor:pointer" onclick="getUserCommentLogs(-1)"
                                      disabled>

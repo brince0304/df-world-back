@@ -699,15 +699,15 @@ function getUserCommentLogs(page) {
             if (data.content.length > 0) {
                 $(data.content).each(function () {
                     if (this.deleted === false) {
-                        html += '<div data-id="' + this.id + '" style="margin:5px">';
+                        html += '<tr data-id="' + this.id + '" style="margin:5px">';
                         html += '<a style="text-decoration-line: none; color: #535353;" href="/boards/' + this.boardId + '">';
                         if (this.commentContent.length < 35) {
-                            html += '<span class="boardTitle">' + this.commentContent + '</span>'
+                            html += '<td style="width:67%"><span  class="boardTitle">' + this.commentContent + '</span></td>'
                         } else {
-                            html += '<span class="commentOverflow" > ' + this.commentContent + '</span>'
+                            html += '<td style="width:67%" ><span class="commentOverflow" > ' + this.commentContent + '</span></td>'
                         }
                         html +=
-                            '                                   <div style="display:inline-block; float:right;">' +
+                            '                                   <td >' +
                             '                                       <i class="fa fa-heart-o" style=""> </i>' +
                             '                                       <span class="badge bg-transparent text-black"' +
                             '                                             >' + this.commentLikeCount + '</span>' +
@@ -715,20 +715,19 @@ function getUserCommentLogs(page) {
                             '                                       <span class="badge bg-transparent text-black"' +
                             '                                             >' + this.childrenCommentsSize + '</span>'
                         html += '<span style="color:grey; font-size: 11px;" >' + this.createdAt + '</span>';
+                        html += '</td>';
                         html += '</a>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
+                        html += '</tr>';
                     } else {
-                        html += '<div data-id="' + this.id + '" style="margin:5px">';
-                        html += '<i class="fa fa-exclamation" aria-hidden="true" style="color:darkred"></i>';
+                        html += '<tr data-id="' + this.id + '" style="margin:5px">';
+                        html += '<td style="width:67%" ><i class="fa fa-exclamation" aria-hidden="true" style="color:darkred"></i>';
                         if (this.commentContent.length < 35) {
-                            html += '<span class="boardTitle" style="color:darkred">' + this.commentContent + '</span>'
+                            html += '<span class="boardTitle" style="color:darkred;">' + this.commentContent + '</span></td>'
                         } else {
-                            html += '<span class="commentOverflow"  style="color:darkred"> ' + this.commentContent + '</span>'
+                            html += '<span class="commentOverflow"  style="color:darkred ;"> ' + this.commentContent + '</span></td>'
                         }
                         html +=
-                            '                                   <div style="display:inline-block; float:right;">' +
+                            '                                   <td >' +
                             '                                       <i class="fa fa-heart-o" style=""> </i>' +
                             '                                       <span class="badge bg-transparent text-black"' +
                             '                                             >' + this.commentLikeCount + '</span>' +
@@ -736,9 +735,8 @@ function getUserCommentLogs(page) {
                             '                                       <span class="badge bg-transparent text-black"' +
                             '                                             >' + this.childrenCommentsSize + '</span>'
                         html += '<span style="color:grey; font-size: 11px;" >' + this.createdAt + '</span>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
+                        html += '</td>';
+                        html += '</tr>';
                     }
                 });
                 $('#commentLog').html(html);
