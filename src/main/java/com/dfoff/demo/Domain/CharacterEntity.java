@@ -49,16 +49,19 @@ public class CharacterEntity extends AuditingFields {
     @Setter
     private String jobGrowName;
     @Setter
-    private Integer adventureFame;
+    @Builder.Default
+    private Integer adventureFame=0;
 
     @Setter
     private String adventureName;
 
     @Setter
-    private Integer buffPower;
+    @Builder.Default
+    private Integer buffPower = 0;
 
     @Setter
-    private Integer damageIncrease;
+    @Builder.Default
+    private Integer damageIncrease = 0;
 
     @Setter
     private String guildId;
@@ -116,6 +119,10 @@ public class CharacterEntity extends AuditingFields {
 
         private final String guildName;
 
+        private final Integer buffPower;
+
+        private final Integer damageIncrease;
+
 
 
 
@@ -132,6 +139,8 @@ public class CharacterEntity extends AuditingFields {
                     .jobGrowName(dto.getJobGrowName())
                     .adventureFame(dto.getAdventureFame())
                     .adventureName(dto.getAdventureName())
+                    .damageIncrease(dto.getDamageIncrease())
+                    .buffPower(dto.getBuffPower())
                     .guildId(dto.getGuildId())
                     .guildName(dto.getGuildName())
                     .build();
@@ -147,6 +156,26 @@ public class CharacterEntity extends AuditingFields {
                     .jobGrowId(dto.getJobGrowId())
                     .jobName(dto.getJobName())
                     .jobGrowName(dto.getJobGrowName())
+                    .build();
+        }
+
+
+        public static CharacterEntityDto from(CharacterEntityResponse response){
+            return CharacterEntityDto.builder()
+                    .characterId(response.getCharacterId())
+                    .characterName(response.getCharacterName())
+                    .serverId(response.getServerId())
+                    .level(response.getLevel())
+                    .jobId(response.getJobId())
+                    .jobGrowId(response.getJobGrowId())
+                    .jobName(response.getJobName())
+                    .jobGrowName(response.getJobGrowName())
+                    .adventureFame(response.getAdventureFame())
+                    .adventureName(response.getAdventureName())
+                    .guildId(response.getGuildId())
+                    .guildName(response.getGuildName())
+                    .buffPower(response.getBuffPower())
+                    .damageIncrease(response.getDamageIncrease())
                     .build();
         }
 
@@ -198,6 +227,8 @@ public class CharacterEntity extends AuditingFields {
                     .adventureName(entity.getAdventureName())
                     .guildId(entity.getGuildId())
                     .guildName(entity.getGuildName())
+                    .buffPower(entity.getBuffPower())
+                    .damageIncrease(entity.getDamageIncrease())
                     .build();
         }
 
@@ -232,6 +263,10 @@ public class CharacterEntity extends AuditingFields {
 
             private final String guildName;
 
+            private final Integer buffPower;
+
+            private final Integer damageIncrease;
+
             private final List<CharacterAbilityDto.Status__1> status;
 
 
@@ -251,6 +286,9 @@ public class CharacterEntity extends AuditingFields {
                         .guildId(dto.getGuildId())
                         .guildName(dto.getGuildName())
                         .modifiedAt(dto.getModifiedAt()!=null?timesAgo(dto.getModifiedAt()):"방금 전")
+                        .createdAt(dto.getCreatedAt()!=null?timesAgo(dto.getCreatedAt()):"방금 전")
+                        .buffPower(dto.getBuffPower())
+                        .damageIncrease(dto.getDamageIncrease())
                         .build();
             }
 
