@@ -261,6 +261,7 @@ public class UserAccountService {
             throw new IllegalArgumentException("모험단이 등록되지 않았습니다.");
         }
         account.getAdventure().setUserAccount(null);
+        account.getAdventure().setRepresentCharacter(null);
         account.setAdventure(null);
 
     }
