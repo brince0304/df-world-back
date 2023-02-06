@@ -9,6 +9,7 @@ import com.dfoff.demo.Service.NotificationService;
 import com.dfoff.demo.Service.SaveFileService;
 import com.dfoff.demo.Service.UserAccountService;
 import com.dfoff.demo.Util.Bcrypt;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.web.PageableDefault;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -127,9 +129,12 @@ public class UserAccountController {
 
 
     @PostMapping("/users")
-    public ResponseEntity<?> createAccount(@RequestBody UserAccount.UserAccountSignUpRequest request) {
+    public ResponseEntity<?> createAccount(@RequestBody @Valid UserAccount.UserAccountSignUpRequest request, BindingResult bindingResult) {
         if (!request.getPassword().equals(request.getPasswordCheck())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        if(bindingResult.hasErrors()){
+            return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
         }
         request.setPassword(bcrypt.encode(request.getPassword()));
         userAccountService.createAccount(request, saveFileService.getFileByFileName("icon_char_0.png"));

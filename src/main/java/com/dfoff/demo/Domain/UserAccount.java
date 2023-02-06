@@ -376,6 +376,8 @@ public class UserAccount extends AuditingFields {
 
         private final Set<CharacterUserAccountResponse> adventureCharacters;
 
+        private final String representCharacterName;
+
 
 
         public static UserAccountMyPageResponse from(UserAccount userAccount) {
@@ -390,6 +392,7 @@ public class UserAccount extends AuditingFields {
                     .modifiedAt(userAccount.getModifiedAt())
                     .modifiedBy(userAccount.getModifiedBy())
                     .adventureCharacters(userAccount.getAdventure() !=null ? userAccount.getAdventure().getCharacters().stream().map(CharacterUserAccountResponse::from).collect(Collectors.toSet()) : new HashSet<>())
+                    .representCharacterName(userAccount.getAdventure() == null ? "" : userAccount.getAdventure().getRepresentCharacter().getCharacterName())
                     .build();
         }
 

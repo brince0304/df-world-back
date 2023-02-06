@@ -337,10 +337,14 @@
                                                                  style=""> <small
                                                                         style=" display:inline; color: #d39e00"
                                                                         th:text="${char.adventureFame}"></small> </span>
-                                                                <img class="badge bg-light text-dark" type="button"
-                                                                      th:data-id="${char.characterId}"
-                                                                      th:data-server="${char.serverId}"
-                                                                      style="display:inline ; float:right; " src="/images/icon_char/mohum.png"></div>
+                                                                <img class="badge bg-light text-dark"
+                                                                     th:data-id="${char.characterId}"
+                                                                     th:data-server="${char.serverId}"
+                                                                     style="display:inline ; float:right; " th:if="${user.representCharacterName!=char.characterName}" width="35x"  src="/images/icon_char/mohum.png">
+                                                                <img class="badge bg-light text-dark"
+                                                                     th:data-id="${char.characterId}"
+                                                                     th:data-server="${char.serverId}"
+                                                                     style="display:inline ; float:right; " th:if="${user.representCharacterName==char.characterName}" width="35px" src="/images/icon_char/star-icon.png"></div>
                                                             <div class="advisor_thumb">
                                                                 <img th:src="${char.characterImageUrl}"
                                                                      src="" style="scale:1.7" alt="">
