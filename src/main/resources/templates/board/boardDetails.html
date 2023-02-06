@@ -1148,7 +1148,6 @@
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             success: function (success) {
-                alert('댓글 작성 완료');
                 $('#comment').val('');
                 getBoardComment($('#boardId').val());
             },
@@ -1164,11 +1163,11 @@
                 url: "/boards",
                 type: "delete",
                 data: {
-                    id: $("#boardId").val()
+                    boardId: $("#boardId").val()
                 },
                 success: function (data) {
                     alert("삭제되었습니다.");
-                    location.href = "/board.df";
+                    location.href = "/boards/";
                 },
                 error: function (request, status, error) {
                     alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
