@@ -16,14 +16,18 @@ import java.util.StringTokenizer;
 @Slf4j
 public class CharactersUtil {
 
+    //버퍼들의 장비 옵션을 가져와서 버프강화 수치를 나타내주는 메소드
+    //신화장비 장착시에는 +2, 최신 에픽 장착시에는 +3가 됨 (30레벨 기준)
     public static List<String> getBuffPercent(CharacterBuffEquipmentJsonDto dto, List<EquipmentDetailJsonDto> equipment) throws InterruptedException {
         List<String> list = new ArrayList<>();
         int levelPlus =0;
         if(equipment.size()>0){
             for(EquipmentDetailJsonDto buff : equipment){
+                //버퍼 전용 옵션이기 때문에 버퍼일때만 스킬 레벨을 올려준다.
                 if(dto.getJobGrowName().equals("眞 크루세이더") || dto.getJobGrowName().equals("眞 인챈트리스") ||
                         dto.getJobGrowName().equals("헤카테")  ||dto.getJobGrowName().equals("홀리 오더") ||
                         dto.getJobGrowName().equals("세인트")){
+                    //30레벨 50레벨 스킬 강화 옵션이 달려있을때
                     if(buff.getItemBuff()==null || !buff.getItemBuff().getExplain().contains("30") || !buff.getItemBuff().getExplain().contains("50")){
                         if(buff.getItemRarity().equals("신화")){
                             levelPlus += 2;
@@ -60,6 +64,7 @@ public class CharactersUtil {
 
             } else if(dto.getSkill().getBuff()!=null && levelPlus>0){
                 list.add(dto.getSkill().getBuff().getSkillInfo().getName());
+                //버퍼일때는 스킬강화 수치가 버프강화 옵션에 나오지 않기때문에 새로 스킬 정보를 파싱해와서 해당 레벨에 맞는 수치를 찾아서 계산해주어야함
                 CharacterSkillDetailJsonDto skill = RestTemplateUtil.parseJsonFromUri(RestTemplateUtil.getCharacterSkillDetailUri(dto.getJobId(),dto.getSkill().getBuff().getSkillInfo().getSkillId()), CharacterSkillDetailJsonDto.class);
                 String desc = skill.getLevelInfo().getOptionDesc();
                 Integer level = dto.getSkill().getBuff().getSkillInfo().getOption().getLevel()+levelPlus;
@@ -71,6 +76,7 @@ public class CharactersUtil {
                     if(token.contains("스킬") || token.contains("데미지")||token.contains("무기")){
                         String num = token.substring(token.length()-3,token.length()-2);
                         switch (Integer.parseInt(num)-1) {
+                            // json이 네임과 벨류로 필드가 이뤄져있기 때문에 일일히 케이스를 나눠서 값을 가져와야함
                             case 0 -> list.add(val.getValue1() + "%");
                             case 1 -> list.add(val.getValue2() + "%");
                             case 2 -> list.add(val.getValue3() + "%");
@@ -93,6 +99,7 @@ public class CharactersUtil {
     }
 
     //계산법만 가져와서 씀
+   // 제대로된 계산법을 찾지 못했기때문에 보류
     public static String getSkillFinalPercent (CharacterSkillDetailJsonDto dto, int level) {
         List<String> percentPerLevel = new ArrayList<>();
         String optionDesc = dto.getLevelInfo().getOptionDesc();
@@ -142,6 +149,7 @@ public class CharactersUtil {
         public static String customForm(LocalDateTime date) {
             return date.format(DateTimeFormatter.ofPattern("MM월 dd일"));
         }
+        //캐릭터 프로필 이미지 css 클래스이름용 변환 메소드
     public static String getStyleClassName(String jobName) {
         return switch (jobName) {
             case "격투가(남)" -> "m-fighter";
