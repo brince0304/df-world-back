@@ -1,11 +1,12 @@
 package com.dfoff.demo.Service;
 
-import com.dfoff.demo.Domain.SaveFile;
-import com.dfoff.demo.Domain.UserAccount;
-import com.dfoff.demo.Repository.SaveFileRepository;
+import com.dfoff.demo.Domain.*;
+import com.dfoff.demo.Repository.UserAccountCharacterMapperRepository;
 import com.dfoff.demo.Repository.UserAccountRepository;
+import com.dfoff.demo.Repository.AdventureRepository;
 import com.dfoff.demo.Util.Bcrypt;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,6 +15,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -28,6 +31,12 @@ class UserAccountServiceTest {
     UserAccountService sut;
     @Mock
     UserAccountRepository userAccountRepository;
+
+    @Mock
+    AdventureRepository adventureRepository;
+
+    @Mock
+    UserAccountCharacterMapperRepository mapperRepository;
 
     @Mock
     Bcrypt bcrypt;
@@ -157,25 +166,6 @@ class UserAccountServiceTest {
         then(userAccountRepository).should().existsByUserId(account.getUserId());
     }
 
-    @Test
-    @DisplayName("계정 업데이트 테스트")
-    void updateAccountDetailsTest() {
-        UserAccount.UserAccountUpdateRequest account = UserAccount.UserAccountUpdateRequest.builder().
-                password("test2").passwordCheck("test2").
-                email("test2").
-                nickname("test2").
-                build();
-        given(userAccountRepository.findById(any())).willReturn(java.util.Optional.of(UserAccount.builder().
-                userId("test").
-                password("test").
-                email("test").
-                nickname("test").
-                build()));
-        //when&then
-        sut.updateAccountDetails(account.toDto());
-        then(userAccountRepository).should().findById(any());
-    }
-
 
 
     @Test
@@ -208,6 +198,109 @@ class UserAccountServiceTest {
     }
 
     @Test
+    @DisplayName("계정 모험단 등록 테스트")
+    void saveUserAdventureTest(){
+        given(adventureRepository.checkAdventureHasUserAccount(any())).willReturn(false);
+        given(adventureRepository.existsByRepresentCharacter_CharacterId(any())).willReturn(false);
+        given(userAccountRepository.findById(any())).willReturn(java.util.Optional.of(UserAccount.builder().
+                userId("test").
+                password("test").
+                email("test").
+                nickname("test").
+                build()));
+        given(adventureRepository.save(any())).willReturn(Adventure.builder().characters(new HashSet<>()).build());
+
+        sut.saveUserAdventure(Adventure.UserAdventureRequest.builder().adventureName("test")
+                .representCharacterId("test").serverId("test").build(),
+                UserAccount.UserAccountDto.from(createUserAccount()),
+                CharacterEntity.CharacterEntityDto.builder().characterId("test").serverId("test").adventureName("test").build(),
+                new ArrayList<>());
+
+            then(adventureRepository).should().save(any());
+    }
+
+    @Test
+    void updateUserPasswordTest(){
+        UserAccount account = createUserAccount();
+        String previousAccountPassword = account.getPassword();
+        given(userAccountRepository.findById(any())).willReturn(java.util.Optional.of(account));
+        sut.changePassword(UserAccount.UserAccountDto.from(account),"안녕하세요");
+        then(userAccountRepository).should().findById(any());
+       assertThat(account.getPassword()).isNotEqualTo(previousAccountPassword);
+    }
+
+    @Test
+    @DisplayName("계정 모험단 등록 테스트 - 예외 이미 존재하는 모험단")
+    void saveUserAdventureExceptionTest(){
+        given(adventureRepository.checkAdventureHasUserAccount(any())).willReturn(true);
+
+        Throwable throwable= catchThrowable(()->sut.saveUserAdventure(Adventure.UserAdventureRequest.builder().adventureName("test")
+                        .representCharacterId("test").serverId("test").build(),
+                UserAccount.UserAccountDto.from(createUserAccount()),
+                CharacterEntity.CharacterEntityDto.builder().characterId("test").serverId("test").adventureName("test").build(),
+                new ArrayList<>()));
+
+        assertThat(throwable).isInstanceOf(EntityExistsException.class);
+    }
+
+    @Test
+    @DisplayName("계정 모험단 등록 테스트 - 예외 이미 등록된 대표 캐릭터")
+    void saveUserAdventureException2Test(){
+        given(adventureRepository.checkAdventureHasUserAccount(any())).willReturn(false);
+        given(adventureRepository.existsByRepresentCharacter_CharacterId(any())).willReturn(true);
+
+
+        Throwable throwable= catchThrowable(()->sut.saveUserAdventure(Adventure.UserAdventureRequest.builder().adventureName("test")
+                        .representCharacterId("test").serverId("test").build(),
+                UserAccount.UserAccountDto.from(createUserAccount()),
+                CharacterEntity.CharacterEntityDto.builder().characterId("test").serverId("test").adventureName("test").build(),
+                new ArrayList<>()));
+
+        assertThat(throwable).isInstanceOf(EntityExistsException.class);
+    }
+
+    @Test
+    @DisplayName("계정 모험단 갱신 테스트")
+    void refreshUserAdventureTest(){
+        given(adventureRepository.existsByUserAccount_UserId(any())).willReturn(true);
+        UserAccount account = createUserAccount();
+        account.setAdventure(createUserAdventure());
+        given(userAccountRepository.findById(any())).willReturn(java.util.Optional.of(account));
+
+        sut.refreshUserAdventure(UserAccount.UserAccountDto.from(account));
+
+        then(adventureRepository).should().existsByUserAccount_UserId(any());
+        then(userAccountRepository).should().findById(any());
+    }
+
+    @Test
+    @DisplayName("유저 모험단 갱신 테스트 - 모험단이 존재하지 않는 경우")
+    void refreshUserAdventureExceptionTest(){
+        given(adventureRepository.existsByUserAccount_UserId(any())).willReturn(false);
+        UserAccount account = createUserAccount();
+        account.setAdventure(createUserAdventure());
+
+        Throwable throwable = catchThrowable(()-> sut.refreshUserAdventure(UserAccount.UserAccountDto.from(account)));
+
+        then(adventureRepository).should().existsByUserAccount_UserId(any());
+        assertThat(throwable).isInstanceOf(EntityNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("유저 모험단 갱신 테스트 - 계정이 존재하지 않는 경우")
+    void refreshUserAdventureExceptionTest2(){
+        given(adventureRepository.existsByUserAccount_UserId(any())).willReturn(true);
+        given(userAccountRepository.findById(any())).willThrow(EntityNotFoundException.class);
+        UserAccount account = createUserAccount();
+        account.setAdventure(createUserAdventure());
+
+        Throwable throwable = catchThrowable(()-> sut.refreshUserAdventure(UserAccount.UserAccountDto.from(account)));
+
+        then(adventureRepository).should().existsByUserAccount_UserId(any());
+        assertThat(throwable).isInstanceOf(EntityNotFoundException.class);
+    }
+
+    @Test
     @DisplayName("계정 프로필 아이콘 변경 테스트")
     void changeProfileIconTest() {
         //given
@@ -218,10 +311,36 @@ class UserAccountServiceTest {
                 build();
         //when
         sut.changeProfileIcon(UserAccount.UserAccountDto.from(createUserAccount()), SaveFile.SaveFileDto.from(saveFile));
-
         //then
         then(userAccountRepository).should().findById(any());
     }
+
+    @Test
+    void addCharacter(){
+        //given
+        given(userAccountRepository.existsByUserId(any())).willReturn(true);
+        given(userAccountRepository.findById(any())).willReturn(Optional.ofNullable(UserAccount.builder().userId("test").build()));
+
+        //when
+        sut.addCharacter(UserAccount.UserAccountDto.builder().userId("test").build(),CharacterEntity.CharacterEntityDto.builder().characterId("test").build());
+
+        //then
+        then(mapperRepository).should().save(any());
+    }
+
+    @Test
+    void deleteCharacter(){
+        //given
+        given(userAccountRepository.existsByUserId(any())).willReturn(true);
+        given(userAccountRepository.findById(any())).willReturn(Optional.ofNullable(UserAccount.builder().userId("test").build()));
+        given(mapperRepository.findByUserAccountAndCharacter(any(),any())).willReturn(UserAccountCharacterMapper.of(UserAccount.builder().userId("test").build(),CharacterEntity.builder().characterId("test").build()));
+        //when
+        sut.deleteCharacter(UserAccount.UserAccountDto.builder().userId("test").build(),CharacterEntity.CharacterEntityDto.builder().characterId("test").build());
+
+        //then
+        then(mapperRepository).should().findByUserAccountAndCharacter(any(),any());
+    }
+
 
     private UserAccount createUserAccount() {
         UserAccount account = UserAccount.builder().
@@ -246,5 +365,14 @@ class UserAccountServiceTest {
                 email("test").
                 nickname("test").
                 build();
+    }
+
+    private Adventure createUserAdventure() {
+        return Adventure.builder().
+                userAccount(createUserAccount())
+                .characters(new HashSet<>())
+                .adventureName("test")
+                .representCharacter(CharacterEntity.builder().build())
+                .build();
     }
 }

@@ -1,8 +1,8 @@
 package com.dfoff.demo.Controller;
 
+import com.dfoff.demo.Domain.Adventure;
 import com.dfoff.demo.Domain.SaveFile;
 import com.dfoff.demo.Domain.UserAccount;
-import com.dfoff.demo.Domain.UserAdventure;
 import com.dfoff.demo.Repository.CharacterEntityRepository;
 import com.dfoff.demo.Repository.SaveFileRepository;
 import com.dfoff.demo.Repository.UserAccountCharacterMapperRepository;
@@ -12,8 +12,6 @@ import com.dfoff.demo.Service.CharacterService;
 import com.dfoff.demo.Service.SaveFileService;
 import com.dfoff.demo.Service.UserAccountService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -22,17 +20,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Collection;
-
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -81,8 +72,10 @@ class UserAccountControllerTest {
     }
 
 
+
+    @WithUserDetails("test")
     void setUp() throws Exception {
-        UserAdventure.UserAdventureRequest userAdventureRequest = UserAdventure.UserAdventureRequest
+        Adventure.UserAdventureRequest userAdventureRequest = Adventure.UserAdventureRequest
                 .builder()
                 .randomString("소라")
                 .randomJobName("마법사(여)")
@@ -179,7 +172,7 @@ class UserAccountControllerTest {
     void addCharacterExceptionTest() throws Exception {
 
         mvc.perform(post("/users/characters?serverId=cain&characterId=77dae44a87261743386852bb3979c03a"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
     @Test
     @WithUserDetails ("test")
@@ -199,7 +192,7 @@ class UserAccountControllerTest {
     @Test
     void updateProfileExceptionTest() throws Exception {
         mvc.perform(put("/users?nickname=테스트&email=테스트"))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
 
@@ -224,7 +217,7 @@ class UserAccountControllerTest {
     @Test
     @WithUserDetails ("test")
     void createUserAdventure() throws Exception {
-        UserAdventure.UserAdventureRequest userAdventureRequest = UserAdventure.UserAdventureRequest
+        Adventure.UserAdventureRequest userAdventureRequest = Adventure.UserAdventureRequest
                 .builder()
                 .randomString("소라")
                 .randomJobName("마법사(여)")
@@ -243,7 +236,7 @@ class UserAccountControllerTest {
 
     @Test
     void getRandomJobNameAndStringExceptionTest() throws Exception {
-        mvc.perform(get("/users/adventure/validate")).andExpect(status().isForbidden());
+        mvc.perform(get("/users/adventure/validate")).andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -254,7 +247,7 @@ class UserAccountControllerTest {
 
     @Test
     void refreshUserAdventureExceptionTest() throws Exception {
-        mvc.perform(get("/users/adventure/refresh")).andExpect(status().isForbidden());
+        mvc.perform(get("/users/adventure/refresh")).andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -265,7 +258,7 @@ class UserAccountControllerTest {
 
     @Test
     void searchCharacterForUserAccountExceptionTest() throws Exception {
-        mvc.perform(get("/users/characters/").param("serverId","cain").param("characterName","소라")).andExpect(status().isForbidden());
+        mvc.perform(get("/users/characters/").param("serverId","cain").param("characterName","소라")).andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -276,6 +269,12 @@ class UserAccountControllerTest {
 
     @Test
     void getLogExceptionTest() throws Exception {
-        mvc.perform(get("/users/logs/").param("type","board").param("sortBy","like")).andExpect(status().isForbidden());
+        mvc.perform(get("/users/logs/").param("type","board").param("sortBy","like")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithUserDetails("test")
+    void refreshUserAdventureTest() throws Exception {
+        mvc.perform(get("/users/adventure/refresh")).andExpect(status().isOk());
     }
 }

@@ -32,7 +32,7 @@ class CharacterControllerTest {
 
     @Test
     void searchCharacter() throws Exception {
-        mvc.perform(get("/characters/?characterName=테스트&serverId=all"))
+        mvc.perform(get("/characters/").param("characterName","테스트").param("serverId","all"))
                 .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_HTML));
     }
 

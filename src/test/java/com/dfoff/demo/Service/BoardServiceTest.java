@@ -13,6 +13,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
@@ -62,7 +63,6 @@ class BoardServiceTest {
         given(boardRepository.save(any(Board.class))).willReturn(board);
         //when
         sut.createBoard(createBoardRequestDto(),createSaveFileDto(),createUserAccountDto(),null);
-
         //then
         then(boardRepository).should().save(any(Board.class));
     }
@@ -134,8 +134,12 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
     @Test
     void updateArticleTest() {
         //given
-        Board board = createBoardDto().toEntity();
-        board.setBoardTitle("test00");
+        Board board = Board.builder()
+                        .id(1L)
+                                .boardTitle("안녕하세요")
+                                        .boardContent("방ㅇ가방가입니다하이하이")
+                                                .boardType(BoardType.NOTICE).build();
+        String previousTitle = board.getBoardTitle();
         given(boardRepository.findBoardById(any(Long.class))).willReturn(Optional.of(board));
 
         //when
@@ -143,7 +147,26 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
 
         //then
         then(boardRepository).should().findBoardById(any(Long.class));
-        assertThat(board.getBoardTitle()).isEqualTo("test2");
+        assertThat(previousTitle).isEqualTo(board.getBoardTitle());
+    }
+
+    @Test
+    void updateArticleOtherCaseTest() {
+        //given
+        Board board = Board.builder()
+                .id(1L)
+                .boardTitle("안녕하세요")
+                .boardContent("방ㅇ가방가입니다하이하이")
+                .boardType(BoardType.NOTICE).build();
+        String previousTitle = board.getBoardTitle();
+        given(boardRepository.findBoardById(any(Long.class))).willReturn(Optional.of(board));
+
+        //when
+        sut.updateBoard(eq(1L),createBoardRequestDto2(),createSaveFileDto(),null);
+
+        //then
+        then(boardRepository).should().findBoardById(any(Long.class));
+        assertThat(previousTitle).isEqualTo(board.getBoardTitle());
     }
 
     @Test
@@ -207,6 +230,7 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
 
     private Board.BoardDto createBoardDto() {
         return Board.BoardDto.builder()
+                .id(1L)
                 .boardTitle("test")
                 .boardContent("test")
                 .boardType(BoardType.FREE)
@@ -246,7 +270,7 @@ given(boardRepository.findAll(Pageable.ofSize(10))).willReturn(new PageImpl<>(Li
 
     private Board.BoardRequest createBoardRequestDto2(){
         return Board.BoardRequest.builder()
-                .boardTitle("test2")
+                .boardTitle("안녕하세요")
                 .boardContent("test222222222222")
                 .boardType(BoardType.FREE)
                 .build();
