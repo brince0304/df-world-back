@@ -277,4 +277,14 @@ class UserAccountControllerTest {
     void refreshUserAdventureTest() throws Exception {
         mvc.perform(get("/users/adventure/refresh")).andExpect(status().isOk());
     }
+    @Test
+    @WithUserDetails("test")
+    void deleteByAccountByUserIdTest() throws Exception {
+        mvc.perform(delete("/users")).andExpect(status().isOk());
+    }
+
+    @Test
+    void deleteByAccountByUserIdExceptionTest() throws Exception {
+        mvc.perform(delete("/users")).andExpect(status().isUnauthorized());
+    }
 }
