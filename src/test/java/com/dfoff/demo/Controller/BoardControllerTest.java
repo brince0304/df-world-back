@@ -1,6 +1,5 @@
 package com.dfoff.demo.Controller;
 
-import com.dfoff.demo.Annotation.WithMockCustomUser;
 import com.dfoff.demo.Domain.Board;
 import com.dfoff.demo.Domain.BoardComment;
 import com.dfoff.demo.Domain.EnumType.BoardType;
@@ -67,17 +66,24 @@ class BoardControllerTest {
     @Test
     @WithUserDetails("test")
     void deleteBoardTest() throws Exception {
-        mvc.perform(delete("/boards").param("id", "1")).andExpect(status().isOk());
+        mvc.perform(delete("/boards").param("boardId", "1")).andExpect(status().isOk());
     }
 
     @Test
     void deleteBoardExceptionTest() throws Exception {
-        mvc.perform(delete("/boards").param("id", "5")).andExpect(status().isForbidden());
+        mvc.perform(delete("/boards").param("boardId", "5")).andExpect(status().isUnauthorized());
     }
 
     @Test
+    @WithUserDetails("tes")
+    void deleteBoardIllegalAccessTest() throws Exception {
+        mvc.perform(delete("/boards").param("boardId", "5")).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithUserDetails("test")
     void deleteBoardNotFoundExceptionTest() throws Exception {
-        mvc.perform(delete("/boards").param("id", "1")).andExpect(status().isForbidden());
+        mvc.perform(delete("/boards").param("boardId", "50")).andExpect(status().isNotFound());
     }
 
     @Test
@@ -97,6 +103,25 @@ class BoardControllerTest {
 
         mvc.perform(put("/boards").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardRequest)))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithUserDetails("tes")
+    void updateBoardIllegalAccessTest() throws Exception {
+        Board.BoardRequest boardRequest = Board.BoardRequest.builder()
+                .id(10L)
+                .boardTitle("test")
+                .boardContent("test4214124214214121212412")
+                .boardType(BoardType.NOTICE)
+                .serverId("bakal")
+                .hashtag(new ArrayList<>())
+                .characterId("13b99a237d7e1b9369fdcf2ca186b845")
+                .boardFiles("")
+                .build();
+
+
+        mvc.perform(put("/boards").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardRequest)))
+                .andExpect(status().isForbidden());
     }
 
 
@@ -130,7 +155,7 @@ class BoardControllerTest {
                 .build();
 
         mvc.perform(post("/boards").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardRequest)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -156,7 +181,7 @@ class BoardControllerTest {
                 .boardFiles("")
                 .build();
         mvc.perform(put("/boards").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardRequest)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
 
@@ -206,7 +231,7 @@ class BoardControllerTest {
                 .commentContent("test")
                 .build();
         mvc.perform(post("/comments").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardCommentRequest)))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -239,6 +264,12 @@ class BoardControllerTest {
 
     @Test
     void deleteBoardCommentUnauthorized() throws Exception {
+        mvc.perform(delete("/comments").param("commentId", "5")).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithUserDetails("tes")
+    void deleteBoardCommentIllegalAccess() throws Exception {
         mvc.perform(delete("/comments").param("commentId", "5")).andExpect(status().isForbidden());
     }
 
@@ -247,6 +278,17 @@ class BoardControllerTest {
         BoardComment.BoardCommentRequest boardCommentRequest = BoardComment.BoardCommentRequest.builder()
                 .boardId(958L)
                 .commentId(1L)
+                .commentContent("test22")
+                .build();
+        mvc.perform(put("/comments").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardCommentRequest))).andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @WithUserDetails("tes")
+    void updateBoardCommentIllegalAccess() throws Exception {
+        BoardComment.BoardCommentRequest boardCommentRequest = BoardComment.BoardCommentRequest.builder()
+                .boardId(5L)
+                .commentId(5L)
                 .commentContent("test22")
                 .build();
         mvc.perform(put("/comments").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(boardCommentRequest))).andExpect(status().isForbidden());

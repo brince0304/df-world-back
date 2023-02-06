@@ -2,6 +2,7 @@ package com.dfoff.demo.Controller;
 
 import com.dfoff.demo.Annotation.Auth;
 import com.dfoff.demo.Annotation.BindingErrorCheck;
+import com.dfoff.demo.Annotation.BoardCheck;
 import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.Domain.EnumType.UserAccount.NotificationType;
@@ -96,15 +97,14 @@ public class BoardController {
 
     @Auth
     @GetMapping("/boards/insert")
+    @BoardCheck
     public ModelAndView getBoardInsert(@AuthenticationPrincipal UserAccount.PrincipalDto principal,@RequestParam String request,
-                                       @RequestParam(required = false) String id,
-                                       Board.BoardRequest boardRequest) {
+                                       @RequestParam(required = false) Long id) {
         ModelAndView mav = new ModelAndView("/board/boardInsert");
         if (request.equals("add")) {
-            mav.addObject("boardRequest", boardRequest);
             mav.addObject("requestType", request);
         } else if (request.equals("update")) {
-            Board.BoardDetailResponse boardResponse = boardService.getBoardDetailById(Long.parseLong(id));
+            Board.BoardDetailResponse boardResponse = boardService.getBoardDetailById(id);
             mav.addObject("boardResponse", boardResponse);
             mav.addObject("requestType", request);
             StringBuilder sb = new StringBuilder();
@@ -127,19 +127,15 @@ public class BoardController {
         return boardService.findHashtags(query);
     }
     @Auth
+    @BoardCheck
     @DeleteMapping("/boards")
     public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
-                                         @RequestParam Long id) {
-
-        String writer = boardService.getBoardAuthorById(id);
-        if (!writer.equals(principalDto.getUsername())) {
-            throw new SecurityException("권한이 없습니다.");
-        }
-        boardService.getBoardSaveFile(id).forEach(saveFile -> saveFileService.deleteFile(saveFile.id()));
-        boardService.getBoardCommentsByBoardId(id).stream().filter(o -> !o.getUserId().equals(principalDto.getUsername())).forEach(o -> {
+                                         @RequestParam Long boardId) {
+        boardService.getBoardSaveFile(boardId).forEach(saveFile -> saveFileService.deleteFile(saveFile.id()));
+        boardService.getBoardCommentsByBoardId(boardId).stream().filter(o -> !o.getUserId().equals(principalDto.getUsername())).forEach(o -> {
             notificationService.saveBoardCommentNotification(o.getUserAccountDto(), o, principalDto.getNickname(), NotificationType.DELETE_COMMENT);
         });
-        boardService.deleteBoardById(id);
+        boardService.deleteBoardById(boardId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @Auth
@@ -149,9 +145,9 @@ public class BoardController {
                                                      @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable
                                                     ) throws InterruptedException {
         if (serverId.equals("adventure")) {
-            return new ResponseEntity<>(characterService.getCharacterByAdventureName(characterName, pageable).map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).toList(), HttpStatus.OK);
+            return new ResponseEntity<>(characterService.getCharacterByAdventureName(characterName, pageable), HttpStatus.OK);
         }
-        List<CompletableFuture<CharacterEntity.CharacterEntityDto>> dtos = new ArrayList<>();
+        List<CharacterEntity.CharacterEntityDto> dtos = new ArrayList<>();
         List<CharacterEntity.CharacterEntityDto> dtos1 = characterService.getCharacterDtos(serverId, characterName).join();
         return getCharacterResponse(dtos, dtos1, characterService);
     }
@@ -159,26 +155,25 @@ public class BoardController {
     @Auth
     @BindingErrorCheck
     @PostMapping("/boards")
-    public ResponseEntity<?> saveBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody @Valid Board.BoardRequest boardRequest, BindingResult bindingResult) {
-
+    public ResponseEntity<?> saveBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody @Valid Board.BoardRequest boardRequest, BindingResult bindingResult) throws InterruptedException {
         Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestFileIds(boardRequest);
-        if (boardRequest.getServerId().equals("")) {
+        if (boardRequest.serverId().equals("")) {
             return new ResponseEntity<>(boardService.createBoard(boardRequest, set, UserAccount.UserAccountDto.from(principalDto), null), HttpStatus.OK);
         }
-        CharacterEntity.CharacterEntityDto character = characterService.getCharacter(boardRequest.getServerId(), boardRequest.getCharacterId()).join();
+        CharacterEntity.CharacterEntityDto character = characterService.getCharacter(boardRequest.serverId(), boardRequest.characterId());
         return new ResponseEntity<>(boardService.createBoard(boardRequest, set, UserAccount.UserAccountDto.from(principalDto), character), HttpStatus.OK);
     }
 
     @Auth
+    @BoardCheck
     @BindingErrorCheck
     @PutMapping("/boards")
-    public ResponseEntity<?> updateBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody @Valid Board.BoardRequest updateRequest, BindingResult bindingResult) {
-        String writer = boardService.getBoardAuthorById(updateRequest.getId());
-        if (!writer.equals(principalDto.getUsername())) {
-            throw new SecurityException("권한이 없습니다.");
+    public ResponseEntity<?> updateBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody @Valid Board.BoardRequest boardRequest, BindingResult bindingResult) throws InterruptedException {
+        Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestFileIds(boardRequest);
+        if(boardRequest.serverId().equals("")) {
+            return new ResponseEntity<>(boardService.updateBoard(boardRequest.id(), boardRequest, set, null), HttpStatus.OK);
         }
-        Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestFileIds(updateRequest);
-        CharacterEntity.CharacterEntityDto character = characterService.getCharacter(updateRequest.getServerId(), updateRequest.getCharacterId()).join();
-        return new ResponseEntity<>(boardService.updateBoard(updateRequest.getId(), updateRequest, set, character), HttpStatus.OK);
+        CharacterEntity.CharacterEntityDto character = characterService.getCharacter(boardRequest.serverId(), boardRequest.characterId());
+        return new ResponseEntity<>(boardService.updateBoard(boardRequest.id(), boardRequest, set, character), HttpStatus.OK);
     }
 }

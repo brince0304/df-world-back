@@ -33,10 +33,6 @@ class CharacterServiceTest {
     @Mock
     CharacterEntityRepository characterEntityRepository;
 
-    @Mock
-    UserAccountRepository userAccountRepository;
-    @Mock
-    UserAccountCharacterMapperRepository mapperRepository;
 
     @Mock
     RestTemplateUtil restTemplateUtil;
@@ -61,7 +57,7 @@ class CharacterServiceTest {
     }
 
     @Test
-    void getCharacter(){
+    void getCharacter() throws InterruptedException {
         //given
         given(characterEntityRepository.findById(any())).willReturn(Optional.ofNullable(CharacterEntity.builder().characterId("test").build()));
         //when
@@ -85,36 +81,9 @@ class CharacterServiceTest {
         //given
         given(characterEntityRepository.save(any())).willReturn(CharacterEntity.builder().characterId("3bf7c8c99a0389acc0e66f4ff230d0acs").serverId("casillas").build());
         //when
-        sut.getCharacterAbilityAsync(CharacterEntity.CharacterEntityDto.builder().characterId("3bf7c8c99a0389acc0e66f4ff230d0ac").serverId("casillas").build());
+        sut.getCharacterAbility(CharacterEntity.CharacterEntityDto.builder().characterId("3bf7c8c99a0389acc0e66f4ff230d0ac").serverId("casillas").build());
         //then
         then(characterEntityRepository).should().save(any());
-    }
-    @Test
-    void addCharacter(){
-        //given
-        given(userAccountRepository.existsByUserId(any())).willReturn(true);
-        given(characterEntityRepository.findById(any())).willReturn(Optional.ofNullable(CharacterEntity.builder().characterId("test").build()));
-        given(userAccountRepository.findById(any())).willReturn(Optional.ofNullable(UserAccount.builder().userId("test").build()));
-
-        //when
-        sut.addCharacter(UserAccount.UserAccountDto.builder().userId("test").build(),CharacterEntity.CharacterEntityDto.builder().characterId("test").build());
-
-        //then
-        then(mapperRepository).should().save(any());
-    }
-
-    @Test
-    void deleteCharacter(){
-        //given
-        given(userAccountRepository.existsByUserId(any())).willReturn(true);
-        given(characterEntityRepository.findById(any())).willReturn(Optional.ofNullable(CharacterEntity.builder().characterId("test").build()));
-        given(userAccountRepository.findById(any())).willReturn(Optional.ofNullable(UserAccount.builder().userId("test").build()));
-        given(mapperRepository.findByUserAccountAndCharacter(any(),any())).willReturn(UserAccountCharacterMapper.of(UserAccount.builder().userId("test").build(),CharacterEntity.builder().characterId("test").build()));
-        //when
-        sut.deleteCharacter(UserAccount.UserAccountDto.builder().userId("test").build(),CharacterEntity.CharacterEntityDto.builder().characterId("test").build());
-
-        //then
-        then(mapperRepository).should().findByUserAccountAndCharacter(any(),any());
     }
 
 }

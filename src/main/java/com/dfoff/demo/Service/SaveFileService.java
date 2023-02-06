@@ -67,8 +67,8 @@ public class SaveFileService {
     }
 
     public Set<SaveFile.SaveFileDto> getFileDtosFromRequestFileIds(Board.BoardRequest dto) {
-        deleteNotUploadedFilesFromBoardContent(dto.getBoardContent(),dto.getBoardFiles());
-        String[] fileIdArr = Objects.requireNonNull(dto.getBoardFiles()).split(",");
+        deleteNotUploadedFilesFromBoardContent(dto.boardContent(),dto.boardFiles());
+        String[] fileIdArr = Objects.requireNonNull(dto.boardFiles()).split(",");
         Set<SaveFile.SaveFileDto> saveFileDtos = new HashSet<>();
         for (String fileId : fileIdArr) {
             log.info("fileId: {}", fileId);

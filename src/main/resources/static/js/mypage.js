@@ -139,6 +139,16 @@ $('.nav-menu a, #mobile-nav a, .scrollto').on('click', function () {
 
 $('#nicknameUpdate').blur(function () {
     const nickname = $('#nicknameUpdate').val();
+    if(nickname.length < 2 || nickname.length > 10){
+        nicknameCheck = false;
+        $('#nicknameUpdateForm').removeClass('was-validated');
+        $('#nicknameUpdate').removeClass("is-valid");
+        $('#nicknameUpdate').addClass("is-invalid");
+        $('#nicknameUpdateVal').hide();
+        $('#nicknameUpdateNonVal').text("닉네임은 2자 이상 10자 이하로 입력해주세요.");
+        $('#nicknameUpdateNonVal').show();
+        return;
+    }
     $.ajax({
         url: "/users/check?nickname=" + nickname,
         type: "GET",
@@ -155,7 +165,9 @@ $('#nicknameUpdate').blur(function () {
                 $('#nicknameUpdate').removeClass("is-valid");
                 $('#nicknameUpdate').addClass("is-invalid");
                 $('#nicknameUpdateVal').hide();
+                $('#nicknameUpdateNonVal').text("이미 사용중인 닉네임입니다.");
                 $('#nicknameUpdateNonVal').show();
+
                 nicknameCheck = false;
             }
 
@@ -167,6 +179,27 @@ $('#nicknameUpdate').blur(function () {
 
 $('#emailUpdate').blur(function () {
     const email = $('#emailUpdate').val();
+    emailRegExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+    if(email === ""){
+        $('#emailUpdateForm').removeClass('was-validated');
+        $('#emailUpdate').removeClass("is-valid");
+        $('#emailUpdate').addClass("is-invalid");
+        $('#emailUpdateVal').hide();
+        $('#emailUpdateNonVal').text("이메일을 입력해주세요.");
+        $('#emailUpdateNonVal').show();
+        emailCheck = false;
+        return;
+    }
+    if(email.match(emailRegExp) === null){
+        $('#emailUpdateForm').removeClass('was-validated');
+        $('#emailUpdate').removeClass("is-valid");
+        $('#emailUpdate').addClass("is-invalid");
+        $('#emailUpdateVal').hide();
+        $('#emailUpdateNonVal').text("이메일 형식이 올바르지 않습니다.");
+        $('#emailUpdateNonVal').show();
+        emailCheck = false;
+        return;
+    }
     $.ajax({
         url: "/users/check?email=" + email,
         type: "GET",
@@ -183,6 +216,7 @@ $('#emailUpdate').blur(function () {
                 $('#emailUpdate').removeClass("is-valid");
                 $('#emailUpdate').addClass("is-invalid");
                 $('#emailUpdateVal').hide();
+                $('#emailUpdateNonVal').text("이미 사용중인 이메일입니다.");
                 $('#emailUpdateNonVal').show();
                 emailCheck = false;
             }
@@ -194,14 +228,25 @@ $('#emailUpdate').blur(function () {
 });
 
 $('#passwordCheckUpdate').blur(function () {
+    const passwordRegEx = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
     const password = $('#passwordUpdate').val();
     let passwordCheck = $('#passwordCheckUpdate').val();
-
+    if(password.match(passwordRegEx) === null){
+        $('#passwordCheckUpdateForm').removeClass('was-validated');
+        $('#passwordCheckUpdate').removeClass("is-valid");
+        $('#passwordCheckUpdate').addClass("is-invalid");
+        $('#passwordCheckUpdateVal').hide();
+        $('#passwordUpdateNonVal').text("비밀번호는 영문, 숫자, 특수문자를 포함한 8자 이상 20자 이하로 입력해주세요.");
+        $('#passwordUpdateNonVal').show();
+        passwordBooleanCheck = false;
+        return;
+    }
     if (password !== passwordCheck) {
         $('#passwordCheckUpdateForm').removeClass('was-validated');
         $('#passwordCheckUpdate').removeClass("is-valid");
         $('#passwordCheckUpdate').addClass("is-invalid");
         $('#passwordCheckUpdateVal').hide();
+        $('#passwordUpdateNonVal').text("비밀번호가 일치하지 않습니다.");
         $('#passwordCheckUpdateNonVal').show();
         $('#passwordUpdate').removeClass("is-valid");
         $('#passwordUpdate').addClass("is-invalid");
@@ -221,12 +266,26 @@ $('#passwordCheckUpdate').blur(function () {
 $('#passwordUpdate').blur(function () {
     const password = $('#passwordUpdate').val();
     const passwordCheck = $('#passwordCheckUpdate').val();
+    const passwordRegEx = /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$/;
+
+
+    if(password.match(passwordRegEx) === null){
+        $('#passwordUpdateForm').removeClass('was-validated');
+        $('#passwordUpdate').removeClass("is-valid");
+        $('#passwordUpdate').addClass("is-invalid");
+        $('#passwordUpdateVal').hide();
+        $('#passwordUpdateNonVal').text("비밀번호는 영문, 숫자, 특수문자를 포함한 8자 이상 20자 이하로 입력해주세요.");
+        $('#passwordUpdateNonVal').show();
+        passwordBooleanCheck = false;
+        return;
+    }
 
     if (password !== passwordCheck) {
         $('#passwordCheckUpdateForm').removeClass('was-validated');
         $('#passwordCheckUpdate').removeClass("is-valid");
         $('#passwordCheckUpdate').addClass("is-invalid");
         $('#passwordCheckUpdateVal').hide();
+        $('#passwordUpdateNonVal').text("비밀번호가 일치하지 않습니다.");
         $('#passwordCheckUpdateNonVal').show();
         $('#passwordUpdate').removeClass("is-valid");
         $('#passwordUpdate').addClass("is-invalid");
@@ -237,8 +296,8 @@ $('#passwordUpdate').blur(function () {
         $('#passwordCheckUpdate').removeClass("is-invalid");
         $('#passwordUpdate').addClass("is-valid");
         $('#passwordUpdate').removeClass("is-invalid");
-        $('#passwordCheckUpdateVal').show();
-        $('#passwordCheckUpdateNonVal').hide();
+        $('#passwordUpdateVal').show();
+        $('#passwordUpdateNonVal').hide();
         passwordBooleanCheck = true;
     }
 });
@@ -640,15 +699,15 @@ function getUserCommentLogs(page) {
             if (data.content.length > 0) {
                 $(data.content).each(function () {
                     if (this.deleted === false) {
-                        html += '<div data-id="' + this.id + '" style="margin:5px">';
+                        html += '<tr data-id="' + this.id + '" style="margin:5px">';
                         html += '<a style="text-decoration-line: none; color: #535353;" href="/boards/' + this.boardId + '">';
                         if (this.commentContent.length < 35) {
-                            html += '<span class="boardTitle">' + this.commentContent + '</span>'
+                            html += '<td style="width:67%"><span  class="boardTitle">' + this.commentContent + '</span></td>'
                         } else {
-                            html += '<span class="commentOverflow" > ' + this.commentContent + '</span>'
+                            html += '<td style="width:67%" ><span class="commentOverflow" > ' + this.commentContent + '</span></td>'
                         }
                         html +=
-                            '                                   <div style="display:inline-block; float:right;">' +
+                            '                                   <td >' +
                             '                                       <i class="fa fa-heart-o" style=""> </i>' +
                             '                                       <span class="badge bg-transparent text-black"' +
                             '                                             >' + this.commentLikeCount + '</span>' +
@@ -656,20 +715,19 @@ function getUserCommentLogs(page) {
                             '                                       <span class="badge bg-transparent text-black"' +
                             '                                             >' + this.childrenCommentsSize + '</span>'
                         html += '<span style="color:grey; font-size: 11px;" >' + this.createdAt + '</span>';
+                        html += '</td>';
                         html += '</a>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
+                        html += '</tr>';
                     } else {
-                        html += '<div data-id="' + this.id + '" style="margin:5px">';
-                        html += '<i class="fa fa-exclamation" aria-hidden="true" style="color:darkred"></i>';
+                        html += '<tr data-id="' + this.id + '" style="margin:5px">';
+                        html += '<td style="width:67%" ><i class="fa fa-exclamation" aria-hidden="true" style="color:darkred"></i>';
                         if (this.commentContent.length < 35) {
-                            html += '<span class="boardTitle" style="color:darkred">' + this.commentContent + '</span>'
+                            html += '<span class="boardTitle" style="color:darkred;">' + this.commentContent + '</span></td>'
                         } else {
-                            html += '<span class="commentOverflow"  style="color:darkred"> ' + this.commentContent + '</span>'
+                            html += '<span class="commentOverflow"  style="color:darkred ;"> ' + this.commentContent + '</span></td>'
                         }
                         html +=
-                            '                                   <div style="display:inline-block; float:right;">' +
+                            '                                   <td >' +
                             '                                       <i class="fa fa-heart-o" style=""> </i>' +
                             '                                       <span class="badge bg-transparent text-black"' +
                             '                                             >' + this.commentLikeCount + '</span>' +
@@ -677,9 +735,8 @@ function getUserCommentLogs(page) {
                             '                                       <span class="badge bg-transparent text-black"' +
                             '                                             >' + this.childrenCommentsSize + '</span>'
                         html += '<span style="color:grey; font-size: 11px;" >' + this.createdAt + '</span>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
+                        html += '</td>';
+                        html += '</tr>';
                     }
                 });
                 $('#commentLog').html(html);
@@ -779,26 +836,26 @@ function getUserBoardLogs(page) {
             if (data.content.length > 0) {
                 $(data.content).each(function () {
                     if (this.deleted === false) {
-                        html += '<div data-id="' + this.id + '" style="margin:5px">';
+                        html += '<tr data-id="' + this.id + '" style="margin:5px">';
                         html += '<a style="text-decoration-line: none; color: #535353;" href="/boards/' + this.id +'">';
                         if (this.character != null) {
-                            html += '<div class="myPage-character">'
+                            html += '<td class="td-header" style="padding-right:0"><div><div class="myPage-character">'
                             html += '<img class="text-dark ' + this.character.imgStyleClassName + '"  src="' + this.character.characterImageUrl + '"/></div>';
                             html += '<i class="fa fa-plug" style="margin-left:2px"> </i>';
-                            html += '<span class="badge bg-transparent text-dark" >' + this.character.characterName + '</span>';
+                            html += '<span class="badge bg-transparent text-dark" >' + this.character.characterName + '</span></div></td>';
                         } else {
-                            html += '<div class="myPage-character">';
+                            html += '<td class="td-header" style="padding-right:0"><div><div class="myPage-character">';
                             html += '</div>';
                             html += '<i class="fa fa-plug" style="color: black; margin-left:2px"> </i>';
-                            html += '<span class="badge bg-transparent text-dark" >캐릭터없음</span>';
+                            html += '<span class="badge bg-transparent text-dark" >캐릭터없음</span></div></td>';
                         }
                         if (this.boardTitle.length < 25) {
-                            html += '<span class="boardTitle">' + this.boardTitle + '</span>';
+                            html += '<td class="td-body" style="padding-left:0; padding-right:0"><div><span class="boardTitle">' + this.boardTitle + '</span></div></td>';
                         } else {
-                            html += '<span class="boardTitleOverflow" > ' + this.boardTitle + '</span>';
+                            html += '<td class="td-body" style="padding-left:0; padding-right:0"><div><span class="boardTitleOverflow" > ' + this.boardTitle + '</span></div></td>';
                         }
                         html +=
-                            '                                   <div style="display:inline-block; float:right;">' +
+                            '                                   <td class="td-footer" style="padding-left:0"><div>' +
                             '                                       <i class="fa fa-heart-o" style=""> </i>' +
                             '                                       <span class="badge bg-transparent text-black"' +
                             '                                             >' + this.boardLikeCount + '</span>' +
@@ -806,30 +863,29 @@ function getUserBoardLogs(page) {
                             '                                       <span class="badge bg-transparent text-black"' +
                             '                                             >' + this.commentCount + '</span>'
                         html += '<span style="color:grey; font-size: 11px;" >' + this.createdAt + '</span>';
-                        html += '</a>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
+                        html += '</div></a>';
+                        html += '</td>';
+                        html += '</tr>';
                     } else {
-                        html += '<div data-id="' + this.id + '" style="margin:5px">';
+                        html += '<tr data-id="' + this.id + '" style="margin:5px">';
                         if (this.character != null) {
-                            html += '<div class="myPage-character">'
+                            html += '<td class="td-header" style=" padding-right:0"><div><div class="myPage-character">'
                             html += '<img class="text-dark ' + this.character.imgStyleClassName + '"  src="' + this.character.characterImageUrl + '"/></div>';
-                            html += '<i class="fa fa-exclamation" style="margin-left:2px; color:darkred"> </i>';
-                            html += '<span class="badge bg-transparent"  style="color:darkred">삭제됨</span>';
+                            html += '<i class="fa fa-exclamation" style="margin-left:5%; color:darkred"> </i>';
+                            html += '<span class="badge bg-transparent"  style="color:darkred">삭제됨</span></div></td>';
                         } else {
-                            html += '<div class="myPage-character">';
+                            html += '<td class="td-header" style=" padding-right:0"><div><div class="myPage-character">';
                             html += '</div>';
                             html += '<i class="fa fa-exclamation" style="color: darkred; margin-left:2px"> </i>';
-                            html += '<span class="badge bg-transparent" style="color:darkred" >삭제됨</span>';
+                            html += '<span class="badge bg-transparent" style="color:darkred" >삭제됨</span></div></td>';
                         }
                         if (this.boardTitle.length < 25) {
-                            html += '<span class="boardTitle" style="color:darkred">' + this.boardTitle + '</span>';
+                            html += '<td class="td-body" style="padding-left:0; padding-right:0"><div><span class="boardTitle" style="color:darkred">' + this.boardTitle + '</span></div></td>';
                         } else {
-                            html += '<span class="boardTitleOverflow" style="color:darkred" > ' + this.boardTitle + '</span>';
+                            html += '<td class="td-body" style="padding-left:0; padding-right:0"><div><span class="boardTitleOverflow" style="color:darkred" > ' + this.boardTitle + '</span></div></td>';
                         }
                         html +=
-                            '                                   <div style="display:inline-block; float:right;">' +
+                            '                                   <td class="td-footer"  style="padding-left:0"><div>' +
                             '                                       <i class="fa fa-heart-o" style=""> </i>' +
                             '                                       <span class="badge bg-transparent text-black"' +
                             '                                             >' + this.boardLikeCount + '</span>' +
@@ -837,9 +893,8 @@ function getUserBoardLogs(page) {
                             '                                       <span class="badge bg-transparent text-black"' +
                             '                                             >' + this.commentCount + '</span>'
                         html += '<span style="color:grey; font-size: 11px;" >' + this.createdAt + '</span>';
-                        html += '</div>';
-                        html += '</div>';
-                        html += ' <div class="bar" style="width: 100%; height: 2px; background-color: #e6e6e6;"></div>';
+                        html += '</div></td>';
+                        html += '</tr>';
                     }
                 });
 

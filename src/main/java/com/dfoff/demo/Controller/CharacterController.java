@@ -5,7 +5,6 @@ import com.dfoff.demo.Domain.JsonDtos.CharacterBuffEquipmentJsonDto;
 import com.dfoff.demo.Domain.JsonDtos.CharacterEquipmentJsonDto;
 import com.dfoff.demo.Domain.JsonDtos.CharacterSkillStyleJsonDto;
 import com.dfoff.demo.Domain.JsonDtos.EquipmentDetailJsonDto;
-import com.dfoff.demo.Repository.CharacterEntityRepository;
 import com.dfoff.demo.Service.CharacterService;
 import com.dfoff.demo.Util.CharactersUtil;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +19,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -42,25 +39,25 @@ public class CharacterController {
         mav.addObject("serverId", serverId);
         mav.addObject("characterName", characterName);
         if (serverId.equals("adventure")) {
-            mav.addObject("characters", characterService.getCharacterByAdventureName(characterName, pageable).map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from));
+            mav.addObject("characters", characterService.getCharacterByAdventureName(characterName, pageable));
             return mav;
         }
         List<CharacterEntity.CharacterEntityDto> characters = characterService.getCharacterDtos(serverId, characterName).join();
         int start = (int) pageable.getOffset();
         int end = Math.min((start + pageable.getPageSize()), characters.size());
-        List<CompletableFuture<CharacterEntity.CharacterEntityDto>> list = new ArrayList<>();
+        List<CharacterEntity.CharacterEntityDto> list = new ArrayList<>();
         Page<CharacterEntity.CharacterEntityDto> characterPage = new PageImpl<>(characters.subList(Math.min(start, end), end), pageable, characters.size());
                 characterPage.forEach(o-> {
-                    if (o.getLevel() >= 100) {
+                    if (o.getLevel() >= 110) {
                         try {
-                            list.add(characterService.getCharacterAbilityAsync(o));
+                            list.add(characterService.getCharacterAbility(o));
                         } catch (InterruptedException e) {
                             throw new RuntimeException(e);
                         }
                     }
-                    else list.add(CompletableFuture.completedFuture(o));
+                    else list.add(o);
                 });
-        mav.addObject("characters", new PageImpl<>(list.stream().map(CompletableFuture::join).collect(Collectors.toList()), pageable, characters.size()));
+        mav.addObject("characters", new PageImpl<>(list, pageable, characters.size()));
         return mav;
     }
 
@@ -85,7 +82,7 @@ public class CharacterController {
         mav.addObject("characterId", characterId);
         mav.addObject("buffEquipment",characterBuffEquipment);
         mav.addObject("characterEquipment",characterEquipmentJsonDto );
-        mav.addObject("characterAbility", CharacterEntity.CharacterEntityDto.CharacterEntityResponse.from(characterService.getCharacterAbility(serverId, characterId).join(),serverId));
+        mav.addObject("characterAbility", CharacterEntity.CharacterEntityDto.CharacterEntityResponse.from(characterService.getCharacterAbilityAsync(serverId, characterId).join(),serverId));
         mav.addObject("characterEquipmentDetails",equipmentDetailJsonDtos);
         mav.addObject("buffStatus", CharactersUtil.getBuffPercent(characterBuffEquipment,equipmentDetailJsonDtos));
         mav.addObject("buffAvatar",characterService.getCharacterBuffAvatar(serverId, characterId).join());

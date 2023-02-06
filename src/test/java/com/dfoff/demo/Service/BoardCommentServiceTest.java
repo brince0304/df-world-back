@@ -125,18 +125,6 @@ class BoardCommentServiceTest {
 
 
 
-    @Test
-    @DisplayName("댓글 수정 실패 - 댓글을 수정할 권한이 없습니다")
-    void updateBoardCommentExceptionTest() {
-        //given
-        given(boardCommentRepository.findBoardCommentById(anyLong())).willReturn(Optional.ofNullable(createBoardComment0()));
-        //when
-        Throwable throwable=catchThrowable(()->sut.updateBoardComment(anyLong(),createBoardCommentRequestDto(),null ));
-
-        //then
-        assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
-
-    }
 
     @Test
     @DisplayName("댓글 좋아요 성공")
