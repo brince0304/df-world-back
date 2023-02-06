@@ -2,12 +2,15 @@ package com.dfoff.demo.Domain;
 
 import com.dfoff.demo.Domain.EnumType.UserAccount.SecurityRole;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
-import com.dfoff.demo.Util.Bcrypt;
 import com.dfoff.demo.Util.FileUtil;
 import com.dfoff.demo.Util.RestTemplateUtil;
 import io.micrometer.core.lang.Nullable;
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.springframework.security.core.GrantedAuthority;
@@ -73,8 +76,9 @@ public class UserAccount extends AuditingFields {
     private Boolean deleted= Boolean.FALSE;
 
     @Setter
-    @OneToOne(mappedBy = "userAccount", cascade = CascadeType.ALL)
-    private UserAdventure userAdventure;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "adventure_id", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
+    private Adventure adventure;
 
     @OneToMany (mappedBy = "userAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @Builder.Default
@@ -204,9 +208,21 @@ public class UserAccount extends AuditingFields {
     }
 
     @Builder
-    public record UserAccountUpdateRequest(@NotEmpty String userId, @Nullable String password,
-                                           @Nullable String passwordCheck, @Nullable String nickname,
-                                           @Nullable String email) {
+    public static class UserAccountUpdateRequest {
+        @Size(min = 4, max = 20)
+        private  String userId;
+        @Setter
+        @Size(min = 8, max = 20)
+        @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$")
+        private  String password;
+        @Size(min = 8, max = 20)
+        @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$")
+        private String passwordCheck;
+        @Size(min = 2, max = 20)
+        private  String nickname;
+        @Email
+        private  String email;
+
         public UserAccountUpdateRequest(String userId, String password, String passwordCheck, String nickname, String email) {
             this.userId = userId;
             this.password = password;
@@ -241,11 +257,18 @@ public class UserAccount extends AuditingFields {
     @ToString
     @NoArgsConstructor
     public static class UserAccountSignUpRequest {
+        @Size(min = 4, max = 20)
         private  String userId;
         @Setter
+        @Size(min = 8, max = 20)
+        @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$")
         private  String password;
+        @Size(min = 8, max = 20)
+        @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$")
         private String passwordCheck;
+        @Size(min = 2, max = 20)
         private  String nickname;
+        @Email
         private  String email;
 
         private  Set<SecurityRole> roles = Set.of(SecurityRole.ROLE_USER);
@@ -366,7 +389,7 @@ public class UserAccount extends AuditingFields {
                     .createdBy(userAccount.getCreatedBy())
                     .modifiedAt(userAccount.getModifiedAt())
                     .modifiedBy(userAccount.getModifiedBy())
-                    .adventureCharacters(userAccount.getUserAdventure() !=null ? userAccount.getUserAdventure().getCharacters().stream().map(CharacterUserAccountResponse::from).collect(Collectors.toSet()) : new HashSet<>())
+                    .adventureCharacters(userAccount.getAdventure() !=null ? userAccount.getAdventure().getCharacters().stream().map(CharacterUserAccountResponse::from).collect(Collectors.toSet()) : new HashSet<>())
                     .build();
         }
 
