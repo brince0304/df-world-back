@@ -163,7 +163,7 @@ public class BoardService {
            if(request.hashtag()!=null){
            if(request.hashtag().size()>5){throw new IllegalArgumentException("해시태그는 5개까지만 등록 가능합니다.");}
            updateHashtagAndBoard(board_,(request.hashtag()));}
-           if(request.boardTitle()!=null){
+           if(request.boardTitle()!=null && !request.boardTitle().equals(board_.getBoardTitle())){
                board_.setBoardTitle(request.boardTitle());
            }
               if(request.boardContent()!=null){
