@@ -6,8 +6,10 @@ import com.dfoff.demo.Repository.UserAccountRepository;
 import com.dfoff.demo.Repository.AdventureRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.actuate.endpoint.SecurityContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -193,9 +195,10 @@ public class UserAccountService {
 
     public void deleteUserAccountById(String userId) {
         if (userAccountRepository.existsByUserId(userId)) {
-            userAccountRepository.deleteBoardByUserAccountId(userId);
-            userAccountRepository.deleteBoardCommentByUserAccountId(userId);
             userAccountRepository.deleteById(userId);
+            SecurityContextHolder.clearContext();
+        }else{
+            throw new EntityNotFoundException("존재하지 않는 아이디입니다.");
         }
     }
 

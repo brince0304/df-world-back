@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @Table(indexes =
         {@Index(columnList = "email", unique = true)
                 , @Index(columnList = "nickname", unique = true)})
-@SQLDelete(sql = "UPDATE user_account SET deleted = true, deleted_at = now() WHERE id = ?")
+@SQLDelete(sql = "UPDATE user_account SET deleted = true, deleted_at = now() WHERE user_id = ?")
 public class UserAccount extends AuditingFields {
     @Id
     @Column(length = 50)

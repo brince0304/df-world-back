@@ -775,6 +775,23 @@ let commentPage = 0;
 let boardSortBy = "";
 let commentSortBy = "";
 
+function deleteAccount(){
+    const userId = $('#session').val();
+    if(prompt("정말로 탈퇴하시겠습니까? 탈퇴하시려면 아이디를 입력해주세요.") === userId){
+        $.ajax({
+            url: "/users",
+            type: "DELETE",
+            success: function (data) {
+                alert("탈퇴되었습니다.");
+                location.href = "/";
+            }, error: function (request, status, error) {
+                console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+            }
+        });
+    }else{
+        alert("아이디가 일치하지 않습니다.");
+    }
+}
 function getUserBoardLogs(page) {
     if (boardPage !== 0 && page === -1 && page !== null) {
         boardPage = boardPage - 1;

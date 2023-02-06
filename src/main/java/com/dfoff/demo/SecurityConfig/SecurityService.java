@@ -30,6 +30,9 @@ public class SecurityService implements UserDetailsService {
         if (_account.isEmpty()) {
             throw new UsernameNotFoundException("사용자를 찾을수 없습니다.");
         }
+        if(_account.get().getDeleted()!=null&&_account.get().getDeleted()) {
+            throw new UsernameNotFoundException("탈퇴한 사용자입니다.");
+        }
         UserAccount account = _account.get();
         List<GrantedAuthority> authorities = new ArrayList<>();
         for (SecurityRole role : account.getRoles()) {
