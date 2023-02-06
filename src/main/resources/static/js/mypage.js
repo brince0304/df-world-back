@@ -810,6 +810,20 @@ function deleteAdventure(){
         alert("모험단 이름이 일치하지 않습니다.");
     }
 }
+function refreshAdventure(){
+    if(confirm("모험단을 갱신하시겠습니까? 약간의 시간이 소요됩니다.")) {
+        $.ajax({
+            url: "/users/adventure/refresh",
+            type: "GET",
+            success: function (data) {
+                alert("갱신이 완료되었습니다.");
+                location.reload();
+            }, error: function (request, status, error) {
+                console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+            }
+        });
+    }
+}
 function getUserBoardLogs(page) {
     if (boardPage !== 0 && page === -1 && page !== null) {
         boardPage = boardPage - 1;

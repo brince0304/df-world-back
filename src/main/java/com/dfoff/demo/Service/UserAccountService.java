@@ -115,12 +115,12 @@ public class UserAccountService {
         return true;
     }
 
-    public Adventure.UserAdventureResponse getUserAdventureByUserId(String userId) {
+    public UserAccount.UserAdventureResponse getUserAdventureByUserId(String userId) {
         UserAccount account_= userAccountRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
         if(account_.getAdventure()==null){
             throw new EntityNotFoundException("모험단이 등록되지 않았습니다.");
         }
-        return Adventure.UserAdventureResponse.from(account_.getAdventure());
+        return UserAccount.UserAdventureResponse.from(account_);
     }
 
     public Boolean checkUserAdventure(String userId) {

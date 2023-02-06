@@ -19,6 +19,8 @@
     <!-- Style -->
     <link rel="stylesheet" href="/header/css/style.css">
     <link href="/css/main.scss" rel="stylesheet">
+    <link rel="stylesheet" href="/css/board-char-thumbnail.css">
+
 
     <link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css'>
     <title>던파모아온오프</title>
@@ -50,6 +52,9 @@
             padding-left: 30%;
             scale: 1.3;
             cursor: pointer;
+        }
+        .my-page-adventure th{
+            width: 35%;
         }
 
         .myPage-character {
@@ -520,13 +525,39 @@
                     </div>
 
                 <div id="my-adventure-body" class="modal-body" style="min-height: 300px; max-height: 500px; overflow: auto;">
-                    <h5>
-                        <span th:text="${adventure.adventureName}"></span>
-                        <span th:text="${adventure.serverName}"></span>
-                    </h5>
+                    <table class="table my-page-adventure">
+                        <tbody>
+                          <tr>
+                            <th scope="row">모험단 이름</th>
+                            <td th:text="${adventure.adventureName}"></td>
+                          </tr>
+                        <tr>
+                            <th scope="row">대표 캐릭터</th>
+                            <td th:text="${user.representCharacterName}"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">모험단 명성</th>
+                            <td th:text="${adventure.getAdventureFame()}"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">모험단 피해증가+버프력</th>
+                            <td th:text="${adventure.getAdventureDamageIncreaseAndBuffPower()}"></td>
+                        </tr>
+                          <tr>
+                              <th scope="row">등록된 캐릭터</th>
+                              <td >
+                                  <div style="display: inline-flex" class="board-character" th:each="char : ${adventure.characters}" >
+                                      <img   th:src="${char.characterImgUrl}" th:class="${char.getImgStyleClassName()}" >
+                                  </div>
+                              </td>
+                          </tr>
+                        </tbody>
+
+                    </table>
                 </div>
 
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" onclick="refreshAdventure()">갱신 [[${adventure.modifiedAt}]]</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
                     <button type="button" class="btn btn-danger" onclick="deleteAdventure()">연동 해제</button>
                     <input type="hidden" id="adventure-name" th:value="${adventure.adventureName}">

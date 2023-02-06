@@ -163,6 +163,7 @@ public class CharactersUtil {
             case "총검사" -> "m-gunwarrior";
             case "프리스트(남)" -> "m-priest";
             case "프리스트(여)" -> "f-priest";
+            case "도적" -> "f-thief";
             default -> "default";
         };
     }

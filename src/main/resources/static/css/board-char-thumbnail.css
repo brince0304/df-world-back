@@ -1,0 +1,161 @@
+
+.board-character {
+    background-image: url("/static/images/icon_char/bg_char.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+
+    width: 25px;
+    height: 25px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    border-radius: 50%;
+    border: 1.5px solid #898989;
+
+}
+
+.board-character .f-mage {
+    position: absolute;
+    left: -980%;
+    right: -1010%;
+    top: -1050%;
+    bottom: -1020%;
+    margin: auto;
+    min-height: 100%;
+    min-width: 100%;
+}
+
+
+.board-character .default {
+    position: absolute;
+    left: -980%;
+    right: -1010%;
+    top: -1030%;
+    bottom: -1020%;
+    margin: auto;
+    min-height: 100%;
+    min-width: 100%;
+}
+
+.board-character .m-gunner {
+    position: absolute;
+    left: -1000%;
+    right: -1010%;
+    top: -700%;
+    bottom: -1020%;
+    margin: auto;
+    min-height: 100%;
+    min-width: 100%;
+}
+
+.board-character .f-gunner {
+    position: absolute;
+    left: -1000%;
+    right: -1010%;
+    top: -850%;
+    bottom: -1020%;
+    margin: auto;
+    min-height: 100%;
+    min-width: 100%;
+}
+
+.board-character .m-fighter {
+    position: absolute;
+    left: -1000%;
+    right: -1030%;
+    top: -850%;
+    bottom: -1020%;
+    margin: auto;
+    min-height: 100%;
+    min-width: 100%;
+}
+
+.board-character .f-thief {
+    position: absolute;
+    left: -1000%;
+    right: -1010%;
+    top: -870%;
+    bottom: -1020%;
+    margin: auto;
+    min-height: 100%;
+    min-width: 100%;
+}
+
+.board-character .f-fighter {
+    position: absolute;
+    left: -980%;
+    right: -990%;
+    top: -960%;
+    bottom: -1020%;
+    margin: auto;
+    min-height: 100%;
+    min-width: 100%;
+}
+
+
+.board-character .m-warrior {
+    position: absolute;
+    left: -1000%;
+    right: -1010%;
+    top: -900%;
+    bottom: -1020%;
+    margin: auto;
+    min-height: 100%;
+    min-width: 100%;
+}
+
+.board-character .f-warrior {
+    position: absolute;
+    left: -1000%;
+    right: -1010%;
+    top: -930%;
+    bottom: -1020%;
+    margin: auto;
+    min-height: 100%;
+    min-width: 100%;
+}
+
+.board-character .f-priest {
+    position: absolute;
+    left: -1000%;
+    right: -1010%;
+    top: -930%;
+    bottom: -1020%;
+    margin: auto;
+    min-height: 100%;
+    min-width: 100%;
+}
+
+.board-character .m-priest {
+    position: absolute;
+    left: -1000%;
+    right: -1010%;
+    top: -760%;
+    bottom: -1020%;
+    margin: auto;
+    min-height: 100%;
+    min-width: 100%;
+}
+
+.board-character .m-lancer {
+    position: absolute;
+    left: -1000%;
+    right: -1050%;
+    top: -840%;
+    bottom: -1020%;
+    margin: auto;
+    min-height: 100%;
+    min-width: 100%;
+}
+
+.board-character .m-gunwarrior {
+    position: absolute;
+    left: -1000%;
+    right: -1010%;
+    top: -810%;
+    bottom: -1020%;
+    margin: auto;
+    min-height: 100%;
+    min-width: 100%;
+}

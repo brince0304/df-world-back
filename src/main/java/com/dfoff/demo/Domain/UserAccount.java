@@ -2,6 +2,7 @@ package com.dfoff.demo.Domain;
 
 import com.dfoff.demo.Domain.EnumType.UserAccount.SecurityRole;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
+import com.dfoff.demo.Util.CharactersUtil;
 import com.dfoff.demo.Util.FileUtil;
 import com.dfoff.demo.Util.RestTemplateUtil;
 import io.micrometer.core.lang.Nullable;
@@ -410,7 +411,9 @@ public class UserAccount extends AuditingFields {
         private String adventureFame;
         private String adventureDamageIncreaseAndBuffPower;
 
-        private Set<CharacterUserAccountResponse> characters;
+        private String modifiedAt;
+
+        private Set<CharacterEntity.CharacterEntityMainPageResponse> characters;
 
         public static UserAdventureResponse from(UserAccount userAccount){
             return UserAdventureResponse.builder()
@@ -420,7 +423,8 @@ public class UserAccount extends AuditingFields {
                     .serverName(CharacterEntity.CharacterEntityResponse.getServerName(userAccount.getAdventure().getRepresentCharacter().getServerId()))
                     .adventureFame(userAccount.getAdventure().getAdventureFame().toString())
                     .adventureDamageIncreaseAndBuffPower(userAccount.getAdventure().getAdventureDamageIncreaseAndBuffPower().toString())
-                    .characters(userAccount.getAdventure().getCharacters().stream().map(CharacterUserAccountResponse::from).collect(Collectors.toSet()))
+                    .characters(userAccount.getAdventure().getCharacters().stream().map(CharacterEntity.CharacterEntityMainPageResponse::from).collect(Collectors.toSet()))
+                    .modifiedAt(CharactersUtil.timesAgo(userAccount.getAdventure().getModifiedAt()))
                     .build();
         }
     }
