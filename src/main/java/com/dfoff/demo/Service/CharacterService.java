@@ -1,6 +1,7 @@
 package com.dfoff.demo.Service;
 
 
+import com.dfoff.demo.Annotation.SaveAdventure;
 import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Domain.JsonDtos.*;
 import com.dfoff.demo.Repository.*;
@@ -29,11 +30,6 @@ import static com.dfoff.demo.Util.CharactersUtil.timesAgo;
 public class CharacterService {
     private final CharacterSkillDetailRepository characterSkillDetailRepository;
     private final CharacterEntityRepository characterEntityRepository;
-    private final UserAccountRepository userAccountRepository;
-
-    private final UserAccountCharacterMapperRepository mapperRepository;
-
-
     private final Gson gson = RestTemplateUtil.getGson();
 
     @Async
@@ -53,7 +49,9 @@ public class CharacterService {
 
 
 
-
+    public List<CharacterEntity.CharacterEntityDto> getCharactersByAdventureName(String adventureName) {
+        return characterEntityRepository.findAllByAdventureName(adventureName).stream().map(CharacterEntity.CharacterEntityDto::from).collect(Collectors.toList());
+    }
 
 
     public String getRandomJobName(){
@@ -70,10 +68,9 @@ public class CharacterService {
         return timesAgo(characterEntityRepository.getReferenceById(characterId).getModifiedAt());
     }
 
-    @Async
-    public CompletableFuture<CharacterEntity.CharacterEntityDto> getCharacter(String serverId, String characterId) {
+    public CharacterEntity.CharacterEntityDto getCharacter(String serverId, String characterId) throws InterruptedException {
         if(characterId==null || characterId.equals("")){
-            return CompletableFuture.completedFuture(null);
+            throw new IllegalArgumentException("캐릭터 아이디가 없습니다.");
         }
         CharacterEntity characterEntity = characterEntityRepository.findById(characterId).orElseGet(()-> {
             try {
@@ -82,7 +79,7 @@ public class CharacterService {
                 throw new RuntimeException(e);
             }
         });
-        return CompletableFuture.completedFuture(CharacterEntity.CharacterEntityDto.from(characterEntity));
+        return CharacterEntity.CharacterEntityDto.from(characterEntity);
     }
 
     @Async
@@ -110,18 +107,19 @@ public class CharacterService {
         return characterEntityRepository.findAllByAdventureNameContaining(adventureName, pageable);
     }
 
-    @Async
-    public CompletableFuture<CharacterEntity.CharacterEntityDto> getCharacterAbilityAsync(CharacterEntity.CharacterEntityDto dto) throws InterruptedException {
+    @SaveAdventure
+    public CharacterEntity.CharacterEntityDto getCharacterAbility(CharacterEntity.CharacterEntityDto dto) throws InterruptedException {
         CharacterEntity entity = characterEntityRepository.save(CharacterEntity.CharacterEntityDto.toEntity(dto));
         CharacterAbilityDto characterDto = parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(dto.getServerId(), dto.getCharacterId()), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
        characterStatusSetter(entity,characterDto);
         entity.setServerId(dto.getServerId());
-        return CompletableFuture.completedFuture(CharacterEntity.CharacterEntityDto.from(entity));
+        return CharacterEntity.CharacterEntityDto.from(entity);
     }
 
 
     @Async
-    public CompletableFuture<CharacterAbilityDto> getCharacterAbility(String serverId, String characterId) throws InterruptedException {
+    @SaveAdventure
+    public CompletableFuture<CharacterAbilityDto> getCharacterAbilityAsync(String serverId, String characterId) throws InterruptedException {
         CharacterAbilityDto characterDto = parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
         CharacterEntity character = characterEntityRepository.save(CharacterAbilityDto.toEntity(characterDto,serverId));
         characterStatusSetter(character,characterDto);
@@ -130,14 +128,10 @@ public class CharacterService {
         return CompletableFuture.completedFuture(characterDto);
     }
 
-    public void addCharacter(UserAccount.UserAccountDto account, CharacterEntity.CharacterEntityDto character) { //캐릭터가 존재하지 않을 이유가 없음
-        if (userAccountRepository.existsByUserId(account.userId())) {
-            UserAccount userAccount = userAccountRepository.findById(account.userId()).orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
-            CharacterEntity characterEntity = characterEntityRepository.findById(character.getCharacterId()).orElseGet(() -> CharacterEntity.CharacterEntityDto.toEntity(character));
-            UserAccountCharacterMapper mapper = UserAccountCharacterMapper.of(userAccount, characterEntity);
-            mapperRepository.save(mapper);
-        }
-    }
+
+
+
+
 
     @Async
     public CompletableFuture<List<CharacterTalismanJsonDto.Talisman>> getCharacterTalisman(String serverId, String characterId) throws InterruptedException {
@@ -146,17 +140,7 @@ public class CharacterService {
     }
 
 
-    public void deleteCharacter(UserAccount.UserAccountDto dto, CharacterEntity.CharacterEntityDto character) {
-        if (userAccountRepository.existsByUserId(dto.userId())) {
-            CharacterEntity characterEntity = characterEntityRepository.findById(character.getCharacterId()).orElseGet(() -> CharacterEntity.CharacterEntityDto.toEntity(character));
-            UserAccount userAccount = userAccountRepository.findById(dto.userId()).orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
-            UserAccountCharacterMapper mapper = mapperRepository.findByUserAccountAndCharacter(userAccount, characterEntity);
-            if(mapper!=null) {
-                mapper.setCharacter(null);
-                mapper.setUserAccount(null);
-            }
-        }
-    }
+
 
     @Async
     public CompletableFuture<CharacterSkillStyleJsonDto.Style> getCharacterSkillStyle(String serverId, String characterId) throws InterruptedException {
@@ -255,12 +239,12 @@ public class CharacterService {
         return randomString.toString();
     }
 
-    public boolean checkCharacterAdventure(UserAdventure.UserAdventureRequest request) throws InterruptedException {
+    public boolean checkCharacterAdventure(Adventure.UserAdventureRequest request) throws InterruptedException {
         List<CharacterDto> dto = parseJsonFromUri(RestTemplateUtil.getCharacterSearchUri(request.getServerId(),request.getRandomString()), CharacterDto.CharacterJSONDto.class).toDto();
         if(dto.size()==0){
             return false;
         }
-CharacterDto characterDto = dto.get(0);
+        CharacterDto characterDto = dto.get(0);
         CharacterAbilityDto dto_ = RestTemplateUtil.parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(request.getServerId(), characterDto.getCharacterId()), CharacterAbilityDto.class);
         return dto_.getJobName().equals(request.getRandomJobName()) && dto_.getAdventureName().equals(request.getAdventureName());
     }
@@ -282,5 +266,6 @@ CharacterDto characterDto = dto.get(0);
         entity.setBuffPower(characterDto.getStatus().stream().filter(o -> o.getName().equals("버프력")).findFirst().isEmpty() ? 0 : Integer.parseInt(characterDto.getStatus().stream().filter(o -> o.getName().equals("버프력")).findFirst().get().getValue()));
         entity.setAdventureName(characterDto.getAdventureName());
     }
+
 
 }
