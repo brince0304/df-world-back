@@ -287,4 +287,9 @@ class UserAccountControllerTest {
     void deleteByAccountByUserIdExceptionTest() throws Exception {
         mvc.perform(delete("/users")).andExpect(status().isUnauthorized());
     }
+    @Test
+    @WithUserDetails("test")
+    void deleteMyAdventureExceptionTest() throws Exception {
+        mvc.perform(delete("/users/adventure")).andExpect(status().isBadRequest());
+    }
 }

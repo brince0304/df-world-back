@@ -103,7 +103,7 @@ public class CharacterService {
         return CompletableFuture.completedFuture(parseJsonFromUri(RestTemplateUtil.getCharacterBuffEquipmentUri(serverId, characterId), CharacterBuffEquipmentJsonDto.class));
     }
 
-    public Page<CharacterEntity.CharacterEntityDto.CharacterEntityResponse> getCharacterByAdventureName(String adventureName, Pageable pageable) {
+    public Page<CharacterEntity.CharacterEntityResponse> getCharacterByAdventureName(String adventureName, Pageable pageable) {
         return characterEntityRepository.findAllByAdventureNameContaining(adventureName, pageable);
     }
 

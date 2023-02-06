@@ -6,7 +6,6 @@ import com.dfoff.demo.Repository.UserAccountRepository;
 import com.dfoff.demo.Repository.AdventureRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.actuate.endpoint.SecurityContext;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -85,7 +84,7 @@ public class UserAccountService {
     }
 
     public void refreshUserAdventure(UserAccount.UserAccountDto dto) {
-        if (!adventureRepository.existsByUserAccount_UserId(dto.userId())) {
+        if (!adventureRepository.existsByUserAccount_UserIdAndDeletedIsFalse(dto.userId())) {
             throw new EntityNotFoundException("모험단이 등록되지 않았습니다.");
         }
         UserAccount userAccount = userAccountRepository.findById(dto.userId()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
@@ -117,7 +116,16 @@ public class UserAccountService {
     }
 
     public Adventure.UserAdventureResponse getUserAdventureByUserId(String userId) {
-        return Adventure.UserAdventureResponse.from(userAccountRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다.")).getAdventure());
+        UserAccount account_= userAccountRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
+        if(account_.getAdventure()==null){
+            throw new EntityNotFoundException("모험단이 등록되지 않았습니다.");
+        }
+        return Adventure.UserAdventureResponse.from(account_.getAdventure());
+    }
+
+    public Boolean checkUserAdventure(String userId) {
+
+        return  adventureRepository.existsByUserAccount_UserIdAndDeletedIsFalse(userId);
     }
 
 
@@ -209,6 +217,8 @@ public class UserAccountService {
             mapperRepository.save(mapper);
         }
     }
+    
+    
 
     public void deleteCharacter(UserAccount.UserAccountDto dto, CharacterEntity.CharacterEntityDto character) {
         if (userAccountRepository.existsByUserId(dto.userId())) {
@@ -243,5 +253,15 @@ public class UserAccountService {
         }
         account.setEmail(email);
         return true;
+    }
+
+    public void deleteUserAdventure(String userId) {
+        UserAccount account = userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+        if(account.getAdventure()==null){
+            throw new IllegalArgumentException("모험단이 등록되지 않았습니다.");
+        }
+        account.getAdventure().setUserAccount(null);
+        account.setAdventure(null);
+
     }
 }

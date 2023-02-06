@@ -281,7 +281,7 @@
                            th:if="${uncheckedLogCount==0}"></i> 활동 내역</small></a>
                 </div>
 
-                <div class="col-md-auto ">
+                <div class="col-md-auto " >
                     <ul class="list-inline">
                         <li class="list-inline-item"><a data-bs-toggle="modal"
                                                         data-bs-target="#iconSelectModal" href="#" class="
@@ -290,9 +290,13 @@
                                 alt="DP" class="  rounded-circle img-fluid " width="20" height="20"> <small>프로필 아이콘
                             변경</small> </a>
                         </li>
-                        <li class="list-inline-item"><a data-bs-toggle="modal"
+                        <li class="list-inline-item" th:if="${user.representCharacterName==''}"><a data-bs-toggle="modal"
                                                         data-bs-target="#charSearchModalForAdventure" href="#" class="
                          btn btn-outlined btn-black text-muted"> <small>모험단 등록</small> </a>
+                        </li>
+                        <li class="list-inline-item" th:if="${user.representCharacterName!=''}"><a data-bs-toggle="modal"
+                                                                                                   data-bs-target="#my-adventure" href="#" class="
+                         btn btn-outlined btn-black text-muted"> <small>모험단 관리</small> </a>
                         </li>
                     </ul>
                 </div>
@@ -505,6 +509,31 @@
             </div>
         </div>
     </div>
+
+    <div th:if="${adventure!=null}" class="modal fade" id="my-adventure" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"
+         style="margin-left:2%"
+         aria-hidden="true">
+        <div class="modal-dialog" style="max-width:500px" role="document">
+            <div class="modal-content" style="    border: 1px solid rgba(0,0,0,.2);">
+                <div class="modal-header" style="padding: 5px;">
+                    <h5 class="modal-title" id="exampleModalLabel2">모험단 정보</h5>
+                    </div>
+
+                <div id="my-adventure-body" class="modal-body" style="min-height: 300px; max-height: 500px; overflow: auto;">
+                    <h5>
+                        <span th:text="${adventure.adventureName}"></span>
+                        <span th:text="${adventure.serverName}"></span>
+                    </h5>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteAdventure()">연동 해제</button>
+                    <input type="hidden" id="adventure-name" th:value="${adventure.adventureName}">
+                </div>
+            </div>
+            </div>
+        </div>
 
 
     <div class="modal fade notification col-sm-12 col-md-12 col-lg-6 col-xl-6" id="userLogModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel2"

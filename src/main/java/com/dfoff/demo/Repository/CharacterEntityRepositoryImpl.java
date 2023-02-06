@@ -52,13 +52,13 @@ public class CharacterEntityRepositoryImpl implements CharacterEntityCustomRepos
     }
 
     @Override
-    public Page<CharacterEntity.CharacterEntityDto.CharacterEntityResponse> findAllByAdventureNameContaining(String adventureName, Pageable pageable) {
-        List<CharacterEntity.CharacterEntityDto.CharacterEntityResponse> list  =queryFactory.selectFrom(QCharacterEntity.characterEntity)
+    public Page<CharacterEntity.CharacterEntityResponse> findAllByAdventureNameContaining(String adventureName, Pageable pageable) {
+        List<CharacterEntity.CharacterEntityResponse> list  =queryFactory.selectFrom(QCharacterEntity.characterEntity)
                 .where(q.adventureName.contains(adventureName))
                 .orderBy(QCharacterEntity.characterEntity.adventureFame.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .fetch().stream().map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).toList();
+                .fetch().stream().map(CharacterEntity.CharacterEntityResponse::from).toList();
 
         return new PageImpl<>(list, pageable, list.size());
     }

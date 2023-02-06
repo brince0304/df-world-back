@@ -792,6 +792,24 @@ function deleteAccount(){
         alert("아이디가 일치하지 않습니다.");
     }
 }
+
+function deleteAdventure(){
+    const adventureName = $('#adventure-name').val();
+    if(prompt("연동을 해제 하시겠습니까? 삭제하시려면 모험단 이름을 입력해주세요.") === adventureName){
+        $.ajax({
+            url: "/users/adventure",
+            type: "DELETE",
+            success: function (data) {
+                alert("연동이 해제되었습니다.");
+                location.reload();
+            }, error: function (request, status, error) {
+                console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
+            }
+        });
+    }else{
+        alert("모험단 이름이 일치하지 않습니다.");
+    }
+}
 function getUserBoardLogs(page) {
     if (boardPage !== 0 && page === -1 && page !== null) {
         boardPage = boardPage - 1;

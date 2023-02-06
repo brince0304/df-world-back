@@ -5,7 +5,7 @@ import com.dfoff.demo.Domain.Adventure;
 public interface AdventureRepository extends org.springframework.data.jpa.repository.JpaRepository<Adventure, String>, AdventureCustomRepository {
     boolean existsByRepresentCharacter_CharacterId(String characterId);
 
-    boolean existsByUserAccount_UserId(String userId);
+    boolean existsByUserAccount_UserIdAndDeletedIsFalse(String userId);
 
 
 

@@ -82,7 +82,7 @@ public class CharacterController {
         mav.addObject("characterId", characterId);
         mav.addObject("buffEquipment",characterBuffEquipment);
         mav.addObject("characterEquipment",characterEquipmentJsonDto );
-        mav.addObject("characterAbility", CharacterEntity.CharacterEntityDto.CharacterEntityResponse.from(characterService.getCharacterAbilityAsync(serverId, characterId).join(),serverId));
+        mav.addObject("characterAbility", CharacterEntity.CharacterEntityResponse.from(characterService.getCharacterAbilityAsync(serverId, characterId).join(),serverId));
         mav.addObject("characterEquipmentDetails",equipmentDetailJsonDtos);
         mav.addObject("buffStatus", CharactersUtil.getBuffPercent(characterBuffEquipment,equipmentDetailJsonDtos));
         mav.addObject("buffAvatar",characterService.getCharacterBuffAvatar(serverId, characterId).join());

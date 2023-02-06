@@ -399,4 +399,29 @@ public class UserAccount extends AuditingFields {
 
 
     }
+
+    @Builder
+    @Data
+    public static class UserAdventureResponse{
+        private String adventureName;
+        private String representCharacterName;
+        private String serverId;
+        private String serverName;
+        private String adventureFame;
+        private String adventureDamageIncreaseAndBuffPower;
+
+        private Set<CharacterUserAccountResponse> characters;
+
+        public static UserAdventureResponse from(UserAccount userAccount){
+            return UserAdventureResponse.builder()
+                    .adventureName(userAccount.getAdventure().getAdventureName())
+                    .representCharacterName(userAccount.getAdventure().getRepresentCharacter().getCharacterName())
+                    .serverId(userAccount.getAdventure().getRepresentCharacter().getServerId())
+                    .serverName(CharacterEntity.CharacterEntityResponse.getServerName(userAccount.getAdventure().getRepresentCharacter().getServerId()))
+                    .adventureFame(userAccount.getAdventure().getAdventureFame().toString())
+                    .adventureDamageIncreaseAndBuffPower(userAccount.getAdventure().getAdventureDamageIncreaseAndBuffPower().toString())
+                    .characters(userAccount.getAdventure().getCharacters().stream().map(CharacterUserAccountResponse::from).collect(Collectors.toSet()))
+                    .build();
+        }
+    }
 }

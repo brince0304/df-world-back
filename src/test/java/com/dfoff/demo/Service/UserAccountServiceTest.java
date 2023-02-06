@@ -74,6 +74,50 @@ class UserAccountServiceTest {
     }
 
     @Test
+    @DisplayName("계정 모험단 연동 해제 테스트")
+    void deleteUserAdventureTest(){
+        //given
+
+        UserAccount userAccount = UserAccount.builder().
+                userId("test").
+                password("test").
+                email("test").
+                nickname("test").
+                build();
+        Adventure adventure = Adventure.builder().
+                adventureName("test")
+                        .userAccount(userAccount).
+
+                build();
+        userAccount.setAdventure(adventure);
+        given(userAccountRepository.findById(any())).willReturn(Optional.of(userAccount));
+        //when
+        sut.deleteUserAdventure(userAccount.getUserId());
+        //then
+        then(userAccountRepository).should().findById(any());
+        assertThat(userAccount.getAdventure()).isNull();
+    }
+    @Test
+    @DisplayName("계정 모험단 연동 해제 테스트 예외 - 모험단이 없을때")
+    void deleteUserAdventureExceptionTest(){
+        //given
+
+        UserAccount userAccount = UserAccount.builder().
+                userId("test").
+                password("test").
+                email("test").
+                nickname("test").
+                build();
+        given(userAccountRepository.findById(any())).willReturn(Optional.of(userAccount));
+        //when
+        Throwable throwable = catchThrowable(()->sut.deleteUserAdventure(userAccount.getUserId()));
+        //then
+        then(userAccountRepository).should().findById(any());
+        assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
+
+    }
+
+    @Test
     @DisplayName("닉네임 중복확인 테스트")
     void existsByNicknameTest() {
         //given
@@ -262,41 +306,41 @@ class UserAccountServiceTest {
     @Test
     @DisplayName("계정 모험단 갱신 테스트")
     void refreshUserAdventureTest(){
-        given(adventureRepository.existsByUserAccount_UserId(any())).willReturn(true);
+        given(adventureRepository.existsByUserAccount_UserIdAndDeletedIsFalse(any())).willReturn(true);
         UserAccount account = createUserAccount();
         account.setAdventure(createUserAdventure());
         given(userAccountRepository.findById(any())).willReturn(java.util.Optional.of(account));
 
         sut.refreshUserAdventure(UserAccount.UserAccountDto.from(account));
 
-        then(adventureRepository).should().existsByUserAccount_UserId(any());
+        then(adventureRepository).should().existsByUserAccount_UserIdAndDeletedIsFalse(any());
         then(userAccountRepository).should().findById(any());
     }
 
     @Test
     @DisplayName("유저 모험단 갱신 테스트 - 모험단이 존재하지 않는 경우")
     void refreshUserAdventureExceptionTest(){
-        given(adventureRepository.existsByUserAccount_UserId(any())).willReturn(false);
+        given(adventureRepository.existsByUserAccount_UserIdAndDeletedIsFalse(any())).willReturn(false);
         UserAccount account = createUserAccount();
         account.setAdventure(createUserAdventure());
 
         Throwable throwable = catchThrowable(()-> sut.refreshUserAdventure(UserAccount.UserAccountDto.from(account)));
 
-        then(adventureRepository).should().existsByUserAccount_UserId(any());
+        then(adventureRepository).should().existsByUserAccount_UserIdAndDeletedIsFalse(any());
         assertThat(throwable).isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
     @DisplayName("유저 모험단 갱신 테스트 - 계정이 존재하지 않는 경우")
     void refreshUserAdventureExceptionTest2(){
-        given(adventureRepository.existsByUserAccount_UserId(any())).willReturn(true);
+        given(adventureRepository.existsByUserAccount_UserIdAndDeletedIsFalse(any())).willReturn(true);
         given(userAccountRepository.findById(any())).willThrow(EntityNotFoundException.class);
         UserAccount account = createUserAccount();
         account.setAdventure(createUserAdventure());
 
         Throwable throwable = catchThrowable(()-> sut.refreshUserAdventure(UserAccount.UserAccountDto.from(account)));
 
-        then(adventureRepository).should().existsByUserAccount_UserId(any());
+        then(adventureRepository).should().existsByUserAccount_UserIdAndDeletedIsFalse(any());
         assertThat(throwable).isInstanceOf(EntityNotFoundException.class);
     }
 

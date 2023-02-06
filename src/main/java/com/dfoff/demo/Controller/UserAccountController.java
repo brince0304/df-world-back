@@ -127,7 +127,7 @@ public class UserAccountController {
             }
         }
         int size = Math.min(dtos.size(), 15);
-        return new ResponseEntity<>(dtos.stream().map(CharacterEntity.CharacterEntityDto.CharacterEntityResponse::from).collect(Collectors.toList()).subList(0, size), HttpStatus.OK);
+        return new ResponseEntity<>(dtos.stream().map(CharacterEntity.CharacterEntityResponse::from).collect(Collectors.toList()).subList(0, size), HttpStatus.OK);
     }
 
 
@@ -170,6 +170,9 @@ public class UserAccountController {
         UserAccount.UserAccountMyPageResponse response = userAccountService.getUserAccountById(principal.getUsername());
         mav.addObject("user", response);
         mav.addObject("uncheckedLogCount", notificationService.getUncheckedNotificationCount(principal.getUsername()));
+        if(userAccountService.checkUserAdventure(principal.getUsername())){
+            mav.addObject("adventure",userAccountService.getUserAdventureByUserId(principal.getUsername()));
+        }
         return mav;
     }
 
@@ -178,6 +181,12 @@ public class UserAccountController {
     public ResponseEntity<?> deleteAccount(@AuthenticationPrincipal UserAccount.PrincipalDto principal, HttpServletRequest request) {
         userAccountService.deleteUserAccountById(principal.getUsername());
         request.getSession().invalidate();
+        return new ResponseEntity<>("success", HttpStatus.OK);
+    }
+    @Auth
+    @DeleteMapping("/users/adventure")
+    public ResponseEntity<?> deleteAdventure(@AuthenticationPrincipal UserAccount.PrincipalDto principal) {
+        userAccountService.deleteUserAdventure(principal.getUsername());
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 

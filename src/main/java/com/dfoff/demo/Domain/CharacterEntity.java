@@ -233,133 +233,135 @@ public class CharacterEntity extends AuditingFields {
         }
 
 
-        @Getter
-        @Data
-        @Builder
-        public static class CharacterEntityResponse implements Serializable {
-            private final String createdAt;
-            private final String modifiedAt;
-            private final String characterId;
-            private final String characterName;
-
-            private final String serverId;
-
-            private final String serverName;
-
-            private final Integer level;
-
-            private final String jobId;
-
-            private final String jobGrowId;
-
-            private final String jobName;
-
-            private final String jobGrowName;
-
-            private final Integer adventureFame;
-            private final String adventureName;
-
-            private final String guildId;
-
-            private final String guildName;
-
-            private final Integer buffPower;
-
-            private final Integer damageIncrease;
-
-            private final List<CharacterAbilityDto.Status__1> status;
-
-
-            public static CharacterEntityResponse from(CharacterEntityDto dto) {
-                return CharacterEntityResponse.builder()
-                        .characterId(dto.getCharacterId())
-                        .characterName(dto.getCharacterName())
-                        .serverId(dto.getServerId())
-                        .level(dto.getLevel())
-                        .jobId(dto.getJobId())
-                        .jobGrowId(dto.getJobGrowId())
-                        .jobName(dto.getJobName())
-                        .jobGrowName(dto.getJobGrowName())
-                        .adventureFame(dto.getAdventureFame())
-                        .adventureName(dto.getAdventureName())
-                        .serverName(getServerName(dto.getServerId()))
-                        .guildId(dto.getGuildId())
-                        .guildName(dto.getGuildName())
-                        .modifiedAt(dto.getModifiedAt()!=null?timesAgo(dto.getModifiedAt()):"방금 전")
-                        .createdAt(dto.getCreatedAt()!=null?timesAgo(dto.getCreatedAt()):"방금 전")
-                        .buffPower(dto.getBuffPower())
-                        .damageIncrease(dto.getDamageIncrease())
-                        .build();
-            }
-
-            public static CharacterEntityResponse from(CharacterEntity dto) {
-                return CharacterEntityResponse.builder()
-                        .characterId(dto.getCharacterId())
-                        .characterName(dto.getCharacterName())
-                        .serverId(dto.getServerId())
-                        .level(dto.getLevel())
-                        .jobId(dto.getJobId())
-                        .jobGrowId(dto.getJobGrowId())
-                        .jobName(dto.getJobName())
-                        .jobGrowName(dto.getJobGrowName())
-                        .adventureFame(dto.getAdventureFame())
-                        .adventureName(dto.getAdventureName())
-                        .serverName(getServerName(dto.getServerId()))
-                        .guildId(dto.getGuildId())
-                        .guildName(dto.getGuildName())
-                        .modifiedAt(dto.getModifiedAt()!=null?timesAgo(dto.getModifiedAt()):"방금 전")
-                        .build();
-            }
 
 
 
-            public static CharacterEntityResponse from(CharacterAbilityDto dto,String serverId) {
-                return CharacterEntityResponse.builder()
-                        .characterId(dto.getCharacterId())
-                        .characterName(dto.getCharacterName())
-                        .serverId(serverId)
-                        .level(dto.getLevel())
-                        .jobId(dto.getJobId())
-                        .jobGrowId(dto.getJobGrowId())
-                        .jobName(dto.getJobName())
-                        .jobGrowName(dto.getJobGrowName())
-                        .adventureFame(dto.getAdventureFame())
-                        .adventureName(dto.getAdventureName())
-                        .serverName(getServerName(serverId))
-                        .guildId(dto.getGuildId())
-                        .guildName(dto.getGuildName())
-                        .status(dto.getStatus())
-                        .build();
-            }
+    }
 
-            public static String getServerName(String serverId) {
-                if (serverId.equals("bakal")) {
-                    return "바칼";
-                } else if (serverId.equals("cain")) {
-                    return "카인";
-                } else if (serverId.equals("diregie")) {
-                    return "디레지에";
-                } else if (serverId.equals("hilder")) {
-                    return "힐더";
-                } else if (serverId.equals("prey")) {
-                    return "프레이";
-                } else if (serverId.equals("siroco")) {
-                    return "시로코";
-                } else if (serverId.equals("casillas")) {
-                    return "카시야스";
-                } else if (serverId.equals("anton")) {
-                    return "안톤";
-                } else {
-                    return serverId;
-                }
-            }
+    @Getter
+    @Data
+    @Builder
+    public static class CharacterEntityResponse implements Serializable {
+        private final String createdAt;
+        private final String modifiedAt;
+        private final String characterId;
+        private final String characterName;
 
-            public static Set<CharacterEntityResponse> from(Set<CharacterEntityDto> dtos) {
-                return dtos.stream().map(CharacterEntityResponse::from).collect(Collectors.toSet());
-            }
+        private final String serverId;
 
+        private final String serverName;
+
+        private final Integer level;
+
+        private final String jobId;
+
+        private final String jobGrowId;
+
+        private final String jobName;
+
+        private final String jobGrowName;
+
+        private final Integer adventureFame;
+        private final String adventureName;
+
+        private final String guildId;
+
+        private final String guildName;
+
+        private final Integer buffPower;
+
+        private final Integer damageIncrease;
+
+        private final List<CharacterAbilityDto.Status__1> status;
+
+
+        public static CharacterEntityResponse from(CharacterEntityDto dto) {
+            return CharacterEntityResponse.builder()
+                    .characterId(dto.getCharacterId())
+                    .characterName(dto.getCharacterName())
+                    .serverId(dto.getServerId())
+                    .level(dto.getLevel())
+                    .jobId(dto.getJobId())
+                    .jobGrowId(dto.getJobGrowId())
+                    .jobName(dto.getJobName())
+                    .jobGrowName(dto.getJobGrowName())
+                    .adventureFame(dto.getAdventureFame())
+                    .adventureName(dto.getAdventureName())
+                    .serverName(getServerName(dto.getServerId()))
+                    .guildId(dto.getGuildId())
+                    .guildName(dto.getGuildName())
+                    .modifiedAt(dto.getModifiedAt()!=null?timesAgo(dto.getModifiedAt()):"방금 전")
+                    .createdAt(dto.getCreatedAt()!=null?timesAgo(dto.getCreatedAt()):"방금 전")
+                    .buffPower(dto.getBuffPower())
+                    .damageIncrease(dto.getDamageIncrease())
+                    .build();
         }
 
+        public static CharacterEntityResponse from(CharacterEntity dto) {
+            return CharacterEntityResponse.builder()
+                    .characterId(dto.getCharacterId())
+                    .characterName(dto.getCharacterName())
+                    .serverId(dto.getServerId())
+                    .level(dto.getLevel())
+                    .jobId(dto.getJobId())
+                    .jobGrowId(dto.getJobGrowId())
+                    .jobName(dto.getJobName())
+                    .jobGrowName(dto.getJobGrowName())
+                    .adventureFame(dto.getAdventureFame())
+                    .adventureName(dto.getAdventureName())
+                    .serverName(getServerName(dto.getServerId()))
+                    .guildId(dto.getGuildId())
+                    .guildName(dto.getGuildName())
+                    .modifiedAt(dto.getModifiedAt()!=null?timesAgo(dto.getModifiedAt()):"방금 전")
+                    .build();
+        }
+
+
+
+        public static CharacterEntityResponse from(CharacterAbilityDto dto,String serverId) {
+            return CharacterEntityResponse.builder()
+                    .characterId(dto.getCharacterId())
+                    .characterName(dto.getCharacterName())
+                    .serverId(serverId)
+                    .level(dto.getLevel())
+                    .jobId(dto.getJobId())
+                    .jobGrowId(dto.getJobGrowId())
+                    .jobName(dto.getJobName())
+                    .jobGrowName(dto.getJobGrowName())
+                    .adventureFame(dto.getAdventureFame())
+                    .adventureName(dto.getAdventureName())
+                    .serverName(getServerName(serverId))
+                    .guildId(dto.getGuildId())
+                    .guildName(dto.getGuildName())
+                    .status(dto.getStatus())
+                    .build();
+        }
+
+        public static String getServerName(String serverId) {
+            if (serverId.equals("bakal")) {
+                return "바칼";
+            } else if (serverId.equals("cain")) {
+                return "카인";
+            } else if (serverId.equals("diregie")) {
+                return "디레지에";
+            } else if (serverId.equals("hilder")) {
+                return "힐더";
+            } else if (serverId.equals("prey")) {
+                return "프레이";
+            } else if (serverId.equals("siroco")) {
+                return "시로코";
+            } else if (serverId.equals("casillas")) {
+                return "카시야스";
+            } else if (serverId.equals("anton")) {
+                return "안톤";
+            } else {
+                return serverId;
+            }
+        }
+
+        public static Set<CharacterEntityResponse> from(Set<CharacterEntityDto> dtos) {
+            return dtos.stream().map(CharacterEntityResponse::from).collect(Collectors.toSet());
+        }
 
     }
 

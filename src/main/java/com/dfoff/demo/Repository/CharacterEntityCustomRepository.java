@@ -13,7 +13,7 @@ public interface CharacterEntityCustomRepository {
 
     List<CharacterEntity.CharacterEntityMainPageResponse> getCharacterRankingBest5OrderByBuffPower();
 
-    Page<CharacterEntity.CharacterEntityDto.CharacterEntityResponse> findAllByAdventureNameContaining(String adventureName, Pageable pageable);
+    Page<CharacterEntity.CharacterEntityResponse> findAllByAdventureNameContaining(String adventureName, Pageable pageable);
 
     Long getBoardCountByCharacterId(String characterId);
 
