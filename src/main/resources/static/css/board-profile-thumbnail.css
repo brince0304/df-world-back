@@ -1,20 +1,40 @@
-
 .board-character {
+    background-image: url("/static/images/icon_char/bg_char.jpeg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+
+    width: 30px;
+    height: 30px;
+    overflow: hidden;
+    position: relative;
+    float: right;
+    display: inline-block;
+    border-radius: 50%;
+    border: 1.5px solid #898989;
+    margin-top:10px;
+    margin-right:25px;
+
+}
+
+.myPage-character {
     background-image: url("/images/icon_char/bg_char.jpeg");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
 
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
     overflow: hidden;
     position: relative;
-    display: flex;
+    float: right;
+    display: inline-block;
     border-radius: 50%;
     border: 1.5px solid #898989;
+    margin-left:5px;
 }
 
-.board-character .f-mage {
+.board-character .f-mage  {
     position: absolute;
     left: -980%;
     right: -1010%;
@@ -26,7 +46,7 @@
 }
 
 
-.board-character .default {
+.board-character .default  {
     position: absolute;
     left: -980%;
     right: -1010%;
@@ -37,7 +57,7 @@
     min-width: 100%;
 }
 
-.board-character .m-gunner {
+.board-character .m-gunner  {
     position: absolute;
     left: -1000%;
     right: -1010%;
@@ -48,7 +68,7 @@
     min-width: 100%;
 }
 
-.board-character .f-gunner {
+.board-character .f-gunner  {
     position: absolute;
     left: -1000%;
     right: -1010%;
@@ -59,7 +79,7 @@
     min-width: 100%;
 }
 
-.board-character .m-fighter {
+.board-character .m-fighter  {
     position: absolute;
     left: -1000%;
     right: -1030%;
@@ -80,7 +100,6 @@
     min-height: 100%;
     min-width: 100%;
 }
-
 .board-character .f-fighter {
     position: absolute;
     left: -980%;
@@ -91,6 +110,7 @@
     min-height: 100%;
     min-width: 100%;
 }
+
 
 
 .board-character .m-warrior {
@@ -125,7 +145,6 @@
     min-height: 100%;
     min-width: 100%;
 }
-
 .board-character .m-priest {
     position: absolute;
     left: -1000%;

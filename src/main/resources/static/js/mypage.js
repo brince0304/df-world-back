@@ -551,14 +551,14 @@ function setCharacterForAdventure(serverId, characterId,characterName,adventureN
             url: "/users/adventure/validate",
             type: "GET",
             success: function (data) {
-                html = '<h3 style="text-align: center;">'+adventureName+' 모험단</h3>';
-                html += '<h3 style="text-align: center;">'+characterName+' 캐릭터가 등록된 서버에</h3>';
-                html += '<h3 style="text-align: center;">'+data.randomJobName+' 직업으로</h3>';
-                html += '<h3 style="text-align: center;">'+data.randomString+' 닉네임을 가진 캐릭터를 생성 후 확인을 눌러주세요. </h3>';
-                html += '<h3 style="text-align: center;">인증이 완료되면 대표 캐릭터로 등록됩니다.</h3>';
-                html += '<h3 style="text-align: center;">인증이 완료되지 않으면 대표 캐릭터로 등록되지 않습니다.</h3>';
-                html += '<button type="button" class="btn btn-primary" onclick="validateCharacterForAdventure(\''+serverId+'\',\''+characterId+'\',\''+adventureName+'\',\''+data.randomJobName+'\',\''+data.randomString+'\')">확인</button>';
+                var html ="";
+                html = '<table class="table"><tbody><tr><th scope="row">모험단</th><td>'+adventureName+'</td></tr>';
+                html += '<tr><th scope="row">서버</th><td>'+getServerName(serverId)+'</td></tr>';
+                html += '<tr><th scope="row">직업</th><td>'+data.randomJobName+'</td></tr>';
+                html += '<tr><th scope="row">닉네임</th><td>'+data.randomString+'</td></tr></table>';
+                html += '<h3 style="font-style: inherit;text-align: center;">캐릭터를 생성 후 버튼을 눌러주세요.</h3>';
                 $('#searchBodyForAdventure').html(html);
+                $('#adventure-modal-footer').append('<button type="button" class="btn btn-primary" id="validate-btn" onclick="validateCharacterForAdventure(\''+serverId+'\',\''+characterId+'\',\''+adventureName+'\',\''+data.randomJobName+'\',\''+data.randomString+'\')">인증</button>');
             }, error: function (request, status, error) {
                 alert("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
             }
@@ -586,6 +586,7 @@ function validateCharacterForAdventure(serverId, characterId,adventureName,rando
         }, error: function (request, status, error) {
             alert("인증에 실패하였습니다. 다시 시도해주세요.");
             $('#charSearchModalForAdventure').modal('hide');
+            $('#validate-btn').remove();
             location.reload();            }
     });
 }
@@ -618,7 +619,7 @@ function getUserLogs(page) {
             let html = "";
             if (data.content.length > 0) {
                 $(data.content).each(function () {
-                    html += '<div data-id="' + this.id + '" style="margin:5px">';
+                    html += '<div data-id="' + this.id + '" style="margin:5px" class="board-list">';
                     html += '<a style="text-decoration-line: none; color: #535353;" href="/boards/' + this.boardId + '">';
                     html += '<span class="boardTitle">'+this.logContent+'</span>'
                     html += '<span style="color:grey; font-size: 11px; float:right; display:inline-flex;" >' + this.createdDate + '</span>';
@@ -651,6 +652,18 @@ function getUserLogs(page) {
                 $('#prevUserLogBtn').removeClass('text-secondary');
             }
             $('#userLogPage').text(logPage + 1);
+            $('.board-list').mouseover(function () {
+                $(this).css('cursor', 'pointer');
+                $(this).css('background-color', '#f2f2f2');
+            });
+            $('.board-list').mouseout(function () {
+                $(this).css('background-color', 'white');
+            });
+
+            $('.board-list').click(function () {
+                var boardId = $(this).attr('data-id');
+                location.href = '/boards/' + boardId;
+            });
         }, error: function (request, status, error) {
             console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
 
@@ -699,7 +712,7 @@ function getUserCommentLogs(page) {
             if (data.content.length > 0) {
                 $(data.content).each(function () {
                     if (this.deleted === false) {
-                        html += '<tr data-id="' + this.id + '" style="margin:5px">';
+                        html += '<tr data-id="' + this.id + '" style="margin:5px" class="board-list">';
                         html += '<a style="text-decoration-line: none; color: #535353;" href="/boards/' + this.boardId + '">';
                         if (this.commentContent.length < 35) {
                             html += '<td style="width:67%"><span  class="boardTitle">' + this.commentContent + '</span></td>'
@@ -763,6 +776,18 @@ function getUserCommentLogs(page) {
                 $('#prevCommentsBtn').removeClass('text-secondary');
             }
             $('#commentPage').text(commentPage + 1);
+            $('.board-list').mouseover(function () {
+                $(this).css('cursor', 'pointer');
+                $(this).css('background-color', '#f2f2f2');
+            });
+            $('.board-list').mouseout(function () {
+                $(this).css('background-color', 'white');
+            });
+
+            $('.board-list').click(function () {
+                var boardId = $(this).attr('data-id');
+                location.href = '/boards/' + boardId;
+            });
         }, error: function (request, status, error) {
             console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
 
@@ -885,7 +910,7 @@ function getUserBoardLogs(page) {
             if (data.content.length > 0) {
                 $(data.content).each(function () {
                     if (this.deleted === false) {
-                        html += '<tr data-id="' + this.id + '" style="margin:5px">';
+                        html += '<tr data-id="' + this.id + '" style="margin:5px" class="board-list" >';
                         html += '<a style="text-decoration-line: none; color: #535353;" href="/boards/' + this.id +'">';
                         if (this.character != null) {
                             html += '<td class="td-header" style="padding-right:0"><div><div class="myPage-character">'
@@ -916,7 +941,7 @@ function getUserBoardLogs(page) {
                         html += '</td>';
                         html += '</tr>';
                     } else {
-                        html += '<tr data-id="' + this.id + '" style="margin:5px">';
+                        html += '<tr data-id="' + this.id + '" style="margin:5px" >';
                         if (this.character != null) {
                             html += '<td class="td-header" style=" padding-right:0"><div><div class="myPage-character">'
                             html += '<img class="text-dark ' + this.character.imgStyleClassName + '"  src="' + this.character.characterImageUrl + '"/></div>';
@@ -971,6 +996,18 @@ function getUserBoardLogs(page) {
                 $('#prevBoardssBtn').removeClass('text-secondary');
             }
             $('#boardPage').text(boardPage + 1);
+            $('.board-list').mouseover(function () {
+                $(this).css('cursor', 'pointer');
+                $(this).css('background-color', '#f2f2f2');
+            });
+            $('.board-list').mouseout(function () {
+                $(this).css('background-color', 'white');
+            });
+
+            $('.board-list').click(function () {
+                var boardId = $(this).attr('data-id');
+                location.href = '/boards/' + boardId;
+            });
         }, error: function (request, status, error) {
             console.log("code:" + request.status + "\n" + "message:" + request.responseText + "\n" + "error:" + error);
         }, done: function (data) {

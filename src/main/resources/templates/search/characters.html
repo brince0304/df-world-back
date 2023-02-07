@@ -980,12 +980,11 @@
 
             <div class="media-29101 d-md-flex w-100">
                 <div id="equipTableView" style="padding: 10px; width:100%">
-                    <table id="equipTable" style="width: 100%; border-spacing: 0 5px;">
+                    <table id="equipTable" style="width: 100%; border-spacing: 0 5px;" class="table">
 
                         <tr class="itemRows" th:if="${characterEquipment.equipment!=null}"
-                            th:each="equip,i : ${characterEquipment.equipment}" >
+                            th:each="equip,i : ${characterEquipment.equipment}"  th:data-bs-target="${'#'+equip.slotName+'-modal'}" data-bs-toggle="modal">
                             <td>
-                                <a href="#" th:data-bs-target="${'#'+equip.slotName+'-modal'}" data-bs-toggle="modal">
                                 <div class="item-icon-view">
                                     <div th:switch="${equip.itemRarity}">
                                     </div>
@@ -1044,8 +1043,6 @@
 																		</span>
 
                                 </div>
-
-                                </a>
                             </td>
 
                         </tr>
@@ -1064,7 +1061,7 @@
                                 </div>
                             </div>
                         </div>
-                        <table class="buff-item-equip-table" style="width: 100%; border-spacing: 0 5px;">
+                        <table class="buff-item-equip-table table" style="width: 100%; border-spacing: 0 5px;" >
                             <tbody th:if="${buffEquipment.skill.buff!=null}">
                             <tr class="itemRows" th:each="buffEquip:${buffEquipment.skill.buff.equipment}">
                                 <td>
@@ -1100,7 +1097,7 @@
                                 </div>
                             </div>
                         </div>
-                        <table class="buff-item-avatar-table" style="width: 100%; border-spacing: 0 5px;">
+                        <table class="buff-item-avatar-table table" style="width: 100%; border-spacing: 0 5px;">
                             <tbody th:if="${buffAvatar.skill.buff!=null}">
                             <tr class="itemRows" th:each="buffAvatar:${buffAvatar.skill.buff.avatar}">
                                 <td>
@@ -1139,7 +1136,7 @@
                                 </div>
                             </div>
                         </div>
-                        <table class="buff-item-creature-table" style="width: 100%; border-spacing: 0 5px;">
+                        <table class="buff-item-creature-table table" style="width: 100%; border-spacing: 0 5px;">
                             <tbody>
                             <tr class="itemRows"
                                 th:if="${buffCreature.skill.buff!=null && buffCreature.skill.buff.creature!=null}">
@@ -1577,7 +1574,7 @@
                             </div>
                         </div>
                     </div>
-                    <table style="width:100%">
+                    <table style="width:100%" class="table">
                         <tr class="itemRows" th:if="${characterAvatar.avatar.size()>0}"
                             th:each="avatar:${characterAvatar.avatar}">
                             <td>
@@ -1613,7 +1610,7 @@
                             </div>
                         </div>
                     </div>
-                    <table class="" id="t_table" style="width: 100%">
+                    <table class="table" id="t_table" style="width: 100%">
                         <tbody>
                         <tr class="itemRows" th:if="${characterTalisman.size()>0}"
                             th:each="talisman : ${characterTalisman}">
@@ -1818,6 +1815,17 @@
         $('#activeskill').hide();
         $('#passiveskill').show();
     }
+
+
+    $('.itemRows').mouseover(function(){
+        $(this).css('background-color','#F5F5F5');
+    })
+
+    $('.itemRows').mouseout(function(){
+        $(this).css('background-color','#FFFFFF');
+    })
+
+    $('.itemRows').css('cursor','pointer');
 
 </script>
 </html>

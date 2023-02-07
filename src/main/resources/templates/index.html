@@ -23,6 +23,9 @@
           integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
     <title>Title</title>
     <style>
+        .header-margin{
+            margin-top:1.3%;
+        }
         .rank-table {
             cursor: pointer;
         }
@@ -160,10 +163,10 @@
                 <div style="padding-bottom: 10px;">
                     <table class="table" id="rankTable" style="margin:0;">
                         <tbody>
-                        <tr class="rank-adventure-fame" th:each="character,i :${adventureFameRanking}">
+                        <tr class="rank-adventure-fame rank-table"  th:data-id="${character.characterId}"
+                            th:data-server="${character.serverId}" th:each="character,i :${adventureFameRanking}">
 
-                            <td style="width:1%" class="rank-table" th:data-id="${character.characterId}"
-                                th:data-server="${character.serverId}">
+                            <td style="width:1%" class="" >
                                 <div class="rank-header" th:switch="${i.index}">
                                     <i class="fa fa-crown" style="color:gold;" th:case="0"></i>
                                     <i class="fa fa-crown" style="color:silver;" th:case="1"></i>
@@ -207,9 +210,9 @@
                         </tr>
 
 
-                        <tr class="rank-damage-increase" th:each="character,i :${damageIncreaseRanking}">
-                            <td style="width:1%" class="rank-table" th:data-id="${character.characterId}"
-                                th:data-server="${character.serverId}">
+                        <tr class="rank-damage-increase rank-table"  th:data-id="${character.characterId}"
+                            th:data-server="${character.serverId}" th:each="character,i :${damageIncreaseRanking}">
+                            <td style="width:1%" >
 
                                 <div class="rank-header" th:switch="${i.index}">
                                     <i class="fa fa-crown" style="color:gold;" th:case="0"></i>
@@ -255,10 +258,10 @@
                         </tr>
 
 
-                        <tr class="rank-buff-power" th:each="character,i :${buffPowerRanking}">
+                        <tr class="rank-buff-power rank-table"  th:data-id="${character.characterId}"
+                            th:data-server="${character.serverId}" th:each="character,i :${buffPowerRanking}">
 
-                            <td style="width:1%" class="rank-table" th:data-id="${character.characterId}"
-                                th:data-server="${character.serverId}">
+                            <td style="width:1%" >
                                 <div class="rank-header" th:switch="${i.index}">
                                     <i class="fa fa-crown" style="color:gold;" th:case="0"></i>
                                     <i class="fa fa-crown" style="color:silver;" th:case="1"></i>
@@ -300,9 +303,9 @@
                             </td>
                         </tr>
 
-                        <tr class="rank-adventure-adventure-fame" th:each="adv,i :${advFameRanking}">
-                            <td style="width:1%" class="rank-table"
-                                th:data-id="${adv.adventureName}" th:data-server="${adv.serverName}">
+                        <tr class="rank-adventure-adventure-fame rank-table" th:data-id="${adv.adventureName}" th:data-server="${adv.serverName}" th:each="adv,i :${advFameRanking}">
+                            <td style="width:1%"
+                                >
                                 <div class="rank-header" th:switch="${i.index}">
                                     <i class="fa fa-crown" style="color:gold;" th:case="0"></i>
                                     <i class="fa fa-crown" style="color:silver;" th:case="1"></i>
@@ -365,30 +368,36 @@
                 <div style="padding: 5px;">
 
 
-                    <div class="boardItem" data-id="72630"
+                    <div class="boardItem"
                          style="position: relative; display: table; width: 100%; table-layout: fixed; cursor: pointer;
                                  ">
-                        <div style="padding: .75rem; margin-left: 3px;" th:each="article :${articles}">
+                        <div style="padding: .75rem; margin-left: 3px;" th:each="article :${articles}"  class="board-table">
                             <div style="line-height: 20px; font-size: 16px; word-break: break-all; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                <a style="color:black; font-weight: 400; text-decoration-line: none" data-id=""
+                                <a style="color:black; font-weight: 400; text-decoration-line: none"
                                    th:text="${article.boardTitle}" th:href="@{'/boards/'+${article.id}}">회랑3단</a>
                             </div>
 
                             <div style="margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                                <ul style="margin: 0; display: inline-block; padding: 0;">
-                                    <li class="board_item_tag1"><img
-                                            th:src="${article.userProfileImgUrl}"
-                                            src=""
-                                            width="16px" height="16px" style="border-radius: 10px;"><span
-                                            style="padding-left: 5px;" th:text="${article.userNickname}">shehdj</span>
+                                <ul style="margin: 0; display: -webkit-inline-flex; padding: 0;">
+                                    <li class="board_item_tag1"  th:style="${article.profileCharacterIcon!=''?'margin-top:1.3%;display: -webkit-inline-box;':'display: -webkit-inline-box;'}">
+                                        <div style="display: -webkit-inline-box;" th:if="${article.profileCharacterIcon==''}"> <img
+                                                th:src="${article.userProfileImgUrl}"
+                                                src=""
+                                                width="25px" height="25px" style="border-radius: 10px;" ></div>
+                                        <div class="board-character" style="margin-top: -4.5%;" th:if="${article.profileCharacterIcon!=''}">
+                                        <img    th:class="${article.profileCharacterIconClassName}"
+                                                th:src="${article.profileCharacterIcon}"
+                                                src=""
+                                                ></div><span
+                                            style="padding-left: 5px;" th:text="${article.userNickname}" >shehdj</span>
                                     </li>
-                                    <a th:href="@{/board.df(boardType=${article.boardType})}">
-                                        <li class="board_item_tag2"
+                                    <a th:href="@{/boards/(boardType=${article.boardType})}">
+                                        <li class="board_item_tag2" style="margin-top:7%;"
                                             th:text="${article.getBoardType(article.boardType)}">자유
                                         </li>
                                     </a>
 
-                                    <li class="board_item_tag2">
+                                    <li class="board_item_tag2" style="margin-top:1.45%;">
                                         <time class="timeago" datetime="2023-01-13 0:31:35"
                                               th:text="${article.createdAt}"></time>
                                     </li>
@@ -450,6 +459,22 @@
         }
     );
 
+    $(".rank-table").mouseover(function () {
+        $(this).css("background-color", "#f5f5f5");
+    });
+
+    $(".rank-table").mouseout(function () {
+        $(this).css("background-color", "white");
+    });
+
+    $(".board-table").mouseover(function () {
+        $(this).css("background-color", "#f5f5f5");
+    });
+
+    $(".board-table").mouseout(function () {
+        $(this).css("background-color", "white");
+    });
+
     $('#rankAdventureFame').on('click', function () {
         $(this).css('color', 'black');
         $('#rankDamageIncrease').css('color', '#BDBDBD');
@@ -497,6 +522,10 @@
         $('.rank-buff-power').hide();
         $(".rank-adventure-adventure-fame").show();
     });
+
+
+
+
 
 
 </script>

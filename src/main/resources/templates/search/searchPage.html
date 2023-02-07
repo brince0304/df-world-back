@@ -201,7 +201,7 @@
 
                                                 <!-- Single Advisor-->
                                                 <div th:each="char : ${characters}" class="col-12 col-sm-6 col-lg-3">
-                                                    <a style="text-decoration-line: none" th:href="@{/characters/detail(characterId=${char.characterId},serverId=${char.serverId})}">
+                                                    <a style="text-decoration-line: none;color: black" th:href="@{/characters/detail(characterId=${char.characterId},serverId=${char.serverId})}">
                                                     <div
                                                          class="single_advisor_profile wow fadeInUp characterCard "
                                                          data-wow-delay="0.2s">

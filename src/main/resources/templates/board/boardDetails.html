@@ -21,6 +21,8 @@
 
 
     <link rel="stylesheet" href="/header/fonts/icomoon/style.css">
+    <link rel="stylesheet" href="/css/board-char-thumbnail.css">
+
 
 
     <!-- Bootstrap CSS -->
@@ -47,7 +49,7 @@
             padding-bottom: 0.2em;
             line-height: 1.6;
         }
-        .board-character {
+        .board-detail-character {
             background-image: url("/images/icon_char/bg_char.jpeg");
             background-repeat: no-repeat;
             background-size: cover;
@@ -64,7 +66,7 @@
 
         }
 
-        .board-character img {
+        .board-detail-character img {
             position: absolute;
             left: -1000%;
             right: -1010%;
@@ -199,22 +201,28 @@
                 </div>
 
             </div>
-
-            <div th:each="best : ${bestArticles}" style="padding: 2px 13px;">
-                <a style="text-decoration-line: none; color: sandybrown" th:href="@{'/boards/'+${best.id}}">
+            <table class="table" style="table-layout: fixed">
+                <tbody>
+            <tr th:each="best : ${bestArticles}" style="padding: 2px 13px;" class="board-list" th:data-id="${best.id}">
+                <td >
                     <i class="fa fa-trophy" aria-hidden="true" style="margin-right:-5px; margin-left:-2px"></i>
                     <span class="badge bg-transparent text-dark" style="display:inline; margin-right:-10px">베스트</span>
-                    <span th:if="${best.boardTitle.length()<25}"  style="font-size: 12px; font-weight: 400; color: #202020; line-height: 1; display:inline;margin-left:4px"
+                    <span  style="margin-left:4px; width:75%"
+                           th:classappend="${best.boardTitle.length()>25 ? 'boardTitleOverflow' : ''}"
                           th:text="${best.boardTitle}">공지사항 바로가기
                 </span>
-                    <span th:if="${best.boardTitle.length()>25}" class="boardTitleOverflow"
-                          th:text="${best.boardTitle}">공지사항 바로가기
-                </span>
-                    <div style="float:right; display:inline-block; margin-top:-6px;"><img class="boardIcon" src=""
-                                                                                          style="border-radius: 50%; border: 1px solid #898989; display:inline"
-                                                                                          width="20px"
-                                                                                          height="20px"
-                                                                                          th:src="${best.getUserProfileImgUrl()}"/>
+                </td>
+            <td>
+                    <div style="float:right; display:-webkit-inline-box; margin-top:-6px;"><img class="boardIcon" src=""
+                                                                                                style="border-radius: 50%; border: 1px solid #898989; display:inline"
+                                                                                                width="25px"
+                                                                                                height="25px"
+                                                                                                th:src="${best.getUserProfileImgUrl()}" th:if="${best.profileCharacterIcon==''}"/>
+                        <div class="board-character" style="margin-top:3.5%; margin-right:0" th:if="${best.profileCharacterIcon!=''}">
+                            <img  src=""
+                                  style="border-radius: 50%; border: 1px solid #898989; " th:class="${best.profileCharacterIconClassName}"
+                                  th:src="${best.profileCharacterIcon}"/>
+                        </div>
                         <span style="padding-left: 10px; padding-right: 10px; color: #4C4C4C; font-size: 14px; font-weight: 600; padding-top: 2px; display:inline"
                               th:text="${best.userNickname}">테스트</span> <span
                                 class="badge bg-secondary text-black-50"
@@ -239,9 +247,10 @@
                               th:text="${best.getBoardType(best.getBoardType())}"
                               th:if="${best.boardType.name().equals('REPORT')}" style="margin-top: 10px; ">자유게시판</span>
                     </div>
-                </a>
-                <div class="bar"
-                     style="width: 108%; height: 2px; background-color: #e6e6e6; margin-top:5px; margin-left:-15px"></div>
+            </td>
+            </tbody>
+                </table>
+
             </div>
 
             <div style="width:100%;">
@@ -281,14 +290,14 @@
                                th:if="${article.character!=null}"></i>
                             <span class="badge bg-transparent" th:if="${article.character!=null}"
                                   th:text="${article.character.characterName}" style="margin-left: -9px; color:black"> 캐릭터</span></a>
-                        <div class="board-character" th:if="${article.character!=null}"
+                        <div class="board-detail-character" th:if="${article.character!=null}"
                              >
                             <a style="text-decoration-line: none" th:href="@{/characters/detail(characterId=${article.character.characterId},serverId=${article.character.serverId})}">
                             <img  th:src="${article.character.characterImageUrl}"
                                  src=""
                             ></a>
                         </div>
-                        <div class="board-character" th:if="${article.character==null}"
+                        <div class="board-detail-character" th:if="${article.character==null}"
                              >
                             <div style="font-size: 20px; font-weight: 500; color: #999999; margin-left:22px"></div>
                         </div>
@@ -300,10 +309,16 @@
                               th:text="${article.boardTitle}">엔트법석질문421421214214</span><br>
 
 
-                        <div class="" style="padding-bottom:10px; padding-top:5px; width: 100%;">
-                            <img class="boardIcon" data-icon="0" style="border-radius: 50%; border: 1px solid #898989;"
+                        <div class="" style="padding-bottom:10px; padding-top:5px; width: 100%; display:-webkit-inline-box">
+                            <img class="boardIcon" data-icon="0" style="border-radius: 50%; border: 1px solid #898989;" th:if="${article.profileCharacterIcon==''}"
                                  src="" width="25px" height="25px"
                                  th:src="${article.getUserProfileIconPath()}"/>
+                            <div class="board-character" th:if="${article.profileCharacterIcon!=''}" style="margin-top: -0.01%;
+margin-right: 0;">
+                                <img  data-icon="0" style="border-radius: 50%; border: 1px solid #898989;" th:class="${article.profileCharacterIconClassName}"
+                                     src=""
+                                     th:src="${article.profileCharacterIcon}"/>
+                            </div>
                             <span class="userNick"
                                   style="padding-left: 5px; padding-right: 10px; color: #4C4C4C; font-size: 14px; font-weight: 600; padding-top: 2px;"
                                   th:text="${article.userNickname}">만능초밥</span>
@@ -346,7 +361,7 @@
                     <div class="bar"
                          style="width: 100%; height: 2px; background-color: #e6e6e6; margin-top:5px; "></div>
                     <div style="background-color: #F2F2F2">
-                        <div style="margin-left:2%">
+                        <div >
                             <i class="fa fa-commenting" aria-hidden="true" style="margin-left:2% ; margin-right:2px"></i>
                             <span style="font-size: 16px; color: #4C4C4C; font-weight: 500;  padding-top: 10px;  display: inline-block;" id="commentCount"
                                   th:text="${article.commentCount}+' 개'"> 0 개</span>
@@ -467,8 +482,11 @@
                     if(this.isParent===false){
                         html += "<div style='padding:10px; width:95%; margin-left:4%'>";
                         html += "<div style='margin-left:4%;'>";
-                        html += "<a style='color:#898989'><img class='boardIcon' style='border:1px solid #BDBDBD;border-radius:20px;' width='30px' height='30px' src='"+this.userProfileImgUrl+"'/>";
-                        html += "<span style='margin-left:2%' class='text-black-50' data-id='" + this.id + "'>" + this.userNickname + "</span>";
+                        if(this.profileCharacterIcon==''){
+                            html += "<a style='color:#898989'><img class='boardIcon' style='border:1px solid #BDBDBD;border-radius:20px;' width='25px' height='25px' src='" + this.userProfileImgUrl + "'/>";
+                        }else{
+                            html += "<a style='color:#898989'><div class='board-character'><img class='"+this.profileCharacterIconClassName+"' style='border:1px solid #BDBDBD;border-radius:20px;'  src='" + this.profileCharacterIcon + "'/></div>";
+                        }                        html += "<span class='text-black-50' data-id='" + this.id + "'>" + this.userNickname + "</span>";
                         html += "</a>";
                         if (this.userId === $("#principalId").val()) {
                             html += "<span class='badge bg-transparent text-black' id='"+this.id+"-updateBestReply' style=' display: inline-block; margin-left: 2% ; cursor: pointer'  onclick='updateCommentBestReply(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정</span>";
@@ -754,15 +772,19 @@
                     if (this.isParent === true) {
                         count += this.childrenComments.length;
                         html += "<div style='padding:10px; width:95%'>";
-                        html += "<div style='margin-left:4%;'>";
-                        html += "<a style='color:#898989'><img class='boardIcon' style='border:1px solid #BDBDBD;border-radius:20px;' width='30px' height='30px' src='" + this.userProfileImgUrl + "'/>";
-                        html += "<span style='margin-left:2%' class='text-black-50' data-id='" + this.id + "'>" + this.userNickname + "</span>";
+                        html += "<div style='margin-left:4%; display:-webkit-inline-box'>";
+                        if(this.profileCharacterIcon==''){
+                            html += "<a style='color:#898989'><img class='boardIcon' style='border:1px solid #BDBDBD;border-radius:20px;' width='25px' height='25px' src='" + this.userProfileImgUrl + "'/>";
+                        }else{
+                            html += "<a style='color:#898989'><div class='board-character'><img class='"+this.profileCharacterIconClassName+"' style='border:1px solid #BDBDBD;border-radius:20px;'  src='" + this.profileCharacterIcon + "'/></div>";
+                        }
+                        html += "<span  class='text-black-50' data-id='" + this.id + "'>" + this.userNickname + "</span>";
                         html += "</a>";
                         if (this.userId === $("#principalId").val()) {
-                            html += "<span class='badge bg-transparent text-black' id='"+this.id+"-update' style=' display: inline-block; margin-left: 2% ; cursor: pointer'  onclick='updateComment(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정</span>";
-                            html += "<span class='updateBtn badge bg-transparent text-black' id='"+this.id+"-updateCheck' style=' display: inline-block; margin-left: 2%; cursor: pointer'  onclick='updateCommentCheck(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정하기</span>";
-                            html += " <span class='badge bg-transparent text-black' id='"+this.id+"-delete' style='display: inline-block; cursor: pointer'  onclick='deleteComment(" + this.id + ")'><i class='fa fa-trash-o' style='margin-right:10%'></i> 삭제</span>";
-                            html += " <span class='updateCancelBtn badge bg-transparent text-black' id='"+this.id+"-updateCancel' style='display: inline-block; cursor: pointer '  onclick='updateCancel(" + this.id + ")'><i class='fa fa-times' style='margin-right:10%'></i> 취소</span>";
+                            html += "<span class='badge bg-transparent text-black' id='"+this.id+"-update' style='cursor: pointer'  onclick='updateComment(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정</span>";
+                            html += "<span class='updateBtn badge bg-transparent text-black' id='"+this.id+"-updateCheck' style=' cursor: pointer'  onclick='updateCommentCheck(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정하기</span>";
+                            html += " <span class='badge bg-transparent text-black' id='"+this.id+"-delete' style=' cursor: pointer'  onclick='deleteComment(" + this.id + ")'><i class='fa fa-trash-o' style='margin-right:10%'></i> 삭제</span>";
+                            html += " <span class='updateCancelBtn badge bg-transparent text-black' id='"+this.id+"-updateCancel' style=' cursor: pointer '  onclick='updateCancel(" + this.id + ")'><i class='fa fa-times' style='margin-right:10%'></i> 취소</span>";
                         }
                         html += "</div>";
                         html += "<div style='margin-left:3%; margin-top:1%'>";
@@ -805,9 +827,8 @@
                 })
 
                 html2 += "<div style='background-color: #F2F2F2; padding:15px; margin-top:-20px;'>";
-                 html2 +=   "<div style='margin-left :-4px'>";
-                html2 +=   " <i class='fa fa-certificate' aria-hidden='true' style='margin-left:2% ; margin-right:2px'></i>";
-                html2 +=   "     <span style='font-size: 16px; color: #4C4C4C; font-weight: 500;  padding-top: 10px;  display: inline-block;' id='bestCommentCount'>베댓 : "+data.bestComments.length+" 개</span>";
+                 html2 +=   "<div >";
+                html2 +=   "     <span style='font-size: 16px; color: #4C4C4C; font-weight: 500;  padding-top: 10px;  display: inline-block;' id='bestCommen댓tCount'>베댓 : "+data.bestComments.length+" 개</span>";
                 html2 +=   "       <i class='fa fa-list' aria-hidden='true' style='margin-left: 10px; margin-right:2px'></i>";
                 html2 +=   "       <span class='bestCommentBtn' style='font-size: 16px; color: #4C4C4C; font-weight: 500;  padding-top: 10px;  display: inline-block; cursor:pointer' onclick='getBestComments()'>펼치기</span>";
                 html2 +=   "       <span class='bestCommentBtn-disable' style='font-size: 16px; color: #4C4C4C; font-weight: 500;  padding-top: 10px;  display: inline-block; cursor:pointer' onclick='hideBestComments()'>접기</span>";
@@ -817,17 +838,20 @@
                 $(data.bestComments).each(function(){
 
                     html3 += "<div style='padding:10px; width:100%; background-color:#F2F2F2'>";
-                    html3 += "<div style='margin-left:4%;'>";
-                    html3 += "<a style='color:#898989'><img class='boardIcon' style='border:1px solid #BDBDBD;border-radius:20px;' width='30px' height='30px' src='" + this.userProfileImgUrl + "'/>";
-                    html3 += "<span style='margin-left:2%' class='text-black-50' data-id='" + this.id + "'>" + this.userNickname + "</span>";
+                    html3 += "<div style='margin-left:4%; display:-webkit-inline-box'>";
+                    if(this.profileCharacterIcon==''){
+                        html3 += "<a style='color:#898989'><img class='boardIcon' style='border:1px solid #BDBDBD;border-radius:20px;' width='25px' height='25px' src='" + this.userProfileImgUrl + "'/>";
+                    }else{
+                        html3 += "<a style='color:#898989'><div class='board-character'><img class='"+this.profileCharacterIconClassName+"' style='border:1px solid #BDBDBD;border-radius:20px;'  src='" + this.profileCharacterIcon + "'/></div>";
+                    }
+                    html3 += "<span class='text-black-50' data-id='" + this.id + "'>" + this.userNickname + "</span>";
                     html3 += "</a>";
                     html3 += "<i class=\"fa fa-trophy\" aria-hidden=\"true\" style=\"margin-left:8px; scale:1.1\"></i>"
-                    html3 += "<i class=\"fa fa-certificate\" aria-hidden=\"true\" style=\"float:right ;margin-right:4%; scale:1.1\"></i>"
                     if (this.userId === $("#principalId").val()) {
-                        html3 += "<span class='badge bg-transparent text-black' id='"+this.id+"-updateBest' style=' display: inline-block; margin-left: 2% ; cursor: pointer'  onclick='updateCommentBest(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정</span>";
-                        html3 += "<span class='updateBtn badge bg-transparent text-black' id='"+this.id+"-updateCheckBest' style=' display: inline-block; margin-left: 2%; cursor: pointer'  onclick='updateCommentCheckBest(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정하기</span>";
-                        html3 += " <span class='badge bg-transparent text-black' id='"+this.id+"-deleteBest' style='display: inline-block; cursor: pointer'  onclick='deleteCommentBest(" + this.id + ")'><i class='fa fa-trash-o' style='margin-right:10%'></i> 삭제</span>";
-                        html3 += " <span class='updateCancelBtn badge bg-transparent text-black' id='"+this.id+"-updateCancelBest' style='display: inline-block; cursor: pointer '  onclick='updateCancelBest(" + this.id + ")'><i class='fa fa-times' style='margin-right:10%'></i> 취소</span>";
+                        html3 += "<span class='badge bg-transparent text-black' id='"+this.id+"-updateBest' style=' cursor: pointer'  onclick='updateCommentBest(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정</span>";
+                        html3 += "<span class='updateBtn badge bg-transparent text-black' id='"+this.id+"-updateCheckBest' style='  cursor: pointer'  onclick='updateCommentCheckBest(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정하기</span>";
+                        html3 += " <span class='badge bg-transparent text-black' id='"+this.id+"-deleteBest' style='cursor: pointer'  onclick='deleteCommentBest(" + this.id + ")'><i class='fa fa-trash-o' style='margin-right:10%'></i> 삭제</span>";
+                        html3 += " <span class='updateCancelBtn badge bg-transparent text-black' id='"+this.id+"-updateCancelBest' style=' cursor: pointer '  onclick='updateCancelBest(" + this.id + ")'><i class='fa fa-times' style='margin-right:10%'></i> 취소</span>";
                     }
                     html3 += "</div>";
                     html3 += "<div style='margin-left:3%; margin-top:1%'>";
@@ -966,15 +990,18 @@
                 $(data.comments).each(function(){
                     if(this.isParent===false){
                         html += "<div style='padding:10px; width:95%'>";
-                        html += "<div style='margin-left:4%;'>";
-                        html += "<a style='color:#898989'><img class='boardIcon' style='border:1px solid #BDBDBD;border-radius:20px;' width='30px' height='30px' src='" + this.userProfileImgUrl + "'/>";
-                        html += "<span style='margin-left:2%' class='text-black-50' data-id='" + this.id + "'>" + this.userNickname + "</span>";
+                        html += "<div style='margin-left:4%; display: -webkit-inline-box'>";
+                        if(this.profileCharacterIcon==''){
+                            html += "<a style='color:#898989'><img class='boardIcon' style='border:1px solid #BDBDBD;border-radius:20px;' width='25px' height='25px' src='" + this.userProfileImgUrl + "'/>";
+                        }else{
+                            html += "<a style='color:#898989'><div class='board-character'><img class='"+this.profileCharacterIconClassName+"' style='border:1px solid #BDBDBD;border-radius:20px;'  src='" + this.profileCharacterIcon + "'/></div>";
+                        }                        html += "<span  class='text-black-50' data-id='" + this.id + "'>" + this.userNickname + "</span>";
                         html += "</a>";
                         if (this.userId === $("#principalId").val()) {
-                            html += "<span class='badge bg-transparent text-black' id='"+this.id+"-update' style=' display: inline-block; margin-left: 2% ; cursor: pointer'  onclick='updateComment(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정</span>";
-                            html += "<span class='updateBtn badge bg-transparent text-black' id='"+this.id+"-updateCheck' style=' display: inline-block; margin-left: 2%; cursor: pointer'  onclick='updateCommentCheck(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정하기</span>";
-                            html += " <span class='badge bg-transparent text-black' id='"+this.id+"-delete' style='display: inline-block; cursor: pointer'  onclick='deleteComment(" + this.id + ")'><i class='fa fa-trash-o' style='margin-right:10%'></i> 삭제</span>";
-                            html += " <span class='updateCancelBtn badge bg-transparent text-black' id='"+this.id+"-updateCancel' style='display: inline-block; cursor: pointer '  onclick='updateCancel(" + this.id + ")'><i class='fa fa-times' style='margin-right:10%'></i> 취소</span>";
+                            html += "<span class='badge bg-transparent text-black' id='"+this.id+"-update' style=' cursor: pointer'  onclick='updateComment(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정</span>";
+                            html += "<span class='updateBtn badge bg-transparent text-black' id='"+this.id+"-updateCheck' style='cursor: pointer'  onclick='updateCommentCheck(" + this.id + ")'><i class='fa fa-pencil' style='margin-right:10%'></i>  수정하기</span>";
+                            html += " <span class='badge bg-transparent text-black' id='"+this.id+"-delete' style=' cursor: pointer'  onclick='deleteComment(" + this.id + ")'><i class='fa fa-trash-o' style='margin-right:10%'></i> 삭제</span>";
+                            html += " <span class='updateCancelBtn badge bg-transparent text-black' id='"+this.id+"-updateCancel' style='cursor: pointer '  onclick='updateCancel(" + this.id + ")'><i class='fa fa-times' style='margin-right:10%'></i> 취소</span>";
 
                         }
                         html += "</div>";
@@ -1196,6 +1223,17 @@
             }
         });
     }
+    $('.board-list').mouseover(function () {
+        $(this).css('cursor', 'pointer');
+        $(this).css('background-color', '#f2f2f2');
+    });
+    $('.board-list').mouseout(function () {
+        $(this).css('background-color', 'white');
+    });
 
+    $('.board-list').click(function () {
+        var boardId = $(this).attr('data-id');
+        location.href = '/boards/' + boardId;
+    });
 </script>
 </html>
