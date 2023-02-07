@@ -235,10 +235,11 @@ class UserAccountServiceTest {
         given(userAccountRepository.existsByUserId(userId)).willReturn(false);
 
         //when
-        sut.deleteUserAccountById(userId);
+        Throwable throwable = catchThrowable(()->sut.deleteUserAccountById(userId));
 
         //then
         then(userAccountRepository).should().existsByUserId(userId);
+        assertThat(throwable).isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
