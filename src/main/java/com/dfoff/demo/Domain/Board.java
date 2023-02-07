@@ -216,6 +216,11 @@ public class Board extends AuditingFields {
 
         private final String userProfileImgUrl;
 
+        private final Boolean userAdventureExist;
+
+        private final String profileCharacterIcon;
+        private final String profileCharacterIconClassName;
+
         private final CharacterBoardResponse character;
 
         private final Set<String> hashtags;
@@ -257,6 +262,9 @@ public class Board extends AuditingFields {
                     .character(board.getCharacter() == null ? null : CharacterBoardResponse.from(board.getCharacter()))
                     .userProfileImgUrl(FileUtil.getProfileIconPath(board.getUserAccount().getProfileIcon().getFileName()))
                     .hashtags(board.getHashtags().stream().map(BoardHashtagMapper::getHashtag).map(Hashtag::getName).collect(Collectors.toSet()))
+                    .userAdventureExist(board.getUserAccount().getAdventure() != null)
+                    .profileCharacterIcon(board.getUserAccount().getProfileCharacterIcon() == null ? "" : board.getUserAccount().getProfileCharacterIcon())
+                    .profileCharacterIconClassName(board.getUserAccount().getProfileCharacterIcon() == null ? "" : board.getUserAccount().getProfileCharacterIconClassName())
                     .build();
         }
     }
@@ -390,6 +398,12 @@ public class Board extends AuditingFields {
 
         private final List<String> hashtags;
 
+        private final Boolean userAdventureExist;
+
+        private final String profileCharacterIcon;
+
+        private final String profileCharacterIconClassName;
+
         public String convert(String date) {
             return converter.convert(date);
         }
@@ -427,6 +441,9 @@ public class Board extends AuditingFields {
                     .userProfileIconPath(FileUtil.getProfileIconPath(board.getUserAccount().getProfileIcon().getFileName()))
                     .commentCount(String.valueOf(board.getBoardComments().size()))
                     .hashtags(board.getHashtags().stream().map(BoardHashtagMapper::getHashtag).map(Hashtag::getName).collect(Collectors.toList()))
+                    .userAdventureExist(board.getUserAccount().getAdventure() != null)
+                    .profileCharacterIcon(board.getUserAccount().getProfileCharacterIcon() == null ? "" : board.getUserAccount().getProfileCharacterIcon())
+                    .profileCharacterIconClassName(board.getUserAccount().getProfileCharacterIcon() == null ? "" : board.getUserAccount().getProfileCharacterIconClassName())
                     .build();
         }
     }

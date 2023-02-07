@@ -86,6 +86,12 @@ public class UserAccount extends AuditingFields {
     @ToString.Exclude
     private Set<Notification> notifications = new LinkedHashSet<>();
 
+    @Setter
+    private String profileCharacterIcon;
+
+    @Setter
+    private String profileCharacterIconClassName;
+
 
     private LocalDateTime deletedAt;
 
@@ -379,6 +385,10 @@ public class UserAccount extends AuditingFields {
 
         private final String representCharacterName;
 
+        private final String profileCharacterIcon;
+
+        private final String profileCharacterIconClassName;
+
 
 
         public static UserAccountMyPageResponse from(UserAccount userAccount) {
@@ -394,6 +404,8 @@ public class UserAccount extends AuditingFields {
                     .modifiedBy(userAccount.getModifiedBy())
                     .adventureCharacters(userAccount.getAdventure() !=null ? userAccount.getAdventure().getCharacters().stream().map(CharacterUserAccountResponse::from).collect(Collectors.toSet()) : new HashSet<>())
                     .representCharacterName(userAccount.getAdventure() == null ? "" : userAccount.getAdventure().getRepresentCharacter().getCharacterName())
+                    .profileCharacterIcon(userAccount.getProfileCharacterIcon() == null ? "" : userAccount.getProfileCharacterIcon())
+                    .profileCharacterIconClassName(userAccount.getProfileCharacterIconClassName() == null ? "" : userAccount.getProfileCharacterIconClassName())
                     .build();
         }
 

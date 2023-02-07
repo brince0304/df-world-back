@@ -130,6 +130,17 @@ public class UserAccountController {
         return new ResponseEntity<>(dtos.stream().map(CharacterEntity.CharacterEntityResponse::from).collect(Collectors.toList()).subList(0, size), HttpStatus.OK);
     }
 
+    @Auth
+    @PostMapping("/users/adventure/character-icon")
+    public ResponseEntity<?> changeProfileIconToCharacterImg(@AuthenticationPrincipal UserAccount.PrincipalDto principal, @RequestParam String serverId, @RequestParam String characterId) throws InterruptedException {
+        CharacterEntity.CharacterEntityDto character = characterService.getCharacter(serverId, characterId);
+        if (character == null) {
+            return new ResponseEntity<>("캐릭터를 찾을 수 없습니다.", HttpStatus.BAD_REQUEST);
+        }
+        userAccountService.changeProfileIconByAdventureCharacter(character,principal.getUsername());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
 
     @PostMapping("/users")
     public ResponseEntity<?> createAccount(@RequestBody @Valid UserAccount.UserAccountSignUpRequest request, BindingResult bindingResult) {

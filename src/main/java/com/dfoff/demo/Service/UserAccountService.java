@@ -4,6 +4,9 @@ import com.dfoff.demo.Domain.*;
 import com.dfoff.demo.Repository.UserAccountCharacterMapperRepository;
 import com.dfoff.demo.Repository.UserAccountRepository;
 import com.dfoff.demo.Repository.AdventureRepository;
+import com.dfoff.demo.Util.CharactersUtil;
+import com.dfoff.demo.Util.FileUtil;
+import com.dfoff.demo.Util.RestTemplateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -112,6 +115,8 @@ public class UserAccountService {
     public boolean changeProfileIcon(UserAccount.UserAccountDto dto, SaveFile.SaveFileDto iconDto) {
         UserAccount account = userAccountRepository.findById(dto.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         account.setProfileIcon(iconDto.toEntity());
+        account.setProfileCharacterIcon(null);
+        account.setProfileCharacterIconClassName(null);
         return true;
     }
 
@@ -263,6 +268,22 @@ public class UserAccountService {
         account.getAdventure().setUserAccount(null);
         account.getAdventure().setRepresentCharacter(null);
         account.setAdventure(null);
+        account.setProfileCharacterIcon(null);
+        account.setProfileCharacterIconClassName(null);
 
+    }
+
+    public void changeProfileIconByAdventureCharacter(CharacterEntity.CharacterEntityDto dto,String userId){
+        UserAccount account_ =  userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+        if(account_.getAdventure()==null){
+            throw new IllegalArgumentException("모험단이 등록되지 않았습니다.");
+        }
+        if(!dto.getAdventureName().equals(account_.getAdventure().getAdventureName())){
+            throw new IllegalArgumentException("회원님의 모험단에 등록된 캐릭터가 아닙니다.");
+        }
+        String characterImgUrl  = RestTemplateUtil.getCharacterImgUri(dto.getServerId(),dto.getCharacterId(),"1");
+        String characterClassName = CharactersUtil.getStyleClassName(dto.getJobName());
+        account_.setProfileCharacterIcon(characterImgUrl);
+        account_.setProfileCharacterIconClassName(characterClassName);
     }
 }

@@ -2,6 +2,7 @@ package com.dfoff.demo.Domain;
 
 import com.dfoff.demo.Domain.EnumType.BoardType;
 import com.dfoff.demo.JpaAuditing.AuditingFields;
+import com.dfoff.demo.Util.CharactersUtil;
 import com.dfoff.demo.Util.FileUtil;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -91,6 +92,10 @@ public class BoardComment extends AuditingFields {
         private final String userProfileImgUrl;
         private final Set<BoardCommentResponse> childrenComments;
 
+        private final String profileCharacterIcon;
+
+        private final String profileCharacterIconClassName;
+
         private final BoardType boardType;
 
         public String getBoardType(BoardType type) {
@@ -123,6 +128,8 @@ public class BoardComment extends AuditingFields {
                     .childrenComments(boardComment.getChildrenComments().stream().map(BoardCommentResponse::from).collect(Collectors.toSet()))
                     .userProfileImgUrl(FileUtil.getProfileIconPath(boardComment.getUserAccount().getProfileIcon().getFileName()))
                     .boardType(boardComment.getBoard().getBoardType())
+                    .profileCharacterIconClassName(boardComment.getUserAccount().getProfileCharacterIconClassName()==null?"":boardComment.getUserAccount().getProfileCharacterIconClassName())
+                    .profileCharacterIcon(boardComment.getUserAccount().getProfileCharacterIcon()==null?"":boardComment.getUserAccount().getProfileCharacterIcon())
                     .build();
 
         }
