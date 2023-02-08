@@ -240,6 +240,9 @@ public class CharacterService {
     }
 
     public boolean checkCharacterAdventure(Adventure.UserAdventureRequest request) throws InterruptedException {
+        if(request.getAdventureName().equals("")){
+            return false;
+        }
         List<CharacterDto> dto = parseJsonFromUri(RestTemplateUtil.getCharacterSearchUri(request.getServerId(),request.getRandomString()), CharacterDto.CharacterJSONDto.class).toDto();
         if(dto.size()==0){
             return false;
