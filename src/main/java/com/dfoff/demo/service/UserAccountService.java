@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,9 +48,10 @@ public class UserAccountService {
         account0.setProfileIcon(profileIcon.toEntity());
     }
 
+    @Transactional(readOnly = true)
     public String getUserAdventureNameByUserId(String userId) {
-        UserAccount userAccount = userAccountRepository.findById(userId).orElseThrow(()-> new EntityNotFoundException("존재하지 않는 아이디입니다."));
-        if(userAccount.getAdventure() == null) {
+        UserAccount userAccount = userAccountRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
+        if (userAccount.getAdventure() == null) {
             throw new EntityNotFoundException("모험단이 등록되지 않았습니다.");
         }
         return userAccount.getAdventure().getAdventureName();
@@ -55,19 +59,20 @@ public class UserAccountService {
     }
 
 
-
+    @Transactional(readOnly = true)
     public boolean existsByUserId(String userId) {
         return userAccountRepository.existsByUserId(userId);
     }
 
+    @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
         return userAccountRepository.existsByEmail(email);
     }
 
+    @Transactional(readOnly = true)
     public boolean existsByNickname(String nickname) {
         return userAccountRepository.existsByNickname(nickname);
     }
-
 
 
     public void refreshUserAdventure(UserAccount.UserAccountDto dto) {
@@ -78,9 +83,9 @@ public class UserAccountService {
         userAdventureStatusSetter(userAccount);
     }
 
-    public Adventure.UserAdventureDto addAllCharactersToUserAdventure(UserAccount.UserAccountDto dto, List<CharacterEntity.CharacterEntityDto> characters){
+    public Adventure.UserAdventureDto addAllCharactersToUserAdventure(UserAccount.UserAccountDto dto, List<CharacterEntity.CharacterEntityDto> characters) {
         UserAccount userAccount = userAccountRepository.findById(dto.userId()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
-        if(userAccount.getAdventure()== null){
+        if (userAccount.getAdventure() == null) {
             throw new EntityNotFoundException("모험단이 등록되지 않았습니다.");
         }
         userAccount.getAdventure().getCharacters().addAll(characters.stream().map(CharacterEntity.CharacterEntityDto::toEntity).toList());
@@ -101,7 +106,8 @@ public class UserAccountService {
         }
     }
 
-    private void userAdventureStatusBuffPowerAndDamageIncreaseSetter(Adventure adventure){
+
+    private void userAdventureStatusBuffPowerAndDamageIncreaseSetter(Adventure adventure) {
         for (CharacterEntity entity : adventure.getCharacters()) {
             if (entity.getDamageIncrease() != 0) {
                 adventure.setAdventureDamageIncreaseAndBuffPower(adventure.getAdventureDamageIncreaseAndBuffPower() + entity.getDamageIncrease());
@@ -121,16 +127,18 @@ public class UserAccountService {
         return true;
     }
 
+    @Transactional(readOnly = true)
     public UserAccount.UserAdventureResponse getUserAdventureById(String userId) {
-        UserAccount account_= userAccountRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
-        if(account_.getAdventure()==null){
+        UserAccount account_ = userAccountRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
+        if (account_.getAdventure() == null) {
             throw new EntityNotFoundException("모험단이 등록되지 않았습니다.");
         }
         return UserAccount.UserAdventureResponse.from(account_);
     }
 
+    @Transactional(readOnly = true)
     public Boolean checkUserAdventureById(String userId) {
-        return  adventureRepository.existsByUserAccount_UserIdAndDeletedIsFalse(userId);
+        return adventureRepository.existsByUserAccount_UserIdAndDeletedIsFalse(userId);
     }
 
 
@@ -151,7 +159,7 @@ public class UserAccountService {
             throw new EntityExistsException("이미 등록된 대표 캐릭터 입니다.");
         }
         UserAccount account = userAccountRepository.findById(userAccount.userId()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
-        Adventure adventure = adventureRepository.findById(request.getAdventureName()).orElseGet(()->adventureRepository.save(request.toEntity(userAccount, character)));
+        Adventure adventure = adventureRepository.findById(request.getAdventureName()).orElseGet(() -> adventureRepository.save(request.toEntity(userAccount, character)));
         adventure.getCharacters().addAll(characters.stream().map(CharacterEntity.CharacterEntityDto::toEntity).toList());
         account.setAdventure(adventure);
         userAdventureStatusSetter(account);
@@ -166,7 +174,7 @@ public class UserAccountService {
     }
 
     @Transactional(readOnly = true)
-    public Page<BoardComment.BoardCommentMyPageResponse> getCommentsByIdOrderByLikeCount(String userId, Pageable pageable) {
+    private Page<BoardComment.BoardCommentMyPageResponse> getCommentsByIdOrderByLikeCount(String userId, Pageable pageable) {
         if (userAccountRepository.existsByUserId(userId)) {
             return userAccountRepository.findBoardCommentsByUserIdOrderByLikeCount(userId, pageable).map(BoardComment.BoardCommentMyPageResponse::from);
         }
@@ -210,7 +218,7 @@ public class UserAccountService {
         if (userAccountRepository.existsByUserId(userId)) {
             userAccountRepository.deleteById(userId);
             SecurityContextHolder.clearContext();
-        }else{
+        } else {
             throw new EntityNotFoundException("존재하지 않는 아이디입니다.");
         }
     }
@@ -222,47 +230,52 @@ public class UserAccountService {
             mapperRepository.save(mapper);
         }
     }
-    
-    
+
 
     public void deleteCharacterFromUserAccount(UserAccount.UserAccountDto dto, CharacterEntity.CharacterEntityDto character) {
         if (userAccountRepository.existsByUserId(dto.userId())) {
             UserAccount userAccount = userAccountRepository.findById(dto.userId()).orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
             UserAccountCharacterMapper mapper = mapperRepository.findByUserAccountAndCharacter(userAccount, CharacterEntity.CharacterEntityDto.toEntity(character));
-            if(mapper!=null) {
+            if (mapper != null) {
                 mapper.setCharacter(null);
                 mapper.setUserAccount(null);
             }
         }
     }
 
-    public boolean changePassword(UserAccount.UserAccountDto accountDto, String password) {
+    public void changePassword(UserAccount.UserAccountDto accountDto, String password) {
+        if (!password.matches("^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$")) {
+            throw new IllegalArgumentException("비밀번호는 영문, 숫자, 특수문자를 포함하여 8~20자리로 입력해주세요.");
+        }
         UserAccount account = userAccountRepository.findById(accountDto.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         account.setPassword(password);
-        return true;
     }
 
-    public boolean changeNickname(UserAccount.UserAccountDto accountDto, String nickname) {
-        UserAccount account = userAccountRepository.findById(accountDto.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+    public void changeNickname(UserAccount.UserAccountDto accountDto, String nickname) {
+        if (!nickname.matches("^[a-zA-Z0-9가-힣]{2,10}$")) {
+            throw new IllegalArgumentException("닉네임은 2~10자리로 입력해주세요.");
+        }
         if (userAccountRepository.existsByNickname(nickname)) {
-            return false;
+            throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");
         }
+        UserAccount account = userAccountRepository.findById(accountDto.userId()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
         account.setNickname(nickname);
-        return true;
     }
 
-    public boolean changeEmail(UserAccount.UserAccountDto accountDto, String email) {
-        UserAccount account = userAccountRepository.findById(accountDto.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
-        if (userAccountRepository.existsByEmail(email)) {
-            return false;
+    public void changeEmail(UserAccount.UserAccountDto accountDto, String email) {
+        if (!email.matches("^[a-zA-Z0-9]+@[a-zA-Z0-9]+\\.[a-zA-Z0-9]+$")) {
+            throw new IllegalArgumentException("이메일 형식이 올바르지 않습니다.");
         }
+        if (userAccountRepository.existsByEmail(email)) {
+            throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
+        }
+        UserAccount account = userAccountRepository.findById(accountDto.userId()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
         account.setEmail(email);
-        return true;
     }
 
     public void deleteUserAdventureFromUserAccount(String userId) {
         UserAccount account = userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
-        if(account.getAdventure()==null){
+        if (account.getAdventure() == null) {
             throw new IllegalArgumentException("모험단이 등록되지 않았습니다.");
         }
         account.getAdventure().setUserAccount(null);
@@ -273,15 +286,31 @@ public class UserAccountService {
 
     }
 
-    public void changeProfileIconByAdventureCharacter(CharacterEntity.CharacterEntityDto dto,String userId){
-        UserAccount account_ =  userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
-        if(account_.getAdventure()==null){
+    public void changeProfileIconByAdventureCharacter(CharacterEntity.CharacterEntityDto dto, String userId) {
+        UserAccount account_ = userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+        if (account_.getAdventure() == null) {
             throw new IllegalArgumentException("모험단이 등록되지 않았습니다.");
         }
-        if(!dto.getAdventureName().equals(account_.getAdventure().getAdventureName())){
+        if (!dto.getAdventureName().equals(account_.getAdventure().getAdventureName())) {
             throw new IllegalArgumentException("회원님의 모험단에 등록된 캐릭터가 아닙니다.");
         }
-        account_.setProfileCharacterIcon(RestTemplateUtil.getCharacterImgUri(dto.getServerId(),dto.getCharacterId(),"1"));
+        account_.setProfileCharacterIcon(RestTemplateUtil.getCharacterImgUri(dto.getServerId(), dto.getCharacterId(), "1"));
         account_.setProfileCharacterIconClassName(CharactersUtil.getStyleClassName(dto.getJobName()));
+    }
+
+    public Page<Board.BoardListMyPageResponse> getUserBoardLogs(UserAccount.UserAccountDto dto, Pageable pageable, String sortBy) {
+        return switch (sortBy) {
+            case "like" -> getBoardsByIdOrderByLikeCount(dto.userId(), pageable);
+            case "commentCount" -> getBoardsByIdOrderByCommentCount(dto.userId(), pageable);
+            case "view" -> getBoardsByIdOrderByViewCount(dto.userId(), pageable);
+            default -> getBoardsById(dto.userId(), pageable);
+        };
+    }
+
+    public Page<BoardComment.BoardCommentMyPageResponse> getUserCommentLogs(UserAccount.UserAccountDto dto, Pageable pageable, String sortBy) {
+        if (sortBy.equals("like")) {
+            return getCommentsByIdOrderByLikeCount(dto.userId(), pageable);
+        }
+        return getCommentsById(dto.userId(), pageable);
     }
 }
