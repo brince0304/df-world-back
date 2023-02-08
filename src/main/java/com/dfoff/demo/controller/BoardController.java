@@ -62,9 +62,7 @@ public class BoardController {
     public ResponseEntity<?> likeBoardById(@RequestParam Long boardId, HttpServletRequest req, @AuthenticationPrincipal UserAccount.PrincipalDto principal) {
         if (redisService.checkBoardLikeLog(req.getRemoteAddr(), boardId)) {
             redisService.deleteBoardLikeLog(req.getRemoteAddr(), boardId);
-
             return new ResponseEntity<>(boardService.decreaseBoardLikeCount(boardId).getBoardLikeCount(), HttpStatus.OK);
-
         } else {
             redisService.saveBoardLikeLog(req.getRemoteAddr(), boardId);
             Board.BoardDto dto = boardService.increaseBoardLikeCount(boardId);
@@ -127,11 +125,11 @@ public class BoardController {
     @Auth
     @BoardCheck
     @DeleteMapping("/boards")
-    public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto,
+    public ResponseEntity<?> deleteBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principal,
                                          @RequestParam Long boardId) {
         boardService.getBoardSaveFile(boardId).forEach(saveFile -> saveFileService.deleteFile(saveFile.id()));
-        boardService.getBoardCommentsByBoardId(boardId).stream().filter(o -> !o.getUserId().equals(principalDto.getUsername())).forEach(o -> {
-            notificationService.saveBoardCommentNotification(o.getUserAccountDto(), o, principalDto.getNickname(), NotificationType.DELETE_COMMENT);
+        boardService.getBoardCommentsByBoardId(boardId).stream().filter(o -> !o.getUserId().equals(principal.getUsername())).forEach(o -> {
+            notificationService.saveBoardCommentNotification(o.getUserAccountDto(), o, principal.getNickname(), NotificationType.DELETE_COMMENT);
         });
         boardService.deleteBoardById(boardId);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -153,20 +151,20 @@ public class BoardController {
     @Auth
     @BindingErrorCheck
     @PostMapping("/boards")
-    public ResponseEntity<?> saveBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody @Valid Board.BoardRequest boardRequest, BindingResult bindingResult) throws InterruptedException {
+    public ResponseEntity<?> saveBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principal, @RequestBody @Valid Board.BoardRequest boardRequest, BindingResult bindingResult) throws InterruptedException, IllegalAccessException {
         Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestFileIds(boardRequest);
         if (boardRequest.serverId().equals("")) {
-            return new ResponseEntity<>(boardService.createBoard(boardRequest, set, UserAccount.UserAccountDto.from(principalDto), null), HttpStatus.OK);
+            return new ResponseEntity<>(boardService.createBoard(boardRequest, set, UserAccount.UserAccountDto.from(principal), null), HttpStatus.OK);
         }
         CharacterEntity.CharacterEntityDto character = characterService.getCharacter(boardRequest.serverId(), boardRequest.characterId());
-        return new ResponseEntity<>(boardService.createBoard(boardRequest, set, UserAccount.UserAccountDto.from(principalDto), character), HttpStatus.OK);
+        return new ResponseEntity<>(boardService.createBoard(boardRequest, set, UserAccount.UserAccountDto.from(principal), character), HttpStatus.OK);
     }
 
     @Auth
     @BoardCheck
     @BindingErrorCheck
     @PutMapping("/boards")
-    public ResponseEntity<?> updateBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principalDto, @RequestBody @Valid Board.BoardRequest boardRequest, BindingResult bindingResult) throws InterruptedException {
+    public ResponseEntity<?> updateBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principal, @RequestBody @Valid Board.BoardRequest boardRequest, BindingResult bindingResult) throws InterruptedException {
         Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestFileIds(boardRequest);
         if(boardRequest.serverId().equals("")) {
             return new ResponseEntity<>(boardService.updateBoard(boardRequest.id(), boardRequest, set, null), HttpStatus.OK);

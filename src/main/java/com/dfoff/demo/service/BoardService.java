@@ -32,16 +32,13 @@ public class BoardService {
 
 
 
-    public Long createBoard(Board.BoardRequest request, Set<SaveFile.SaveFileDto> saveFile, UserAccount.UserAccountDto dto, CharacterEntity.CharacterEntityDto character) {
+    public Long createBoard(Board.BoardRequest request, Set<SaveFile.SaveFileDto> saveFile, UserAccount.UserAccountDto dto, CharacterEntity.CharacterEntityDto character) throws IllegalAccessException {
         if(request.boardType()==BoardType.NOTICE){
-            throw new IllegalArgumentException("공지사항은 관리자만 작성할 수 있습니다.");
+            throw new IllegalAccessException("공지사항은 관리자만 작성할 수 있습니다.");
         }
         Board board_ = boardRepository.save(request.toEntity(dto.toEntity()));
         saveFile.stream().map(SaveFile.SaveFileDto::toEntity).forEach(o-> board_.getBoardFiles().add(o));
         if(request.hashtag()!=null){
-        if(request.hashtag().size()>5){
-            throw new IllegalArgumentException("해시태그는 5개까지만 등록 가능합니다.");
-        }
         saveHashtagAndBoard(board_,request.hashtag());}
         if(character!=null){
             board_.setCharacter(CharacterEntity.CharacterEntityDto.toEntity(character));
@@ -49,13 +46,10 @@ public class BoardService {
         return board_.getId();
     }
 
-    public List<String> createHashtag(String hashtag){
-        return  hashtag!=null ? Arrays.stream(hashtag.replaceAll(" ","").split("#")).filter(o->!o.equals("")).collect(Collectors.toList()) : new ArrayList<>()  ;
-    }
-
-
-
     public void saveHashtagAndBoard(Board board , List<Hashtag.HashtagRequest> hashtags){
+        if(hashtags.size()>5){
+            throw new IllegalArgumentException("해시태그는 5개까지만 등록 가능합니다.");
+        }
         for (Hashtag.HashtagRequest hashtag : hashtags) {
             if(hashtag.getValue().length()>7) {
                 throw new IllegalArgumentException("해시태그는 7자 이하로 등록 가능합니다.");
@@ -66,6 +60,7 @@ public class BoardService {
     }
 
     public void updateHashtagAndBoard(Board board , List<Hashtag.HashtagRequest> hashtags){
+        if(hashtags.size()>5){throw new IllegalArgumentException("해시태그는 5개까지만 등록 가능합니다.");}
         board.getHashtags().forEach(o->{
             o.setBoard(null);
             o.setHashtag(null);
@@ -164,7 +159,6 @@ public class BoardService {
        Board board_ =  boardRepository.findBoardById(id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
        if(request != null){
            if(request.hashtag()!=null){
-           if(request.hashtag().size()>5){throw new IllegalArgumentException("해시태그는 5개까지만 등록 가능합니다.");}
            updateHashtagAndBoard(board_,(request.hashtag()));}
            if(request.boardTitle()!=null && !request.boardTitle().equals(board_.getBoardTitle())){
                board_.setBoardTitle(request.boardTitle());
@@ -181,7 +175,6 @@ public class BoardService {
        }
        fileDtos.stream().map(SaveFile.SaveFileDto::toEntity).forEach(o-> board_.getBoardFiles().add(o));
        return board_.getId();
-
     }
 
     public void deleteBoardById(Long id){
