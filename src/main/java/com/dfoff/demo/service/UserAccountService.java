@@ -100,7 +100,7 @@ public class UserAccountService {
 
     private void userAdventureStatusAdventureFameSetter(Adventure adventure) {
         for (CharacterEntity entity : adventure.getCharacters()) {
-            if (entity.getAdventureFame() != 0) {
+            if ( entity.getAdventureFame()!=null && entity.getAdventureFame() != 0  ) {
                 adventure.setAdventureFame(adventure.getAdventureFame() + entity.getAdventureFame());
             }
         }
@@ -109,10 +109,10 @@ public class UserAccountService {
 
     private void userAdventureStatusBuffPowerAndDamageIncreaseSetter(Adventure adventure) {
         for (CharacterEntity entity : adventure.getCharacters()) {
-            if (entity.getDamageIncrease() != 0) {
+            if (entity.getDamageIncrease()!=null && entity.getDamageIncrease() != 0) {
                 adventure.setAdventureDamageIncreaseAndBuffPower(adventure.getAdventureDamageIncreaseAndBuffPower() + entity.getDamageIncrease());
             }
-            if (entity.getBuffPower() != 0) {
+            if (entity.getBuffPower()!=null && entity.getBuffPower() != 0) {
                 adventure.setAdventureDamageIncreaseAndBuffPower(adventure.getAdventureDamageIncreaseAndBuffPower() + entity.getBuffPower());
             }
         }
@@ -174,7 +174,7 @@ public class UserAccountService {
     }
 
     @Transactional(readOnly = true)
-    private Page<BoardComment.BoardCommentMyPageResponse> getCommentsByIdOrderByLikeCount(String userId, Pageable pageable) {
+    public Page<BoardComment.BoardCommentMyPageResponse> getCommentsByIdOrderByLikeCount(String userId, Pageable pageable) {
         if (userAccountRepository.existsByUserId(userId)) {
             return userAccountRepository.findBoardCommentsByUserIdOrderByLikeCount(userId, pageable).map(BoardComment.BoardCommentMyPageResponse::from);
         }

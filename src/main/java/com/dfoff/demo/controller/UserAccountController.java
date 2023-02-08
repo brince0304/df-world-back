@@ -107,13 +107,13 @@ public class UserAccountController {
     static ResponseEntity<?> getCharacterResponse(List<CharacterEntity.CharacterEntityDto> list, List<CharacterEntity.CharacterEntityDto> dtos, CharacterService characterService) throws InterruptedException {
         for (CharacterEntity.CharacterEntityDto dto : dtos.subList(0, Math.min(dtos.size(), 15))) {
             if (dto.getLevel() >= 110) {
-                dtos.add(characterService.getCharacterAbility(dto));
+                list.add(characterService.getCharacterAbility(dto));
             } else {
-                dtos.add(dto);
+                list.add(dto);
             }
         }
-        int size = Math.min(dtos.size(), 15);
-        return new ResponseEntity<>(dtos.stream().map(CharacterEntity.CharacterEntityResponse::from).collect(Collectors.toList()).subList(0, size), HttpStatus.OK);
+        int size = Math.min(list.size(), 15);
+        return new ResponseEntity<>(list.stream().map(CharacterEntity.CharacterEntityResponse::from).collect(Collectors.toList()).subList(0, size), HttpStatus.OK);
     }
 
     @Auth

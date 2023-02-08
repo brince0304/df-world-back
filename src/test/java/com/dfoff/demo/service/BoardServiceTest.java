@@ -50,7 +50,7 @@ class BoardServiceTest {
 
 
     @Test
-    void createArticleTest() {
+    void createArticleTest() throws IllegalAccessException {
         //given
         Board board = Board.builder()
                 .boardTitle("title")

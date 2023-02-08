@@ -133,7 +133,7 @@ class UserAccountControllerTest {
 
 
     @Test
-    @WithUserDetails ("test")
+    @WithUserDetails ("tes")
     void changeProfileIconTest() throws Exception {
         mvc.perform(put("/users?profileIcon=icon_char_0.png"))
                 .andExpect(status().isOk());
@@ -288,7 +288,7 @@ class UserAccountControllerTest {
         mvc.perform(delete("/users")).andExpect(status().isUnauthorized());
     }
     @Test
-    @WithUserDetails("test")
+    @WithUserDetails("tes")
     void deleteMyAdventureExceptionTest() throws Exception {
         mvc.perform(delete("/users/adventure")).andExpect(status().isBadRequest());
     }

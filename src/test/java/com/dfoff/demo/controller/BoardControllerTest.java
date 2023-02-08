@@ -124,7 +124,7 @@ class BoardControllerTest {
         Board.BoardRequest boardRequest = Board.BoardRequest.builder()
                 .boardTitle("test")
                 .boardContent("test4124124214212114212")
-                .boardType(BoardType.NOTICE)
+                .boardType(BoardType.FREE)
                 .serverId("bakal")
                 .hashtag(new ArrayList<>())
                 .characterId("13b99a237d7e1b9369fdcf2ca186b845")

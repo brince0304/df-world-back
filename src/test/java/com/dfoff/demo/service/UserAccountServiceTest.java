@@ -92,7 +92,7 @@ class UserAccountServiceTest {
         userAccount.setAdventure(adventure);
         given(userAccountRepository.findById(any())).willReturn(Optional.of(userAccount));
         //when
-        sut.deleteUserAdventure(userAccount.getUserId());
+        sut.deleteUserAdventureFromUserAccount(userAccount.getUserId());
         //then
         then(userAccountRepository).should().findById(any());
         assertThat(userAccount.getAdventure()).isNull();
@@ -110,7 +110,7 @@ class UserAccountServiceTest {
                 build();
         given(userAccountRepository.findById(any())).willReturn(Optional.of(userAccount));
         //when
-        Throwable throwable = catchThrowable(()->sut.deleteUserAdventure(userAccount.getUserId()));
+        Throwable throwable = catchThrowable(()->sut.deleteUserAdventureFromUserAccount(userAccount.getUserId()));
         //then
         then(userAccountRepository).should().findById(any());
         assertThat(throwable).isInstanceOf(IllegalArgumentException.class);
@@ -269,7 +269,7 @@ class UserAccountServiceTest {
         UserAccount account = createUserAccount();
         String previousAccountPassword = account.getPassword();
         given(userAccountRepository.findById(any())).willReturn(java.util.Optional.of(account));
-        sut.changePassword(UserAccount.UserAccountDto.from(account),"안녕하세요");
+        sut.changePassword(UserAccount.UserAccountDto.from(account),"biqwj@!908e@");
         then(userAccountRepository).should().findById(any());
        assertThat(account.getPassword()).isNotEqualTo(previousAccountPassword);
     }
@@ -367,7 +367,7 @@ class UserAccountServiceTest {
         given(userAccountRepository.findById(any())).willReturn(Optional.ofNullable(UserAccount.builder().userId("test").build()));
 
         //when
-        sut.addCharacter(UserAccount.UserAccountDto.builder().userId("test").build(),CharacterEntity.CharacterEntityDto.builder().characterId("test").build());
+        sut.addCharacterToUserAccount(UserAccount.UserAccountDto.builder().userId("test").build(),CharacterEntity.CharacterEntityDto.builder().characterId("test").build());
 
         //then
         then(mapperRepository).should().save(any());
@@ -380,7 +380,7 @@ class UserAccountServiceTest {
         given(userAccountRepository.findById(any())).willReturn(Optional.ofNullable(UserAccount.builder().userId("test").build()));
         given(mapperRepository.findByUserAccountAndCharacter(any(),any())).willReturn(UserAccountCharacterMapper.of(UserAccount.builder().userId("test").build(),CharacterEntity.builder().characterId("test").build()));
         //when
-        sut.deleteCharacter(UserAccount.UserAccountDto.builder().userId("test").build(),CharacterEntity.CharacterEntityDto.builder().characterId("test").build());
+        sut.deleteCharacterFromUserAccount(UserAccount.UserAccountDto.builder().userId("test").build(),CharacterEntity.CharacterEntityDto.builder().characterId("test").build());
 
         //then
         then(mapperRepository).should().findByUserAccountAndCharacter(any(),any());
