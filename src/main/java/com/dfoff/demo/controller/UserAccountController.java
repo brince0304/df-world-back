@@ -83,8 +83,8 @@ public class UserAccountController {
     @GetMapping("/users/adventure/validate")
     public ResponseEntity<?> getRandomJobNameAndString(@AuthenticationPrincipal UserAccount.PrincipalDto principal) {
         HashMap<String, String> map = new HashMap<>();
-        map.put("randomJobName", "characterService.getRandomJobName()");
-        map.put("randomString", "characterService.getRandomString()");
+        map.put("randomJobName", characterService.getRandomJobName());
+        map.put("randomString", characterService.getRandomString());
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
@@ -109,14 +109,14 @@ public class UserAccountController {
         if (serverId.equals("adventure")) {
             return new ResponseEntity<>(characterService.getCharacterByAdventureName(characterName, pageable), HttpStatus.OK);
         }
-        List<CharacterEntity.CharacterEntityDto> dtos = new ArrayList<>();
-        List<CharacterEntity.CharacterEntityDto> dtos1 = characterService.getCharacterDtos(serverId, characterName).join();
-        return getCharacterResponse(dtos, dtos1, characterService);
+        List<CharacterEntity.CharacterEntityDto> list = new ArrayList<>();
+        List<CharacterEntity.CharacterEntityDto> dtos = characterService.getCharacterDtos(serverId, characterName).join();
+        return getCharacterResponse(list, dtos, characterService);
     }
 
 
-    static ResponseEntity<?> getCharacterResponse(List<CharacterEntity.CharacterEntityDto> dtos, List<CharacterEntity.CharacterEntityDto> dtos1, CharacterService characterService) throws InterruptedException {
-        for (CharacterEntity.CharacterEntityDto dto : dtos1.subList(0, Math.min(dtos1.size(), 15))) {
+    static ResponseEntity<?> getCharacterResponse(List<CharacterEntity.CharacterEntityDto> list, List<CharacterEntity.CharacterEntityDto> dtos, CharacterService characterService) throws InterruptedException {
+        for (CharacterEntity.CharacterEntityDto dto : dtos.subList(0, Math.min(dtos.size(), 15))) {
             if (dto.getLevel() >= 110) {
                 dtos.add(characterService.getCharacterAbility(dto));
             } else {
@@ -161,9 +161,9 @@ public class UserAccountController {
 
     @Auth
     @DeleteMapping("/users/characters")
-    public ResponseEntity<?> deleteCharacter(@AuthenticationPrincipal UserAccount.PrincipalDto principal,
-                                             @RequestParam(required = false) String serverId,
-                                             @RequestParam(required = false) String characterId
+    public ResponseEntity<?> deleteCharacterFromUserAccount(@AuthenticationPrincipal UserAccount.PrincipalDto principal,
+                                                            @RequestParam(required = false) String serverId,
+                                                            @RequestParam(required = false) String characterId
     ) throws InterruptedException {
         userAccountService.deleteCharacterFromUserAccount(UserAccount.UserAccountDto.from(principal), characterService.getCharacter(serverId, characterId));
         return new ResponseEntity<>("success", HttpStatus.OK);
@@ -173,8 +173,7 @@ public class UserAccountController {
     @GetMapping("/users/my-page")
     public ModelAndView getMyPage(@AuthenticationPrincipal UserAccount.PrincipalDto principal) {
         ModelAndView mav = new ModelAndView("/mypage/mypage");
-        UserAccount.UserAccountMyPageResponse response = userAccountService.getUserAccountById(principal.getUsername());
-        mav.addObject("user", response);
+        mav.addObject("user", userAccountService.getUserAccountById(principal.getUsername()));
         mav.addObject("uncheckedLogCount", notificationService.getUncheckedNotificationCount(principal.getUsername()));
         if(userAccountService.checkUserAdventureById(principal.getUsername())){
             mav.addObject("adventure",userAccountService.getUserAdventureById(principal.getUsername()));
@@ -187,13 +186,13 @@ public class UserAccountController {
     public ResponseEntity<?> deleteAccount(@AuthenticationPrincipal UserAccount.PrincipalDto principal, HttpServletRequest request) {
         userAccountService.deleteUserAccountById(principal.getUsername());
         request.getSession().invalidate();
-        return new ResponseEntity<>("success", HttpStatus.OK);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
     @Auth
     @DeleteMapping("/users/adventure")
     public ResponseEntity<?> deleteAdventure(@AuthenticationPrincipal UserAccount.PrincipalDto principal) {
         userAccountService.deleteUserAdventureFromUserAccount(principal.getUsername());
-        return new ResponseEntity<>("success", HttpStatus.OK);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
 
     @Auth
