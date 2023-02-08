@@ -584,10 +584,8 @@ function validateCharacterForAdventure(serverId, characterId,adventureName,rando
             $('#charSearchModalForAdventure').modal('hide');
             location.reload();
         }, error: function (request, status, error) {
-            alert("인증에 실패하였습니다. 다시 시도해주세요.");
-            $('#charSearchModalForAdventure').modal('hide');
-            $('#validate-btn').remove();
-            location.reload();            }
+            alert("캐릭터 정보가 존재하지 않습니다. (반영이 아직 안됐을수도..?)");
+        }
     });
 }
 
