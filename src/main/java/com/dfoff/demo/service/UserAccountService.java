@@ -46,7 +46,7 @@ public class UserAccountService {
     }
 
     public String getUserAdventureNameByUserId(String userId) {
-        UserAccount userAccount = userAccountRepository.findById(userId).orElseThrow(EntityNotFoundException::new);
+        UserAccount userAccount = userAccountRepository.findById(userId).orElseThrow(()-> new EntityNotFoundException("존재하지 않는 아이디입니다."));
         if(userAccount.getAdventure() == null) {
             throw new EntityNotFoundException("모험단이 등록되지 않았습니다.");
         }
@@ -69,21 +69,6 @@ public class UserAccountService {
     }
 
 
-    public void updateAccountDetails(UserAccount.UserAccountDto request) {
-        UserAccount account = userAccountRepository.findById(request.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
-        if (userAccountRepository.existsByEmail(request.email())) {
-            return;
-        }
-        if (userAccountRepository.existsByNickname(request.nickname())) {
-            return;
-        }
-        if (request.email() != null) {
-            account.setEmail(request.email());
-        }
-        if (request.nickname() != null) {
-            account.setNickname(request.nickname());
-        }
-    }
 
     public void refreshUserAdventure(UserAccount.UserAccountDto dto) {
         if (!adventureRepository.existsByUserAccount_UserIdAndDeletedIsFalse(dto.userId())) {
@@ -103,11 +88,28 @@ public class UserAccountService {
     }
 
     private void userAdventureStatusSetter(UserAccount userAccount) {
-        Integer userAdventureFame = userAccount.getAdventure().getCharacters().stream().mapToInt(CharacterEntity::getAdventureFame).sum();
-        Integer userDamageIncrease = userAccount.getAdventure().getCharacters().stream().mapToInt(CharacterEntity::getDamageIncrease).sum();
-        Integer userBuffPower = userAccount.getAdventure().getCharacters().stream().mapToInt(CharacterEntity::getBuffPower).sum();
-        userAccount.getAdventure().setAdventureFame(userAdventureFame);
-        userAccount.getAdventure().setAdventureDamageIncreaseAndBuffPower(userDamageIncrease + userBuffPower);
+        Adventure adventure = userAccount.getAdventure();
+        userAdventureStatusAdventureFameSetter(adventure);
+        userAdventureStatusBuffPowerAndDamageIncreaseSetter(adventure);
+    }
+
+    private void userAdventureStatusAdventureFameSetter(Adventure adventure) {
+        for (CharacterEntity entity : adventure.getCharacters()) {
+            if (entity.getAdventureFame() != 0) {
+                adventure.setAdventureFame(adventure.getAdventureFame() + entity.getAdventureFame());
+            }
+        }
+    }
+
+    private void userAdventureStatusBuffPowerAndDamageIncreaseSetter(Adventure adventure){
+        for (CharacterEntity entity : adventure.getCharacters()) {
+            if (entity.getDamageIncrease() != 0) {
+                adventure.setAdventureDamageIncreaseAndBuffPower(adventure.getAdventureDamageIncreaseAndBuffPower() + entity.getDamageIncrease());
+            }
+            if (entity.getBuffPower() != 0) {
+                adventure.setAdventureDamageIncreaseAndBuffPower(adventure.getAdventureDamageIncreaseAndBuffPower() + entity.getBuffPower());
+            }
+        }
     }
 
 
@@ -119,7 +121,7 @@ public class UserAccountService {
         return true;
     }
 
-    public UserAccount.UserAdventureResponse getUserAdventureByUserId(String userId) {
+    public UserAccount.UserAdventureResponse getUserAdventureById(String userId) {
         UserAccount account_= userAccountRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
         if(account_.getAdventure()==null){
             throw new EntityNotFoundException("모험단이 등록되지 않았습니다.");
@@ -127,8 +129,7 @@ public class UserAccountService {
         return UserAccount.UserAdventureResponse.from(account_);
     }
 
-    public Boolean checkUserAdventure(String userId) {
-
+    public Boolean checkUserAdventureById(String userId) {
         return  adventureRepository.existsByUserAccount_UserIdAndDeletedIsFalse(userId);
     }
 
@@ -150,14 +151,14 @@ public class UserAccountService {
             throw new EntityExistsException("이미 등록된 대표 캐릭터 입니다.");
         }
         UserAccount account = userAccountRepository.findById(userAccount.userId()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
-        Adventure adventure = adventureRepository.save(request.toEntity(userAccount, character));
+        Adventure adventure = adventureRepository.findById(request.getAdventureName()).orElseGet(()->adventureRepository.save(request.toEntity(userAccount, character)));
         adventure.getCharacters().addAll(characters.stream().map(CharacterEntity.CharacterEntityDto::toEntity).toList());
         account.setAdventure(adventure);
         userAdventureStatusSetter(account);
     }
 
     @Transactional(readOnly = true)
-    public Page<BoardComment.BoardCommentMyPageResponse> getCommentsByUserId(String userId, Pageable pageable) {
+    public Page<BoardComment.BoardCommentMyPageResponse> getCommentsById(String userId, Pageable pageable) {
         if (userAccountRepository.existsByUserId(userId)) {
             return userAccountRepository.findBoardCommentsByUserId(userId, pageable).map(BoardComment.BoardCommentMyPageResponse::from);
         }
@@ -165,7 +166,7 @@ public class UserAccountService {
     }
 
     @Transactional(readOnly = true)
-    public Page<BoardComment.BoardCommentMyPageResponse> getCommentsByUserIdOrderByLikeCount(String userId, Pageable pageable) {
+    public Page<BoardComment.BoardCommentMyPageResponse> getCommentsByIdOrderByLikeCount(String userId, Pageable pageable) {
         if (userAccountRepository.existsByUserId(userId)) {
             return userAccountRepository.findBoardCommentsByUserIdOrderByLikeCount(userId, pageable).map(BoardComment.BoardCommentMyPageResponse::from);
         }
@@ -173,7 +174,7 @@ public class UserAccountService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Board.BoardListMyPageResponse> getBoardsByUserId(String userId, Pageable pageable) {
+    public Page<Board.BoardListMyPageResponse> getBoardsById(String userId, Pageable pageable) {
         if (userAccountRepository.existsByUserId(userId)) {
             return userAccountRepository.findBoardsByUserId(userId, pageable).map(Board.BoardListMyPageResponse::from);
         }
@@ -181,7 +182,7 @@ public class UserAccountService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Board.BoardListMyPageResponse> getBoardsByUserIdOrderByLikeCount(String userId, Pageable pageable) {
+    public Page<Board.BoardListMyPageResponse> getBoardsByIdOrderByLikeCount(String userId, Pageable pageable) {
         if (userAccountRepository.existsByUserId(userId)) {
             return userAccountRepository.findBoardsByUserIdOrderByLikeCount(userId, pageable).map(Board.BoardListMyPageResponse::from);
         }
@@ -189,7 +190,7 @@ public class UserAccountService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Board.BoardListMyPageResponse> getBoardsByUserIdOrderByViewCount(String userId, Pageable pageable) {
+    public Page<Board.BoardListMyPageResponse> getBoardsByIdOrderByViewCount(String userId, Pageable pageable) {
         if (userAccountRepository.existsByUserId(userId)) {
             return userAccountRepository.findBoardsByUserIdOrderByViewCount(userId, pageable).map(Board.BoardListMyPageResponse::from);
         }
@@ -197,7 +198,7 @@ public class UserAccountService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Board.BoardListMyPageResponse> getBoardsByUserIdOrderByCommentCount(String userId, Pageable pageable) {
+    public Page<Board.BoardListMyPageResponse> getBoardsByIdOrderByCommentCount(String userId, Pageable pageable) {
         if (userAccountRepository.existsByUserId(userId)) {
             return userAccountRepository.findBoardsByUserIdOrderByCommentCount(userId, pageable).map(Board.BoardListMyPageResponse::from);
         }
@@ -214,7 +215,7 @@ public class UserAccountService {
         }
     }
 
-    public void addCharacter(UserAccount.UserAccountDto account, CharacterEntity.CharacterEntityDto character) { //캐릭터가 존재하지 않을 이유가 없음
+    public void addCharacterToUserAccount(UserAccount.UserAccountDto account, CharacterEntity.CharacterEntityDto character) { //캐릭터가 존재하지 않을 이유가 없음
         if (userAccountRepository.existsByUserId(account.userId())) {
             UserAccount userAccount = userAccountRepository.findById(account.userId()).orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
             UserAccountCharacterMapper mapper = UserAccountCharacterMapper.of(userAccount, CharacterEntity.CharacterEntityDto.toEntity(character));
@@ -224,7 +225,7 @@ public class UserAccountService {
     
     
 
-    public void deleteCharacter(UserAccount.UserAccountDto dto, CharacterEntity.CharacterEntityDto character) {
+    public void deleteCharacterFromUserAccount(UserAccount.UserAccountDto dto, CharacterEntity.CharacterEntityDto character) {
         if (userAccountRepository.existsByUserId(dto.userId())) {
             UserAccount userAccount = userAccountRepository.findById(dto.userId()).orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
             UserAccountCharacterMapper mapper = mapperRepository.findByUserAccountAndCharacter(userAccount, CharacterEntity.CharacterEntityDto.toEntity(character));
@@ -235,14 +236,14 @@ public class UserAccountService {
         }
     }
 
-    public boolean changePassword(UserAccount.UserAccountDto accountDTO, String password) {
-        UserAccount account = userAccountRepository.findById(accountDTO.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+    public boolean changePassword(UserAccount.UserAccountDto accountDto, String password) {
+        UserAccount account = userAccountRepository.findById(accountDto.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         account.setPassword(password);
         return true;
     }
 
-    public boolean changeNickname(UserAccount.UserAccountDto accountDTO, String nickname) {
-        UserAccount account = userAccountRepository.findById(accountDTO.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+    public boolean changeNickname(UserAccount.UserAccountDto accountDto, String nickname) {
+        UserAccount account = userAccountRepository.findById(accountDto.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         if (userAccountRepository.existsByNickname(nickname)) {
             return false;
         }
@@ -250,8 +251,8 @@ public class UserAccountService {
         return true;
     }
 
-    public boolean changeEmail(UserAccount.UserAccountDto accountDTO, String email) {
-        UserAccount account = userAccountRepository.findById(accountDTO.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+    public boolean changeEmail(UserAccount.UserAccountDto accountDto, String email) {
+        UserAccount account = userAccountRepository.findById(accountDto.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         if (userAccountRepository.existsByEmail(email)) {
             return false;
         }
@@ -259,7 +260,7 @@ public class UserAccountService {
         return true;
     }
 
-    public void deleteUserAdventure(String userId) {
+    public void deleteUserAdventureFromUserAccount(String userId) {
         UserAccount account = userAccountRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
         if(account.getAdventure()==null){
             throw new IllegalArgumentException("모험단이 등록되지 않았습니다.");
@@ -280,9 +281,7 @@ public class UserAccountService {
         if(!dto.getAdventureName().equals(account_.getAdventure().getAdventureName())){
             throw new IllegalArgumentException("회원님의 모험단에 등록된 캐릭터가 아닙니다.");
         }
-        String characterImgUrl  = RestTemplateUtil.getCharacterImgUri(dto.getServerId(),dto.getCharacterId(),"1");
-        String characterClassName = CharactersUtil.getStyleClassName(dto.getJobName());
-        account_.setProfileCharacterIcon(characterImgUrl);
-        account_.setProfileCharacterIconClassName(characterClassName);
+        account_.setProfileCharacterIcon(RestTemplateUtil.getCharacterImgUri(dto.getServerId(),dto.getCharacterId(),"1"));
+        account_.setProfileCharacterIconClassName(CharactersUtil.getStyleClassName(dto.getJobName()));
     }
 }

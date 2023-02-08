@@ -1,6 +1,7 @@
 package com.dfoff.demo.controller;
 
 import com.dfoff.demo.annotation.Auth;
+import com.dfoff.demo.annotation.BindingErrorCheck;
 import com.dfoff.demo.domain.Adventure;
 import com.dfoff.demo.domain.CharacterEntity;
 import com.dfoff.demo.domain.UserAccount;
@@ -81,11 +82,9 @@ public class UserAccountController {
     @Auth
     @GetMapping("/users/adventure/validate")
     public ResponseEntity<?> getRandomJobNameAndString(@AuthenticationPrincipal UserAccount.PrincipalDto principal) {
-        String randomJobName = characterService.getRandomJobName();
-        String randomString = characterService.getRandomString();
         HashMap<String, String> map = new HashMap<>();
-        map.put("randomJobName", "마법사(여)");
-        map.put("randomString", "소라");
+        map.put("randomJobName", "characterService.getRandomJobName()");
+        map.put("randomString", "characterService.getRandomString()");
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
@@ -140,13 +139,11 @@ public class UserAccountController {
     }
 
 
+    @BindingErrorCheck
     @PostMapping("/users")
     public ResponseEntity<?> createAccount(@RequestBody @Valid UserAccount.UserAccountSignUpRequest request, BindingResult bindingResult) {
         if (!request.getPassword().equals(request.getPasswordCheck())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
-        if(bindingResult.hasErrors()){
-            return new ResponseEntity<>(bindingResult.getAllErrors().get(0).getDefaultMessage(),HttpStatus.BAD_REQUEST);
         }
         request.setPassword(bcrypt.encode(request.getPassword()));
         userAccountService.createAccount(request, saveFileService.getFileByFileName("icon_char_0.png"));
@@ -158,7 +155,7 @@ public class UserAccountController {
     public ResponseEntity<?> addCharacterToUserAccount(@AuthenticationPrincipal UserAccount.PrincipalDto principal,
                                                        @RequestParam(required = false) String serverId,
                                                        @RequestParam(required = false) String characterId) throws InterruptedException {
-        userAccountService.addCharacter(UserAccount.UserAccountDto.from(principal), characterService.getCharacterAbility(characterService.getCharacter(serverId, characterId)));
+        userAccountService.addCharacterToUserAccount(UserAccount.UserAccountDto.from(principal), characterService.getCharacterAbility(characterService.getCharacter(serverId, characterId)));
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
@@ -168,7 +165,7 @@ public class UserAccountController {
                                              @RequestParam(required = false) String serverId,
                                              @RequestParam(required = false) String characterId
     ) throws InterruptedException {
-        userAccountService.deleteCharacter(UserAccount.UserAccountDto.from(principal), characterService.getCharacter(serverId, characterId));
+        userAccountService.deleteCharacterFromUserAccount(UserAccount.UserAccountDto.from(principal), characterService.getCharacter(serverId, characterId));
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
@@ -179,8 +176,8 @@ public class UserAccountController {
         UserAccount.UserAccountMyPageResponse response = userAccountService.getUserAccountById(principal.getUsername());
         mav.addObject("user", response);
         mav.addObject("uncheckedLogCount", notificationService.getUncheckedNotificationCount(principal.getUsername()));
-        if(userAccountService.checkUserAdventure(principal.getUsername())){
-            mav.addObject("adventure",userAccountService.getUserAdventureByUserId(principal.getUsername()));
+        if(userAccountService.checkUserAdventureById(principal.getUsername())){
+            mav.addObject("adventure",userAccountService.getUserAdventureById(principal.getUsername()));
         }
         return mav;
     }
@@ -195,7 +192,7 @@ public class UserAccountController {
     @Auth
     @DeleteMapping("/users/adventure")
     public ResponseEntity<?> deleteAdventure(@AuthenticationPrincipal UserAccount.PrincipalDto principal) {
-        userAccountService.deleteUserAdventure(principal.getUsername());
+        userAccountService.deleteUserAdventureFromUserAccount(principal.getUsername());
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
 
@@ -208,20 +205,20 @@ public class UserAccountController {
         if (type.equals("board")) {
             return switch (sortBy) {
                 case "like" ->
-                        new ResponseEntity<>(userAccountService.getBoardsByUserIdOrderByLikeCount(principal.getUsername(), pageable), HttpStatus.OK);
+                        new ResponseEntity<>(userAccountService.getBoardsByIdOrderByLikeCount(principal.getUsername(), pageable), HttpStatus.OK);
                 case "commentCount" ->
-                        new ResponseEntity<>(userAccountService.getBoardsByUserIdOrderByCommentCount(principal.getUsername(), pageable), HttpStatus.OK);
+                        new ResponseEntity<>(userAccountService.getBoardsByIdOrderByCommentCount(principal.getUsername(), pageable), HttpStatus.OK);
                 case "view" ->
-                        new ResponseEntity<>(userAccountService.getBoardsByUserIdOrderByViewCount(principal.getUsername(), pageable), HttpStatus.OK);
+                        new ResponseEntity<>(userAccountService.getBoardsByIdOrderByViewCount(principal.getUsername(), pageable), HttpStatus.OK);
                 default ->
-                        new ResponseEntity<>(userAccountService.getBoardsByUserId(principal.getUsername(), pageable), HttpStatus.OK);
+                        new ResponseEntity<>(userAccountService.getBoardsById(principal.getUsername(), pageable), HttpStatus.OK);
             };
         }
         if (type.equals("comment")) {
             if (sortBy.equals("like")) {
-                return new ResponseEntity<>(userAccountService.getCommentsByUserIdOrderByLikeCount(principal.getUsername(), pageable), HttpStatus.OK);
+                return new ResponseEntity<>(userAccountService.getCommentsByIdOrderByLikeCount(principal.getUsername(), pageable), HttpStatus.OK);
             }
-            return new ResponseEntity<>(userAccountService.getCommentsByUserId(principal.getUsername(), pageable), HttpStatus.OK);
+            return new ResponseEntity<>(userAccountService.getCommentsById(principal.getUsername(), pageable), HttpStatus.OK);
         }
         if (type.equals("log")) {
             return new ResponseEntity<>(notificationService.getUserNotifications(principal.getUsername(), pageable), HttpStatus.OK);
