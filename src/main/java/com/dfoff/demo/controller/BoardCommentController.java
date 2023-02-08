@@ -58,12 +58,8 @@ public class BoardCommentController {
     private ResponseEntity<?> getCommentResponse(HttpServletRequest req, @RequestParam(required = false) Long boardId, Map<String, Object> map, Map<String, Boolean> likeMap, List<BoardComment.BoardCommentResponse> comments
             , List<BoardComment.BoardCommentResponse> bestComments) {
         map.put("comments", comments);
-        comments.forEach(o -> {
-            likeMap.put(String.valueOf(o.getId()), redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, o.getId()));
-        });
-        bestComments.forEach(o -> {
-            likeMap.put(String.valueOf(o.getId()), redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, o.getId()));
-        });
+        comments.forEach(o -> likeMap.put(String.valueOf(o.getId()), redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, o.getId())));
+        bestComments.forEach(o -> likeMap.put(String.valueOf(o.getId()), redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, o.getId())));
         map.put("likeMap", likeMap);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
@@ -73,7 +69,6 @@ public class BoardCommentController {
             if (redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId)) {
                 redisService.deleteBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId);
                 return new ResponseEntity<>(commentService.updateBoardCommentDisLike(commentId).getCommentLikeCount(), HttpStatus.OK);
-
             } else {
                 redisService.saveBoardCommentLikeLog(req.getRemoteAddr(), boardId, commentId);
                 BoardComment.BoardCommentDto dto = commentService.updateBoardCommentLike(commentId);
