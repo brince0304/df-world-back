@@ -43,7 +43,6 @@ public class SseController {
         sseEmitter.onCompletion(() -> sseEmitters.remove(userId));
         sseEmitter.onTimeout(() -> sseEmitters.remove(userId));
         sseEmitter.onError((e) -> sseEmitters.remove(userId));
-
         return sseEmitter;
     }
 }

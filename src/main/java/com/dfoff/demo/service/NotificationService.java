@@ -39,8 +39,7 @@ public class NotificationService {
             }
         }
     }
-    public void deleteNotificationsByDate(LocalDate date){
-    }
+
 
     public void saveBoardNotification(UserAccount.UserAccountDto dto, Board.BoardDto boardDto, String nickname,NotificationType type){
         Notification notification = Notification.of(dto.toEntity(),boardDto.toEntity(),type, NotificationUtil.getNotificationContentFrom(type.name(), nickname,""));
