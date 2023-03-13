@@ -32,12 +32,12 @@ import java.util.stream.Collectors;
 @SQLDelete(sql = "UPDATE user_account SET deleted = true, deleted_at = now() WHERE user_id = ?")
 public class UserAccount extends AuditingFields {
     @Id
-    @Column(length = 50)
+    @Column(length = 20)
     private String userId;
     @Setter
     private String password;
     @Setter
-    @Column(length = 50, unique = true)
+    @Column(length = 8, unique = true)
     private String nickname;
     @Setter
     @Column(length = 100, unique = true)
@@ -221,7 +221,7 @@ public class UserAccount extends AuditingFields {
         @Size(min = 8, max = 20)
         @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$")
         private String passwordCheck;
-        @Size(min = 2, max = 20)
+        @Size(min = 2, max = 8)
         private  String nickname;
         @Email
         private  String email;
@@ -269,7 +269,7 @@ public class UserAccount extends AuditingFields {
         @Size(min = 8, max = 20)
         @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$")
         private String passwordCheck;
-        @Size(min = 2, max = 20)
+        @Size(min = 2, max = 8)
         private  String nickname;
         @Email
         private  String email;

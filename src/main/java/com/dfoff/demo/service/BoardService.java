@@ -30,8 +30,6 @@ public class BoardService {
     private final BoardHashtagMapperRepository mapper;
 
 
-
-
     public Long createBoard(Board.BoardRequest request, Set<SaveFile.SaveFileDto> saveFile, UserAccount.UserAccountDto dto, CharacterEntity.CharacterEntityDto character) throws IllegalAccessException {
         if(request.boardType()==BoardType.NOTICE){
             throw new IllegalAccessException("공지사항은 관리자만 작성할 수 있습니다.");

@@ -28,8 +28,8 @@ public class MainController {
         mav.addObject("adventureFameRanking",characterService.getCharacterRankingBest5OrderByAdventureFame());
         mav.addObject("damageIncreaseRanking",characterService.getCharacterRankingBest5OrderByDamageIncrease());
         mav.addObject("buffPowerRanking",characterService.getCharacterRankingBest5OrderByBuffPower());
-        mav.addObject("advFameRanking",adventureService.getUserAdventureRankingBest5OrderByAdventureFame());
-        mav.addObject("adventureDamageIncreaseRanking",adventureService.getUserAdventureRankingBest5OrderByAdventureDamageIncreaseAndBuffPower());
+        mav.addObject("advFameRanking",adventureService.getAdventureRankingBest5OrderByAdventureFame());
+        mav.addObject("adventureDamageIncreaseRanking",adventureService.getAdventureRankingBest5OrderByAdventureDamageIncreaseAndBuffPower());
         return mav;
     }
 

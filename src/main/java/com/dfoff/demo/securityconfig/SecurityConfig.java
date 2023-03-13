@@ -32,7 +32,7 @@ public class SecurityConfig {
                         .successHandler(new LoginSuccessHandlerCustom())
                 .permitAll()
                 .failureHandler((request, response, exception) -> {
-                    log.info("login fail");
+                    log.info(request.getParameter("username"));
                     response.sendError(401, "로그인에 실패하였습니다.");
                 })
         )

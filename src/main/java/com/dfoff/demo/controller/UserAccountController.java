@@ -81,7 +81,7 @@ public class UserAccountController {
     @GetMapping("/users/adventure/refresh")
     public ResponseEntity<?> refreshUserAdventure(@AuthenticationPrincipal UserAccount.PrincipalDto principal) throws InterruptedException {
         String adventureName = userAccountService.getUserAdventureNameByUserId(principal.getUsername());
-        Adventure.UserAdventureDto dto = userAccountService.addAllCharactersToUserAdventure(UserAccount.UserAccountDto.from(principal), characterService.getCharactersByAdventureName(adventureName));
+        Adventure.AdventureDto dto = userAccountService.addAllCharactersToUserAdventure(UserAccount.UserAccountDto.from(principal), characterService.getCharactersByAdventureName(adventureName));
         for (CharacterEntity.CharacterEntityDto character : dto.getCharacters()) {
             characterService.getCharacterAbility(character);
         }

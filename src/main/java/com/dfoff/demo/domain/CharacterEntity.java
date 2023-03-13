@@ -27,24 +27,24 @@ import static com.dfoff.demo.utils.CharactersUtil.timesAgo;
 public class CharacterEntity extends AuditingFields {
     @Id
     private String characterId;
-    @Column (nullable = false)
+    @Column(nullable = false)
     @Setter
     private String serverId;
     @Setter
     private String characterName;
-    @Column (nullable = false)
+    @Column(nullable = false)
     @Setter
     private Integer level;
-    @Column (nullable = false)
+    @Column(nullable = false)
     @Setter
     private String jobId;
-    @Column (nullable = false)
+    @Column(nullable = false)
     @Setter
     private String jobGrowId;
-    @Column (nullable = false)
+    @Column(nullable = false)
     @Setter
     private String jobName;
-    @Column (nullable = false)
+    @Column(nullable = false)
     @Setter
     private String jobGrowName;
     @Setter
@@ -123,9 +123,6 @@ public class CharacterEntity extends AuditingFields {
         private final Integer damageIncrease;
 
 
-
-
-
         public static CharacterEntity toEntity(CharacterEntityDto dto) {
             return CharacterEntity.builder()
                     .characterId(dto.getCharacterId())
@@ -159,7 +156,7 @@ public class CharacterEntity extends AuditingFields {
         }
 
 
-        public static CharacterEntityDto from(CharacterEntityResponse response){
+        public static CharacterEntityDto from(CharacterEntityResponse response) {
             return CharacterEntityDto.builder()
                     .characterId(response.getCharacterId())
                     .characterName(response.getCharacterName())
@@ -190,6 +187,7 @@ public class CharacterEntity extends AuditingFields {
                     .serverId(dto.getServerId())
                     .build();
         }
+
         public static String getServerName(String serverId) {
             if (serverId.equals("bakal")) {
                 return "바칼";
@@ -230,9 +228,6 @@ public class CharacterEntity extends AuditingFields {
                     .damageIncrease(entity.getDamageIncrease())
                     .build();
         }
-
-
-
 
 
     }
@@ -289,8 +284,8 @@ public class CharacterEntity extends AuditingFields {
                     .serverName(getServerName(dto.getServerId()))
                     .guildId(dto.getGuildId())
                     .guildName(dto.getGuildName())
-                    .modifiedAt(dto.getModifiedAt()!=null?timesAgo(dto.getModifiedAt()):"방금 전")
-                    .createdAt(dto.getCreatedAt()!=null?timesAgo(dto.getCreatedAt()):"방금 전")
+                    .modifiedAt(dto.getModifiedAt() != null ? timesAgo(dto.getModifiedAt()) : "방금 전")
+                    .createdAt(dto.getCreatedAt() != null ? timesAgo(dto.getCreatedAt()) : "방금 전")
                     .buffPower(dto.getBuffPower())
                     .damageIncrease(dto.getDamageIncrease())
                     .build();
@@ -311,13 +306,12 @@ public class CharacterEntity extends AuditingFields {
                     .serverName(getServerName(dto.getServerId()))
                     .guildId(dto.getGuildId())
                     .guildName(dto.getGuildName())
-                    .modifiedAt(dto.getModifiedAt()!=null?timesAgo(dto.getModifiedAt()):"방금 전")
+                    .modifiedAt(dto.getModifiedAt() != null ? timesAgo(dto.getModifiedAt()) : "방금 전")
                     .build();
         }
 
 
-
-        public static CharacterEntityResponse from(CharacterAbilityDto dto,String serverId) {
+        public static CharacterEntityResponse from(CharacterAbilityDto dto, String serverId) {
             return CharacterEntityResponse.builder()
                     .characterId(dto.getCharacterId())
                     .characterName(dto.getCharacterName())
@@ -368,46 +362,95 @@ public class CharacterEntity extends AuditingFields {
     @Data
     @Builder
     public static class CharacterEntityMainPageResponse implements Serializable {
-            private final String modifiedAt;
-            private final String characterId;
-            private final String characterName;
+        private final String modifiedAt;
+        private final String characterId;
+        private final String characterName;
 
-            private final String serverId;
+        private final String serverId;
 
-            private final String serverName;
-
-
-            private final String jobName;
-
-            private final String jobGrowName;
-
-            private final Integer adventureFame;
-            private final String adventureName;
-
-            private final String imgStyleClassName;
-
-            private final Integer damageIncrease;
-
-            private final Integer buffPower;
-            private final String characterImgUrl;
+        private final String serverName;
 
 
-            public static CharacterEntityMainPageResponse from(CharacterEntity entity) {
-                return CharacterEntityMainPageResponse.builder()
-                        .characterId(entity.getCharacterId())
-                        .characterName(entity.getCharacterName())
-                        .serverId(entity.getServerId())
-                        .jobName(entity.getJobName())
-                        .jobGrowName(entity.getJobGrowName())
-                        .adventureFame(entity.getAdventureFame())
-                        .adventureName(entity.getAdventureName())
-                        .serverName(CharacterEntityDto.getServerName(entity.getServerId()))
-                        .modifiedAt(entity.getModifiedAt()!=null?timesAgo(entity.getModifiedAt()):"방금 전")
-                        .imgStyleClassName(CharactersUtil.getStyleClassName(entity.getJobName()))
-                        .damageIncrease(entity.getDamageIncrease())
-                        .buffPower(entity.getBuffPower())
-                        .characterImgUrl(RestTemplateUtil.getCharacterImgUri(entity.getServerId(), entity.getCharacterId(), "1"))
-                        .build();
-            }
+        private final String jobName;
+
+        private final String jobGrowName;
+
+        private final Integer adventureFame;
+        private final String adventureName;
+
+        private final String imgStyleClassName;
+
+        private final Integer damageIncrease;
+
+        private final Integer buffPower;
+        private final String characterImgUrl;
+
+
+        public static CharacterEntityMainPageResponse from(CharacterEntity entity) {
+            return CharacterEntityMainPageResponse.builder()
+                    .characterId(entity.getCharacterId())
+                    .characterName(entity.getCharacterName())
+                    .serverId(entity.getServerId())
+                    .jobName(entity.getJobName())
+                    .jobGrowName(entity.getJobGrowName())
+                    .adventureFame(entity.getAdventureFame())
+                    .adventureName(entity.getAdventureName())
+                    .serverName(CharacterEntityDto.getServerName(entity.getServerId()))
+                    .modifiedAt(entity.getModifiedAt() != null ? timesAgo(entity.getModifiedAt()) : "방금 전")
+                    .imgStyleClassName(CharactersUtil.getStyleClassName(entity.getJobName()))
+                    .damageIncrease(entity.getDamageIncrease())
+                    .buffPower(entity.getBuffPower())
+                    .characterImgUrl(RestTemplateUtil.getCharacterImgUri(entity.getServerId(), entity.getCharacterId(), "1"))
+                    .build();
+        }
+    }
+
+    @Data
+    @Builder
+    public static class CharacterEntityRankingResponse implements Serializable {
+        @Setter
+        private  Long rank;
+
+        private final String modifiedAt;
+        private final String characterId;
+        private final String characterName;
+
+        private final String serverId;
+
+        private final String serverName;
+
+
+        private final String jobName;
+
+        private final String jobGrowName;
+
+        private final Integer adventureFame;
+        private final String adventureName;
+
+        private final String imgStyleClassName;
+
+        private final Integer damageIncrease;
+
+        private final Integer buffPower;
+        private final String characterImgUrl;
+
+
+        public static CharacterEntityRankingResponse from(CharacterEntity entity) {
+            return CharacterEntityRankingResponse.builder()
+                    .characterId(entity.getCharacterId())
+                    .characterName(entity.getCharacterName())
+                    .serverId(entity.getServerId())
+                    .jobName(entity.getJobName())
+                    .jobGrowName(entity.getJobGrowName())
+                    .adventureFame(entity.getAdventureFame())
+                    .adventureName(entity.getAdventureName())
+                    .serverName(CharacterEntityDto.getServerName(entity.getServerId()))
+                    .modifiedAt(entity.getModifiedAt() != null ? timesAgo(entity.getModifiedAt()) : "방금 전")
+                    .buffPower(entity.getBuffPower())
+                    .imgStyleClassName(CharactersUtil.getStyleClassName(entity.getJobName()))
+                    .damageIncrease(entity.getDamageIncrease())
+                    .characterImgUrl(RestTemplateUtil.getCharacterImgUri(entity.getServerId(), entity.getCharacterId(), "1")).build();
+
+        }
     }
 }

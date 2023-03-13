@@ -171,14 +171,14 @@ public class CharacterService {
         return characterEntityRepository.getCharacterCountByJobName(jobName);
     }
 
-    public Long getRankByCharacterId(String characterId){
-        return characterEntityRepository.getRankByCharacterId(characterId);
+    public Long getRankCountByCharacterIdOrderByAdventureFame(String characterId){
+        return characterEntityRepository.getRankCountByCharacterIdOrderByAdventureFame(characterId);
     }
 
 
 
-    public Long getRankByCharacterIdAndJobName(String characterId, String jobName){
-        return characterEntityRepository.getRankByCharacterId(characterId,jobName);
+    public Long getRankCountByCharacterIdAndJobNameOrderByAdventureFame(String characterId, String jobName){
+        return characterEntityRepository.getRankCountByCharacterIdAndJobNameOrderByAdventureFame(characterId,jobName);
     }
 
     public Double getRankPercent(Long rank, Long count){
@@ -271,4 +271,12 @@ public class CharacterService {
     }
 
 
+    public Page<CharacterEntity.CharacterEntityRankingResponse> getCharacterRanking(String searchType, String characterName, Pageable pageable) {
+        return switch (searchType) {
+            case "damageIncrease" ->
+                    characterEntityRepository.getCharacterRankingOrderByDamageIncrease(characterName, pageable);
+            case "buffPower" -> characterEntityRepository.getCharacterRankingOrderByBuffPower(characterName, pageable);
+            default -> characterEntityRepository.getCharacterRankingOrderByAdventureFame(characterName, pageable);
+        };
+    }
 }
