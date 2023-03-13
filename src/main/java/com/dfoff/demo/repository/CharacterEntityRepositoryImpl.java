@@ -9,6 +9,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CharacterEntityRepositoryImpl implements CharacterEntityCustomRepository {
     private final JPAQueryFactory queryFactory;
@@ -71,8 +72,7 @@ public class CharacterEntityRepositoryImpl implements CharacterEntityCustomRepos
                 .fetchFirst();
     }
 
-    @Override
-    public Long getRankByCharacterId(String characterId) {
+    public Long getRankCountByCharacterIdOrderByAdventureFame(String characterId) {
         return queryFactory.select(QCharacterEntity.characterEntity.count())
                 .from(QCharacterEntity.characterEntity)
                 .where(QCharacterEntity.characterEntity.adventureFame.gt(queryFactory.select(QCharacterEntity.characterEntity.adventureFame)
@@ -81,8 +81,25 @@ public class CharacterEntityRepositoryImpl implements CharacterEntityCustomRepos
                 .fetchFirst()+1;
     }
 
-    @Override
-    public Long getRankByCharacterId(String characterId, String jobName) {
+    public Long getRankCountByCharacterIdOrderByDamageIncrease(String characterId) {
+        return queryFactory.select(QCharacterEntity.characterEntity.count())
+                .from(QCharacterEntity.characterEntity)
+                .where(QCharacterEntity.characterEntity.damageIncrease.gt(queryFactory.select(QCharacterEntity.characterEntity.damageIncrease)
+                        .from(QCharacterEntity.characterEntity)
+                        .where(QCharacterEntity.characterEntity.characterId.eq(characterId))))
+                .fetchFirst()+1;
+    }
+
+    public Long getRankCountByCharacterIdOrderByBuffpower(String characterId) {
+        return queryFactory.select(QCharacterEntity.characterEntity.count())
+                .from(QCharacterEntity.characterEntity)
+                .where(QCharacterEntity.characterEntity.buffPower.gt(queryFactory.select(QCharacterEntity.characterEntity.buffPower)
+                        .from(QCharacterEntity.characterEntity)
+                        .where(QCharacterEntity.characterEntity.characterId.eq(characterId))))
+                .fetchFirst()+1;
+    }
+
+    public Long getRankCountByCharacterIdAndJobNameOrderByAdventureFame(String characterId, String jobName) {
         return queryFactory.select(QCharacterEntity.characterEntity.count())
                 .from(QCharacterEntity.characterEntity)
                 .where(QCharacterEntity.characterEntity.adventureFame.gt(queryFactory.select(QCharacterEntity.characterEntity.adventureFame)
@@ -105,5 +122,50 @@ public class CharacterEntityRepositoryImpl implements CharacterEntityCustomRepos
         return queryFactory.selectFrom(QCharacterEntity.characterEntity)
                 .where(QCharacterEntity.characterEntity.adventureName.eq(adventureName))
                 .fetch();
+    }
+
+    @Override
+    public Page<CharacterEntity.CharacterEntityRankingResponse> getCharacterRankingOrderByAdventureFame(String characterName, Pageable pageable) {
+        Long count = queryFactory.select(QCharacterEntity.characterEntity.count())
+                .from(QCharacterEntity.characterEntity)
+                .where(QCharacterEntity.characterEntity.characterName.contains(characterName),QCharacterEntity.characterEntity.adventureFame.gt(0))
+                .fetchFirst();
+        List<CharacterEntity.CharacterEntityRankingResponse> list = queryFactory.selectFrom(q)
+                .where(q.characterName.contains(characterName),q.adventureFame.gt(0))
+                .orderBy(q.adventureFame.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch().stream().map(CharacterEntity.CharacterEntityRankingResponse::from).peek(o->o.setRank(getRankCountByCharacterIdOrderByAdventureFame(o.getCharacterId()))).toList();
+        return new PageImpl<>(list, pageable, count);
+    }
+
+    @Override
+    public Page<CharacterEntity.CharacterEntityRankingResponse> getCharacterRankingOrderByDamageIncrease(String characterName, Pageable pageable) {
+        Long count = queryFactory.select(QCharacterEntity.characterEntity.count())
+                .from(QCharacterEntity.characterEntity)
+                .where(QCharacterEntity.characterEntity.characterName.contains(characterName),QCharacterEntity.characterEntity.damageIncrease.gt(0))
+                .fetchFirst();
+        List<CharacterEntity.CharacterEntityRankingResponse> list = queryFactory.selectFrom(q)
+                .where(q.characterName.contains(characterName),q.damageIncrease.gt(0))
+                .orderBy(q.damageIncrease.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch().stream().map(CharacterEntity.CharacterEntityRankingResponse::from).peek(o->o.setRank(getRankCountByCharacterIdOrderByDamageIncrease(o.getCharacterId()))).toList();
+        return new PageImpl<>(list, pageable, count);
+    }
+
+    @Override
+    public Page<CharacterEntity.CharacterEntityRankingResponse> getCharacterRankingOrderByBuffPower(String characterName, Pageable pageable) {
+        Long count = queryFactory.select(QCharacterEntity.characterEntity.count())
+                .from(QCharacterEntity.characterEntity)
+                .where(QCharacterEntity.characterEntity.characterName.contains(characterName),QCharacterEntity.characterEntity.buffPower.gt(0))
+                .fetchFirst();
+        List<CharacterEntity.CharacterEntityRankingResponse> list = queryFactory.selectFrom(q)
+                .where(q.characterName.contains(characterName),q.buffPower.gt(0))
+                .orderBy(q.buffPower.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch().stream().map(CharacterEntity.CharacterEntityRankingResponse::from).peek(o->o.setRank(getRankCountByCharacterIdOrderByBuffpower(o.getCharacterId()))).toList();
+        return new PageImpl<>(list, pageable, count);
     }
 }

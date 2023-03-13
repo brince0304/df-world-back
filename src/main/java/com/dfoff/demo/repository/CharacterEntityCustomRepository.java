@@ -17,10 +17,20 @@ public interface CharacterEntityCustomRepository {
 
     Long getBoardCountByCharacterId(String characterId);
 
-    Long getRankByCharacterId(String characterId);
+    Long getRankCountByCharacterIdOrderByAdventureFame(String characterId);
 
-    Long getRankByCharacterId(String characterId,String jobName);
+    Long getRankCountByCharacterIdOrderByDamageIncrease(String characterId);
+
+    Long getRankCountByCharacterIdOrderByBuffpower(String characterId);
+
+        Long getRankCountByCharacterIdAndJobNameOrderByAdventureFame(String characterId,String jobName);
     Long getCharacterCountByJobName(String jobName);
 
     List<CharacterEntity> findAllByAdventureName(String adventureName);
+
+    Page<CharacterEntity.CharacterEntityRankingResponse> getCharacterRankingOrderByAdventureFame(String characterName, Pageable pageable);
+
+    Page<CharacterEntity.CharacterEntityRankingResponse> getCharacterRankingOrderByDamageIncrease(String characterName, Pageable pageable);
+
+    Page<CharacterEntity.CharacterEntityRankingResponse> getCharacterRankingOrderByBuffPower(String characterName, Pageable pageable);
 }

@@ -5,6 +5,7 @@ import com.dfoff.demo.domain.jsondtos.CharacterBuffEquipmentJsonDto;
 import com.dfoff.demo.domain.jsondtos.CharacterEquipmentJsonDto;
 import com.dfoff.demo.domain.jsondtos.CharacterSkillStyleJsonDto;
 import com.dfoff.demo.domain.jsondtos.EquipmentDetailJsonDto;
+import com.dfoff.demo.service.AdventureService;
 import com.dfoff.demo.service.CharacterService;
 import com.dfoff.demo.utils.CharactersUtil;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,6 +28,7 @@ import java.util.List;
 @EnableAsync
 public class CharacterController {
     private final CharacterService characterService;
+    private final AdventureService adventureService;
 
     @GetMapping("/characters/")
     public ModelAndView searchCharacterInfo(@RequestParam(required = false) String serverId,
@@ -60,14 +63,28 @@ public class CharacterController {
         mav.addObject("characters", new PageImpl<>(list, pageable, characters.size()));
         return mav;
     }
+    @GetMapping("/characters/rank/")
+    public ModelAndView getCharacterRanking(@RequestParam (required = false) String searchType,@RequestParam (required = false) String characterName, @PageableDefault(size = 10) Pageable pageable) {
+        ModelAndView mav = new ModelAndView("/search/ranking");
+        if(searchType==null || searchType.equals("")){searchType="fame";}
+        if(characterName==null){characterName="";}
+        mav.addObject("searchType",searchType);
+        mav.addObject("characterName",characterName);
+        if(searchType.contains("adventure")){
+            mav.addObject("response",adventureService.getAdventureRank(searchType,pageable,characterName));
+                    return mav;
+        }
+        mav.addObject("response",characterService.getCharacterRanking(searchType, characterName, pageable));
+        return mav;
+    }
 
     @GetMapping("/characters/detail")
     public ModelAndView getCharacterDetails(@RequestParam String serverId,
                                             @RequestParam String characterId) throws InterruptedException {
         ModelAndView mav = new ModelAndView("/search/characters");
         CharacterBuffEquipmentJsonDto characterBuffEquipment = characterService.getCharacterBuffEquipment(serverId, characterId).join();
-        Long characterRank = characterService.getRankByCharacterId(characterId);
-        Long characterRankByJobName = characterService.getRankByCharacterIdAndJobName(characterId, characterBuffEquipment.getJobName());
+        Long characterRank = characterService.getRankCountByCharacterIdOrderByAdventureFame(characterId);
+        Long characterRankByJobName = characterService.getRankCountByCharacterIdAndJobNameOrderByAdventureFame(characterId, characterBuffEquipment.getJobName());
         Long characterCountByJobName = characterService.getCharacterCountByJobName(characterBuffEquipment.getJobName());
         Long characterCount = characterService.getCharacterCount();
         String characterRankPercent = String.format("%.2f", (double) characterRank / characterCount * 100);
@@ -99,6 +116,11 @@ public class CharacterController {
         mav.addObject("characterPercent", characterRankPercent);
         mav.addObject("characterPercentByJobName", characterRankPercentByJobName);
         return mav;
+    }
+
+    @GetMapping("/characters/mainRank")
+    public ResponseEntity<?> getCharacterMainRanking(@RequestParam String searchType, @PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(characterService.getCharacterRanking(searchType, "", pageable));
     }
 
 
