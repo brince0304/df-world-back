@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Character Ranking</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/rank-style.css" />
+  <link rel="stylesheet" href="/header/fonts/icomoon/style.css">
+  <link href="/Login/assets/css/login-register.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="/header/css/owl.carousel.min.css">
+  <link rel="stylesheet" href="/header/css/style.css">
+  <link rel="stylesheet" href="/css/rank-table-style.css">
+  <link rel="stylesheet" href="/css/board-char-thumbnail.css">
+
+  <style>
+  .adventure-characters{
+    opacity: 0.5;
+  }
+  </style>
+</head>
+<body>
+<header id="header"></header>
+<div class="container card card-margin" style="margin-top:10%">
+<div class="tab-header">
+  <div class="tab-item"  data-tab-name="fame" th:classappend="${searchType} == 'fame' ? 'active':''">명성</div>
+  <div class="tab-item"  data-tab-name="damageIncrease" th:classappend="${searchType} == 'damageIncrease' ? 'active':''">피해증가</div>
+  <div class="tab-item"  data-tab-name="buffPower" th:classappend="${searchType} == 'buffPower' ? 'active':''">버프력</div>
+  <div class="tab-item" data-tab-name="adventureFame" th:classappend="${searchType} == 'adventureFame' ? 'active':''">모험단명성</div>
+  <div class="tab-item" data-tab-name="adventureDamageIncreaseBuffPower" th:classappend="${searchType} == 'adventureDamageIncreaseBuffPower' ? 'active':''">모험단피증+버프력</div>
+</div>
+<div class="search-container">
+
+    <span th:if="${searchType.contains('adventure')}">캐릭터를 클릭시 상세 조회 페이지로 이동됩니다.</span>
+    <input type="text" class="search-input" id="character-rank-search-input"  placeholder="" th:value="${characterName}" />
+    <button class="btn" style="background-color:#343a40; border-radius: 0; font-palette: white; -webkit-text-fill-color: white" id="character-rank-search-btn">검색</button>
+</div>
+<div class="table-container">
+  <table class="table">
+    <thead class="thead-dark">
+    <tr>
+      <th><span class="badge bg-transparent text-white" style="scale: 1.5">순위</span></th>
+      <th><span class="badge bg-transparent text-white" style="scale: 1.5">캐릭터</span></th>
+      <th th:if="${!searchType.contains('adventure')}"><span class="badge bg-transparent text-white" style="scale: 1.5" >닉네임</span></th>
+      <th th:if="${searchType.contains('adventure')}"><span class="badge bg-transparent text-white" style="scale: 1.5" >모험단</span></th>
+      <th th:if="${!searchType.contains('adventure')}" ><span class="badge bg-transparent text-white" style="scale: 1.5" >직업</span></th>
+      <th th:if="${searchType.contains('adventure')}"><span class="badge bg-transparent text-white" style="scale: 1.5"  >캐릭터 갯수</span></th>
+      <th><span class="badge bg-transparent text-white" style="scale: 1.5">서버</span></th>
+        <th th:switch="${searchType}"><span class="badge bg-transparent text-white" style="scale: 1.5" th:case="fame">명성</span>
+          <span class="badge bg-transparent text-white" style="scale: 1.5" th:case="damageIncrease">피해증가</span>
+          <span class="badge bg-transparent text-white" style="scale: 1.5" th:case="buffPower">버프력</span>
+          <span class="badge bg-transparent text-white" style="scale: 1.5" th:case="adventureFame">수치</span>
+          <span class="badge bg-transparent text-white" style="scale: 1.5" th:case="adventureDamageIncreaseBuffPower">수치</span></th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Add 10 characters here -->
+    <tr th:each="char,i:${response}" class="rank-item" th:data-id="${char.characterId}" th:data-server="${char.serverId}" th:if="${!searchType.contains('adventure')}">
+      <td><span class="badge bg-transparent text-black" style="scale: 1.5" th:text="${char.rank}">1</span></td>
+      <td><div class="board-detail-character" th:if="${!searchType.contains('adventure')}"><img src="#" th:src="${char.characterImgUrl}" alt="Character Image"></div></td>
+      <td><span class="badge bg-transparent text-black" style="scale: 1.5" th:text="${char.characterName}">캐릭터</span></td>
+      <td><span class="badge bg-transparent text-black" style="scale: 1.5" th:text="${char.jobGrowName}">직업</span></td>
+      <td><span class="badge bg-transparent text-black" style="scale: 1.5" th:text="${char.serverName}">서버</span></td>
+        <td th:switch="${searchType}">
+          <span class="badge bg-transparent text-black" style="scale: 1.5" th:case="buffPower" th:text="${char.buffPower}" >수치</span>
+          <span class="badge bg-transparent text-black" style="scale: 1.5" th:case="damageIncrease" th:text="${char.damageIncrease}" >수치</span>
+          <span class="badge bg-transparent text-black" style="scale: 1.5" th:case="fame" th:text="${char.adventureFame}" >수치</span></td>
+    </tr>
+    <tr th:each="adventure,i:${response}" class="rank-item-adventure" th:data-id="${adventure.adventureName}" th:data-server="${adventure.serverId}" th:if="${searchType.contains('adventure')}">
+      <td><span class="badge bg-transparent text-black" style="scale: 1.5" th:text="${adventure.adventureRank}">1</span></td>
+      <td><div class="board-detail-character adventure-characters" th:data-id="${char.characterId}" th:data-server="${char.serverId}" th:each="char:${adventure.characters}"><img src="#" th:class="${char.imgStyleClassName}" th:src="${char.characterImgUrl}" alt="Character Image"></div></td>
+      <td><span class="badge bg-transparent text-black" style="scale: 1.5" th:text="${adventure.adventureName}">캐릭터</span></td>
+      <td><span class="badge bg-transparent text-black" style="scale: 1.5" th:text="${adventure.characterCount}">직업</span></td>
+      <td><span class="badge bg-transparent text-black" style="scale: 1.5" th:text="${adventure.serverName}">서버</span></td>
+      <td th:switch="${searchType}">
+        <span class="badge bg-transparent text-black" style="scale: 1.5" th:case="adventureFame" th:text="${adventure.adventureFame}" >수치</span>
+        <span class="badge bg-transparent text-black" style="scale: 1.5" th:case="adventureDamageIncreaseBuffPower" th:text="${adventure.adventureDamageIncreaseAndBuffPower}" >수치</span>
+</td>
+    </tr>
+
+    <!-- Add 8 more characters here -->
+    </tbody>
+    </table>
+</div>
+
+  <nav class="pagination-outer" th:if="${!response.isEmpty()}" id="rank-navitation"
+       aria-label="Page navigation">
+    <ul class="pagination" th:with="start=${(response.number/5)*5 + 1},
+                    last=(${start + 4 < response.totalPages ? start + 4 : response.totalPages})">
+      <li class="page-item" th:class="${response.first} ? 'disabled'">
+        <a th:href="${response.first} ? '#' :@{/characters/rank/(page=${0},searchType=${searchType},characterName=${characterName})}"
+           class="page-link" aria-label="Previous">
+          <span aria-hidden="true">«</span>
+        </a>
+      </li>
+      <li class="page-item" th:each="page: ${#numbers.sequence(start , last)}"
+          th:class="${page == response.number + 1} ? 'active'"><a
+              class="page-link" th:text="${page }"
+              th:href="@{/characters/rank/(page=${page -1},searchType=${searchType},characterName=${characterName})}">1</a>
+      </li>
+      <li class="page-item"
+          th:class="${response.totalPages == response.number +1 } ? 'disabled'">
+        <a href="#" class="page-link" aria-label="Next"
+           th:href="@{/characters/rank/(page=${response.number +1},searchType=${searchType},characterName=${characterName})}">
+          <span aria-hidden="true">»</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+<footer id="footer">
+
+</footer>
+<script src="https://code.jquery.com/jquery-3.6.1.js"></script>
+<script src="/header/js/jquery.sticky.js"></script>
+<script src="/header/js/main.js"></script>
+<script src="/Login/assets/js/login-register.js" type="text/javascript"></script>
+<script src="/js/scriptfile.js" type="text/javascript"></script>`
+<script src="/header/js/jquery.sticky.js"></script>
+<script src="/header/js/main.js"></script>
+<!-- Popper JS -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js" integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js" integrity="sha384-mQ93GR66B00ZXjt0YO5KlohRA5SY2XofN4zfuZxLkoj1gXtW8ANNCe9d5Y3eG5eD" crossorigin="anonymous"></script>
+</body>
+<script>
+    $('.tab-item').click(function () {
+        $('.tab-item').removeClass('active');
+        $(this).addClass('active');
+        let tabName = $(this).attr('data-tab-name');
+        location.href = '/characters/rank/?searchType=' + tabName;
+    });
+
+    $('.rank-item').click(function () {
+        let characterId = $(this).attr('data-id');
+        let serverId = $(this).attr('data-server');
+        location.href = '/characters/detail?serverId=' + serverId + '&characterId=' + characterId;
+    });
+
+   $('#character-rank-search-btn').click(function () {
+        let characterName = $('#character-rank-search-input').val();
+        let searchType = $('.tab-item.active').attr('data-tab-name');
+        location.href = '/characters/rank/?searchType=' + searchType + '&characterName=' + characterName;
+    });
+
+$('#character-rank-search-input').keydown(function (key) {
+        if (key.keyCode == 13) {
+            let characterName = $('#character-rank-search-input').val();
+            let searchType = $('.tab-item.active').attr('data-tab-name');
+            location.href = '/characters/rank/?searchType=' + searchType + '&characterName=' + characterName;
+        }
+    });
+
+
+$('.adventure-characters').mouseover(function () {
+  $(this).css('opacity', '1');
+  $(this).css('cursor', 'pointer');
+});
+
+$('.adventure-characters').mouseout(function () {
+  $(this).css('opacity', '0.5');
+});
+
+    $('.adventure-characters').click(function () {
+        let characterId = $(this).attr('data-id');
+        let serverId = $(this).attr('data-server');
+        location.href = '/characters/detail?serverId=' + serverId + '&characterId=' + characterId;
+    });
+
+</script>
+</html>

@@ -38,20 +38,8 @@
                        th:if="${#authentication!=null}">로그아웃</a></li>
                 <li><a  sec:authorize="isAuthenticated()"
                         th:href="@{/users/my-page}" th:text="마이페이지"></a></li>
-                <li><a href="">랭킹</a></li>
+                <li><a href="/characters/rank/">랭킹</a></li>
                 <li><a th:href="@{/boards/}">게시판</a></li>
-
-                <li class="menu-has-children"><a href="">컨텐츠</a>
-                    <ul>
-                        <li><a href="#team-section">버프력 검색</a></li>
-                        <li><a href="#pricing-section">경매장</a></li>
-                        <li><a href="#faq-section">카드 도감</a></li>
-                        <li><a href="#faq-section">아바타 정옵표</a></li>
-                        <li><a href="#faq-section">직업 분포도</a></li>
-                        <li><a href="#faq-section">장비 통계</a></li>
-                        <li><a href="#faq-section">오늘의 등급</a></li>
-                    </ul>
-                </li>
                 <!-- <li><a href="">Contact</a></li> -->
             </ul>
         </nav><!-- #nav-menu-container -->
