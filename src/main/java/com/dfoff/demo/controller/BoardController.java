@@ -58,6 +58,15 @@ public class BoardController {
         return mav;
     }
 
+    @GetMapping("/boards/latest")
+    public ResponseEntity<?> getLatestBoardList(@RequestParam BoardType boardType,
+                                     @RequestParam(required = false) String keyword,
+                                     @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
+                                     @RequestParam(required = false) String searchType) {
+        return new ResponseEntity<>(boardService.getBoardsByKeyword(boardType, keyword, searchType, pageable), HttpStatus.OK);
+    }
+
+
     @PostMapping("/boards/like-board")
     public ResponseEntity<?> likeBoardById(@RequestParam Long boardId, HttpServletRequest req, @AuthenticationPrincipal UserAccount.PrincipalDto principal) {
         if (redisService.checkBoardLikeLog(req.getRemoteAddr(), boardId)) {
