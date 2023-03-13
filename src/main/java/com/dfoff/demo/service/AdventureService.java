@@ -6,6 +6,8 @@ import com.dfoff.demo.repository.AdventureRepository;
 import com.dfoff.demo.repository.CharacterEntityRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,12 +54,19 @@ public class AdventureService {
         adventure.setAdventureDamageIncreaseAndBuffPower(adventureDamageIncreaseAndBuffPower);
     }
 
-    public List<Adventure.UserAdventureMainPageResponse> getUserAdventureRankingBest5OrderByAdventureFame(){
+    public List<Adventure.AdventureMainPageResponse> getAdventureRankingBest5OrderByAdventureFame(){
         return adventureRepository.getAdventureRankingBest5OrderByAdventureFame();
     }
 
-    public List<Adventure.UserAdventureMainPageResponse> getUserAdventureRankingBest5OrderByAdventureDamageIncreaseAndBuffPower(){
+    public List<Adventure.AdventureMainPageResponse> getAdventureRankingBest5OrderByAdventureDamageIncreaseAndBuffPower(){
         return adventureRepository.getAdventureRankingBest5OrderByAdventureDamageIncreaseAndBuffPower();
+    }
+
+    public Page<Adventure.AdventureRankingResponse> getAdventureRank(String searchType, Pageable pageable, String adventureName){
+        if(searchType.equals("adventureFame")){
+            return adventureRepository.getAdventureRankrderByAdventureFame(pageable,adventureName);
+    }
+        return adventureRepository.getAdventureRankrderByAdventureDamageIncreaseBuffPower(pageable,adventureName);
     }
 
 

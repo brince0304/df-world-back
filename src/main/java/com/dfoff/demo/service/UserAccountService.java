@@ -10,8 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -83,13 +80,13 @@ public class UserAccountService {
         userAdventureStatusSetter(userAccount);
     }
 
-    public Adventure.UserAdventureDto addAllCharactersToUserAdventure(UserAccount.UserAccountDto dto, List<CharacterEntity.CharacterEntityDto> characters) {
+    public Adventure.AdventureDto addAllCharactersToUserAdventure(UserAccount.UserAccountDto dto, List<CharacterEntity.CharacterEntityDto> characters) {
         UserAccount userAccount = userAccountRepository.findById(dto.userId()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
         if (userAccount.getAdventure() == null) {
             throw new EntityNotFoundException("모험단이 등록되지 않았습니다.");
         }
         userAccount.getAdventure().getCharacters().addAll(characters.stream().map(CharacterEntity.CharacterEntityDto::toEntity).toList());
-        return Adventure.UserAdventureDto.from(userAccount.getAdventure());
+        return Adventure.AdventureDto.from(userAccount.getAdventure());
     }
 
     private void userAdventureStatusSetter(UserAccount userAccount) {

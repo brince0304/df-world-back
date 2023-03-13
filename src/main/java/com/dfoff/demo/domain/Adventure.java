@@ -92,7 +92,7 @@ public class Adventure extends AuditingFields {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UserAdventureResponse{
+    public static class AdventureResponse {
         private String adventureName;
 
         private String representCharacterId;
@@ -109,8 +109,8 @@ public class Adventure extends AuditingFields {
 
         private Set<Board.CharacterBoardResponse> characters;
 
-        public static UserAdventureResponse from(Adventure adventure){
-            return UserAdventureResponse.builder()
+        public static AdventureResponse from(Adventure adventure){
+            return AdventureResponse.builder()
                     .adventureName(adventure.getAdventureName())
                     .representCharacterId(adventure.getRepresentCharacter().getCharacterId())
                     .serverId(adventure.getServerId())
@@ -127,7 +127,7 @@ public class Adventure extends AuditingFields {
     @Builder
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class UserAdventureMainPageResponse{
+    public static class AdventureMainPageResponse {
         private String adventureName;
 
         private String representCharacterId;
@@ -142,8 +142,8 @@ public class Adventure extends AuditingFields {
 
         private List<Board.CharacterBoardResponse> characters;
 
-        public static UserAdventureMainPageResponse from(Adventure adventure){
-            return UserAdventureMainPageResponse.builder()
+        public static AdventureMainPageResponse from(Adventure adventure){
+            return AdventureMainPageResponse.builder()
                     .adventureName(adventure.getAdventureName())
                     .serverId(adventure.getServerId())
                     .characters(adventure.getCharacters().size()>4? adventure.getCharacters().stream().map(Board.CharacterBoardResponse::from).collect(Collectors.toList()).subList(0,3)
@@ -155,10 +155,47 @@ public class Adventure extends AuditingFields {
         }
     }
 
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AdventureRankingResponse {
+        private String adventureName;
+
+        private String representCharacterId;
+
+        private String serverId;
+
+        private Integer adventureFame;
+
+        private Integer adventureDamageIncreaseAndBuffPower;
+
+        private String serverName;
+
+        private List<CharacterEntity.CharacterEntityRankingResponse> characters;
+
+        private Long characterCount;
+
+        private Long adventureRank;
+
+        public static AdventureRankingResponse from(Adventure adventure){
+            return AdventureRankingResponse.builder()
+                    .adventureName(adventure.getAdventureName())
+                    .serverId(adventure.getServerId())
+                    .characters(adventure.getCharacters().size()>4? adventure.getCharacters().stream().map(CharacterEntity.CharacterEntityRankingResponse::from).collect(Collectors.toList()).subList(0,4)
+                            : adventure.getCharacters().stream().map(CharacterEntity.CharacterEntityRankingResponse::from).collect(Collectors.toList()))
+                    .adventureFame(adventure.getAdventureFame())
+                    .adventureDamageIncreaseAndBuffPower(adventure.getAdventureDamageIncreaseAndBuffPower())
+                    .serverName(CharacterEntity.CharacterEntityDto.getServerName(adventure.getServerId()))
+                    .characterCount((long) adventure.getCharacters().size())
+                    .build();
+        }
+    }
+
 
     @Data
     @Builder
-    public static class UserAdventureDto {
+    public static class AdventureDto {
         private String adventureName;
 
         private String representCharacterId;
@@ -172,8 +209,8 @@ public class Adventure extends AuditingFields {
 
         private Set<CharacterEntity.CharacterEntityDto> characters;
 
-        public static UserAdventureDto from(Adventure adventure){
-            return UserAdventureDto.builder()
+        public static AdventureDto from(Adventure adventure){
+            return AdventureDto.builder()
                     .adventureName(adventure.getAdventureName())
                     .representCharacterId(adventure.getRepresentCharacter().getCharacterId())
                     .serverId(adventure.getServerId())
