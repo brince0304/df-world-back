@@ -25,7 +25,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findAllByTypeAndBoardTitleContainingIgnoreCaseOrBoardContentContainingIgnoreCase(@Param("boardType") BoardType boardType, @Param("keyword") String keyword, Pageable pageable);
     @Query("select b from Board b where lower(b.userAccount.nickname) like lower (concat('%',:keyword,'%')) and b.deleted=false and b.boardType=:boardType")
     Page<Board> findAllByTypeAndUserAccountContainingIgnoreCase(@Param("boardType") BoardType boardType, @Param("keyword") String keyword, Pageable pageable);
-
     @Query("select b from Board b where  b.deleted=false and lower(b.boardContent) like lower (concat('%',:keyword,'%'))")
     Page<Board> findAllByBoardContentContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
     @Query("select b from Board b where lower(b.boardTitle) like lower (concat('%',:keyword,'%')) and b.deleted=false")
@@ -34,7 +33,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     Page<Board> findAllByBoardTitleContainingIgnoreCaseOrBoardContentContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
     @Query("select b from Board b where lower(b.userAccount.nickname) like lower (concat('%',:keyword,'%')) and b.deleted=false")
     Page<Board> findAllByUserAccountContainingIgnoreCase(@Param("keyword") String keyword, Pageable pageable);
-
     @Query("select b from Board b where b.deleted=false and b.boardType=:boardType")
     Page<Board> findAllByBoardType(@Param("boardType") BoardType boardType, Pageable pageable);
 

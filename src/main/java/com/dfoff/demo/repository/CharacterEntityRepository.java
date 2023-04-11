@@ -13,6 +13,7 @@ public interface CharacterEntityRepository  extends JpaRepository<CharacterEntit
 
 
 
+
     @Query("select c from CharacterEntity c order by c.adventureFame desc")
     Page<CharacterEntity> findAllByAdventureFame(Pageable pageable);
 

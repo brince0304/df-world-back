@@ -21,6 +21,10 @@ public class RedisService {
 
     private final Long REDIS_KEY_EXPIRE_TIME = 60*60*24L*7L;
 
+    private  final String REDIS_TOKEN_KEY_PREFIX = "LOGOUT_";
+
+    private  final String REDIS_TOKEN_EXPIRED_DURATION = "EXPIRE_DURATION";
+
     public void saveBoardLikeLog(String ipAddress, Long boardId){
         redisTemplate.opsForValue().set( REDIS_KEY_BOARD+boardId+REDIS_KEY_LIKE_LOG+ipAddress,ipAddress,REDIS_KEY_EXPIRE_TIME,TimeUnit.SECONDS);
     }
@@ -64,6 +68,8 @@ public class RedisService {
         return redisTemplate.opsForValue().get(key);
     }
 
+
+
     public void delete(String key){
         redisTemplate.delete(key);
     }
@@ -71,8 +77,22 @@ public class RedisService {
 
     public void setExpired(String key, String value, long expired){
         redisTemplate.opsForValue().set(key,value,expired);
-        redisTemplate.expire(key,expired, TimeUnit.SECONDS);
+        redisTemplate.expire(key,expired, TimeUnit.MILLISECONDS);
     }
+
+    public void deleteData(String key){
+        redisTemplate.delete(key);
+    }
+
+    public void setBlackList(String key, String value, long expired){
+        redisTemplate.opsForValue().set(REDIS_TOKEN_KEY_PREFIX+key,value,expired);
+        redisTemplate.expire(key,expired, TimeUnit.MILLISECONDS);
+    }
+
+    public boolean hasBlacklist (String key){
+        return Boolean.TRUE.equals(redisTemplate.hasKey(REDIS_TOKEN_KEY_PREFIX+key));
+    }
+
 
 
 

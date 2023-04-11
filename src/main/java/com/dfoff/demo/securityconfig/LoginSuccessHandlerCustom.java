@@ -12,6 +12,9 @@ public class LoginSuccessHandlerCustom implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setHeader("Access-Control-Allow-Origin", "*");
+        log.info("로그인 성공 {}", authentication.getName());
 
     }
 

@@ -96,19 +96,7 @@ public class BoardComment extends AuditingFields {
 
         private final BoardType boardType;
 
-        public String getBoardType(BoardType type) {
-            if (type == null) {
-                return null;
-            }
-            return switch (type) {
-                case NOTICE -> "공지";
-                case FREE -> "자유";
-                case QUESTION -> "Q&A";
-                case RECRUITMENT -> "구인";
-                case MARKET -> "거래";
-                case REPORT -> "사건/사고";
-            };
-        }
+
 
         public static BoardCommentResponse from(BoardComment boardComment) {
             return BoardCommentResponse.builder()
@@ -154,19 +142,6 @@ public class BoardComment extends AuditingFields {
 
         private final BoardType boardType;
 
-        public String getBoardType(BoardType type) {
-            if (type == null) {
-                return null;
-            }
-            return switch (type) {
-                case NOTICE -> "공지";
-                case FREE -> "자유";
-                case QUESTION -> "Q&A";
-                case RECRUITMENT -> "구인";
-                case MARKET -> "거래";
-                case REPORT -> "사건/사고";
-            };
-        }
 
         public static BoardCommentMyPageResponse from(BoardComment boardComment) {
             return BoardCommentMyPageResponse.builder()
@@ -255,6 +230,19 @@ public class BoardComment extends AuditingFields {
                     .commentContent(this.commentContent)
                     .board(this.boardDto != null ? this.boardDto.toEntity() : null)
                     .userAccount(this.userAccountDto != null ? this.userAccountDto.toEntity() : null)
+                    .build();
+        }
+    }
+
+    @Builder
+    public record BoardCommentLikeResponse (
+            Long id,
+            Boolean isLike
+    ){
+        public static BoardCommentLikeResponse from(Long id, Boolean isLike) {
+            return BoardCommentLikeResponse.builder()
+                    .id(id)
+                    .isLike(isLike)
                     .build();
         }
     }

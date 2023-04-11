@@ -6,7 +6,8 @@ public enum BoardType {
     ,MARKET ("거래")
     ,QUESTION ("질답")
     ,RECRUITMENT ("모집")
-    ,REPORT("사건/사고");
+    ,REPORT("사건/사고"),
+    ALL("전체");
 
 
     BoardType(String value) {

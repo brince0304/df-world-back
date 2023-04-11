@@ -112,6 +112,28 @@ public class Hashtag extends AuditingFields {
     }
 
 
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class HashtagSearchResponse{
+        private String name;
+        private Long count;
+
+        public static HashtagSearchResponse from(Hashtag hashtag) {
+            return HashtagSearchResponse.builder()
+                    .name(hashtag.getName())
+                    .count((long) hashtag.getBoards().size())
+                    .build();
+        }
+
+
+
+
+
+    }
+
+
 }
 
 

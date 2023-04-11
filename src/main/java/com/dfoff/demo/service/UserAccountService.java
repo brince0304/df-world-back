@@ -1,6 +1,8 @@
 package com.dfoff.demo.service;
 
 import com.dfoff.demo.domain.*;
+import com.dfoff.demo.jwt.TokenDto;
+import com.dfoff.demo.jwt.TokenProvider;
 import com.dfoff.demo.repository.UserAccountCharacterMapperRepository;
 import com.dfoff.demo.repository.UserAccountRepository;
 import com.dfoff.demo.repository.AdventureRepository;
@@ -10,6 +12,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +35,11 @@ public class UserAccountService {
     private final AdventureRepository adventureRepository;
 
     private final UserAccountCharacterMapperRepository mapperRepository;
+
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
+
+    private final TokenProvider tokenProvider;
 
 
     public void createAccount(UserAccount.UserAccountSignUpRequest account, SaveFile.SaveFileDto profileIcon) {
@@ -146,6 +157,12 @@ public class UserAccountService {
         }
         return null;
     }
+
+    public UserAccount.UserLoginResponse getLoginResponse(String userId) {
+        UserAccount userAccount = userAccountRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
+        return UserAccount.UserLoginResponse.from(userAccount);
+    }
+
 
 
     public void saveUserAdventure(Adventure.UserAdventureRequest request, UserAccount.UserAccountDto userAccount, CharacterEntity.CharacterEntityDto character, List<CharacterEntity.CharacterEntityDto> characters) {
@@ -304,10 +321,21 @@ public class UserAccountService {
         };
     }
 
+    @Transactional (readOnly = true)
     public Page<BoardComment.BoardCommentMyPageResponse> getUserCommentLogs(UserAccount.UserAccountDto dto, Pageable pageable, String sortBy) {
         if (sortBy.equals("like")) {
             return getCommentsByIdOrderByLikeCount(dto.userId(), pageable);
         }
         return getCommentsById(dto.userId(), pageable);
     }
+
+    @Transactional (readOnly = true)
+    public TokenDto getToken(String userId, String password) throws Exception {
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(new UsernamePasswordAuthenticationToken(userId, password));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        UserAccount.PrincipalDto principal = (UserAccount.PrincipalDto) authentication.getPrincipal();
+        log.info("principal : {}", principal);
+        return TokenDto.from(principal, tokenProvider.generateToken(principal),tokenProvider.generateRefreshToken(principal));
+    }
+
 }

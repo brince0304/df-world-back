@@ -239,6 +239,7 @@ public class Board extends AuditingFields {
                 case RECRUITMENT -> "구인";
                 case MARKET -> "거래";
                 case REPORT -> "사건/사고";
+                case ALL -> "전체";
             };
         }
 
@@ -305,6 +306,7 @@ public class Board extends AuditingFields {
                 case RECRUITMENT -> "구인";
                 case MARKET -> "거래";
                 case REPORT -> "사건/사고";
+                case ALL -> "전";
             };
         }
 
@@ -417,6 +419,7 @@ public class Board extends AuditingFields {
                 case RECRUITMENT -> "구인";
                 case MARKET -> "거래";
                 case REPORT -> "사건/사고";
+                case ALL -> "전체";
             };
         }
 

@@ -60,8 +60,10 @@ public class SaveFile extends AuditingFields {
     }
 
         @Builder
-        public record SaveFileDto(Long id, String fileName, String filePath, String fileType, Long fileSize,
-                                  LocalDateTime createdAt, LocalDateTime modifiedAt, String createdBy, String modifiedBy) {
+        public record SaveFileDto(
+                Long id, String fileName, String filePath, String fileType, Long fileSize,
+                                  LocalDateTime createdAt, LocalDateTime modifiedAt, String createdBy, String modifiedBy
+        ) {
             public static SaveFileDto from(SaveFile saveFile) {
                 if(saveFile == null) return null;
                 return SaveFileDto.builder()

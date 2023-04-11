@@ -27,7 +27,7 @@ public class SaveFileController {
 
     @Auth
     @PostMapping("/files")
-    public ResponseEntity<?> uploadFile(@AuthenticationPrincipal UserAccount.PrincipalDto principal, @RequestPart("file") MultipartFile file) throws IOException {
+    public ResponseEntity<?> uploadFile(@AuthenticationPrincipal UserAccount.PrincipalDto principal, @RequestBody MultipartFile file) throws IOException {
             SaveFile.SaveFileDto fileDto = saveFileService.saveFile(FileUtil.getFileDtoFromMultiPartFile(file));
             return new ResponseEntity<>(fileDto, HttpStatus.OK);
         }

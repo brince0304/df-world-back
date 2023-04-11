@@ -122,6 +122,11 @@ public class CharacterEntity extends AuditingFields {
 
         private final Integer damageIncrease;
 
+        private final String characterImgPath;
+
+        private final String serverName;
+
+
 
         public static CharacterEntity toEntity(CharacterEntityDto dto) {
             return CharacterEntity.builder()
@@ -226,6 +231,8 @@ public class CharacterEntity extends AuditingFields {
                     .guildName(entity.getGuildName())
                     .buffPower(entity.getBuffPower())
                     .damageIncrease(entity.getDamageIncrease())
+                    .characterImgPath(RestTemplateUtil.getCharacterImgUri(entity.getServerId(), entity.getCharacterId(),"3"))
+                    .serverName(getServerName(entity.getServerId()))
                     .build();
         }
 
@@ -266,6 +273,8 @@ public class CharacterEntity extends AuditingFields {
 
         private final Integer damageIncrease;
 
+        private final String characterImgPath;
+
         private final List<CharacterAbilityDto.Status__1> status;
 
 
@@ -288,6 +297,7 @@ public class CharacterEntity extends AuditingFields {
                     .createdAt(dto.getCreatedAt() != null ? timesAgo(dto.getCreatedAt()) : "방금 전")
                     .buffPower(dto.getBuffPower())
                     .damageIncrease(dto.getDamageIncrease())
+                    .characterImgPath(RestTemplateUtil.getCharacterImgUri(dto.getServerId(), dto.getCharacterId(),"3"))
                     .build();
         }
 
@@ -307,6 +317,7 @@ public class CharacterEntity extends AuditingFields {
                     .guildId(dto.getGuildId())
                     .guildName(dto.getGuildName())
                     .modifiedAt(dto.getModifiedAt() != null ? timesAgo(dto.getModifiedAt()) : "방금 전")
+                    .characterImgPath(RestTemplateUtil.getCharacterImgUri(dto.getServerId(), dto.getCharacterId(),"3"))
                     .build();
         }
 
@@ -451,6 +462,32 @@ public class CharacterEntity extends AuditingFields {
                     .damageIncrease(entity.getDamageIncrease())
                     .characterImgUrl(RestTemplateUtil.getCharacterImgUri(entity.getServerId(), entity.getCharacterId(), "1")).build();
 
+        }
+    }
+
+    @Data
+    @Builder
+    public static class AutoCompleteResponse{
+        private final String characterId;
+        private final String characterName;
+        private final String serverId;
+        private final String serverName;
+        private final String jobName;
+        private final String jobGrowName;
+        private final String adventureName;
+        private final String level;
+
+        public static AutoCompleteResponse from(CharacterEntity entity){
+            return AutoCompleteResponse.builder()
+                    .characterId(entity.getCharacterId())
+                    .characterName(entity.getCharacterName())
+                    .serverId(entity.getServerId())
+                    .serverName(CharacterEntityDto.getServerName(entity.getServerId()))
+                    .jobName(entity.getJobName())
+                    .jobGrowName(entity.getJobGrowName())
+                    .adventureName(entity.getAdventureName())
+                    .level("레벨 " + entity.getLevel())
+                    .build();
         }
     }
 }

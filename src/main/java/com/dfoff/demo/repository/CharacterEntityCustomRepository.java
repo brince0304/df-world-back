@@ -33,4 +33,10 @@ public interface CharacterEntityCustomRepository {
     Page<CharacterEntity.CharacterEntityRankingResponse> getCharacterRankingOrderByDamageIncrease(String characterName, Pageable pageable);
 
     Page<CharacterEntity.CharacterEntityRankingResponse> getCharacterRankingOrderByBuffPower(String characterName, Pageable pageable);
+
+    List<CharacterEntity.AutoCompleteResponse> getCharacterNameAutoCompleteServerAll(String characterName);
+
+    List<CharacterEntity.AutoCompleteResponse> getCharacterNameAutoComplete(String characterName, String serverId);
+
+    List<CharacterEntity.AutoCompleteResponse> getCharacterNameAutoCompleteServerAdventure(String name);
 }

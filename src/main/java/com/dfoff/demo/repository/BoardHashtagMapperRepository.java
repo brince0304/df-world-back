@@ -13,4 +13,7 @@ public interface BoardHashtagMapperRepository extends org.springframework.data.j
 
     @Query("select bhm from BoardHashtagMapper bhm where bhm.hashtag.name=:name and bhm.board.deleted=false and bhm.board.boardType=:boardType")
     Page<BoardHashtagMapper> findAllByHashtagNameAndBoardType(@Param("name") String name,@Param("boardType") BoardType boardType, Pageable pageable);
+
+
+    Long countAllByHashtagName(String name);
 }

@@ -71,4 +71,8 @@ public class NotificationService {
         notification.setChecked(Boolean.TRUE);
         return "/boards/"+notification.getBoardId();
     }
+
+    public Long getNotificationCount(String username) {
+        return notificationRepository.getNotificationCountByUserId(username);
+    }
 }

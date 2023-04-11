@@ -21,10 +21,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 @Slf4j
@@ -40,27 +37,36 @@ public class BoardCommentController {
 
     @GetMapping("/comments/")
     public ResponseEntity<?> getBoardComments(HttpServletRequest req,
-                                              @RequestParam(required = false) Long boardId,
-                                              @RequestParam(required = false) Long commentId) {
+                                              @RequestParam(required = true) Long boardId) {
         Map<String, Object> map = new HashMap<>();
-        Map<String, Boolean> likeMap = new HashMap<>();
+        List<BoardComment.BoardCommentLikeResponse> likeResponses = new ArrayList<>();
         List<BoardComment.BoardCommentResponse> bestComments = commentService.findBestBoardCommentByBoardId(boardId);
-        map.put("bestComments", bestComments);
         List<BoardComment.BoardCommentResponse> comments;
-        if (commentId == null) {
             comments = commentService.findBoardCommentByBoardId(boardId);
-        } else {
-            comments = commentService.findBoardCommentsByParentId(boardId, commentId);
-        }
-        return getCommentResponse(req, boardId, map, likeMap, comments, bestComments);
+        return getCommentResponse(req, boardId, map, likeResponses, comments, bestComments);
     }
 
-    private ResponseEntity<?> getCommentResponse(HttpServletRequest req, @RequestParam(required = false) Long boardId, Map<String, Object> map, Map<String, Boolean> likeMap, List<BoardComment.BoardCommentResponse> comments
+    @GetMapping("/comments/{boardId}/{id}")
+    public ResponseEntity<?> getChildrenComments(HttpServletRequest req,
+                                             @PathVariable Long id,
+                                                @PathVariable Long boardId) {
+        return new ResponseEntity<>(commentService.findBoardCommentsByParentId(boardId,id), HttpStatus.OK);
+    }
+
+    private ResponseEntity<?> getCommentResponse(HttpServletRequest req, @RequestParam(required = false) Long boardId, Map<String, Object> map, List<BoardComment.BoardCommentLikeResponse> likeResponses, List<BoardComment.BoardCommentResponse> comments
             , List<BoardComment.BoardCommentResponse> bestComments) {
         map.put("comments", comments);
-        comments.forEach(o -> likeMap.put(String.valueOf(o.getId()), redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, o.getId())));
-        bestComments.forEach(o -> likeMap.put(String.valueOf(o.getId()), redisService.checkBoardCommentLikeLog(req.getRemoteAddr(), boardId, o.getId())));
-        map.put("likeMap", likeMap);
+        comments.forEach(comment -> {
+            comment.getChildrenComments().forEach(childComment -> {
+                likeResponses.add(BoardComment.BoardCommentLikeResponse.from(childComment.getId(), redisService.checkBoardCommentLikeLog(req.getRemoteAddr(),boardId, childComment.getId())));
+            });
+            likeResponses.add(BoardComment.BoardCommentLikeResponse.from(comment.getId(),redisService.checkBoardCommentLikeLog(req.getRemoteAddr(),boardId,comment.getId())));
+        });
+
+        map.put("bestComments", bestComments);
+
+
+        map.put("likeResponses", likeResponses);
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
@@ -82,21 +88,21 @@ public class BoardCommentController {
     @BindingErrorCheck
     @PostMapping("/comments")
     public ResponseEntity<?> createBoardComment(@AuthenticationPrincipal UserAccount.PrincipalDto principal,@RequestBody @Valid BoardComment.BoardCommentRequest request, BindingResult bindingResult,
-                                                @RequestParam(required = false) String mode) {
+                                                @RequestParam(required = false) String parentId) {
         Board.BoardDto boardDto = boardService.getBoardDto(request.boardId());
-        if (mode != null && mode.equals("children")) {
-            BoardComment.BoardCommentDto commentDto =commentService.createChildrenComment(request.commentId(), request, UserAccount.UserAccountDto.from(principal), boardDto);
+        BoardComment.BoardCommentDto commentDto;
+        if (parentId != null) {
+            commentDto = commentService.createChildrenComment(request.commentId(), request, UserAccount.UserAccountDto.from(principal), boardDto);
             if(!commentDto.getBoardDto().getUserAccount().userId().equals(principal.getUsername())){
                 notificationService.saveBoardCommentNotification(commentDto.getBoardDto().getUserAccount(), commentDto, principal.getNickname(),NotificationType.CHILDREN_COMMENT);
             }
-            return new ResponseEntity<>(HttpStatus.OK);
         } else {
-            BoardComment.BoardCommentDto commentDto = commentService.createBoardComment(request, UserAccount.UserAccountDto.from(principal), boardDto);
+            commentDto = commentService.createBoardComment(request, UserAccount.UserAccountDto.from(principal), boardDto);
             if(!commentDto.getBoardDto().getUserAccount().userId().equals(principal.getUsername())){
                 notificationService.saveBoardCommentNotification(commentDto.getBoardDto().getUserAccount(), commentDto, principal.getNickname(),NotificationType.COMMENT);
             }
-            return new ResponseEntity<>("success", HttpStatus.OK);
         }
+        return new ResponseEntity<>(commentDto.getId(),HttpStatus.OK);
     }
 
 

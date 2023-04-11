@@ -74,6 +74,10 @@ public class BoardService {
         return Board.BoardDetailResponse.from(board_);
     }
 
+    public Long getBoardCountByHashtag(String hashtag){
+        return mapper.countAllByHashtagName(hashtag);
+    }
+
     public String getBoardAuthorById(Long id){
         Board board_ = boardRepository.findBoardById(id).orElseThrow(()->new EntityNotFoundException("게시글이 존재하지 않습니다."));
         return board_.getUserAccount().getUserId();
@@ -99,24 +103,27 @@ public class BoardService {
 
 
     public Page<Board.BoardListResponse> getBoardsByKeyword(BoardType boardType, String keyword, String searchType, Pageable pageable) {
-        if (boardType==null&&keyword == null) {
+        if(keyword==null){
+            keyword="";
+        }
+        if (boardType==BoardType.ALL&& Objects.equals(keyword, "")) {
             return boardRepository.findAll(pageable).map(Board.BoardListResponse::from);
-        } else if (boardType==null&&searchType.equals("title")) {
+        } else if (boardType==BoardType.ALL&&searchType.equals("title")) {
             return boardRepository.findAllByBoardTitleContainingIgnoreCase(keyword, pageable).map(Board.BoardListResponse::from);
-        } else if (boardType==null&&searchType.equals("content")) {
+        } else if (boardType==BoardType.ALL&&searchType.equals("content")) {
             return boardRepository.findAllByBoardContentContainingIgnoreCase(keyword, pageable).map(Board.BoardListResponse::from);
-        }else if(boardType==null&&searchType.equals("nickname")){
+        }else if(boardType==BoardType.ALL&&searchType.equals("nickname")){
             return boardRepository.findAllByUserAccountContainingIgnoreCase(keyword, pageable).map(Board.BoardListResponse::from);
-        }else if(boardType==null&&searchType.equals("title_content")) {
+        }else if(boardType==BoardType.ALL&&searchType.equals("title_content")) {
             return boardRepository.findAllByBoardTitleContainingIgnoreCaseOrBoardContentContainingIgnoreCase(keyword, pageable).map(Board.BoardListResponse::from);
-        }else if(boardType!=null&&keyword==null){
+        }else if(boardType!=null&&keyword.equals("") ){
             return boardRepository.findAllByBoardType(boardType, pageable).map(Board.BoardListResponse::from);
-        }else if(boardType==null&& searchType.equals("hashtag")) {
+        }else if(boardType==BoardType.ALL&& searchType.equals("hashtag")) {
             return mapper.findAllByHashtagName(keyword, pageable).map(BoardHashtagMapper::getBoard).map(Board.BoardListResponse::from);
-        }else if(boardType==null&& searchType.equals("characterName")) {
+        }else if(boardType==BoardType.ALL&& searchType.equals("characterName")) {
             return boardRepository.findAllByCharacterName(keyword, pageable).map(Board.BoardListResponse::from);
         }
-        else if(boardType != null){
+        else if(boardType != null&& boardType!=BoardType.ALL){
             switch (searchType) {
                 case "title" -> {
                     return boardRepository.findAllByTypeAndBoardTitleContainingIgnoreCase(boardType, keyword, pageable).map(Board.BoardListResponse::from);
@@ -140,8 +147,8 @@ public class BoardService {
 
     public List<Board.BoardListResponse> getBestBoardByBoardType(BoardType boardType){
         LocalDateTime end = LocalDateTime.now();
-        LocalDateTime start = end.minusDays(10);
-        if(boardType==null){
+        LocalDateTime start = end.minusDays(3);
+        if(boardType==BoardType.ALL){
             return boardRepository.findBoardByLikeCount(start,end).stream().map(Board.BoardListResponse::from).toList();
         }else{
             return boardRepository.findBoardByLikeCountAndBoardType(boardType,start,end).stream().map(Board.BoardListResponse::from).toList();
@@ -194,7 +201,7 @@ public class BoardService {
         return board_.getBoardFiles().stream().map(SaveFile.SaveFileDto::from).collect(Collectors.toSet());
     }
 
-    public List<String> findHashtags(String query) {
-        return hashtagRepository.findAllByNameContainingIgnoreCase(query).stream().map(Hashtag::getName).toList();
+    public List<Hashtag.HashtagSearchResponse> findHashtags(String query) {
+        return hashtagRepository.findAllByNameContainingIgnoreCase(query).stream().map(Hashtag.HashtagSearchResponse::from).toList();
     }
 }

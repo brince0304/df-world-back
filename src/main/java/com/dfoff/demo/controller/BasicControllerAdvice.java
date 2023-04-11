@@ -34,9 +34,9 @@ public class BasicControllerAdvice {
     }
 
     @ExceptionHandler(UsernameNotFoundException.class)
-    public ModelAndView handleUsernameNotFoundException(UsernameNotFoundException exception) {
+    public ResponseEntity<?> handleUsernameNotFoundException(UsernameNotFoundException exception) {
         log.error(exception.getMessage());
-        return new ModelAndView(exception.getMessage(), HttpStatus.FORBIDDEN);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception.getMessage());
     }
 
 

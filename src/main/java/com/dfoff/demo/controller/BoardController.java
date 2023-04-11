@@ -42,20 +42,22 @@ public class BoardController {
     private final RedisService redisService;
 
 
-    @GetMapping("/boards/")
-    public ModelAndView getBoardList(@RequestParam(required = false) BoardType boardType,
+    @GetMapping("/boards")
+    public ResponseEntity<?> getBoardList(@RequestParam(required = false) BoardType boardType,
                                      @RequestParam(required = false) String keyword,
                                      @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                      @RequestParam(required = false) String searchType) {
-        ModelAndView mav = new ModelAndView("/board/boardList");
-        mav.addObject("articles", boardService.getBoardsByKeyword(boardType, keyword, searchType, pageable));
-        mav.addObject("bestArticles", boardService.getBestBoardByBoardType(boardType));
-        if (boardType != null) {
-            mav.addObject("boardType", boardType.toString());
-        }
-        mav.addObject("keyword", keyword);
-        mav.addObject("searchType", searchType);
-        return mav;
+        Map<String,Object> map = new HashMap<>();
+        map.put("articles", boardService.getBoardsByKeyword(boardType, keyword, searchType, pageable));
+        return new ResponseEntity<>(map, HttpStatus.OK);
+    }
+
+    @GetMapping("/boards/best")
+    public ResponseEntity<?> getBestArticleList (@RequestParam (required = false) BoardType boardType)
+    {
+        Map<String,Object> map = new HashMap<>();
+        map.put("bestArticles", boardService.getBestBoardByBoardType(boardType));
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     @GetMapping("/boards/latest")
@@ -84,19 +86,17 @@ public class BoardController {
 
 
     @GetMapping("/boards/{boardId}")
-    public ModelAndView getBoardDetail(@PathVariable Long boardId,
+    public ResponseEntity<?> getBoardDetail(@PathVariable Long boardId,
                                        HttpServletRequest req) {
-        ModelAndView mav = new ModelAndView("/board/boardDetails");
+        Map<String,Object> modelMap = new HashMap<>();
         if (!redisService.checkBoardViewLog(req.getRemoteAddr(), boardId)) {
             redisService.saveBoardViewLog(req.getRemoteAddr(), boardId);
             boardService.increaseBoardViewCount(boardId);
         }
         Board.BoardDetailResponse boardResponse = boardService.getBoardDetailById(boardId);
-        mav.addObject("article", boardResponse);
-        mav.addObject("boardType", boardResponse.getBoardType().toString());
-        mav.addObject("bestArticles", boardService.getBestBoardByBoardType(null));
-        mav.addObject("likeLog", redisService.checkBoardLikeLog(req.getRemoteAddr(), boardId));
-        return mav;
+        modelMap.put("article", boardResponse);
+        modelMap.put("likeLog", redisService.checkBoardLikeLog(req.getRemoteAddr(), boardId));
+        return new ResponseEntity<>(modelMap, HttpStatus.OK);
     }
 
 
@@ -128,8 +128,13 @@ public class BoardController {
     }
     @Auth
     @GetMapping("/hashtags/")
-    public List<String> getHashtags(@AuthenticationPrincipal UserAccount.PrincipalDto principal, @RequestParam String query) {
-        return boardService.findHashtags(query);
+    public ResponseEntity<?> getHashtags(@AuthenticationPrincipal UserAccount.PrincipalDto principal, @RequestParam String query) {
+        return new ResponseEntity<>(boardService.findHashtags(query), HttpStatus.OK);
+    }
+
+    @GetMapping("/hashtags/{hashtag}")
+    public ResponseEntity<?> getBoardCountByHashtag(@PathVariable String hashtag) {
+        return new ResponseEntity<>(boardService.getBoardCountByHashtag(hashtag), HttpStatus.OK);
     }
     @Auth
     @BoardCheck

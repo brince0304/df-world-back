@@ -20,5 +20,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     Boolean existsByNotificationContentContainingIgnoreCaseAndBoardIdAndNotificationType (String  logContent, Long boardId, NotificationType notificationType);
 
-
+   @Query("select count(l) from Notification l where l.userAccount.userId = :userId and l.checked = false")
+    Long getNotificationCountByUserId(String userId);
 }

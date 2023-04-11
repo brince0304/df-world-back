@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
@@ -161,6 +162,7 @@ public class UserAccount extends AuditingFields {
         public boolean isEnabled() {
             return true;
         }
+
     }
 
 
@@ -433,6 +435,51 @@ public class UserAccount extends AuditingFields {
                     .adventureDamageIncreaseAndBuffPower(userAccount.getAdventure().getAdventureDamageIncreaseAndBuffPower().toString())
                     .characters(userAccount.getAdventure().getCharacters().stream().map(CharacterEntity.CharacterEntityMainPageResponse::from).collect(Collectors.toSet()))
                     .modifiedAt(CharactersUtil.timesAgo(userAccount.getAdventure().getModifiedAt()))
+                    .build();
+        }
+    }
+
+    @Data
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UserLoginRequst {
+        private String username;
+        private String password;
+
+
+    }
+
+    @Data
+    @Builder
+    public static class UserLoginResponse{
+        private String userId;
+        private String nickname;
+        private String email;
+        private String profileImgPath;
+
+        private String adventureName;
+
+        private String representCharacterName;
+
+        private String serverId;
+
+        private String serverName;
+
+        private String characterCount;
+
+
+
+        public static UserLoginResponse from(UserAccount userAccount){
+            return UserLoginResponse.builder()
+                    .userId(userAccount.getUserId())
+                    .nickname(userAccount.getNickname())
+                    .email(userAccount.getEmail())
+                    .profileImgPath(userAccount.getProfileIcon() == null ? "" : FileUtil.getProfileIconPath(userAccount.getProfileIcon().getFileName()))
+                    .adventureName(userAccount.getAdventure() == null ? "" : userAccount.getAdventure().getAdventureName())
+                    .representCharacterName(userAccount.getAdventure() == null ? "" : userAccount.getAdventure().getRepresentCharacter().getCharacterName())
+                    .serverId(userAccount.getAdventure() == null ? "" : userAccount.getAdventure().getRepresentCharacter().getServerId())
+                    .serverName(userAccount.getAdventure() == null ? "" : CharacterEntity.CharacterEntityResponse.getServerName(userAccount.getAdventure().getRepresentCharacter().getServerId()))
                     .build();
         }
     }

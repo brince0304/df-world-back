@@ -38,15 +38,14 @@ public class CharacterService {
             return CompletableFuture.completedFuture(List.of());
         }
         List<CharacterDto> characterDtoList = parseJsonFromUri(RestTemplateUtil.getCharacterSearchUri(serverId, characterName), CharacterDto.CharacterJSONDto.class).toDto();
-        List<CharacterEntity> characterEntityList = characterDtoList.stream().map(CharacterEntity.CharacterEntityDto::toEntity).filter(o->o.getLevel()>=75).collect(Collectors.toList());
+        List<CharacterEntity> characterEntityList = characterDtoList.stream().map(CharacterEntity.CharacterEntityDto::toEntity).filter(o -> o.getLevel() >= 75).collect(Collectors.toList());
         characterEntityRepository.saveAll(characterEntityList);
         return CompletableFuture.completedFuture(characterEntityList.stream().map(CharacterEntity.CharacterEntityDto::from).collect(Collectors.toList()));
     }
 
-    public void saveSkillDetails(CharacterSkillStyleJsonDto style, CharacterSkillDetailJsonDto detail){
-        characterSkillDetailRepository.saveAll(CharacterSkillDetail.CharacterSkillDetailDto.toEntity(style,detail));
+    public void saveSkillDetails(CharacterSkillStyleJsonDto style, CharacterSkillDetailJsonDto detail) {
+        characterSkillDetailRepository.saveAll(CharacterSkillDetail.CharacterSkillDetailDto.toEntity(style, detail));
     }
-
 
 
     public List<CharacterEntity.CharacterEntityDto> getCharactersByAdventureName(String adventureName) {
@@ -54,8 +53,8 @@ public class CharacterService {
     }
 
 
-    public String getRandomJobName(){
-        if(characterEntityRepository.count() == 0){
+    public String getRandomJobName() {
+        if (characterEntityRepository.count() == 0) {
             return "귀검사(남)";
         }
         long number = characterEntityRepository.count();
@@ -69,12 +68,12 @@ public class CharacterService {
     }
 
     public CharacterEntity.CharacterEntityDto getCharacter(String serverId, String characterId) throws InterruptedException {
-        if(characterId==null || characterId.equals("")){
+        if (characterId == null || characterId.equals("")) {
             throw new IllegalArgumentException("캐릭터 아이디가 없습니다.");
         }
-        CharacterEntity characterEntity = characterEntityRepository.findById(characterId).orElseGet(()-> {
+        CharacterEntity characterEntity = characterEntityRepository.findById(characterId).orElseGet(() -> {
             try {
-                return characterEntityRepository.save(CharacterAbilityDto.toEntity(parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto(),serverId));
+                return characterEntityRepository.save(CharacterAbilityDto.toEntity(parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto(), serverId));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -84,7 +83,7 @@ public class CharacterService {
 
     @Async
     public CompletableFuture<CharacterEquipmentJsonDto> getCharacterEquipment(String serverId, String characterId) throws InterruptedException {
-        if(characterId==null || characterId.equals("")){
+        if (characterId == null || characterId.equals("")) {
             return CompletableFuture.completedFuture(null);
         }
         return CompletableFuture.completedFuture(parseJsonFromUri(RestTemplateUtil.getCharacterEquipmentUri(serverId, characterId), CharacterEquipmentJsonDto.class));
@@ -92,12 +91,12 @@ public class CharacterService {
 
     @Async
     public CompletableFuture<EquipmentDetailJsonDto> getEquipmentDetail(CharacterEquipmentJsonDto.Equipment eq) throws InterruptedException {
-        return CompletableFuture.completedFuture(parseJsonFromUri(RestTemplateUtil.getEquipmentDetailUri(eq.getItemId()),EquipmentDetailJsonDto.class));
+        return CompletableFuture.completedFuture(parseJsonFromUri(RestTemplateUtil.getEquipmentDetailUri(eq.getItemId()), EquipmentDetailJsonDto.class));
     }
 
     @Async
     public CompletableFuture<CharacterBuffEquipmentJsonDto> getCharacterBuffEquipment(String serverId, String characterId) throws InterruptedException {
-        if(characterId==null || characterId.equals("")){
+        if (characterId == null || characterId.equals("")) {
             return CompletableFuture.completedFuture(null);
         }
         return CompletableFuture.completedFuture(parseJsonFromUri(RestTemplateUtil.getCharacterBuffEquipmentUri(serverId, characterId), CharacterBuffEquipmentJsonDto.class));
@@ -111,7 +110,7 @@ public class CharacterService {
     public CharacterEntity.CharacterEntityDto getCharacterAbility(CharacterEntity.CharacterEntityDto dto) throws InterruptedException {
         CharacterEntity entity = characterEntityRepository.save(CharacterEntity.CharacterEntityDto.toEntity(dto));
         CharacterAbilityDto characterDto = parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(dto.getServerId(), dto.getCharacterId()), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
-       characterStatusSetter(entity,characterDto);
+        characterStatusSetter(entity, characterDto);
         entity.setServerId(dto.getServerId());
         return CharacterEntity.CharacterEntityDto.from(entity);
     }
@@ -121,25 +120,18 @@ public class CharacterService {
     @SaveAdventure
     public CompletableFuture<CharacterAbilityDto> getCharacterAbilityAsync(String serverId, String characterId) throws InterruptedException {
         CharacterAbilityDto characterDto = parseJsonFromUri(RestTemplateUtil.getCharacterAbilityUri(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
-        CharacterEntity character = characterEntityRepository.save(CharacterAbilityDto.toEntity(characterDto,serverId));
-        characterStatusSetter(character,characterDto);
+        CharacterEntity character = characterEntityRepository.save(CharacterAbilityDto.toEntity(characterDto, serverId));
+        characterStatusSetter(character, characterDto);
         characterDto.setAdventureName(character.getAdventureName());
         characterDto.setAdventureFame(character.getAdventureFame());
         return CompletableFuture.completedFuture(characterDto);
     }
-
-
-
-
-
 
     @Async
     public CompletableFuture<List<CharacterTalismanJsonDto.Talisman>> getCharacterTalisman(String serverId, String characterId) throws InterruptedException {
         CharacterTalismanJsonDto dto = parseJsonFromUri(RestTemplateUtil.getCharacterTalismanUri(serverId, characterId), CharacterTalismanJsonDto.class);
         return CompletableFuture.completedFuture(dto.getTalismans());
     }
-
-
 
 
     @Async
@@ -151,9 +143,9 @@ public class CharacterService {
     public List<String> getSkillDetails(CharacterSkillStyleJsonDto.Style dto, String jobId) {
         List<String> list = new ArrayList<>();
 
-        dto.getActive().forEach(o-> {
+        dto.getActive().forEach(o -> {
             try {
-                if(o.getRequiredLevel()>=15) {
+                if (o.getRequiredLevel() >= 15) {
                     list.add(CharactersUtil.getSkillFinalPercent(parseJsonFromUri(getCharacterSkillDetailUri(jobId, o.getSkillId()), CharacterSkillDetailJsonDto.class), o.getLevel()));
                 }
             } catch (InterruptedException e) {
@@ -163,33 +155,29 @@ public class CharacterService {
         return list;
     }
 
-    public Long getCharacterCount(){
+    public Long getCharacterCount() {
         return characterEntityRepository.count();
     }
 
-    public Long getCharacterCountByJobName(String jobName){
+    public Long getCharacterCountByJobName(String jobName) {
         return characterEntityRepository.getCharacterCountByJobName(jobName);
     }
 
-    public Long getRankCountByCharacterIdOrderByAdventureFame(String characterId){
+    public Long getRankCountByCharacterIdOrderByAdventureFame(String characterId) {
         return characterEntityRepository.getRankCountByCharacterIdOrderByAdventureFame(characterId);
     }
 
 
-
-    public Long getRankCountByCharacterIdAndJobNameOrderByAdventureFame(String characterId, String jobName){
-        return characterEntityRepository.getRankCountByCharacterIdAndJobNameOrderByAdventureFame(characterId,jobName);
+    public Long getRankCountByCharacterIdAndJobNameOrderByAdventureFame(String characterId, String jobName) {
+        return characterEntityRepository.getRankCountByCharacterIdAndJobNameOrderByAdventureFame(characterId, jobName);
     }
 
-    public Double getRankPercent(Long rank, Long count){
-        return (double)rank/count*100;
+    public Double getRankPercent(Long rank, Long count) {
+        return (double) rank / count * 100;
     }
 
 
-
-
-
-    public Long getBoardCountByCharacterId(String characterId){
+    public Long getBoardCountByCharacterId(String characterId) {
         return characterEntityRepository.getBoardCountByCharacterId(characterId);
     }
 
@@ -204,7 +192,7 @@ public class CharacterService {
         return CompletableFuture.completedFuture(parseJsonFromUri(RestTemplateUtil.getCharacterBuffCreatureUri(serverId, characterId), CharacterBuffCreatureJsonDto.class));
     }
 
-    public Page<CharacterEntity.CharacterEntityDto> getCharactersOrderByAdventureFame(Pageable pageable){
+    public Page<CharacterEntity.CharacterEntityDto> getCharactersOrderByAdventureFame(Pageable pageable) {
         return characterEntityRepository.findAll(pageable).map(CharacterEntity.CharacterEntityDto::from);
     }
 
@@ -212,7 +200,6 @@ public class CharacterService {
     public CompletableFuture<CharacterAvatarJsonDto> getCharacterAvatar(String serverId, String characterId) throws InterruptedException {
         return CompletableFuture.completedFuture(parseJsonFromUri(RestTemplateUtil.getCharacterAvatarUri(serverId, characterId), CharacterAvatarJsonDto.class));
     }
-
 
 
     public void getServerStatus() throws InterruptedException {
@@ -240,11 +227,11 @@ public class CharacterService {
     }
 
     public boolean checkCharacterAdventure(Adventure.UserAdventureRequest request) throws InterruptedException {
-        if(request.getAdventureName().equals("")){
+        if (request.getAdventureName().equals("")) {
             return false;
         }
-        List<CharacterDto> dto = parseJsonFromUri(RestTemplateUtil.getCharacterSearchUri(request.getServerId(),request.getRandomString()), CharacterDto.CharacterJSONDto.class).toDto();
-        if(dto.size()==0){
+        List<CharacterDto> dto = parseJsonFromUri(RestTemplateUtil.getCharacterSearchUri(request.getServerId(), request.getRandomString()), CharacterDto.CharacterJSONDto.class).toDto();
+        if (dto.size() == 0) {
             return false;
         }
         CharacterDto characterDto = dto.get(0);
@@ -253,17 +240,19 @@ public class CharacterService {
     }
 
 
-    public List<CharacterEntity.CharacterEntityMainPageResponse> getCharacterRankingBest5OrderByAdventureFame(){
+    public List<CharacterEntity.CharacterEntityMainPageResponse> getCharacterRankingBest5OrderByAdventureFame() {
         return characterEntityRepository.getCharacterRankingBest5OrderByAdventureFame();
     }
-    public List<CharacterEntity.CharacterEntityMainPageResponse> getCharacterRankingBest5OrderByDamageIncrease(){
+
+    public List<CharacterEntity.CharacterEntityMainPageResponse> getCharacterRankingBest5OrderByDamageIncrease() {
         return characterEntityRepository.getCharacterRankingBest5OrderByDamageIncrease();
     }
-    public List<CharacterEntity.CharacterEntityMainPageResponse> getCharacterRankingBest5OrderByBuffPower(){
+
+    public List<CharacterEntity.CharacterEntityMainPageResponse> getCharacterRankingBest5OrderByBuffPower() {
         return characterEntityRepository.getCharacterRankingBest5OrderByBuffPower();
     }
 
-    private void characterStatusSetter(CharacterEntity entity, CharacterAbilityDto characterDto){
+    private void characterStatusSetter(CharacterEntity entity, CharacterAbilityDto characterDto) {
         entity.setAdventureFame(characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().isEmpty() ? 0 : Integer.parseInt(characterDto.getStatus().stream().filter(o -> o.getName().equals("모험가 명성")).findFirst().get().getValue()));
         entity.setDamageIncrease(characterDto.getStatus().stream().filter(o -> o.getName().equals("피해 증가")).findFirst().isEmpty() ? 0 : Integer.parseInt(characterDto.getStatus().stream().filter(o -> o.getName().equals("피해 증가")).findFirst().get().getValue()));
         entity.setBuffPower(characterDto.getStatus().stream().filter(o -> o.getName().equals("버프력")).findFirst().isEmpty() ? 0 : Integer.parseInt(characterDto.getStatus().stream().filter(o -> o.getName().equals("버프력")).findFirst().get().getValue()));
@@ -278,5 +267,17 @@ public class CharacterService {
             case "buffPower" -> characterEntityRepository.getCharacterRankingOrderByBuffPower(characterName, pageable);
             default -> characterEntityRepository.getCharacterRankingOrderByAdventureFame(characterName, pageable);
         };
+    }
+
+    public List<CharacterEntity.AutoCompleteResponse> getAutocompeleteCharacters(String serverId, String name) {
+        if (serverId.equals("all")) {
+            return characterEntityRepository.getCharacterNameAutoCompleteServerAll(name);
+        }
+        if (serverId.equals("adventure")) {
+            return characterEntityRepository.getCharacterNameAutoCompleteServerAdventure(name);
+        }
+        return characterEntityRepository.getCharacterNameAutoComplete(name, serverId);
+
+
     }
 }

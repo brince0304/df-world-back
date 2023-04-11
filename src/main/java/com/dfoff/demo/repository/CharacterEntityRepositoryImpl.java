@@ -3,6 +3,7 @@ package com.dfoff.demo.repository;
 import com.dfoff.demo.domain.CharacterEntity;
 import com.dfoff.demo.domain.QBoard;
 import com.dfoff.demo.domain.QCharacterEntity;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -167,5 +168,32 @@ public class CharacterEntityRepositoryImpl implements CharacterEntityCustomRepos
                 .limit(pageable.getPageSize())
                 .fetch().stream().map(CharacterEntity.CharacterEntityRankingResponse::from).peek(o->o.setRank(getRankCountByCharacterIdOrderByBuffpower(o.getCharacterId()))).toList();
         return new PageImpl<>(list, pageable, count);
+    }
+
+    @Override
+    public List<CharacterEntity.AutoCompleteResponse> getCharacterNameAutoCompleteServerAll(String characterName) {
+        return queryFactory.selectFrom(q)
+                .where(q.characterName.contains(characterName))
+                .orderBy(q.characterName.asc())
+                .limit(5)
+                .fetch().stream().map(CharacterEntity.AutoCompleteResponse::from).toList();
+    }
+
+    @Override
+    public List<CharacterEntity.AutoCompleteResponse> getCharacterNameAutoComplete(String characterName, String serverId) {
+        return queryFactory.selectFrom(q)
+                .where(q.characterName.contains(characterName),q.serverId.eq(serverId))
+                .orderBy(q.characterName.asc())
+                .limit(5)
+                .fetch().stream().map(CharacterEntity.AutoCompleteResponse::from).toList();
+    }
+
+    @Override
+    public List<CharacterEntity.AutoCompleteResponse> getCharacterNameAutoCompleteServerAdventure(String name) {
+        return queryFactory.selectFrom(q)
+                .where(q.adventureName.contains(name))
+                .orderBy(q.adventureName.asc())
+                .limit(5)
+                .fetch().stream().map(CharacterEntity.AutoCompleteResponse::from).toList();
     }
 }

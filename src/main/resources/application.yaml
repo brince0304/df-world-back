@@ -1,6 +1,5 @@
 debug: false
 management.endpoints.web.exposure.include: "*"
-
 spring:
   thymeleaf3:
     decoupled-logic: true
@@ -39,6 +38,9 @@ spring:
         enabled: true
   freemarker:
     expose-session-attributes: true
+  jwt:
+    secret: secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecret
+    token-validity-in-seconds: 86400
 
 com:
   example:

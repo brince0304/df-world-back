@@ -20,4 +20,10 @@ public class NotificationController {
         return notificationService.checkNotification(id);
     }
 
+    @Auth
+    @GetMapping("/notifications/notification-count")
+    public Long getNotificationCount(@AuthenticationPrincipal UserAccount.PrincipalDto principal) {
+        return notificationService.getNotificationCount(principal.getUsername());
+    }
+
 }

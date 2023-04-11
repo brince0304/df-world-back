@@ -5,12 +5,15 @@ import com.dfoff.demo.annotation.BindingErrorCheck;
 import com.dfoff.demo.domain.Adventure;
 import com.dfoff.demo.domain.CharacterEntity;
 import com.dfoff.demo.domain.UserAccount;
-import com.dfoff.demo.service.CharacterService;
-import com.dfoff.demo.service.NotificationService;
-import com.dfoff.demo.service.SaveFileService;
-import com.dfoff.demo.service.UserAccountService;
+import com.dfoff.demo.jwt.TokenDto;
+import com.dfoff.demo.jwt.TokenProvider;
+import com.dfoff.demo.securityconfig.SecurityService;
+import com.dfoff.demo.service.*;
 import com.dfoff.demo.utils.Bcrypt;
+import com.dfoff.demo.utils.CookieUtil;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +21,10 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -26,6 +32,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -39,8 +46,16 @@ public class UserAccountController {
     private final CharacterService characterService;
 
     private final NotificationService notificationService;
+    private final RedisService redisService;
 
     private final Bcrypt bcrypt;
+
+    private final TokenProvider tokenProvider;
+
+
+    private final SecurityService securityService;
+
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
 
     @GetMapping("/users/check")
@@ -216,14 +231,78 @@ public class UserAccountController {
         if (nickname != null && !nickname.equals("")) {
             userAccountService.changeNickname(UserAccount.UserAccountDto.from(principal), nickname);
             return new ResponseEntity<>("닉네임이 변경되었습니다.", HttpStatus.OK);
-
         }
+
+
         if (email != null && !email.equals("")) {
             userAccountService.changeEmail(UserAccount.UserAccountDto.from(principal), email);
             return new ResponseEntity<>("이메일이 변경되었습니다.", HttpStatus.OK);
         }
         return new ResponseEntity<>("success", HttpStatus.OK);
     }
+
+    @PostMapping("/users/login")
+    public ResponseEntity<?> getAccessToken(@RequestBody UserAccount.UserLoginRequst request,
+                                            HttpServletResponse res) throws Exception {
+     try{
+         TokenDto token =userAccountService.getToken(request.getUsername(), request.getPassword());
+         Map<String,Object> map = new HashMap<>();
+         map.put("CURRENT_USER",userAccountService.getLoginResponse(request.getUsername()));
+         redisService.set(TokenProvider.REFRESH_TOKEN_NAME+request.getUsername(),token.getRefreshToken(),TokenProvider.REFRESH_TOKEN_VALIDATION_SECOND);
+            res.addCookie(CookieUtil.createAccessTokenCookie(token.getAccessToken(), TokenProvider.TOKEN_VALIDATION_SECOND));
+            res.addCookie(CookieUtil.createRefreshTokenCookie(token.getRefreshToken(), TokenProvider.REFRESH_TOKEN_VALIDATION_SECOND));
+            return new ResponseEntity<>(map,HttpStatus.OK);
+     }catch(BadCredentialsException e){
+            return new ResponseEntity<>("아이디 또는 비밀번호가 틀렸습니다.", HttpStatus.BAD_REQUEST);
+     }
+    }
+
+    @GetMapping("/users/logout")
+    @Auth
+    public ResponseEntity<?> logout(@AuthenticationPrincipal UserAccount.PrincipalDto principal, HttpServletRequest request, HttpServletResponse response) {
+        Cookie accessToken = CookieUtil.getCookie(TokenProvider.ACCESS_TOKEN_NAME, request);
+        Cookie refreshToken = CookieUtil.getCookie(TokenProvider.REFRESH_TOKEN_NAME, request);
+        if(accessToken!=null && refreshToken!=null){
+            redisService.delete(TokenProvider.REFRESH_TOKEN_NAME+principal.getUsername());
+            redisService.setBlackList(principal.getUsername(),accessToken.getValue(), TokenProvider.TOKEN_VALIDATION_SECOND);
+            response.addCookie(CookieUtil.createAccessTokenCookie("", 0));
+            response.addCookie(CookieUtil.createRefreshTokenCookie("", 0));
+            return new ResponseEntity<>("로그아웃 되었습니다.", HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping ("/users/details")
+    public ResponseEntity<?> getDetails(@AuthenticationPrincipal UserAccount.PrincipalDto principal) {
+        if(principal!=null){
+            Map<String,Object> map = new HashMap<>();
+            map.put("notification",notificationService.getUncheckedNotificationCount(principal.getUsername()));
+            map.put("user",userAccountService.getLoginResponse(principal.getUsername()));
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+
+
+    @GetMapping("/users/reissue")
+    @Auth
+    public ResponseEntity<?> validateToken(HttpServletRequest req , HttpServletResponse res ,@AuthenticationPrincipal UserAccount.PrincipalDto principaldto) throws Exception {
+        Cookie refreshTokenCookie = CookieUtil.getCookie(TokenProvider.REFRESH_TOKEN_NAME,req);
+        if(refreshTokenCookie !=null){
+            String refreshToken = refreshTokenCookie.getValue();
+            if(redisService.get(refreshToken)!=null){
+                String username = redisService.get(refreshToken);
+                if(username.equals(principaldto.getUsername())) {
+                    String accessToken = tokenProvider.generateToken(principaldto);
+                    return new ResponseEntity<>(accessToken, HttpStatus.OK);
+                }
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
 
 }
 
