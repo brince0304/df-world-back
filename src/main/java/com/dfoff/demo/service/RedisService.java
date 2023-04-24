@@ -61,7 +61,7 @@ public class RedisService {
 
     public void set(String key, String value, Long expireTime){
         redisTemplate.opsForValue().set(key,value);
-        redisTemplate.expire(key,expireTime, TimeUnit.SECONDS);
+        redisTemplate.expire(key,expireTime, TimeUnit.MILLISECONDS);
     }
 
     public String get(String key){
@@ -75,7 +75,7 @@ public class RedisService {
     }
 
 
-    public void setExpired(String key, String value, long expired){
+    public void setExpired(String key, String value, Long expired){
         redisTemplate.opsForValue().set(key,value,expired);
         redisTemplate.expire(key,expired, TimeUnit.MILLISECONDS);
     }
@@ -84,7 +84,7 @@ public class RedisService {
         redisTemplate.delete(key);
     }
 
-    public void setBlackList(String key, String value, long expired){
+    public void setBlackList(String key, String value, Long expired){
         redisTemplate.opsForValue().set(REDIS_TOKEN_KEY_PREFIX+key,value,expired);
         redisTemplate.expire(key,expired, TimeUnit.MILLISECONDS);
     }

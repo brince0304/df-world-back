@@ -19,8 +19,8 @@ import java.util.Date;
 @Slf4j
 public class TokenProvider {
     private final RedisService redisService;
-    public final static int TOKEN_VALIDATION_SECOND = 1000 * 60 * 60;
-    public final static long REFRESH_TOKEN_VALIDATION_SECOND = 1000L * 60 * 60 * 24 * 7; // 7일
+    public final static long TOKEN_VALIDATION_SECOND = 1000* 60 * 60;
+    public final static long REFRESH_TOKEN_VALIDATION_SECOND = 1000 * 60 * 60 * 24 * 7; // 7일
 
     final static public String ACCESS_TOKEN_NAME = "accessToken";
     final static public String REFRESH_TOKEN_NAME = "refreshToken";
@@ -60,6 +60,7 @@ public class TokenProvider {
     public Boolean isTokenExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
     } //토큰이 만료되었는지 확인해주는 메소드
+
 
     public String generateToken(UserAccount.PrincipalDto member) {
         return doGenerateToken(member, TOKEN_VALIDATION_SECOND);

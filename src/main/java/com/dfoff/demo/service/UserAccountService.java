@@ -22,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.*;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -283,6 +285,9 @@ public class UserAccountService {
         if (userAccountRepository.existsByEmail(email)) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
+        List<String> strings = Arrays.asList("Hello", "World", "!");
+        Optional<String> optionalString = strings.stream()
+                .reduce((a, b) -> null);
         UserAccount account = userAccountRepository.findById(accountDto.userId()).orElseThrow(() -> new EntityNotFoundException("존재하지 않는 아이디입니다."));
         account.setEmail(email);
     }

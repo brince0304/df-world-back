@@ -10,7 +10,7 @@ public class CookieUtil {
     public static Cookie createAccessTokenCookie(String token, long expireTime) {
         Cookie cookie = new Cookie(TokenProvider.ACCESS_TOKEN_NAME, token);
         cookie.setHttpOnly(true);
-        cookie.setMaxAge((int) expireTime);
+        cookie.setMaxAge((int) expireTime / 1000);
         cookie.setSecure(true);
         cookie.setPath("/");
         return cookie;
@@ -19,7 +19,7 @@ public class CookieUtil {
     public static Cookie createRefreshTokenCookie(String token, long expireTime) {
         Cookie cookie = new Cookie(TokenProvider.REFRESH_TOKEN_NAME, token);
         cookie.setHttpOnly(true);
-        cookie.setMaxAge((int) expireTime);
+        cookie.setMaxAge((int) expireTime / 1000);
         cookie.setSecure(true);
         cookie.setPath("/");
         return cookie;

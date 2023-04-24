@@ -29,10 +29,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -290,6 +287,7 @@ public class UserAccountController {
     @Auth
     public ResponseEntity<?> validateToken(HttpServletRequest req , HttpServletResponse res ,@AuthenticationPrincipal UserAccount.PrincipalDto principaldto) throws Exception {
         Cookie refreshTokenCookie = CookieUtil.getCookie(TokenProvider.REFRESH_TOKEN_NAME,req);
+
         if(refreshTokenCookie !=null){
             String refreshToken = refreshTokenCookie.getValue();
             if(redisService.get(refreshToken)!=null){
