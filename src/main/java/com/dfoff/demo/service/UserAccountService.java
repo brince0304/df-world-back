@@ -12,11 +12,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -129,12 +130,14 @@ public class UserAccountService {
     }
 
 
-    public boolean changeProfileIcon(UserAccount.UserAccountDto dto, SaveFile.SaveFileDto iconDto) {
+    @Transactional
+    public SaveFile.SaveFileDto changeProfileIcon(UserAccount.UserAccountDto dto, SaveFile.SaveFileDto iconDto) {
         UserAccount account = userAccountRepository.findById(dto.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+        SaveFile.SaveFileDto prevIcon = SaveFile.SaveFileDto.from(account.getProfileIcon());
         account.setProfileIcon(iconDto.toEntity());
         account.setProfileCharacterIcon(null);
         account.setProfileCharacterIconClassName(null);
-        return true;
+        return prevIcon;
     }
 
     @Transactional(readOnly = true)
@@ -242,6 +245,12 @@ public class UserAccountService {
     public void addCharacterToUserAccount(UserAccount.UserAccountDto account, CharacterEntity.CharacterEntityDto character) { //캐릭터가 존재하지 않을 이유가 없음
         if (userAccountRepository.existsByUserId(account.userId())) {
             UserAccount userAccount = userAccountRepository.findById(account.userId()).orElseThrow(() -> new IllegalArgumentException("유저가 존재하지 않습니다."));
+            if(mapperRepository.existsByUserAccountAndCharacter(userAccount, CharacterEntity.CharacterEntityDto.toEntity(character))) {
+                throw new EntityExistsException("이미 등록된 캐릭터입니다.");
+            }
+            if(userAccount.getCharacterEntities().size()>=10){
+                throw new IllegalArgumentException("캐릭터는 최대 10개까지 등록 가능합니다.");
+            }
             UserAccountCharacterMapper mapper = UserAccountCharacterMapper.of(userAccount, CharacterEntity.CharacterEntityDto.toEntity(character));
             mapperRepository.save(mapper);
         }
@@ -259,12 +268,20 @@ public class UserAccountService {
         }
     }
 
-    public void changePassword(UserAccount.UserAccountDto accountDto, String password) {
-        if (!password.matches("^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$")) {
+    @Transactional
+    public void changePassword(UserAccount.UserAccountDto accountDto, String password,String newPassword) {
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        if(!passwordEncoder.matches(password,accountDto.password())){
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+        if (!newPassword.matches("^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$")) {
             throw new IllegalArgumentException("비밀번호는 영문, 숫자, 특수문자를 포함하여 8~20자리로 입력해주세요.");
         }
+        if(passwordEncoder.matches(newPassword,accountDto.password())){
+            throw new IllegalArgumentException("기존 비밀번호와 다른 비밀번호를 입력해주세요.");
+        }
         UserAccount account = userAccountRepository.findById(accountDto.userId()).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
-        account.setPassword(password);
+        account.setPassword(passwordEncoder.encode(newPassword));
     }
 
     public void changeNickname(UserAccount.UserAccountDto accountDto, String nickname) {
@@ -317,7 +334,8 @@ public class UserAccountService {
         account_.setProfileCharacterIconClassName(CharactersUtil.getStyleClassName(dto.getJobName()));
     }
 
-    public Page<Board.BoardListMyPageResponse> getUserBoardLogs(UserAccount.UserAccountDto dto, Pageable pageable, String sortBy) {
+    public Page<Board.BoardListMyPageResponse> getUserBoardLogs(UserAccount.UserAccountDto dto, Pageable
+            pageable, String sortBy) {
         return switch (sortBy) {
             case "like" -> getBoardsByIdOrderByLikeCount(dto.userId(), pageable);
             case "commentCount" -> getBoardsByIdOrderByCommentCount(dto.userId(), pageable);

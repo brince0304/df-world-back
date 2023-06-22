@@ -269,7 +269,8 @@ class UserAccountServiceTest {
         UserAccount account = createUserAccount();
         String previousAccountPassword = account.getPassword();
         given(userAccountRepository.findById(any())).willReturn(java.util.Optional.of(account));
-        sut.changePassword(UserAccount.UserAccountDto.from(account),"biqwj@!908e@");
+        sut.changePassword(UserAccount.UserAccountDto.from(account),"biqwj@!908e@", "biqwj@!908e@");
+        then(userAccountRepository).should().save(any());
         then(userAccountRepository).should().findById(any());
        assertThat(account.getPassword()).isNotEqualTo(previousAccountPassword);
     }

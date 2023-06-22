@@ -36,6 +36,7 @@ public class SaveFileService {
     }
 
 
+    @Transactional
     public void deleteFile(Long fileId) {
         if (!saveFileRepository.existsById(fileId)) {
             throw new EntityNotFoundException("파일이 없습니다 - fileId: " + fileId);
@@ -44,10 +45,23 @@ public class SaveFileService {
         File file = new File(saveFileRepository.getReferenceById(fileId).getFilePath());
         if (file.exists()) {
             if (file.delete()) {
-                log.info("파일삭제 성공");
             }
         }
     }
+
+    @Transactional
+    public void deleteFileByFileName (String fileName) {
+       SaveFile file = saveFileRepository.findByFileName(fileName).orElseThrow(()-> new IllegalArgumentException("파일이 없습니다 - fileName: " + fileName));
+         saveFileRepository.delete(file);
+          File file1 = new File(file.getFilePath());
+          if (file1.exists()) {
+                if (file1.delete()) {
+                }
+          }
+       saveFileRepository.deleteByFileName(fileName);
+    }
+
+
 
     public SaveFile.SaveFileDto saveFile(SaveFile.SaveFileDto saveFile) {
         if(saveFile == null){throw new IllegalArgumentException("파일이 없습니다");}

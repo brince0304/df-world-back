@@ -11,7 +11,6 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
@@ -322,10 +321,15 @@ public class UserAccount extends AuditingFields {
         private final String jobGrowName;
         private final Integer adventureFame;
         private final String adventureName;
+        private final String characterImgPath;
 
-        private final String characterImageUrl;
+        private final Integer buffPower;
 
-        public String getServerName(String serverId) {
+        private final Integer damageIncrease;
+
+        private final String serverName;
+
+        public static String getServerName(String serverId) {
             if (serverId.equals("bakal")) {
                 return "바칼";
             } else if (serverId.equals("cain")) {
@@ -356,7 +360,10 @@ public class UserAccount extends AuditingFields {
                     .jobGrowName(characterEntity.getJobGrowName())
                     .adventureFame(characterEntity.getAdventureFame())
                     .adventureName(characterEntity.getAdventureName())
-                    .characterImageUrl(RestTemplateUtil.getCharacterImgUri(characterEntity.getServerId(),characterEntity.getCharacterId(),"2"))
+                    .characterImgPath(RestTemplateUtil.getCharacterImgUri(characterEntity.getServerId(),characterEntity.getCharacterId(),"2"))
+                    .buffPower(characterEntity.getBuffPower())
+                    .damageIncrease(characterEntity.getDamageIncrease())
+                    .serverName(getServerName(characterEntity.getServerId()))
                     .build();
         }
 
@@ -387,6 +394,8 @@ public class UserAccount extends AuditingFields {
 
         private final String profileCharacterIconClassName;
 
+        private final String adventureName;
+
 
 
         public static UserAccountMyPageResponse from(UserAccount userAccount) {
@@ -404,6 +413,7 @@ public class UserAccount extends AuditingFields {
                     .representCharacterName(userAccount.getAdventure() == null ? "" : userAccount.getAdventure().getRepresentCharacter().getCharacterName())
                     .profileCharacterIcon(userAccount.getProfileCharacterIcon() == null ? "" : userAccount.getProfileCharacterIcon())
                     .profileCharacterIconClassName(userAccount.getProfileCharacterIconClassName() == null ? "" : userAccount.getProfileCharacterIconClassName())
+                    .adventureName(userAccount.getAdventure() == null ? "" : userAccount.getAdventure().getAdventureName())
                     .build();
         }
 
@@ -466,7 +476,7 @@ public class UserAccount extends AuditingFields {
 
         private String serverName;
 
-        private String characterCount;
+        private Integer characterCount;
 
 
 
@@ -480,7 +490,10 @@ public class UserAccount extends AuditingFields {
                     .representCharacterName(userAccount.getAdventure() == null ? "" : userAccount.getAdventure().getRepresentCharacter().getCharacterName())
                     .serverId(userAccount.getAdventure() == null ? "" : userAccount.getAdventure().getRepresentCharacter().getServerId())
                     .serverName(userAccount.getAdventure() == null ? "" : CharacterEntity.CharacterEntityResponse.getServerName(userAccount.getAdventure().getRepresentCharacter().getServerId()))
+                    .characterCount(userAccount.getCharacterEntities().size())
                     .build();
         }
+
+
     }
 }

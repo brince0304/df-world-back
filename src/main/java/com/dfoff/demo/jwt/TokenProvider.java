@@ -80,7 +80,6 @@ public class TokenProvider {
                 .setExpiration(new Date(System.currentTimeMillis() + expireTime))
                 .signWith(getSigningKey(TOKEN_SECRET_KEY), SignatureAlgorithm.HS256)
                 .compact();
-
         return jwt;
     } //토큰을 생성해주는 메소드 (claim에 식별을 위한 다양한 정보를 저장할 수 있다.)
 

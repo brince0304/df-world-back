@@ -8,4 +8,7 @@ import java.util.Optional;
 public interface SaveFileRepository extends org.springframework.data.jpa.repository.JpaRepository<com.dfoff.demo.domain.SaveFile, Long> {
     Optional<SaveFile> findByFileName(@Param("file_name")String fileName);
 
+    Boolean existsByFileName(@Param("file_name")String fileName);
+
+    void deleteByFileName (@Param("file_name")String fileName);
 }

@@ -4,6 +4,7 @@ import com.dfoff.demo.annotation.Auth;
 import com.dfoff.demo.annotation.BindingErrorCheck;
 import com.dfoff.demo.domain.Adventure;
 import com.dfoff.demo.domain.CharacterEntity;
+import com.dfoff.demo.domain.SaveFile;
 import com.dfoff.demo.domain.UserAccount;
 import com.dfoff.demo.jwt.TokenDto;
 import com.dfoff.demo.jwt.TokenProvider;
@@ -11,6 +12,7 @@ import com.dfoff.demo.securityconfig.SecurityService;
 import com.dfoff.demo.service.*;
 import com.dfoff.demo.utils.Bcrypt;
 import com.dfoff.demo.utils.CookieUtil;
+import com.dfoff.demo.utils.FileUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,11 +26,11 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -165,15 +167,14 @@ public class UserAccountController {
     }
 
     @Auth
-    @GetMapping("/users/my-page")
-    public ModelAndView getMyPage(@AuthenticationPrincipal UserAccount.PrincipalDto principal) {
-        ModelAndView mav = new ModelAndView("/mypage/mypage");
-        mav.addObject("user", userAccountService.getUserAccountById(principal.getUsername()));
-        mav.addObject("uncheckedLogCount", notificationService.getUncheckedNotificationCount(principal.getUsername()));
+    @GetMapping("/users/")
+    public ResponseEntity<?> getMyPage(@AuthenticationPrincipal UserAccount.PrincipalDto principal) {
+        HashMap<String,Object> modelMap = new HashMap<>();
+        modelMap.put("userDetail", userAccountService.getUserAccountById(principal.getUsername()));
         if (userAccountService.checkUserAdventureById(principal.getUsername())) {
-            mav.addObject("adventure", userAccountService.getUserAdventureById(principal.getUsername()));
+            modelMap.put("userAdventure", userAccountService.getUserAdventureById(principal.getUsername()));
         }
-        return mav;
+        return new ResponseEntity<>(modelMap, HttpStatus.OK);
     }
 
     @Auth
@@ -192,10 +193,10 @@ public class UserAccountController {
     }
 
     @Auth
-    @GetMapping("/users/logs/")
+    @GetMapping("/users/activities/")
     public ResponseEntity<?> getLog(@AuthenticationPrincipal UserAccount.PrincipalDto principal,
                                     @RequestParam String type,
-                                    @PageableDefault(size = 15) org.springframework.data.domain.Pageable pageable,
+                                    @PageableDefault(size = 10) org.springframework.data.domain.Pageable pageable,
                                     @RequestParam(required = false) String sortBy) {
         if (type.equals("board")) {
             return new ResponseEntity<>(userAccountService.getUserBoardLogs(UserAccount.UserAccountDto.from(principal),pageable,sortBy), HttpStatus.OK);
@@ -203,39 +204,49 @@ public class UserAccountController {
         if (type.equals("comment")) {
             return new ResponseEntity<>(userAccountService.getUserCommentLogs(UserAccount.UserAccountDto.from(principal),pageable,sortBy), HttpStatus.OK);
         }
-        if (type.equals("log")) {
+        if (type.equals("notification")) {
             return new ResponseEntity<>(notificationService.getUserNotifications(principal.getUsername(), pageable), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
+    @Auth
+    @PutMapping ("/users/avatar")
+    public ResponseEntity<?> changeAvatar(@AuthenticationPrincipal UserAccount.PrincipalDto principal,
+                                          @RequestPart MultipartFile file) throws IOException {
+        SaveFile.SaveFileDto dto = saveFileService.saveFile(FileUtil.getFileDtoFromMultiPartFile(file));
+        SaveFile.SaveFileDto prevDto = userAccountService.changeProfileIcon(UserAccount.UserAccountDto.from(principal), dto);
+        if(prevDto.id()>16){
+            saveFileService.deleteFileByFileName(prevDto.fileName());
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+
+
 
     @Auth
     @PutMapping("/users")
-    public ResponseEntity<?> updateProfile(@AuthenticationPrincipal UserAccount.PrincipalDto principal,
-                                           @RequestParam(required = false) String nickname,
-                                           @RequestParam(required = false) String email,
-                                           @RequestParam(required = false) String password,
-                                           @RequestParam(required = false) String profileIcon) {
-        if (password != null && !password.equals("")) {
-            userAccountService.changePassword(UserAccount.UserAccountDto.from(principal), bcrypt.encode(password));
-            return new ResponseEntity<>("비밀번호가 변경되었습니다.", HttpStatus.OK);
-        }
-        if (profileIcon != null && !profileIcon.equals("")) {
-            userAccountService.changeProfileIcon(UserAccount.UserAccountDto.from(principal), saveFileService.getFileByFileName(profileIcon));
-            return new ResponseEntity<>("프로필이 변경되었습니다.", HttpStatus.OK);
-        }
+    public ResponseEntity<?> updateNickname(@AuthenticationPrincipal UserAccount.PrincipalDto principal,
+                                            @RequestParam (required = false) String password,
+                                            @RequestParam (required = false) String newPassword ,
+                                            @RequestParam(required = false) String nickname,
+                                            @RequestParam(required = false) String profileIcon,
+                                            HttpServletResponse res) {
         if (nickname != null && !nickname.equals("")) {
             userAccountService.changeNickname(UserAccount.UserAccountDto.from(principal), nickname);
             return new ResponseEntity<>("닉네임이 변경되었습니다.", HttpStatus.OK);
         }
-
-
-        if (email != null && !email.equals("")) {
-            userAccountService.changeEmail(UserAccount.UserAccountDto.from(principal), email);
-            return new ResponseEntity<>("이메일이 변경되었습니다.", HttpStatus.OK);
+        if (password != null && !password.equals("") && newPassword != null && !newPassword.equals("")) {
+            userAccountService.changePassword(UserAccount.UserAccountDto.from(principal),password,newPassword);
+            return new ResponseEntity<>("비밀번호가 변경되었습니다.", HttpStatus.OK);
         }
-        return new ResponseEntity<>("success", HttpStatus.OK);
+        if (profileIcon != null && !profileIcon.equals("")) {
+            userAccountService.changeProfileIcon(UserAccount.UserAccountDto.from(principal), saveFileService.getFileByFileName(profileIcon));
+            return new ResponseEntity<>("프로필 사진이 변경되었습니다.", HttpStatus.OK);
+        }
+        return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
     }
 
     @PostMapping("/users/login")
@@ -278,27 +289,6 @@ public class UserAccountController {
             return new ResponseEntity<>(map, HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-
-
-
-    @GetMapping("/users/reissue")
-    @Auth
-    public ResponseEntity<?> validateToken(HttpServletRequest req , HttpServletResponse res ,@AuthenticationPrincipal UserAccount.PrincipalDto principaldto) throws Exception {
-        Cookie refreshTokenCookie = CookieUtil.getCookie(TokenProvider.REFRESH_TOKEN_NAME,req);
-
-        if(refreshTokenCookie !=null){
-            String refreshToken = refreshTokenCookie.getValue();
-            if(redisService.get(refreshToken)!=null){
-                String username = redisService.get(refreshToken);
-                if(username.equals(principaldto.getUsername())) {
-                    String accessToken = tokenProvider.generateToken(principaldto);
-                    return new ResponseEntity<>(accessToken, HttpStatus.OK);
-                }
-            }
-        }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
 
