@@ -17,8 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class RestTemplateUtil {
-    @Value("${api.key}")
-    public static String API_KEY;
+    public static String API_KEY = "qQpswERaNSg1ifEA7rbze6oNJrej4JJW";
     private static final Gson gson = getGson();
 
     public static final String LIMIT = "100";

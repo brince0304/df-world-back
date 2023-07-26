@@ -2,8 +2,6 @@ debug: false
 
 management.endpoints.web.exposure.include: "*"
 
-api:
-  key: qQpswERaNSg1ifEA7rbze6oNJrej4JJW
 jwt:
   secret: secretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKey
 

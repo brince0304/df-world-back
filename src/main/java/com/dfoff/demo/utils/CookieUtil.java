@@ -11,6 +11,7 @@ public class CookieUtil {
         Cookie cookie = new Cookie(TokenProvider.ACCESS_TOKEN_NAME, token);
         cookie.setHttpOnly(true);
         cookie.setMaxAge((int) expireTime / 1000);
+        cookie.setSecure(true);
         cookie.setPath("/");
         return cookie;
     }
@@ -19,6 +20,7 @@ public class CookieUtil {
         Cookie cookie = new Cookie(TokenProvider.REFRESH_TOKEN_NAME, token);
         cookie.setHttpOnly(true);
         cookie.setMaxAge((int) expireTime / 1000);
+        cookie.setSecure(true);
         cookie.setPath("/");
         return cookie;
     }
