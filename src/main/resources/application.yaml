@@ -3,7 +3,7 @@ debug: false
 management.endpoints.web.exposure.include: "*"
 
 api:
-  key: ${NEOPLE_API_KEY}
+  key: qQpswERaNSg1ifEA7rbze6oNJrej4JJW
 jwt:
   secret: secretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKey
 
