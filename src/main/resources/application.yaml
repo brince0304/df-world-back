@@ -25,7 +25,6 @@ spring:
   cache:
     type: redis
   jpa:
-    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate.ddl-auto: create
     generate-ddl: on
     defer-datasource-initialization: true
