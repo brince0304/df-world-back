@@ -3,6 +3,7 @@ package com.dfoff.demo.utils;
 
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
@@ -14,7 +15,8 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class RestTemplateUtil {
-    public static final String API_KEY = "qQpswERaNSg1ifEA7rbze6oNJrej4JJW";
+    @Value("${api.key}")
+    public static final String API_KEY = null;
     private static final Gson gson = getGson();
 
     public static final String LIMIT = "100";

@@ -1,6 +1,7 @@
 package com.dfoff.demo.utils;
 
 import com.dfoff.demo.domain.SaveFile;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -11,7 +12,8 @@ import java.util.UUID;
 public class FileUtil {
     private FileUtil() {
     }
-    public static String uploadPath ="/Users/brinc/Desktop/brincestudy/JAVA/df-toy-project/src/main/resources/static/images/imgSaveFolder/";
+    @Value("${servlet.multipart.location}")
+    public static String uploadPath;
 
     public static String getFilePath = "/files/?name=";
 

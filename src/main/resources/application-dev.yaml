@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+      location: /server/upload
+      enabled: true
+  thymeleaf3:
+    decoupled-logic: true
+  cache:
+    type: redis
+  jpa:
+    defer-datasource-initialization: true
+    open-in-view: true
+    hibernate.ddl-auto: create
+    show-sql: false
+    properties:
+      hibernate.format_sql: true
+      hibernate.default_batch_fetch_size: 100
+  sql:
+    init:
+      mode: always
+  devtools:
+    remote:
+      restart:
+        enabled: true
+  freemarker:
+    expose-session-attributes: true
+  jwt:
+    secret: ${JWT_SECRET}
+    token-validity-in-seconds: 86400
