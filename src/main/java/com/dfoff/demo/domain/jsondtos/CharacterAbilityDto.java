@@ -18,68 +18,69 @@ import java.util.List;
 public class CharacterAbilityDto {
 
 
-        private String characterId;
+    private String characterId;
 
-        private String characterName;
+    private String characterName;
 
-        private Integer level;
+    private Integer level;
 
-        private String jobId;
+    private String jobId;
 
-        private String jobGrowId;
+    private String jobGrowId;
 
-        private String jobName;
+    private String jobName;
 
-        private String jobGrowName;
+    private String jobGrowName;
 
-        private String adventureName;
+    private String adventureName;
 
-        private String guildId;
+    private String guildId;
 
-        private String guildName;
+    private String guildName;
 
-        private Integer adventureFame;
+    private Integer adventureFame;
 
-        private List<Buff> buff = new ArrayList<>();
+    @Builder.Default
+    private List<Buff> buff = new ArrayList<>();
 
-        private List<Status__1> status = new ArrayList<>();
+    @Builder.Default
+    private List<Status__1> status = new ArrayList<>();
 
 
+    public static CharacterAbilityJSONDto toAbilityJSONDTO(CharacterAbilityDto dto) {
+        return CharacterAbilityJSONDto.builder()
+                .characterId(dto.getCharacterId())
+                .characterName(dto.getCharacterName())
+                .level(dto.getLevel())
+                .jobId(dto.getJobId())
+                .jobGrowId(dto.getJobGrowId())
+                .jobName(dto.getJobName())
+                .jobGrowName(dto.getJobGrowName())
+                .adventureName(dto.getAdventureName())
+                .guildId(dto.getGuildId())
+                .guildName(dto.getGuildName())
+                .buff(dto.getBuff())
+                .status(dto.getStatus())
+                .build();
+    }
 
-        public static CharacterAbilityJSONDto toAbilityJSONDTO(CharacterAbilityDto dto){
-            return CharacterAbilityJSONDto.builder()
-                    .characterId(dto.getCharacterId())
-                    .characterName(dto.getCharacterName())
-                    .level(dto.getLevel())
-                    .jobId(dto.getJobId())
-                    .jobGrowId(dto.getJobGrowId())
-                    .jobName(dto.getJobName())
-                    .jobGrowName(dto.getJobGrowName())
-                    .adventureName(dto.getAdventureName())
-                    .guildId(dto.getGuildId())
-                    .guildName(dto.getGuildName())
-                    .buff(dto.getBuff())
-                    .status(dto.getStatus())
-                    .build();
-        }
-
-        public static CharacterEntity toEntity(CharacterAbilityDto dto,String ServerId){
-            return CharacterEntity.builder()
-                    .characterId(dto.getCharacterId())
-                    .characterName(dto.getCharacterName())
-                    .level(dto.getLevel())
-                    .jobId(dto.getJobId())
-                    .jobGrowId(dto.getJobGrowId())
-                    .jobName(dto.getJobName())
-                    .jobGrowName(dto.getJobGrowName())
-                    .adventureName(dto.getAdventureName())
-                    .adventureFame(dto.getAdventureFame())
-                    .adventureName(dto.getAdventureName())
-                    .serverId(ServerId)
-                    .guildId(dto.getGuildId())
-                    .guildName(dto.getGuildName())
-                    .build();
-        }
+    public static CharacterEntity toEntity(CharacterAbilityDto dto, String ServerId) {
+        return CharacterEntity.builder()
+                .characterId(dto.getCharacterId())
+                .characterName(dto.getCharacterName())
+                .level(dto.getLevel())
+                .jobId(dto.getJobId())
+                .jobGrowId(dto.getJobGrowId())
+                .jobName(dto.getJobName())
+                .jobGrowName(dto.getJobGrowName())
+                .adventureName(dto.getAdventureName())
+                .adventureFame(dto.getAdventureFame())
+                .adventureName(dto.getAdventureName())
+                .serverId(ServerId)
+                .guildId(dto.getGuildId())
+                .guildName(dto.getGuildName())
+                .build();
+    }
 
 
     @Builder
@@ -126,7 +127,6 @@ public class CharacterAbilityDto {
          */
         public CharacterAbilityJSONDto() {
         }
-
 
 
         public CharacterAbilityDto toDto() {

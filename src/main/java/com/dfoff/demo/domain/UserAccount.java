@@ -275,6 +275,7 @@ public class UserAccount extends AuditingFields {
         @Email
         private  String email;
 
+        @Builder.Default
         private  Set<SecurityRole> roles = Set.of(SecurityRole.ROLE_USER);
 
 
