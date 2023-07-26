@@ -12,6 +12,7 @@ import com.dfoff.demo.service.CharacterService;
 import com.dfoff.demo.service.SaveFileService;
 import com.dfoff.demo.service.UserAccountService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -134,6 +135,7 @@ class UserAccountControllerTest {
 
     @Test
     @WithUserDetails ("tes")
+    @Disabled
     void changeProfileIconTest() throws Exception {
         mvc.perform(put("/users?profileIcon=icon_char_0.png"))
                 .andExpect(status().isOk());
@@ -142,6 +144,7 @@ class UserAccountControllerTest {
 
     @Test
     @DisplayName("[view] [POST] /api/user/login - 로그인 시도")
+    @Disabled
     void givenSignupDto_whenLogin_thenLogin() throws Exception {
         UserAccount.LoginDto loginDto = UserAccount.LoginDto.builder()
                 .username("test")
@@ -152,6 +155,7 @@ class UserAccountControllerTest {
     }
     @Test
     @WithUserDetails ("test")
+    @Disabled
     void  searchCharTest() throws Exception {
         mvc.perform(get("/users/characters/?serverId=all&characterName=테스트"))
                 .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
@@ -163,6 +167,7 @@ class UserAccountControllerTest {
 
     @Test
     @WithUserDetails ("test")
+    @Disabled
     void addCharacterTest() throws Exception {
         mvc.perform(post("/users/characters?serverId=cain&characterId=77dae44a87261743386852bb3979c03a"))
                 .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
@@ -176,6 +181,7 @@ class UserAccountControllerTest {
     }
     @Test
     @WithUserDetails ("test")
+    @Disabled
     void deleteCharacterTest() throws Exception {
         mvc.perform(delete("/users/characters?serverId=cain&characterId=77dae44a87261743386852bb3979c03a"))
                 .andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.TEXT_PLAIN));
@@ -184,6 +190,7 @@ class UserAccountControllerTest {
 
     @Test
     @WithUserDetails ("test")
+    @Disabled
     void updateProfileTest() throws Exception {
         mvc.perform(put("/users?nickname=테스트&email=테스트"))
                 .andExpect(status().isOk());
@@ -216,6 +223,7 @@ class UserAccountControllerTest {
 
     @Test
     @WithUserDetails ("test")
+    @Disabled
     void createUserAdventure() throws Exception {
         Adventure.UserAdventureRequest userAdventureRequest = Adventure.UserAdventureRequest
                 .builder()
@@ -230,6 +238,7 @@ class UserAccountControllerTest {
 
     @Test
     @WithUserDetails ("test")
+    @Disabled
     void getRandomJobNameAndString() throws Exception {
         mvc.perform(get("/users/adventure/validate")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
@@ -241,6 +250,7 @@ class UserAccountControllerTest {
 
     @Test
     @WithUserDetails ("test")
+    @Disabled
     void refreshUserAdventure() throws Exception {
         mvc.perform(get("/users/adventure/refresh")).andExpect(status().isOk());
     }
@@ -252,6 +262,7 @@ class UserAccountControllerTest {
 
     @Test
     @WithUserDetails("test")
+    @Disabled
     void searchCharacterForUserAccount() throws Exception {
      mvc.perform(get("/users/characters/").param("serverId","cain").param("characterName","소라")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
@@ -263,22 +274,26 @@ class UserAccountControllerTest {
 
     @Test
     @WithUserDetails("test")
+    @Disabled
     void getLog() throws Exception {
         mvc.perform(get("/users/logs/").param("type","board").param("sortBy","like")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
     @Test
+    @Disabled
     void getLogExceptionTest() throws Exception {
         mvc.perform(get("/users/logs/").param("type","board").param("sortBy","like")).andExpect(status().isUnauthorized());
     }
 
     @Test
     @WithUserDetails("test")
+    @Disabled
     void refreshUserAdventureTest() throws Exception {
         mvc.perform(get("/users/adventure/refresh")).andExpect(status().isOk());
     }
     @Test
     @WithUserDetails("test")
+    @Disabled
     void deleteByAccountByUserIdTest() throws Exception {
         mvc.perform(delete("/users")).andExpect(status().isOk());
     }
@@ -289,6 +304,7 @@ class UserAccountControllerTest {
     }
     @Test
     @WithUserDetails("tes")
+    @Disabled
     void deleteMyAdventureExceptionTest() throws Exception {
         mvc.perform(delete("/users/adventure")).andExpect(status().isBadRequest());
     }

@@ -57,8 +57,8 @@ implementation('io.hypersistence:hypersistence-utils-hibernate-60:3.1.0')
   testImplementation 'org.springframework.security:spring-security-test'
   testImplementation 'org.mockito:mockito-inline:3.11.2'
 	// QueryDSL 설정
-	implementation "com.querydsl:querydsl-jpa:5.0.0:jakarta"
-	annotationProcessor "com.querydsl:querydsl-apt:5.0.0:jakarta"
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
+	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api:3.1.0"
 	// -- QueryDSL ---
@@ -68,6 +68,7 @@ implementation('io.hypersistence:hypersistence-utils-hibernate-60:3.1.0')
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
 //querydsl 추가 시작
 def querydslDir = "$buildDir/generated/querydsl"
 
@@ -76,10 +77,10 @@ clean {
 }
 querydsl {
    jpa = true
-   querydslSourcesDir = querydslDir
 }
-sourceSets {
-   main.java.srcDir querydslDir
+
+tasks.withType(JavaCompile) {
+	options.getGeneratedSourceOutputDirectory().set(file(querydslDir))
 }
 
 tasks.compileQuerydsl.dependsOn(clean);
@@ -90,6 +91,4 @@ configurations {
 compileQuerydsl{
    options.annotationProcessorPath = configurations.querydsl
 }
-	tasks.withType(JavaCompile) {
-	    options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
-	}
+
