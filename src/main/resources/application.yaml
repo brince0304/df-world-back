@@ -3,6 +3,8 @@ jwt:
   secret: secretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKey
 
 spring:
+  profiles:
+    default: local
   datasource:
     driver-class-name: ${RDS_DRIVER}
     url: ${RDS_URL}
