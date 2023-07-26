@@ -1,15 +1,16 @@
-
-# Set the active profile here
-spring:
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE}
-
 debug: false
 
 management.endpoints.web.exposure.include: "*"
 
 api:
-  key: ${API_KEY}
+  key: ${NEOPLE_API_KEY}
 jwt:
   secret: secretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKeysecretKey
+
+# Set the active profile here
+spring:
+  profiles:
+    active: dev
+
+
 
