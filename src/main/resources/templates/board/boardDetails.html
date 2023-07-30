@@ -1202,7 +1202,7 @@ margin-right: 0;">
     function likeBoard() {
         const boardId = $("#boardId").val();
         $.ajax({
-            url: "/boards/like-board",
+            url: "/boards/like",
             type: "POST",
             data: {
                 boardId: boardId

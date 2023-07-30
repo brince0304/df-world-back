@@ -1,0 +1,38 @@
+spring:
+  datasource:
+    driver-class-name: ${RDS_DRIVER}
+    url: ${RDS_URL}
+    username: ${RDS_USERNAME}
+    password: ${RDS_PASSWORD}
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 20MB
+      location: /server/upload
+      enabled: true
+  thymeleaf3:
+    decoupled-logic: true
+  cache:
+    type: redis
+  jpa:
+    hibernate.ddl-auto: create
+    generate-ddl: on
+    defer-datasource-initialization: true
+    open-in-view: true
+    show-sql: true
+    properties:
+      hibernate.format_sql: true
+      hibernate.default_batch_fetch_size: 100
+  sql:
+    init:
+      mode: always
+  devtools:
+    remote:
+      restart:
+        enabled: true
+  freemarker:
+    expose-session-attributes: true

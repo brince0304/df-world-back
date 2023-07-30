@@ -159,7 +159,7 @@ class BoardControllerTest {
 
     @Test
     void increaseLikeCountTest() throws Exception {
-        mvc.perform(post("/boards/like-board").param("boardId","3")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+        mvc.perform(post("/boards/like").param("boardId","3")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
     }
 
     @Test

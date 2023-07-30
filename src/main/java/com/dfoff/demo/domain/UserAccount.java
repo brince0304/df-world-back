@@ -262,7 +262,7 @@ public class UserAccount extends AuditingFields {
     @NoArgsConstructor
     public static class UserAccountSignUpRequest {
         @Size(min = 4, max = 20)
-        private  String userId;
+        private  String username;
         @Setter
         @Size(min = 8, max = 20)
         @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,20}$")
@@ -281,7 +281,7 @@ public class UserAccount extends AuditingFields {
 
         public UserAccountDto toDto() {
             return UserAccountDto.builder()
-                    .userId(userId)
+                    .userId(username)
                     .password(password)
                     .nickname(nickname)
                     .email(email)
@@ -292,7 +292,7 @@ public class UserAccount extends AuditingFields {
 
         public UserAccount toEntity() {
             return UserAccount.builder()
-                    .userId(userId)
+                    .userId(username)
                     .password(password)
                     .nickname(nickname)
                     .email(email)
@@ -457,8 +457,6 @@ public class UserAccount extends AuditingFields {
     public static class UserLoginRequst {
         private String username;
         private String password;
-
-
     }
 
     @Data
@@ -466,32 +464,17 @@ public class UserAccount extends AuditingFields {
     public static class UserLoginResponse{
         private String userId;
         private String nickname;
-        private String email;
         private String profileImgPath;
-
         private String adventureName;
-
-        private String representCharacterName;
-
-        private String serverId;
-
-        private String serverName;
-
-        private Integer characterCount;
-
-
+        private Long notificationCount;
 
         public static UserLoginResponse from(UserAccount userAccount){
             return UserLoginResponse.builder()
                     .userId(userAccount.getUserId())
                     .nickname(userAccount.getNickname())
-                    .email(userAccount.getEmail())
-                    .profileImgPath(userAccount.getProfileIcon() == null ? "" : FileUtil.getProfileIconPath(userAccount.getProfileIcon().getFileName()))
+                    .profileImgPath(userAccount.getProfileIcon() == null ? null : FileUtil.getProfileIconPath(userAccount.getProfileIcon().getFileName()))
+                    .notificationCount(userAccount.notifications.stream().filter(notification -> !notification.getChecked()).count())
                     .adventureName(userAccount.getAdventure() == null ? "" : userAccount.getAdventure().getAdventureName())
-                    .representCharacterName(userAccount.getAdventure() == null ? "" : userAccount.getAdventure().getRepresentCharacter().getCharacterName())
-                    .serverId(userAccount.getAdventure() == null ? "" : userAccount.getAdventure().getRepresentCharacter().getServerId())
-                    .serverName(userAccount.getAdventure() == null ? "" : CharacterEntity.CharacterEntityResponse.getServerName(userAccount.getAdventure().getRepresentCharacter().getServerId()))
-                    .characterCount(userAccount.getCharacterEntities().size())
                     .build();
         }
 

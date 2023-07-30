@@ -47,17 +47,13 @@ public class BoardController {
                                      @RequestParam(required = false) String keyword,
                                      @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                      @RequestParam(required = false) String searchType) {
-        Map<String,Object> map = new HashMap<>();
-        map.put("articles", boardService.getBoardsByKeyword(boardType, keyword, searchType, pageable));
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return new ResponseEntity<>(boardService.getBoardsByKeyword(boardType, keyword, searchType, pageable), HttpStatus.OK);
     }
 
     @GetMapping("/boards/best")
     public ResponseEntity<?> getBestArticleList (@RequestParam (required = false) BoardType boardType)
     {
-        Map<String,Object> map = new HashMap<>();
-        map.put("bestArticles", boardService.getBestBoardByBoardType(boardType));
-        return new ResponseEntity<>(map, HttpStatus.OK);
+        return new ResponseEntity<>(boardService.getBestBoardByBoardType(boardType), HttpStatus.OK);
     }
 
     @GetMapping("/boards/latest")
@@ -69,7 +65,7 @@ public class BoardController {
     }
 
 
-    @PostMapping("/boards/like-board")
+    @PostMapping("/boards/like")
     public ResponseEntity<?> likeBoardById(@RequestParam Long boardId, HttpServletRequest req, @AuthenticationPrincipal UserAccount.PrincipalDto principal) {
         if (redisService.checkBoardLikeLog(req.getRemoteAddr(), boardId)) {
             redisService.deleteBoardLikeLog(req.getRemoteAddr(), boardId);
@@ -165,7 +161,7 @@ public class BoardController {
     @Auth
     @BindingErrorCheck
     @PostMapping("/boards")
-    public ResponseEntity<?> saveBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principal, @RequestBody @Valid Board.BoardRequest boardRequest, BindingResult bindingResult) throws InterruptedException, IllegalAccessException {
+    public ResponseEntity<?> createBoard(@AuthenticationPrincipal UserAccount.PrincipalDto principal, @RequestBody @Valid Board.BoardRequest boardRequest, BindingResult bindingResult) throws InterruptedException, IllegalAccessException {
         Set<SaveFile.SaveFileDto> set = saveFileService.getFileDtosFromRequestFileIds(boardRequest);
         if (boardRequest.serverId().equals("")) {
             return new ResponseEntity<>(boardService.createBoard(boardRequest, set, UserAccount.UserAccountDto.from(principal), null), HttpStatus.OK);

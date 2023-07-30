@@ -41,14 +41,11 @@ public class CharacterController {
     public ResponseEntity<?> searchCharacterInfo(@RequestParam(required = false) String serverId,
                                             @RequestParam(required = false) String characterName,
                                             @PageableDefault(size = 12) Pageable pageable) throws InterruptedException {
-        Map<String,Object> model = new HashMap<>();
         if (serverId == null || characterName == null) {
-            model.put("characters", Page.empty());
-            return ResponseEntity.ok(model);
+            return ResponseEntity.ok(Page.empty());
         }
         if (serverId.equals("adventure")) {
-            model.put("characters", characterService.getCharacterByAdventureName(characterName, pageable));
-            return ResponseEntity.ok(model);
+            return ResponseEntity.ok(characterService.getCharacterByAdventureName(characterName, pageable));
         }
         List<CharacterEntity.CharacterEntityDto> characters = characterService.getCharacterDtos(serverId, characterName).join();
         int start = (int) pageable.getOffset();
@@ -65,8 +62,7 @@ public class CharacterController {
                     }
                     else list.add(o);
                 });
-        model.put("characters", new PageImpl<>(list, pageable, characters.size()));
-        return ResponseEntity.ok(model);
+        return ResponseEntity.ok(new PageImpl<>(list, pageable, characters.size()));
     }
     @GetMapping("/characters/rank/")
     public ModelAndView getCharacterRanking(@RequestParam (required = false) String searchType,@RequestParam (required = false) String characterName, @PageableDefault(size = 10) Pageable pageable) {

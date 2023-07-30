@@ -46,7 +46,7 @@ public class UserAccountService {
 
 
     public void createAccount(UserAccount.UserAccountSignUpRequest account, SaveFile.SaveFileDto profileIcon) {
-        if (userAccountRepository.existsByUserId(account.getUserId())) {
+        if (userAccountRepository.existsByUserId(account.getUsername())) {
             throw new EntityExistsException("이미 존재하는 아이디입니다.");
         }
         if (userAccountRepository.existsByEmail(account.getEmail())) {

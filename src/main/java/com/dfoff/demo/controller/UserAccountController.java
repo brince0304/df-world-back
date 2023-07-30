@@ -144,7 +144,7 @@ public class UserAccountController {
     public ResponseEntity<?> createAccount(@RequestBody @Valid UserAccount.UserAccountSignUpRequest request, BindingResult bindingResult) {
         request.setPassword(bcrypt.encode(request.getPassword()));
         userAccountService.createAccount(request, saveFileService.getFileByFileName("icon_char_0.png"));
-        return new ResponseEntity<>(request.getUserId(), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Auth
@@ -254,12 +254,11 @@ public class UserAccountController {
                                             HttpServletResponse res) throws Exception {
      try{
          TokenDto token =userAccountService.getToken(request.getUsername(), request.getPassword());
-         Map<String,Object> map = new HashMap<>();
-         map.put("CURRENT_USER",userAccountService.getLoginResponse(request.getUsername()));
+
          redisService.set(TokenProvider.REFRESH_TOKEN_NAME+request.getUsername(),token.getRefreshToken(),TokenProvider.REFRESH_TOKEN_VALIDATION_SECOND);
             res.addCookie(CookieUtil.createAccessTokenCookie(token.getAccessToken(), TokenProvider.TOKEN_VALIDATION_SECOND));
             res.addCookie(CookieUtil.createRefreshTokenCookie(token.getRefreshToken(), TokenProvider.REFRESH_TOKEN_VALIDATION_SECOND));
-            return new ResponseEntity<>(map,HttpStatus.OK);
+            return new ResponseEntity<>(userAccountService.getLoginResponse(request.getUsername()),HttpStatus.OK);
      }catch(BadCredentialsException e){
             return new ResponseEntity<>("아이디 또는 비밀번호가 틀렸습니다.", HttpStatus.BAD_REQUEST);
      }
@@ -283,10 +282,7 @@ public class UserAccountController {
     @GetMapping ("/users/details")
     public ResponseEntity<?> getDetails(@AuthenticationPrincipal UserAccount.PrincipalDto principal) {
         if(principal!=null){
-            Map<String,Object> map = new HashMap<>();
-            map.put("notification",notificationService.getUncheckedNotificationCount(principal.getUsername()));
-            map.put("user",userAccountService.getLoginResponse(principal.getUsername()));
-            return new ResponseEntity<>(map, HttpStatus.OK);
+            return new ResponseEntity<>(userAccountService.getLoginResponse(principal.getUsername()), HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
