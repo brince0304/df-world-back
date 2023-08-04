@@ -9,9 +9,7 @@ on:
 env:
   S3_BUCKET_NAME: df-commnuity-deploy
   REDIS_HOST: ${{ secrets.REDIS_HOST }}
-  REDIS_PORT: 6379
   API_KEY: ${{ secrets.API_KEY }}
-  SPRING_PROFILES_ACTIVE: prod
   RDS_DRIVER: ${{ secrets.RDS_DRIVER }}
   RDS_URL: ${{ secrets.RDS_URL }}
   RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
