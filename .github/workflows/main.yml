@@ -8,6 +8,14 @@ on:
 
 env:
   S3_BUCKET_NAME: df-commnuity-deploy
+  REDIS_HOST: localhost
+  REDIS_PORT: 6379
+  API_KEY: qQpswERaNSg1ifEA7rbze6oNJrej4JJW
+  SPRING_PROFILES_ACTIVE: prod
+  RDS_DRIVER: com.mysql.cj.jdbc.Driver
+  RDS_URL: jdbc:mysql://172.31.0.142:3306/dfdb
+  RDS_USERNAME: appuser
+  RDS_PASSWORD: tjrgus97
 
 jobs:
   build:
