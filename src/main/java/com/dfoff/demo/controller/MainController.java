@@ -16,25 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 @RestController
 @AllArgsConstructor
 public class MainController {
-    private final BoardService boardService;
-    private final CharacterService characterService;
-    private final AdventureService adventureService;
-
-
-    @GetMapping("/main")
-    public ModelAndView main(@PageableDefault(size=5,sort = "createdAt",direction = Sort.Direction.DESC) Pageable pageable) throws ParseException {
-        ModelAndView mav = new ModelAndView("index");
-        mav.addObject("articles",boardService.getBoardsByKeyword(null,null,null,pageable));
-        mav.addObject("adventureFameRanking",characterService.getCharacterRankingBest5OrderByAdventureFame());
-        mav.addObject("damageIncreaseRanking",characterService.getCharacterRankingBest5OrderByDamageIncrease());
-        mav.addObject("buffPowerRanking",characterService.getCharacterRankingBest5OrderByBuffPower());
-        mav.addObject("advFameRanking",adventureService.getAdventureRankingBest5OrderByAdventureFame());
-        mav.addObject("adventureDamageIncreaseRanking",adventureService.getAdventureRankingBest5OrderByAdventureDamageIncreaseAndBuffPower());
-        return mav;
-    }
-
     @GetMapping("/")
-    public String index() throws ParseException {
+    public String index() {
         return "hello";
     }
 
