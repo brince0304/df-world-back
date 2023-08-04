@@ -2,7 +2,15 @@
 
 REPOSITORY=/home/ubuntu/app
 
-source .env
+export REDIS_HOST="localhost"
+export REDIS_PORT=6379
+export API_KEY="qQpswERaNSg1ifEA7rbze6oNJrej4JJW"
+export JWT_SECRET="SECRETSECRETSECRETSECRET"
+export SPRING_PROFILES_ACTIVE="prod"
+export RDS_DRIVER="com.mysql.cj.jdbc.Driver"
+export RDS_URL="jdbc:mysql://172.31.0.142:3306/dfdb"
+export RDS_USERNAME="appuser"
+export RDS_PASSWORD="tjrgus97"
 
 echo "> 현재 구동 중인 애플리케이션 pid 확인"
 
