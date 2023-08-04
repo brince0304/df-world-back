@@ -113,7 +113,7 @@ public class BoardCommentController {
         List<BoardComment.BoardCommentDto> children = commentService.getChildrenComments(commentId);
         children.stream().filter(o-> !Objects.equals(o.getUserId(), principal.getUsername())).forEach(o-> notificationService.saveBoardCommentNotification(o.getUserAccountDto(), o, principal.getNickname(),NotificationType.DELETE_CHILDREN_COMMENT));
         commentService.deleteBoardComment(commentId);
-        return new ResponseEntity<>("success", HttpStatus.OK);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
 
 
@@ -123,7 +123,7 @@ public class BoardCommentController {
     @PutMapping("/comments")
     public ResponseEntity<?> updateBoardComment(@AuthenticationPrincipal UserAccount.PrincipalDto principal,@RequestBody @Valid BoardComment.BoardCommentRequest request, BindingResult bindingResult) {
         commentService.updateBoardComment(request.commentId(), request);
-        return new ResponseEntity<>("success", HttpStatus.OK);
+        return new ResponseEntity<>( HttpStatus.OK);
     }
 
 }

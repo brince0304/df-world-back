@@ -56,6 +56,7 @@ public class BoardComment extends AuditingFields {
     @ToString.Exclude
     @Builder.Default
     @OnDelete(action = OnDeleteAction.CASCADE)
+    @OrderBy("createdAt ASC")
     private final Set<BoardComment> childrenComments = new LinkedHashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
