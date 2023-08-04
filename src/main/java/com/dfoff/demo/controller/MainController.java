@@ -34,8 +34,8 @@ public class MainController {
     }
 
     @GetMapping("/")
-    public ModelAndView index() throws ParseException {
-        return new ModelAndView("redirect:/main");
+    public String index() throws ParseException {
+        return "hello";
     }
 
 }
