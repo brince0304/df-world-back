@@ -18,7 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class MainController {
     @GetMapping("/")
     public String index() {
-        return "hello";
+        return "hello22";
     }
 
 }
