@@ -2,6 +2,7 @@ package com.dfoff.demo.utils;
 
 import com.dfoff.demo.domain.SaveFile;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -9,14 +10,14 @@ import java.io.IOException;
 import java.util.Objects;
 import java.util.UUID;
 
+@Component
 public class FileUtil {
-    private FileUtil() {
-    }
-    @Value("${servlet.multipart.location}")
-    public static String uploadPath;
-
+    private static String uploadPath;
     public static String getFilePath = "/files/?name=";
-
+    @Value("${spring.servlet.multipart.location}")
+    public void setUploadPath(String value) {
+        FileUtil.uploadPath = value;
+    }
 
     public  static String getExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);

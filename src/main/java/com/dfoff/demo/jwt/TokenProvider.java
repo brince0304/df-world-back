@@ -25,8 +25,12 @@ public class TokenProvider {
     final static public String ACCESS_TOKEN_NAME = "accessToken";
     final static public String REFRESH_TOKEN_NAME = "refreshToken";
 
-    @Value("${jwt.secret}")
     private String TOKEN_SECRET_KEY;
+
+    @Value("${jwt.secret}")
+    public void setTokenSecretKey(String tokenSecretKey) {
+        this.TOKEN_SECRET_KEY = tokenSecretKey;
+    }
 
     public TokenProvider(RedisService redisService) {
         this.redisService = redisService;

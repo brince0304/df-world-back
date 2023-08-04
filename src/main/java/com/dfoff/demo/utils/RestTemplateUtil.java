@@ -16,45 +16,51 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
+@Component
 public class RestTemplateUtil {
-    public static String API_KEY = "qQpswERaNSg1ifEA7rbze6oNJrej4JJW";
+
+    private static String API_KEY;
+    @Value("${df.api.key}")
+    public void setAPI_KEY(String value) {
+        API_KEY = value;
+    }
     private static final Gson gson = getGson();
 
     public static final String LIMIT = "100";
 
     public static final String WORD_TYPE = "full";
 
-    public static final String SERVER_LIST_URI = "https://api.neople.co.kr/df/servers?apikey=" + API_KEY;
+    public static final String SERVER_LIST_URI = "https://api.neople.co.kr/df/servers?apikey={API_KEY}";
 
-    public static final String JOB_LIST_URI = "https://api.neople.co.kr/df/jobs?apikey=" + API_KEY;
+    public static final String JOB_LIST_URI = "https://api.neople.co.kr/df/jobs?apikey={API_KEY}";
 
     public static final String CHARACTER_IMG_URI = "https://img-api.neople.co.kr/df/servers/<serverId>/characters/<characterId>?zoom=<zoom>";
 
-    public static final String CHARACTER_SEARCH_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters?characterName=<characterName>&jobId=<jobId>&jobGrowId=<jobGrowId>&limit="+LIMIT+"&wordType="+WORD_TYPE+"&apikey="+API_KEY;
+    public static final String CHARACTER_SEARCH_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters?characterName=<characterName>&jobId=<jobId>&jobGrowId=<jobGrowId>&limit="+LIMIT+"&wordType="+WORD_TYPE+"&apikey={API_KEY}";
 
-    public static final String CHARACTER_DETAILS_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>?apikey="+API_KEY;
+    public static final String CHARACTER_DETAILS_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>?apikey={API_KEY}";
 
-    public static final String CHARACTER_ABILITY_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/status?apikey="+API_KEY;
+    public static final String CHARACTER_ABILITY_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/status?apikey={API_KEY}";
 
-    public static final String CHARACTER_EQUIPMENT_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/equip/equipment?apikey="+API_KEY;
+    public static final String CHARACTER_EQUIPMENT_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/equip/equipment?apikey={API_KEY}";
 
     public static final String EQUIPMENT_IMG_URI = "https://img-api.neople.co.kr/df/items/<itemId>?zoom=<zoom>";
 
-    public static final String EQUIPMENT_DETAIL_URI = "https://api.neople.co.kr/df/items/<itemId>?apikey="+ API_KEY;
+    public static final String EQUIPMENT_DETAIL_URI = "https://api.neople.co.kr/df/items/<itemId>?apikey={API_KEY}";
 
-    public static final String CHARACTER_BUFF_EQUIPMENT_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/skill/buff/equip/equipment?apikey="+API_KEY;
+    public static final String CHARACTER_BUFF_EQUIPMENT_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/skill/buff/equip/equipment?apikey={API_KEY}";
 
-    public static final String CHARACTER_BUFF_AVATAR_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/skill/buff/equip/avatar?apikey="+API_KEY;
+    public static final String CHARACTER_BUFF_AVATAR_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/skill/buff/equip/avatar?apikey={API_KEY}";
 
-    public static final String CHARACTER_BUFF_CREATURE_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/skill/buff/equip/creature?apikey="+API_KEY;
+    public static final String CHARACTER_BUFF_CREATURE_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/skill/buff/equip/creature?apikey={API_KEY}";
 
-        public static final String CHARACTER_AVATAR_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/equip/avatar?apikey="+API_KEY;
+        public static final String CHARACTER_AVATAR_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/equip/avatar?apikey={API_KEY}";
 
-        public static final String CHARACTER_TALISMAN_URI ="https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/equip/talisman?apikey="+API_KEY;
+        public static final String CHARACTER_TALISMAN_URI ="https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/equip/talisman?apikey={API_KEY}";
 
-        public static final String CHARACTER_SKILL_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/skill/style?apikey="+API_KEY;
+        public static final String CHARACTER_SKILL_URI = "https://api.neople.co.kr/df/servers/<serverId>/characters/<characterId>/skill/style?apikey={API_KEY}";
 
-        public static final String CHARACTER_SKILL_DETAIL_URI = "https://api.neople.co.kr/df/skills/<jobId>/<skillId>?apikey="+API_KEY;
+        public static final String CHARACTER_SKILL_DETAIL_URI = "https://api.neople.co.kr/df/skills/<jobId>/<skillId>?apikey={API_KEY}";
     @Bean
     public static Gson getGson() {
         return new Gson();
@@ -127,15 +133,18 @@ public class RestTemplateUtil {
     }
 
     public static <T> T parseJsonFromUri(String url, Class<T> clazz) throws InterruptedException {
+        log.info("api_key : {}", API_KEY);
+        log.info("url : {}", url);
+        String newUrl = url.replace("{API_KEY}", API_KEY);
         HashMap<String, String> result = new HashMap<>();
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders header = new HttpHeaders();
         HttpEntity<?> entity = new HttpEntity<>(header);
-        UriComponents uri = UriComponentsBuilder.fromHttpUrl(url).build();
+        UriComponents uri = UriComponentsBuilder.fromHttpUrl(newUrl).build();
         ResponseEntity<?> response = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, String.class);
         if(response.getStatusCode() == HttpStatus.BAD_REQUEST){
             TimeUnit.MILLISECONDS.sleep(500);
-            return parseJsonFromUri(url, clazz);
+            return parseJsonFromUri(newUrl, clazz);
         }if(response.getStatusCode().is5xxServerError()){
             throw new IllegalArgumentException("서버가 점검중이거나 장애가 발생하였습니다.");
         }if(response.getStatusCode().is4xxClientError()){
