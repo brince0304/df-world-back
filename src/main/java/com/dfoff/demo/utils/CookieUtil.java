@@ -9,18 +9,18 @@ import lombok.experimental.UtilityClass;
 public class CookieUtil {
     public static Cookie createAccessTokenCookie(String token, long expireTime) {
         Cookie cookie = new Cookie(TokenProvider.ACCESS_TOKEN_NAME, token);
-        cookie.setHttpOnly(true);
+        cookie.setHttpOnly(false);
         cookie.setMaxAge((int) expireTime / 1000);
-        cookie.setSecure(true);
+        cookie.setSecure(false);
         cookie.setPath("/");
         return cookie;
     }
 
     public static Cookie createRefreshTokenCookie(String token, long expireTime) {
         Cookie cookie = new Cookie(TokenProvider.REFRESH_TOKEN_NAME, token);
-        cookie.setHttpOnly(true);
+        cookie.setHttpOnly(false);
         cookie.setMaxAge((int) expireTime / 1000);
-        cookie.setSecure(true);
+        cookie.setSecure(false);
         cookie.setPath("/");
         return cookie;
     }
