@@ -47,4 +47,3 @@ server:
     key-store: src/main/resources/ssl/keystore.p12
     key-store-password: ${KEY_STORE_PASSWORD}
     key-store-type: PKCS12
-  port: 443
