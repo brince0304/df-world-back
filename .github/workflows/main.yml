@@ -11,8 +11,8 @@ env:
   REDIS_HOST: ${{ secrets.REDIS_HOST }}
   REDIS_PORT: ${{ secrets.REDIS_PORT }}
   API_KEY: ${{ secrets.API_KEY }}
-  SPRING_PROFILES_ACTIVE: prod
-  RDS_DRIVER: com.mysql.cj.jdbc.Driver
+  SPRING_PROFILES_ACTIVE: ${{ secrets.SPRING_PROFILES_ACTIVE }}
+  RDS_DRIVER: ${{ secrets.RDS_DRIVER }}
   RDS_URL: ${{ secrets.RDS_URL }}
   RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
   RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
