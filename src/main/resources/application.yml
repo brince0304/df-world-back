@@ -4,7 +4,7 @@ spring:
 
 debug: false
 jwt:
-  secret: secretsecretsecretsecretsecretsecretsecretsecretsecret
+  secret: ${JWT_SECRET}
 df:
   api:
     key: ${API_KEY}
