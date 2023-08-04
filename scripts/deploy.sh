@@ -16,18 +16,6 @@ else
   sleep 5
 fi
 
-echo "> 환경변수 설정"
-
-export REDIS_HOST="localhost"
-export REDIS_PORT="6379"
-export API_KEY="qQpswERaNSg1ifEA7rbze6oNJrej4JJW"
-export SPRING_PROFILES_ACTIVE="prod"
-export RDS_DRIVER="com.mysql.cj.jdbc.Driver"
-export RDS_URL="jdbc:mysql://172.31.0.142:3306/dfdb"
-export RDS_USERNAME="appuser"
-export RDS_PASSWORD="tjrgus97"
-export SECRET_KEY="SECRETSECRETSECRETSECRETSECRETSECRETSECRETSECRETSECRETSECRETSECRET"
-
 echo "> 새 애플리케이션 배포"
 
 JAR_NAME=$(ls -tr $REPOSITORY/*SNAPSHOT.jar | tail -n 1)
