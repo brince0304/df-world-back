@@ -13,9 +13,9 @@ env:
   API_KEY: qQpswERaNSg1ifEA7rbze6oNJrej4JJW
   SPRING_PROFILES_ACTIVE: prod
   RDS_DRIVER: com.mysql.cj.jdbc.Driver
-  RDS_URL: jdbc:mysql://172.31.0.142:3306/dfdb
-  RDS_USERNAME: appuser
-  RDS_PASSWORD: tjrgus97
+  RDS_URL: ${{ secrets.RDS_URL }}
+  RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
+  RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
 
 jobs:
   build:
