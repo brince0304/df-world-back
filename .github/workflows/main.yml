@@ -76,5 +76,5 @@ jobs:
         --application-name df-community 
         --deployment-group-name df-community-group 
         --file-exists-behavior OVERWRITE 
-        --s3-location bucket=df-commnuity-deploy,bundleType=zip,key=df-community 
+        --s3-location bucket=df-commnuity-deploy,bundleType=zip,key=df-community.zip
         --region ap-northeast-2
