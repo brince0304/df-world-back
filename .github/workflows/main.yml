@@ -7,14 +7,15 @@ on:
     branches: [ main ]
 
 env:
+  JWT_SECRET: ${{ secrets.JWT_SECRET }}
   S3_BUCKET_NAME: df-commnuity-deploy
+
   REDIS_HOST: ${{ secrets.REDIS_HOST }}
   API_KEY: ${{ secrets.API_KEY }}
   RDS_DRIVER: ${{ secrets.RDS_DRIVER }}
   RDS_URL: ${{ secrets.RDS_URL }}
   RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
   RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
-  JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
 jobs:
   build:
