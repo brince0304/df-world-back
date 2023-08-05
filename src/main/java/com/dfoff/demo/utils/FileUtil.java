@@ -56,6 +56,6 @@ public class FileUtil {
                 .filePath(uploadPath+fileName)
                 .fileType(fileType)
                 .fileSize(fileSize)
-                .build();// TODO: 경로가 자꾸 null 로 입력되기 때문에 해결 방안을 찾아야함.
+                .build();
     }
 }
