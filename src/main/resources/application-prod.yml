@@ -40,7 +40,7 @@ server:
   port: 443
   ssl:
     enabled: true
-    key-store: classpath:ss/keystore.p12
+    key-store: classpath:ssl/keystore.p12
     key-store-password: ${KEY_STORE_PASSWORD}
     key-store-type: PKCS12
 
