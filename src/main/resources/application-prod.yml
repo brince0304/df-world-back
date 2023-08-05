@@ -19,7 +19,7 @@ spring:
   cache:
     type: redis
   jpa:
-    hibernate.ddl-auto: create
+    hibernate.ddl-auto: update
     generate-ddl: on
     defer-datasource-initialization: true
     open-in-view: true
