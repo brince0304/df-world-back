@@ -47,7 +47,6 @@ public class SecurityConfig {
 
     }
 
-
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(securityService).passwordEncoder(bcrypt.getInstance());
@@ -59,21 +58,7 @@ public class SecurityConfig {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("https://modu-df.com", "http://localhost:3000")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
-                        .allowedHeaders("*")
-                        .allowCredentials(true)
-                        .allowedMethods("*")
-                        .exposedHeaders("*");
-            }
-        };
-    }
+
 
 
 }
