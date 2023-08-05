@@ -64,13 +64,11 @@ public class SecurityConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins("https://modu-df.com", "http://localhost:3000")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD")
-                        .allowedHeaders("*")
-                        .allowCredentials(true)
-                        .allowedMethods("*")
-                        .exposedHeaders("*");
+                registry
+                .addMapping("/**")
+                .allowedOrigins("http://localhost:3000","https://modu-df.com","https://www.modu-df.com")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS")
+                .allowCredentials(true);
             }
         };
     }
