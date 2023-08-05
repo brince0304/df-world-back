@@ -13,7 +13,7 @@ import java.util.UUID;
 @Component
 public class FileUtil {
     private static String uploadPath;
-    public static String getFilePath = "/files/?name=";
+    public static String getFilePath = "https://api.df-world.kr:8080/files/?name=";
     @Value("${spring.servlet.multipart.location}")
     public void setUploadPath(String value) {
         FileUtil.uploadPath = value;
