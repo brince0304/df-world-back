@@ -15,7 +15,7 @@ For further reference, please consider the following sections:
 * [Spring Web](https://docs.spring.io/spring-boot/docs/3.0.1/reference/htmlsingle/#web)
 * [Thymeleaf](https://docs.spring.io/spring-boot/docs/3.0.1/reference/htmlsingle/#web.servlet.spring-mvc.template-engines)
 * [Spring Security](https://docs.spring.io/spring-boot/docs/3.0.1/reference/htmlsingle/#web.security)
-* [Spring Data JPA](https://docs.spring.io/spring-boot/docs/3.0.1/reference/htmlsingle/#data.sql.jpa-and-spring-data)
+* [Spring Data JPA](https://docs.spring.io/spring-boot/docs/3.0.1/reference/htmlsingle/#data-dev.sql.jpa-and-spring-data)
 * [Spring Data Redis (Access+Driver)](https://docs.spring.io/spring-boot/docs/3.0.1/reference/htmlsingle/#data.nosql.redis)
 * [Spring Boot Actuator](https://docs.spring.io/spring-boot/docs/3.0.1/reference/htmlsingle/#actuator)
 
