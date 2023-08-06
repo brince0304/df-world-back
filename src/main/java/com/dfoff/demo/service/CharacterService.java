@@ -35,13 +35,18 @@ public class CharacterService {
 
     @Async
     public CompletableFuture<List<CharacterEntity.CharacterEntityDto>> getCharacterDtos(String serverId, String characterName) throws InterruptedException {
-        if (characterName == null || characterName.equals("")) {
+        try {
+            if (characterName == null || characterName.equals("")) {
+                return CompletableFuture.completedFuture(List.of());
+            }
+            List<CharacterDto> characterDtoList = neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterSearchUri(serverId, characterName), CharacterDto.CharacterJSONDto.class).toDto();
+            List<CharacterEntity> characterEntityList = characterDtoList.stream().map(CharacterEntity.CharacterEntityDto::toEntity).filter(o -> o.getLevel() >= 75).collect(Collectors.toList());
+            characterEntityRepository.saveAll(characterEntityList);
+            return CompletableFuture.completedFuture(characterEntityList.stream().map(CharacterEntity.CharacterEntityDto::from).collect(Collectors.toList()));
+        } catch (Exception e) {
+            log.error("getCharacterDtos error", e);
             return CompletableFuture.completedFuture(List.of());
         }
-        List<CharacterDto> characterDtoList = neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterSearchUri(serverId, characterName), CharacterDto.CharacterJSONDto.class).toDto();
-        List<CharacterEntity> characterEntityList = characterDtoList.stream().map(CharacterEntity.CharacterEntityDto::toEntity).filter(o -> o.getLevel() >= 75).collect(Collectors.toList());
-        characterEntityRepository.saveAll(characterEntityList);
-        return CompletableFuture.completedFuture(characterEntityList.stream().map(CharacterEntity.CharacterEntityDto::from).collect(Collectors.toList()));
     }
 
     public void saveSkillDetails(CharacterSkillStyleJsonDto style, CharacterSkillDetailJsonDto detail) {
