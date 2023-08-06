@@ -3,7 +3,7 @@ package com.dfoff.demo.domain;
 import com.dfoff.demo.domain.jsondtos.CharacterAbilityDto;
 import com.dfoff.demo.domain.jsondtos.CharacterDto;
 import com.dfoff.demo.utils.CharactersUtil;
-import com.dfoff.demo.utils.RestTemplateUtil;
+import com.dfoff.demo.utils.NeopleApiUtil;
 import lombok.*;
 
 import jakarta.persistence.*;
@@ -231,7 +231,7 @@ public class CharacterEntity extends AuditingFields {
                     .guildName(entity.getGuildName())
                     .buffPower(entity.getBuffPower())
                     .damageIncrease(entity.getDamageIncrease())
-                    .characterImgPath(RestTemplateUtil.getCharacterImgUri(entity.getServerId(), entity.getCharacterId(),"3"))
+                    .characterImgPath(NeopleApiUtil.getCharacterImgUri(entity.getServerId(), entity.getCharacterId(),"3"))
                     .serverName(getServerName(entity.getServerId()))
                     .build();
         }
@@ -297,7 +297,7 @@ public class CharacterEntity extends AuditingFields {
                     .createdAt(dto.getCreatedAt() != null ? timesAgo(dto.getCreatedAt()) : "방금 전")
                     .buffPower(dto.getBuffPower())
                     .damageIncrease(dto.getDamageIncrease())
-                    .characterImgPath(RestTemplateUtil.getCharacterImgUri(dto.getServerId(), dto.getCharacterId(),"3"))
+                    .characterImgPath(NeopleApiUtil.getCharacterImgUri(dto.getServerId(), dto.getCharacterId(),"3"))
                     .build();
         }
 
@@ -317,7 +317,7 @@ public class CharacterEntity extends AuditingFields {
                     .guildId(dto.getGuildId())
                     .guildName(dto.getGuildName())
                     .modifiedAt(dto.getModifiedAt() != null ? timesAgo(dto.getModifiedAt()) : "방금 전")
-                    .characterImgPath(RestTemplateUtil.getCharacterImgUri(dto.getServerId(), dto.getCharacterId(),"3"))
+                    .characterImgPath(NeopleApiUtil.getCharacterImgUri(dto.getServerId(), dto.getCharacterId(),"3"))
                     .build();
         }
 
@@ -411,7 +411,7 @@ public class CharacterEntity extends AuditingFields {
                     .imgStyleClassName(CharactersUtil.getStyleClassName(entity.getJobName()))
                     .damageIncrease(entity.getDamageIncrease())
                     .buffPower(entity.getBuffPower())
-                    .characterImgUrl(RestTemplateUtil.getCharacterImgUri(entity.getServerId(), entity.getCharacterId(), "1"))
+                    .characterImgUrl(NeopleApiUtil.getCharacterImgUri(entity.getServerId(), entity.getCharacterId(), "1"))
                     .build();
         }
     }
@@ -460,7 +460,7 @@ public class CharacterEntity extends AuditingFields {
                     .buffPower(entity.getBuffPower())
                     .imgStyleClassName(CharactersUtil.getStyleClassName(entity.getJobName()))
                     .damageIncrease(entity.getDamageIncrease())
-                    .characterImgUrl(RestTemplateUtil.getCharacterImgUri(entity.getServerId(), entity.getCharacterId(), "1")).build();
+                    .characterImgUrl(NeopleApiUtil.getCharacterImgUri(entity.getServerId(), entity.getCharacterId(), "1")).build();
 
         }
     }

@@ -16,6 +16,8 @@ import java.util.StringTokenizer;
 @Slf4j
 public class CharactersUtil {
 
+
+
     //버퍼들의 장비 옵션을 가져와서 버프강화 수치를 나타내주는 메소드
     //신화장비 장착시에는 +2, 최신 에픽 장착시에는 +3가 됨 (30레벨 기준)
     public static List<String> getBuffPercent(CharacterBuffEquipmentJsonDto dto, List<EquipmentDetailJsonDto> equipment) throws InterruptedException {
@@ -65,7 +67,7 @@ public class CharactersUtil {
             } else if(dto.getSkill().getBuff()!=null && levelPlus>0){
                 list.add(dto.getSkill().getBuff().getSkillInfo().getName());
                 //버퍼일때는 스킬강화 수치가 버프강화 옵션에 나오지 않기때문에 새로 스킬 정보를 파싱해와서 해당 레벨에 맞는 수치를 찾아서 계산해주어야함
-                CharacterSkillDetailJsonDto skill = RestTemplateUtil.parseJsonFromUri(RestTemplateUtil.getCharacterSkillDetailUri(dto.getJobId(),dto.getSkill().getBuff().getSkillInfo().getSkillId()), CharacterSkillDetailJsonDto.class);
+                CharacterSkillDetailJsonDto skill = NeopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterSkillDetailUri(dto.getJobId(),dto.getSkill().getBuff().getSkillInfo().getSkillId()), CharacterSkillDetailJsonDto.class);
                 String desc = skill.getLevelInfo().getOptionDesc();
                 Integer level = dto.getSkill().getBuff().getSkillInfo().getOption().getLevel()+levelPlus;
                 list.add(level + "");

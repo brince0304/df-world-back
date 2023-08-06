@@ -8,7 +8,8 @@ import com.dfoff.demo.domain.SaveFile;
 import com.dfoff.demo.domain.UserAccount;
 import com.dfoff.demo.jwt.TokenDto;
 import com.dfoff.demo.jwt.TokenProvider;
-import com.dfoff.demo.securityconfig.SecurityService;
+import com.dfoff.demo.oauth.KakaoLoginParams;
+import com.dfoff.demo.oauth.OAuthDto;
 import com.dfoff.demo.service.*;
 import com.dfoff.demo.utils.Bcrypt;
 import com.dfoff.demo.utils.CookieUtil;
@@ -24,7 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -41,20 +41,11 @@ import java.util.stream.Collectors;
 public class UserAccountController {
     private final UserAccountService userAccountService;
     private final SaveFileService saveFileService;
-
+    private final OAuthLoginService oAuthLoginService;
     private final CharacterService characterService;
-
     private final NotificationService notificationService;
     private final RedisService redisService;
-
     private final Bcrypt bcrypt;
-
-    private final TokenProvider tokenProvider;
-
-
-    private final SecurityService securityService;
-
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
 
     @GetMapping("/users/check")
@@ -222,10 +213,6 @@ public class UserAccountController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-
-
-
-
     @Auth
     @PutMapping("/users")
     public ResponseEntity<?> updateNickname(@AuthenticationPrincipal UserAccount.PrincipalDto principal,
@@ -254,7 +241,6 @@ public class UserAccountController {
                                             HttpServletResponse res) throws Exception {
      try{
          TokenDto token =userAccountService.getToken(request.getUsername(), request.getPassword());
-
          redisService.set(TokenProvider.REFRESH_TOKEN_NAME+request.getUsername(),token.getRefreshToken(),TokenProvider.REFRESH_TOKEN_VALIDATION_SECOND);
             res.addCookie(CookieUtil.createAccessTokenCookie(token.getAccessToken(), TokenProvider.TOKEN_VALIDATION_SECOND));
             res.addCookie(CookieUtil.createRefreshTokenCookie(token.getRefreshToken(), TokenProvider.REFRESH_TOKEN_VALIDATION_SECOND));
@@ -263,6 +249,19 @@ public class UserAccountController {
             return new ResponseEntity<>("아이디 또는 비밀번호가 틀렸습니다.", HttpStatus.BAD_REQUEST);
      }
     }
+
+    @PostMapping("/users/kakao")
+    public ResponseEntity<?> loginKakao(@RequestBody KakaoLoginParams params, HttpServletResponse res) throws Exception {
+            OAuthDto oauthDto = oAuthLoginService.login(params,saveFileService.getFileByFileName("icon_char_0.png"));
+            UserAccount.UserAccountDto dto = oauthDto.getUserAccountDto();
+            TokenDto token = oauthDto.getTokenDto();
+            oAuthLoginService.authenticateUser(dto);
+            redisService.set(TokenProvider.REFRESH_TOKEN_NAME+dto.userId(),token.getRefreshToken(),TokenProvider.REFRESH_TOKEN_VALIDATION_SECOND);
+            res.addCookie(CookieUtil.createAccessTokenCookie(token.getAccessToken(), TokenProvider.TOKEN_VALIDATION_SECOND));
+            res.addCookie(CookieUtil.createRefreshTokenCookie(token.getRefreshToken(), TokenProvider.REFRESH_TOKEN_VALIDATION_SECOND));
+        return new ResponseEntity<>(userAccountService.getLoginResponse(dto.userId()),HttpStatus.OK);
+    }
+
 
     @GetMapping("/users/logout")
     @Auth

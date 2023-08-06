@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Optional;
+
 
 public interface UserAccountRepository  extends JpaRepository<UserAccount, String> {
 
@@ -18,6 +20,10 @@ public interface UserAccountRepository  extends JpaRepository<UserAccount, Strin
     boolean existsByEmail(String email);
 
     boolean existsByNickname(String nickname);
+
+    Optional<UserAccount> findByEmail(String email);
+
+    Optional<UserAccount> findByNickname(String nickname);
 
     @Modifying
     @Query("update Board b set b.deleted=true  where b.userAccount.userId=:id ")

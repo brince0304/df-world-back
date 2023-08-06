@@ -6,8 +6,9 @@ import com.dfoff.demo.jwt.TokenProvider;
 import com.dfoff.demo.repository.UserAccountCharacterMapperRepository;
 import com.dfoff.demo.repository.UserAccountRepository;
 import com.dfoff.demo.repository.AdventureRepository;
+import com.dfoff.demo.utils.Bcrypt;
 import com.dfoff.demo.utils.CharactersUtil;
-import com.dfoff.demo.utils.RestTemplateUtil;
+import com.dfoff.demo.utils.NeopleApiUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -41,8 +42,8 @@ public class UserAccountService {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-
     private final TokenProvider tokenProvider;
+
 
 
     public void createAccount(UserAccount.UserAccountSignUpRequest account, SaveFile.SaveFileDto profileIcon) {
@@ -330,7 +331,7 @@ public class UserAccountService {
         if (!dto.getAdventureName().equals(account_.getAdventure().getAdventureName())) {
             throw new IllegalArgumentException("회원님의 모험단에 등록된 캐릭터가 아닙니다.");
         }
-        account_.setProfileCharacterIcon(RestTemplateUtil.getCharacterImgUri(dto.getServerId(), dto.getCharacterId(), "1"));
+        account_.setProfileCharacterIcon(NeopleApiUtil.getCharacterImgUri(dto.getServerId(), dto.getCharacterId(), "1"));
         account_.setProfileCharacterIconClassName(CharactersUtil.getStyleClassName(dto.getJobName()));
     }
 

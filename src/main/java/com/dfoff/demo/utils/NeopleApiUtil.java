@@ -2,7 +2,6 @@ package com.dfoff.demo.utils;
 
 
 import com.google.gson.Gson;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +16,8 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
-public class RestTemplateUtil {
+public class NeopleApiUtil {
+    private static RestTemplate restTemplate;
 
     private static String API_KEY;
     @Value("${df.api.key}")
@@ -137,7 +137,6 @@ public class RestTemplateUtil {
         log.info("url : {}", url);
         String newUrl = url.replace("{API_KEY}", API_KEY);
         HashMap<String, String> result = new HashMap<>();
-        RestTemplate restTemplate = new RestTemplate();
         HttpHeaders header = new HttpHeaders();
         HttpEntity<?> entity = new HttpEntity<>(header);
         UriComponents uri = UriComponentsBuilder.fromHttpUrl(newUrl).build();

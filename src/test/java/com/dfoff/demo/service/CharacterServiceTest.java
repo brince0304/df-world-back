@@ -2,7 +2,7 @@ package com.dfoff.demo.service;
 
 import com.dfoff.demo.domain.CharacterEntity;
 import com.dfoff.demo.repository.CharacterEntityRepository;
-import com.dfoff.demo.utils.RestTemplateUtil;
+import com.dfoff.demo.utils.NeopleApiUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +31,7 @@ class CharacterServiceTest {
 
 
     @Mock
-    RestTemplateUtil restTemplateUtil;
+    NeopleApiUtil neopleApiUtil;
 
     @BeforeEach
     void setUp() {

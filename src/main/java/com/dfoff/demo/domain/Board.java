@@ -3,7 +3,7 @@ package com.dfoff.demo.domain;
 import com.dfoff.demo.domain.enums.BoardType;
 import com.dfoff.demo.utils.CharactersUtil;
 import com.dfoff.demo.utils.FileUtil;
-import com.dfoff.demo.utils.RestTemplateUtil;
+import com.dfoff.demo.utils.NeopleApiUtil;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -184,7 +184,7 @@ public class Board extends AuditingFields {
                     .jobName(characterEntity.getJobName())
                     .adventureName(characterEntity.getAdventureName() == null ? "갱신필요" : characterEntity.getAdventureName())
                     .adventureFame(characterEntity.getAdventureFame() == null ? 0 : characterEntity.getAdventureFame())
-                    .characterImageUrl(RestTemplateUtil.getCharacterImgUri(characterEntity.getServerId(), characterEntity.getCharacterId(), "1"))
+                    .characterImageUrl(NeopleApiUtil.getCharacterImgUri(characterEntity.getServerId(), characterEntity.getCharacterId(), "1"))
                     .imgStyleClassName(CharactersUtil.getStyleClassName(characterEntity.getJobName()))
                     .build();
         }

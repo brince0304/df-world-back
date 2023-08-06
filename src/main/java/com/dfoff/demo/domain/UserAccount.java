@@ -1,9 +1,12 @@
 package com.dfoff.demo.domain;
 
 import com.dfoff.demo.domain.enums.useraccount.SecurityRole;
+import com.dfoff.demo.enums.OAuthProvider;
+import com.dfoff.demo.oauth.OAuthInfoResponse;
 import com.dfoff.demo.utils.CharactersUtil;
 import com.dfoff.demo.utils.FileUtil;
-import com.dfoff.demo.utils.RestTemplateUtil;
+import com.dfoff.demo.utils.NeopleApiUtil;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
@@ -11,10 +14,12 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 
 import java.io.Serializable;
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,7 +37,6 @@ import java.util.stream.Collectors;
 @SQLDelete(sql = "UPDATE user_account SET deleted = true, deleted_at = now() WHERE user_id = ?")
 public class UserAccount extends AuditingFields {
     @Id
-    @Column(length = 20)
     private String userId;
     @Setter
     private String password;
@@ -42,6 +46,12 @@ public class UserAccount extends AuditingFields {
     @Setter
     @Column(length = 100, unique = true)
     private String email;
+
+    @Setter
+    @Enumerated(EnumType.STRING)
+    @Nullable
+    private OAuthProvider oAuthProvider;
+
     @Setter
     @JoinColumn(name="profile_icon", foreignKey = @ForeignKey(ConstraintMode.CONSTRAINT))
     @OneToOne(fetch = FetchType.EAGER)
@@ -121,10 +131,24 @@ public class UserAccount extends AuditingFields {
         private final String password;
         private final String nickname;
         private final String email;
-
+        private final OAuthProvider oAuthProvider;
         private final SaveFile.SaveFileDto profileIcon;
-
         private final List<GrantedAuthority> authorities;
+
+        public static PrincipalDto from (UserAccountDto userAccountDto) {
+            return PrincipalDto.builder()
+                    .username(userAccountDto.userId)
+                    .password(userAccountDto.password)
+                    .nickname(userAccountDto.nickname)
+                    .email(userAccountDto.email)
+                    .oAuthProvider(userAccountDto.oAuthProvider)
+                    .profileIcon(userAccountDto.profileIcon)
+                    .authorities(userAccountDto.roles.stream()
+                            .map(SecurityRole::name)
+                            .map(SimpleGrantedAuthority::new)
+                            .collect(Collectors.toList()))
+                    .build();
+        }
 
 
         @Override
@@ -172,7 +196,7 @@ public class UserAccount extends AuditingFields {
     public record UserAccountDto(String userId, String password, String nickname, String email,
                                  SaveFile.SaveFileDto profileIcon,
                                   Set<SecurityRole> roles, LocalDateTime createdAt,
-                                 String createdBy, LocalDateTime modifiedAt, String modifiedBy) {
+                                 String createdBy, LocalDateTime modifiedAt, String modifiedBy,OAuthProvider oAuthProvider) {
         public static UserAccountDto from(UserAccount userAccount) {
             return UserAccountDto.builder()
                     .userId(userAccount.getUserId())
@@ -185,6 +209,17 @@ public class UserAccount extends AuditingFields {
                     .createdBy(userAccount.getCreatedBy())
                     .modifiedAt(userAccount.getModifiedAt())
                     .modifiedBy(userAccount.getModifiedBy())
+                    .oAuthProvider(userAccount.getOAuthProvider())
+                    .build();
+        }
+
+        public static UserAccountDto from(OAuthInfoResponse infoResponse){
+            return UserAccountDto.builder()
+                    .userId(UUID.randomUUID().toString())
+                    .nickname(infoResponse.getNickname())
+                    .email(infoResponse.getEmail() != null ? infoResponse.getEmail() : infoResponse.getNickname())
+                    .oAuthProvider(infoResponse.getOAuthProvider())
+                    .password(UUID.randomUUID().toString())
                     .build();
         }
 
@@ -195,6 +230,7 @@ public class UserAccount extends AuditingFields {
                     .nickname(principalDto.getNickname())
                     .email(principalDto.getEmail())
                     .profileIcon(principalDto.getProfileIcon())
+                    .oAuthProvider(principalDto.getOAuthProvider())
                     .build();
         }
 
@@ -205,6 +241,7 @@ public class UserAccount extends AuditingFields {
                     .nickname(this.nickname())
                     .email(this.email())
                     .profileIcon(this.profileIcon() == null ? null : this.profileIcon().toEntity())
+                    .oAuthProvider(this.oAuthProvider())
                     .build();
         }
 
@@ -275,6 +312,8 @@ public class UserAccount extends AuditingFields {
         @Email
         private  String email;
 
+        private OAuthProvider oAuthProvider;
+
         @Builder.Default
         private  Set<SecurityRole> roles = Set.of(SecurityRole.ROLE_USER);
 
@@ -286,6 +325,7 @@ public class UserAccount extends AuditingFields {
                     .nickname(nickname)
                     .email(email)
                     .roles(roles)
+                    .oAuthProvider(oAuthProvider)
                     .build();
         }
 
@@ -296,6 +336,7 @@ public class UserAccount extends AuditingFields {
                     .password(password)
                     .nickname(nickname)
                     .email(email)
+                    .oAuthProvider(oAuthProvider)
                     .build();
         }
     }
@@ -323,11 +364,8 @@ public class UserAccount extends AuditingFields {
         private final Integer adventureFame;
         private final String adventureName;
         private final String characterImgPath;
-
         private final Integer buffPower;
-
         private final Integer damageIncrease;
-
         private final String serverName;
 
         public static String getServerName(String serverId) {
@@ -361,7 +399,7 @@ public class UserAccount extends AuditingFields {
                     .jobGrowName(characterEntity.getJobGrowName())
                     .adventureFame(characterEntity.getAdventureFame())
                     .adventureName(characterEntity.getAdventureName())
-                    .characterImgPath(RestTemplateUtil.getCharacterImgUri(characterEntity.getServerId(),characterEntity.getCharacterId(),"2"))
+                    .characterImgPath(NeopleApiUtil.getCharacterImgUri(characterEntity.getServerId(),characterEntity.getCharacterId(),"2"))
                     .buffPower(characterEntity.getBuffPower())
                     .damageIncrease(characterEntity.getDamageIncrease())
                     .serverName(getServerName(characterEntity.getServerId()))
@@ -386,17 +424,12 @@ public class UserAccount extends AuditingFields {
         private final String createdBy;
         private final LocalDateTime modifiedAt;
         private final String modifiedBy;
-
         private final Set<CharacterUserAccountResponse> adventureCharacters;
-
         private final String representCharacterName;
-
         private final String profileCharacterIcon;
-
         private final String profileCharacterIconClassName;
-
         private final String adventureName;
-
+        private final OAuthProvider oAuthProvider;
 
 
         public static UserAccountMyPageResponse from(UserAccount userAccount) {
@@ -415,6 +448,7 @@ public class UserAccount extends AuditingFields {
                     .profileCharacterIcon(userAccount.getProfileCharacterIcon() == null ? "" : userAccount.getProfileCharacterIcon())
                     .profileCharacterIconClassName(userAccount.getProfileCharacterIconClassName() == null ? "" : userAccount.getProfileCharacterIconClassName())
                     .adventureName(userAccount.getAdventure() == null ? "" : userAccount.getAdventure().getAdventureName())
+                    .oAuthProvider(userAccount.getOAuthProvider())
                     .build();
         }
 
@@ -431,9 +465,7 @@ public class UserAccount extends AuditingFields {
         private String serverName;
         private String adventureFame;
         private String adventureDamageIncreaseAndBuffPower;
-
         private String modifiedAt;
-
         private Set<CharacterEntity.CharacterEntityMainPageResponse> characters;
 
         public static UserAdventureResponse from(UserAccount userAccount){
@@ -467,6 +499,7 @@ public class UserAccount extends AuditingFields {
         private String profileImgPath;
         private String adventureName;
         private Long notificationCount;
+        private OAuthProvider oAuthProvider;
 
         public static UserLoginResponse from(UserAccount userAccount){
             return UserLoginResponse.builder()
@@ -475,9 +508,8 @@ public class UserAccount extends AuditingFields {
                     .profileImgPath(userAccount.getProfileIcon() == null ? null : FileUtil.getProfileIconPath(userAccount.getProfileIcon().getFileName()))
                     .notificationCount(userAccount.notifications.stream().filter(notification -> !notification.getChecked()).count())
                     .adventureName(userAccount.getAdventure() == null ? "" : userAccount.getAdventure().getAdventureName())
+                    .oAuthProvider(userAccount.getOAuthProvider())
                     .build();
         }
-
-
     }
 }
