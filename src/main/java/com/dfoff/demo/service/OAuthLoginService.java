@@ -43,7 +43,6 @@ public class OAuthLoginService {
         try {
             Authentication authentication = authenticationManagerBuilder.getObject().authenticate(new UsernamePasswordAuthenticationToken(userAccountDto.userId(), userAccountDto.email()));
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            log.info("complete authenticateUser");
         } catch (Exception e) {
             log.error("authenticateUser error", e);
         }
@@ -58,7 +57,6 @@ public class OAuthLoginService {
                 });
         userAccount.setProfileIcon(profileIcon.toEntity());
         userAccount.setPassword(bcrypt.encode(oAuthInfoResponse.getEmail()));
-        log.info("complete findOrCreateMember");
         return UserAccount.UserAccountDto.from(userAccount);
     }
 

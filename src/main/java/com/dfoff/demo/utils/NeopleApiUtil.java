@@ -2,6 +2,7 @@ package com.dfoff.demo.utils;
 
 
 import com.google.gson.Gson;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,8 +17,9 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class NeopleApiUtil {
-    private static RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     private static String API_KEY;
     @Value("${df.api.key}")
@@ -132,7 +134,7 @@ public class NeopleApiUtil {
                 .replace("<zoom>", zoom);
     }
 
-    public static <T> T parseJsonFromUri(String url, Class<T> clazz) throws InterruptedException {
+    public <T> T parseJsonFromUri(String url, Class<T> clazz) throws InterruptedException {
         log.info("api_key : {}", API_KEY);
         log.info("url : {}", url);
         String newUrl = url.replace("{API_KEY}", API_KEY);

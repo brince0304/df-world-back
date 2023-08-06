@@ -30,6 +30,7 @@ import java.util.Map;
 public class CharacterController {
     private final CharacterService characterService;
     private final AdventureService adventureService;
+    private final CharactersUtil charactersUtil;
 
     @GetMapping("/characters/autoComplete")
     public ResponseEntity<?> autoCompleteSearch(@RequestParam String name, @RequestParam String serverId) {
@@ -99,7 +100,7 @@ public class CharacterController {
         model.put("characterEquipment",characterEquipmentJsonDto );
         model.put("characterAbility", CharacterEntity.CharacterEntityResponse.from(characterService.getCharacterAbilityAsync(serverId, characterId).join(),serverId));
         model.put("characterEquipmentDetails",equipmentDetailJsonDtos);
-        model.put("buffStatus", CharactersUtil.getBuffPercent(characterBuffEquipment,equipmentDetailJsonDtos));
+        model.put("buffStatus", charactersUtil.getBuffPercent(characterBuffEquipment,equipmentDetailJsonDtos));
         model.put("boardCount",characterService.getBoardCountByCharacterId( characterId));
         model.put("lastUpdated",characterService.getLastUpdatedByCharacterId(characterId));
         model.put("characterRank", characterRank);

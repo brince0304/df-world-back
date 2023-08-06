@@ -96,6 +96,11 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 accessTokenCookie = CookieUtil.createAccessTokenCookie("",0);
                 response.addCookie(accessTokenCookie);
             }
+        }catch (UsernameNotFoundException e){
+            log.warn(e.getMessage());
+            log.warn("username not found");
+            accessTokenCookie = CookieUtil.createAccessTokenCookie("",0);
+            response.addCookie(accessTokenCookie);
         }
         filterChain.doFilter(request, response);
     }

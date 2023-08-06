@@ -15,4 +15,11 @@ oauth:
     url:
       auth: https://kauth.kakao.com
       api: https://kapi.kakao.com
+  google:
+    client-id: 1087942298436-psejomddf9lap0hjuvqfqkei0h14ubjk.apps.googleusercontent.com
+    url:
+      client-secret: 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
+      redirect-uri: http://localhost:3000/users/google
+      token-uri: 엑세스토큰URI
+      resource-uri: 리소스URI
 

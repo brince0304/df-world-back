@@ -31,13 +31,14 @@ public class CharacterService {
     private final CharacterSkillDetailRepository characterSkillDetailRepository;
     private final CharacterEntityRepository characterEntityRepository;
     private final Gson gson = NeopleApiUtil.getGson();
+    private final NeopleApiUtil neopleApiUtil;
 
     @Async
     public CompletableFuture<List<CharacterEntity.CharacterEntityDto>> getCharacterDtos(String serverId, String characterName) throws InterruptedException {
         if (characterName == null || characterName.equals("")) {
             return CompletableFuture.completedFuture(List.of());
         }
-        List<CharacterDto> characterDtoList = parseJsonFromUri(NeopleApiUtil.getCharacterSearchUri(serverId, characterName), CharacterDto.CharacterJSONDto.class).toDto();
+        List<CharacterDto> characterDtoList = neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterSearchUri(serverId, characterName), CharacterDto.CharacterJSONDto.class).toDto();
         List<CharacterEntity> characterEntityList = characterDtoList.stream().map(CharacterEntity.CharacterEntityDto::toEntity).filter(o -> o.getLevel() >= 75).collect(Collectors.toList());
         characterEntityRepository.saveAll(characterEntityList);
         return CompletableFuture.completedFuture(characterEntityList.stream().map(CharacterEntity.CharacterEntityDto::from).collect(Collectors.toList()));
@@ -73,7 +74,7 @@ public class CharacterService {
         }
         CharacterEntity characterEntity = characterEntityRepository.findById(characterId).orElseGet(() -> {
             try {
-                return characterEntityRepository.save(CharacterAbilityDto.toEntity(parseJsonFromUri(NeopleApiUtil.getCharacterAbilityUri(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto(), serverId));
+                return characterEntityRepository.save(CharacterAbilityDto.toEntity(neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterAbilityUri(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto(), serverId));
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -86,12 +87,12 @@ public class CharacterService {
         if (characterId == null || characterId.equals("")) {
             return CompletableFuture.completedFuture(null);
         }
-        return CompletableFuture.completedFuture(parseJsonFromUri(NeopleApiUtil.getCharacterEquipmentUri(serverId, characterId), CharacterEquipmentJsonDto.class));
+        return CompletableFuture.completedFuture(neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterEquipmentUri(serverId, characterId), CharacterEquipmentJsonDto.class));
     }
 
     @Async
     public CompletableFuture<EquipmentDetailJsonDto> getEquipmentDetail(CharacterEquipmentJsonDto.Equipment eq) throws InterruptedException {
-        return CompletableFuture.completedFuture(parseJsonFromUri(NeopleApiUtil.getEquipmentDetailUri(eq.getItemId()), EquipmentDetailJsonDto.class));
+        return CompletableFuture.completedFuture(neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getEquipmentDetailUri(eq.getItemId()), EquipmentDetailJsonDto.class));
     }
 
     @Async
@@ -99,7 +100,7 @@ public class CharacterService {
         if (characterId == null || characterId.equals("")) {
             return CompletableFuture.completedFuture(null);
         }
-        return CompletableFuture.completedFuture(parseJsonFromUri(NeopleApiUtil.getCharacterBuffEquipmentUri(serverId, characterId), CharacterBuffEquipmentJsonDto.class));
+        return CompletableFuture.completedFuture(neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterBuffEquipmentUri(serverId, characterId), CharacterBuffEquipmentJsonDto.class));
     }
 
     public Page<CharacterEntity.CharacterEntityResponse> getCharacterByAdventureName(String adventureName, Pageable pageable) {
@@ -109,7 +110,7 @@ public class CharacterService {
     @SaveAdventure
     public CharacterEntity.CharacterEntityDto getCharacterAbility(CharacterEntity.CharacterEntityDto dto) throws InterruptedException {
         CharacterEntity entity = characterEntityRepository.save(CharacterEntity.CharacterEntityDto.toEntity(dto));
-        CharacterAbilityDto characterDto = parseJsonFromUri(NeopleApiUtil.getCharacterAbilityUri(dto.getServerId(), dto.getCharacterId()), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
+        CharacterAbilityDto characterDto = neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterAbilityUri(dto.getServerId(), dto.getCharacterId()), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
         characterStatusSetter(entity, characterDto);
         entity.setServerId(dto.getServerId());
         return CharacterEntity.CharacterEntityDto.from(entity);
@@ -119,7 +120,7 @@ public class CharacterService {
     @Async
     @SaveAdventure
     public CompletableFuture<CharacterAbilityDto> getCharacterAbilityAsync(String serverId, String characterId) throws InterruptedException {
-        CharacterAbilityDto characterDto = parseJsonFromUri(NeopleApiUtil.getCharacterAbilityUri(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
+        CharacterAbilityDto characterDto = neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterAbilityUri(serverId, characterId), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
         CharacterEntity character = characterEntityRepository.save(CharacterAbilityDto.toEntity(characterDto, serverId));
         characterStatusSetter(character, characterDto);
         characterDto.setAdventureName(character.getAdventureName());
@@ -129,14 +130,14 @@ public class CharacterService {
 
     @Async
     public CompletableFuture<List<CharacterTalismanJsonDto.Talisman>> getCharacterTalisman(String serverId, String characterId) throws InterruptedException {
-        CharacterTalismanJsonDto dto = parseJsonFromUri(NeopleApiUtil.getCharacterTalismanUri(serverId, characterId), CharacterTalismanJsonDto.class);
+        CharacterTalismanJsonDto dto = neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterTalismanUri(serverId, characterId), CharacterTalismanJsonDto.class);
         return CompletableFuture.completedFuture(dto.getTalismans());
     }
 
 
     @Async
     public CompletableFuture<CharacterSkillStyleJsonDto.Style> getCharacterSkillStyle(String serverId, String characterId) throws InterruptedException {
-        CharacterSkillStyleJsonDto dto = parseJsonFromUri(NeopleApiUtil.getCharacterSkillUri(serverId, characterId), CharacterSkillStyleJsonDto.class);
+        CharacterSkillStyleJsonDto dto = neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterSkillUri(serverId, characterId), CharacterSkillStyleJsonDto.class);
         return CompletableFuture.completedFuture(dto.getSkill().getStyle());
     }
 
@@ -146,7 +147,7 @@ public class CharacterService {
         dto.getActive().forEach(o -> {
             try {
                 if (o.getRequiredLevel() >= 15) {
-                    list.add(CharactersUtil.getSkillFinalPercent(parseJsonFromUri(getCharacterSkillDetailUri(jobId, o.getSkillId()), CharacterSkillDetailJsonDto.class), o.getLevel()));
+                    list.add(CharactersUtil.getSkillFinalPercent(neopleApiUtil.parseJsonFromUri(getCharacterSkillDetailUri(jobId, o.getSkillId()), CharacterSkillDetailJsonDto.class), o.getLevel()));
                 }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
@@ -184,12 +185,12 @@ public class CharacterService {
 
     @Async
     public CompletableFuture<CharacterBuffAvatarJsonDto> getCharacterBuffAvatar(String serverId, String characterId) throws InterruptedException {
-        return CompletableFuture.completedFuture(parseJsonFromUri(NeopleApiUtil.getCharacterBuffAvatarUri(serverId, characterId), CharacterBuffAvatarJsonDto.class));
+        return CompletableFuture.completedFuture(neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterBuffAvatarUri(serverId, characterId), CharacterBuffAvatarJsonDto.class));
     }
 
     @Async
     public CompletableFuture<CharacterBuffCreatureJsonDto> getCharacterBuffCreature(String serverId, String characterId) throws InterruptedException {
-        return CompletableFuture.completedFuture(parseJsonFromUri(NeopleApiUtil.getCharacterBuffCreatureUri(serverId, characterId), CharacterBuffCreatureJsonDto.class));
+        return CompletableFuture.completedFuture(neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterBuffCreatureUri(serverId, characterId), CharacterBuffCreatureJsonDto.class));
     }
 
     public Page<CharacterEntity.CharacterEntityDto> getCharactersOrderByAdventureFame(Pageable pageable) {
@@ -198,17 +199,17 @@ public class CharacterService {
 
     @Async
     public CompletableFuture<CharacterAvatarJsonDto> getCharacterAvatar(String serverId, String characterId) throws InterruptedException {
-        return CompletableFuture.completedFuture(parseJsonFromUri(NeopleApiUtil.getCharacterAvatarUri(serverId, characterId), CharacterAvatarJsonDto.class));
+        return CompletableFuture.completedFuture(neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterAvatarUri(serverId, characterId), CharacterAvatarJsonDto.class));
     }
 
 
     public void getServerStatus() throws InterruptedException {
-        ServerDto.ServerJSONDto dfServerJSONDto = parseJsonFromUri(NeopleApiUtil.SERVER_LIST_URI, ServerDto.ServerJSONDto.class);
+        ServerDto.ServerJSONDto dfServerJSONDto = neopleApiUtil.parseJsonFromUri(NeopleApiUtil.SERVER_LIST_URI, ServerDto.ServerJSONDto.class);
         dfServerJSONDto.toDTO();
     }
 
     public void getJobList() throws InterruptedException {
-        JobDto.JobJSONDto jobJSONDTO = parseJsonFromUri(NeopleApiUtil.JOB_LIST_URI, JobDto.JobJSONDto.class);
+        JobDto.JobJSONDto jobJSONDTO = neopleApiUtil.parseJsonFromUri(NeopleApiUtil.JOB_LIST_URI, JobDto.JobJSONDto.class);
         jobJSONDTO.toDTO();
     }
 
@@ -230,12 +231,12 @@ public class CharacterService {
         if (request.getAdventureName().equals("")) {
             return false;
         }
-        List<CharacterDto> dto = parseJsonFromUri(NeopleApiUtil.getCharacterSearchUri(request.getServerId(), request.getRandomString()), CharacterDto.CharacterJSONDto.class).toDto();
+        List<CharacterDto> dto = neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterSearchUri(request.getServerId(), request.getRandomString()), CharacterDto.CharacterJSONDto.class).toDto();
         if (dto.size() == 0) {
             return false;
         }
         CharacterDto characterDto = dto.get(0);
-        CharacterAbilityDto dto_ = NeopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterAbilityUri(request.getServerId(), characterDto.getCharacterId()), CharacterAbilityDto.class);
+        CharacterAbilityDto dto_ = neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterAbilityUri(request.getServerId(), characterDto.getCharacterId()), CharacterAbilityDto.class);
         return dto_.getJobName().equals(request.getRandomJobName()) && dto_.getAdventureName().equals(request.getAdventureName());
     }
 
