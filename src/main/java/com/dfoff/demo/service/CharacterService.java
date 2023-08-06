@@ -34,6 +34,7 @@ public class CharacterService {
     private final NeopleApiUtil neopleApiUtil;
 
     @Async
+    @Transactional
     public CompletableFuture<List<CharacterEntity.CharacterEntityDto>> getCharacterDtos(String serverId, String characterName) throws InterruptedException {
         try {
             if (characterName == null || characterName.equals("")) {
@@ -41,7 +42,25 @@ public class CharacterService {
             }
             List<CharacterDto> characterDtoList = neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterSearchUri(serverId, characterName), CharacterDto.CharacterJSONDto.class).toDto();
             List<CharacterEntity> characterEntityList = characterDtoList.stream().map(CharacterEntity.CharacterEntityDto::toEntity).filter(o -> o.getLevel() >= 75).collect(Collectors.toList());
-            characterEntityRepository.saveAll(characterEntityList);
+            List<CharacterEntity> characterEntityList1 = characterEntityList.stream().map((o) -> {
+                if(characterEntityRepository.findById(o.getCharacterId()).isPresent()){
+                    CharacterEntity characterEntity = characterEntityRepository.findById(o.getCharacterId()).get();
+                    characterEntity.setAdventureName(o.getAdventureName());
+                    characterEntity.setJobGrowName(o.getJobGrowName());
+                    characterEntity.setJobName(o.getJobName());
+                    characterEntity.setGuildName(o.getGuildName());
+                    characterEntity.setServerId(o.getServerId());
+                    characterEntity.setAdventureFame(o.getAdventureFame());
+                    characterEntity.setBuffPower(o.getBuffPower());
+                    characterEntity.setGuildId(o.getGuildId());
+                    characterEntity.setJobGrowId(o.getJobGrowId());
+                    characterEntity.setLevel(o.getLevel());
+                    characterEntity.setDamageIncrease(o.getDamageIncrease());
+                }
+                return o;
+            }).toList();
+            List<CharacterEntity> characterEntityList2 = characterEntityList1.stream().filter(Objects::nonNull).toList();
+            characterEntityRepository.saveAll(characterEntityList2);
             return CompletableFuture.completedFuture(characterEntityList.stream().map(CharacterEntity.CharacterEntityDto::from).collect(Collectors.toList()));
         } catch (Exception e) {
             log.error("getCharacterDtos error", e);
@@ -113,6 +132,7 @@ public class CharacterService {
     }
 
     @SaveAdventure
+    @Transactional
     public CharacterEntity.CharacterEntityDto getCharacterAbility(CharacterEntity.CharacterEntityDto dto) throws InterruptedException {
         CharacterEntity entity = characterEntityRepository.save(CharacterEntity.CharacterEntityDto.toEntity(dto));
         CharacterAbilityDto characterDto = neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterAbilityUri(dto.getServerId(), dto.getCharacterId()), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();

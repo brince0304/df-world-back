@@ -27,7 +27,7 @@ spring:
     generate-ddl: on
     defer-datasource-initialization: true
     open-in-view: true
-    show-sql: true
+    show-sql: false
     properties:
       hibernate.format_sql: true
       hibernate.default_batch_fetch_size: 100
