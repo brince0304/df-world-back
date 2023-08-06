@@ -134,7 +134,13 @@ public class CharacterService {
     @SaveAdventure
     @Transactional
     public CharacterEntity.CharacterEntityDto getCharacterAbility(CharacterEntity.CharacterEntityDto dto) throws InterruptedException {
-        CharacterEntity entity = characterEntityRepository.save(CharacterEntity.CharacterEntityDto.toEntity(dto));
+        CharacterEntity entity = characterEntityRepository.findById(dto.getCharacterId()).orElseGet(() -> {
+            try {
+                return characterEntityRepository.save(CharacterAbilityDto.toEntity(neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterAbilityUri(dto.getServerId(), dto.getCharacterId()), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto(), dto.getServerId()));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
         CharacterAbilityDto characterDto = neopleApiUtil.parseJsonFromUri(NeopleApiUtil.getCharacterAbilityUri(dto.getServerId(), dto.getCharacterId()), CharacterAbilityDto.CharacterAbilityJSONDto.class).toDto();
         characterStatusSetter(entity, characterDto);
         entity.setServerId(dto.getServerId());
