@@ -85,7 +85,6 @@ public class SaveFileService {
         String[] fileIdArr = Objects.requireNonNull(dto.boardFiles()).split(",");
         Set<SaveFile.SaveFileDto> saveFileDtos = new HashSet<>();
         for (String fileId : fileIdArr) {
-            log.info("fileId: {}", fileId);
             if (fileId.equals("")) {
                 break;
             }

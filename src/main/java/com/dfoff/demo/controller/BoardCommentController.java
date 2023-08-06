@@ -57,11 +57,14 @@ public class BoardCommentController {
             , List<BoardComment.BoardCommentResponse> bestComments) {
         map.put("comments", comments);
         comments.forEach(comment -> {
-            comment.getChildrenComments().forEach(childComment -> {
-                likeResponses.add(BoardComment.BoardCommentLikeResponse.from(childComment.getId(), redisService.checkBoardCommentLikeLog(req.getRemoteAddr(),boardId, childComment.getId())));
-            });
             likeResponses.add(BoardComment.BoardCommentLikeResponse.from(comment.getId(),redisService.checkBoardCommentLikeLog(req.getRemoteAddr(),boardId,comment.getId())));
         });
+        comments.forEach(comment ->{
+            commentService.getChildrenComments(comment.getId()).forEach(children->{
+                likeResponses.add(BoardComment.BoardCommentLikeResponse.from(children.getId(),redisService.checkBoardCommentLikeLog(req.getRemoteAddr(),boardId,children.getId())));
+            });
+            }
+        );
 
         map.put("bestComments", bestComments);
 

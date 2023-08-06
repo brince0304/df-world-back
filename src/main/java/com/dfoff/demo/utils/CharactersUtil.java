@@ -51,6 +51,10 @@ public class CharactersUtil {
             if(dto.getSkill().getBuff()!=null && levelPlus==0 && !dto.getSkill().getBuff().getSkillInfo().getName().equals("영광의 축복") && !dto.getSkill().getBuff().getSkillInfo().getName().equals("용맹의 축복") &&
             !dto.getSkill().getBuff().getSkillInfo().getName().equals("금단의 저주")){
                 list.add(dto.getSkill().getBuff().getSkillInfo().getName());
+                if(dto.getSkill().getBuff().getSkillInfo().getOption()==null){
+                    list.add("0");
+                    return list;
+                }
                 String desc = dto.getSkill().getBuff().getSkillInfo().getOption().getDesc();
                 List<String> val = dto.getSkill().getBuff().getSkillInfo().getOption().getValues();
                 StringTokenizer st = new StringTokenizer(desc,"\n");

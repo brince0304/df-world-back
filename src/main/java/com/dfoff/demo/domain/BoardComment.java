@@ -83,19 +83,14 @@ public class BoardComment extends AuditingFields {
         private final String commentContent;
         private final String boardId;
         private final String userId;
-
         private final String userNickname;
         private final Integer commentLikeCount;
         private final Boolean isParent;
-
         private final String userProfileImgUrl;
-        private final Set<BoardCommentResponse> childrenComments;
-
         private final String profileCharacterIcon;
-
         private final String profileCharacterIconClassName;
-
         private final BoardType boardType;
+        private final Long childrenCommentCount;
 
 
 
@@ -112,7 +107,7 @@ public class BoardComment extends AuditingFields {
                     .userNickname(boardComment.getUserAccount().getNickname())
                     .commentLikeCount(boardComment.getCommentLikeCount())
                     .isParent(boardComment.getIsParent())
-                    .childrenComments(boardComment.getChildrenComments().stream().map(BoardCommentResponse::from).collect(Collectors.toSet()))
+                    .childrenCommentCount(boardComment.getChildrenComments().stream().filter(c -> !c.getDeleted()).count())
                     .userProfileImgUrl(FileUtil.getProfileIconPath(boardComment.getUserAccount().getProfileIcon().getFileName()))
                     .boardType(boardComment.getBoard().getBoardType())
                     .profileCharacterIconClassName(boardComment.getUserAccount().getProfileCharacterIconClassName()==null?"":boardComment.getUserAccount().getProfileCharacterIconClassName())

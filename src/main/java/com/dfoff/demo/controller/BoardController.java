@@ -95,33 +95,6 @@ public class BoardController {
         return new ResponseEntity<>(modelMap, HttpStatus.OK);
     }
 
-
-    @Auth
-    @GetMapping("/boards/insert")
-    @BoardCheck
-    public ModelAndView getBoardInsert(@AuthenticationPrincipal UserAccount.PrincipalDto principal,@RequestParam String request,
-                                       @RequestParam(required = false) Long id) {
-        ModelAndView mav = new ModelAndView("/board/boardInsert");
-        if (request.equals("add")) {
-            mav.addObject("requestType", request);
-        } else if (request.equals("update")) {
-            Board.BoardDetailResponse boardResponse = boardService.getBoardDetailById(id);
-            mav.addObject("boardResponse", boardResponse);
-            mav.addObject("requestType", request);
-            StringBuilder sb = new StringBuilder();
-            for (String hashtag : boardResponse.getHashtags()) {
-                sb.append(",").append(hashtag);
-            }
-            mav.addObject("hashtag", sb);
-            mav.addObject("characterExist", boardResponse.getCharacter() != null);
-            if (boardResponse.getCharacter() != null) {
-                mav.addObject("characterName", boardResponse.getCharacter().getCharacterName());
-                mav.addObject("characterId", boardResponse.getCharacter().getCharacterId());
-                mav.addObject("serverId", boardResponse.getCharacter().getServerId());
-            }
-        }
-        return mav;
-    }
     @Auth
     @GetMapping("/hashtags/")
     public ResponseEntity<?> getHashtags(@AuthenticationPrincipal UserAccount.PrincipalDto principal, @RequestParam String query) {
