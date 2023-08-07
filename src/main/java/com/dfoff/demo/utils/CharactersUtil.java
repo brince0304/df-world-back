@@ -111,6 +111,27 @@ public class CharactersUtil {
             return null;
         }
     }
+    public static String getServerName(String serverId) {
+        if (serverId.equals("bakal")) {
+            return "바칼";
+        } else if (serverId.equals("cain")) {
+            return "카인";
+        } else if (serverId.equals("diregie")) {
+            return "디레지에";
+        } else if (serverId.equals("hilder")) {
+            return "힐더";
+        } else if (serverId.equals("prey")) {
+            return "프레이";
+        } else if (serverId.equals("siroco")) {
+            return "시로코";
+        } else if (serverId.equals("casillas")) {
+            return "카시야스";
+        } else if (serverId.equals("anton")) {
+            return "안톤";
+        } else {
+            return serverId;
+        }
+    }
 
     //계산법만 가져와서 씀
    // 제대로된 계산법을 찾지 못했기때문에 보류

@@ -193,27 +193,6 @@ public class CharacterEntity extends AuditingFields {
                     .build();
         }
 
-        public static String getServerName(String serverId) {
-            if (serverId.equals("bakal")) {
-                return "바칼";
-            } else if (serverId.equals("cain")) {
-                return "카인";
-            } else if (serverId.equals("diregie")) {
-                return "디레지에";
-            } else if (serverId.equals("hilder")) {
-                return "힐더";
-            } else if (serverId.equals("prey")) {
-                return "프레이";
-            } else if (serverId.equals("siroco")) {
-                return "시로코";
-            } else if (serverId.equals("casillas")) {
-                return "카시야스";
-            } else if (serverId.equals("anton")) {
-                return "안톤";
-            } else {
-                return serverId;
-            }
-        }
 
         public static CharacterEntityDto from(CharacterEntity entity) {
             return CharacterEntityDto.builder()
@@ -232,7 +211,7 @@ public class CharacterEntity extends AuditingFields {
                     .buffPower(entity.getBuffPower())
                     .damageIncrease(entity.getDamageIncrease())
                     .characterImgPath(NeopleApiUtil.getCharacterImgUri(entity.getServerId(), entity.getCharacterId(),"3"))
-                    .serverName(getServerName(entity.getServerId()))
+                    .serverName(CharactersUtil.getServerName(entity.getServerId()))
                     .build();
         }
 
@@ -290,7 +269,7 @@ public class CharacterEntity extends AuditingFields {
                     .jobGrowName(dto.getJobGrowName())
                     .adventureFame(dto.getAdventureFame())
                     .adventureName(dto.getAdventureName())
-                    .serverName(getServerName(dto.getServerId()))
+                    .serverName(CharactersUtil.getServerName(dto.getServerId()))
                     .guildId(dto.getGuildId())
                     .guildName(dto.getGuildName())
                     .modifiedAt(dto.getModifiedAt() != null ? timesAgo(dto.getModifiedAt()) : "방금 전")
@@ -313,7 +292,7 @@ public class CharacterEntity extends AuditingFields {
                     .jobGrowName(dto.getJobGrowName())
                     .adventureFame(dto.getAdventureFame())
                     .adventureName(dto.getAdventureName())
-                    .serverName(getServerName(dto.getServerId()))
+                    .serverName(CharactersUtil.getServerName(dto.getServerId()))
                     .guildId(dto.getGuildId())
                     .guildName(dto.getGuildName())
                     .modifiedAt(dto.getModifiedAt() != null ? timesAgo(dto.getModifiedAt()) : "방금 전")
@@ -334,34 +313,14 @@ public class CharacterEntity extends AuditingFields {
                     .jobGrowName(dto.getJobGrowName())
                     .adventureFame(dto.getAdventureFame())
                     .adventureName(dto.getAdventureName())
-                    .serverName(getServerName(serverId))
+                    .serverName(CharactersUtil.getServerName(serverId))
                     .guildId(dto.getGuildId())
                     .guildName(dto.getGuildName())
                     .status(dto.getStatus())
                     .build();
         }
 
-        public static String getServerName(String serverId) {
-            if (serverId.equals("bakal")) {
-                return "바칼";
-            } else if (serverId.equals("cain")) {
-                return "카인";
-            } else if (serverId.equals("diregie")) {
-                return "디레지에";
-            } else if (serverId.equals("hilder")) {
-                return "힐더";
-            } else if (serverId.equals("prey")) {
-                return "프레이";
-            } else if (serverId.equals("siroco")) {
-                return "시로코";
-            } else if (serverId.equals("casillas")) {
-                return "카시야스";
-            } else if (serverId.equals("anton")) {
-                return "안톤";
-            } else {
-                return serverId;
-            }
-        }
+
 
         public static Set<CharacterEntityResponse> from(Set<CharacterEntityDto> dtos) {
             return dtos.stream().map(CharacterEntityResponse::from).collect(Collectors.toSet());
@@ -406,7 +365,7 @@ public class CharacterEntity extends AuditingFields {
                     .jobGrowName(entity.getJobGrowName())
                     .adventureFame(entity.getAdventureFame())
                     .adventureName(entity.getAdventureName())
-                    .serverName(CharacterEntityDto.getServerName(entity.getServerId()))
+                    .serverName(CharactersUtil.getServerName(entity.getServerId()))
                     .modifiedAt(entity.getModifiedAt() != null ? timesAgo(entity.getModifiedAt()) : "방금 전")
                     .imgStyleClassName(CharactersUtil.getStyleClassName(entity.getJobName()))
                     .damageIncrease(entity.getDamageIncrease())
@@ -455,7 +414,7 @@ public class CharacterEntity extends AuditingFields {
                     .jobGrowName(entity.getJobGrowName())
                     .adventureFame(entity.getAdventureFame())
                     .adventureName(entity.getAdventureName())
-                    .serverName(CharacterEntityDto.getServerName(entity.getServerId()))
+                    .serverName(CharactersUtil.getServerName(entity.getServerId()))
                     .modifiedAt(entity.getModifiedAt() != null ? timesAgo(entity.getModifiedAt()) : "방금 전")
                     .buffPower(entity.getBuffPower())
                     .imgStyleClassName(CharactersUtil.getStyleClassName(entity.getJobName()))
@@ -482,7 +441,7 @@ public class CharacterEntity extends AuditingFields {
                     .characterId(entity.getCharacterId())
                     .characterName(entity.getCharacterName())
                     .serverId(entity.getServerId())
-                    .serverName(CharacterEntityDto.getServerName(entity.getServerId()))
+                    .serverName(CharactersUtil.getServerName(entity.getServerId()))
                     .jobName(entity.getJobName())
                     .jobGrowName(entity.getJobGrowName())
                     .adventureName(entity.getAdventureName())

@@ -11,7 +11,7 @@ df:
 management.endpoints.web.exposure.include: "*"
 oauth:
   kakao:
-    client-id: e73c04042b70c7c3dbea595a140c8221
+    client-id: ${KAKAO_CLIENT_ID}
     url:
       auth: https://kauth.kakao.com
       api: https://kapi.kakao.com

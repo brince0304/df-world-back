@@ -16,7 +16,7 @@ import org.hibernate.annotations.SQLDelete;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
+import com.dfoff.demo.utils.CharactersUtil;
 
 import java.io.Serializable;
 import java.security.Principal;
@@ -367,29 +367,6 @@ public class UserAccount extends AuditingFields {
         private final Integer buffPower;
         private final Integer damageIncrease;
         private final String serverName;
-
-        public static String getServerName(String serverId) {
-            if (serverId.equals("bakal")) {
-                return "바칼";
-            } else if (serverId.equals("cain")) {
-                return "카인";
-            } else if (serverId.equals("diregie")) {
-                return "디레지에";
-            } else if (serverId.equals("hilder")) {
-                return "힐더";
-            } else if (serverId.equals("prey")) {
-                return "프레이";
-            } else if (serverId.equals("siroco")) {
-                return "시로코";
-            } else if (serverId.equals("casillas")) {
-                return "카시야스";
-            } else if (serverId.equals("anton")) {
-                return "안톤";
-            } else {
-                return serverId;
-            }
-        }
-
         public static CharacterUserAccountResponse from(CharacterEntity characterEntity) {
             return CharacterUserAccountResponse.builder()
                     .characterId(characterEntity.getCharacterId())
@@ -402,7 +379,7 @@ public class UserAccount extends AuditingFields {
                     .characterImgPath(NeopleApiUtil.getCharacterImgUri(characterEntity.getServerId(),characterEntity.getCharacterId(),"2"))
                     .buffPower(characterEntity.getBuffPower())
                     .damageIncrease(characterEntity.getDamageIncrease())
-                    .serverName(getServerName(characterEntity.getServerId()))
+                    .serverName(CharactersUtil.getServerName(characterEntity.getServerId()))
                     .build();
         }
 
@@ -473,7 +450,7 @@ public class UserAccount extends AuditingFields {
                     .adventureName(userAccount.getAdventure().getAdventureName())
                     .representCharacterName(userAccount.getAdventure().getRepresentCharacter().getCharacterName())
                     .serverId(userAccount.getAdventure().getRepresentCharacter().getServerId())
-                    .serverName(CharacterEntity.CharacterEntityResponse.getServerName(userAccount.getAdventure().getRepresentCharacter().getServerId()))
+                    .serverName(CharactersUtil.getServerName(userAccount.getAdventure().getRepresentCharacter().getServerId()))
                     .adventureFame(userAccount.getAdventure().getAdventureFame().toString())
                     .adventureDamageIncreaseAndBuffPower(userAccount.getAdventure().getAdventureDamageIncreaseAndBuffPower().toString())
                     .characters(userAccount.getAdventure().getCharacters().stream().map(CharacterEntity.CharacterEntityMainPageResponse::from).collect(Collectors.toSet()))

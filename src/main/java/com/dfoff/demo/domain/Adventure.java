@@ -1,5 +1,6 @@
 package com.dfoff.demo.domain;
 
+import com.dfoff.demo.utils.CharactersUtil;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -117,7 +118,7 @@ public class Adventure extends AuditingFields {
                     .characters(adventure.getCharacters().stream().map(Board.CharacterBoardResponse::from).collect(Collectors.toSet()))
                     .adventureFame(adventure.getAdventureFame())
                     .adventureDamageIncreaseAndBuffPower(adventure.getAdventureDamageIncreaseAndBuffPower())
-                    .serverName(CharacterEntity.CharacterEntityDto.getServerName(adventure.getServerId()))
+                    .serverName(CharactersUtil.getServerName(adventure.getServerId()))
                     .build();
         }
     }
@@ -150,7 +151,7 @@ public class Adventure extends AuditingFields {
                             : adventure.getCharacters().stream().map(Board.CharacterBoardResponse::from).collect(Collectors.toList()))
                     .adventureFame(adventure.getAdventureFame())
                     .adventureDamageIncreaseAndBuffPower(adventure.getAdventureDamageIncreaseAndBuffPower())
-                    .serverName(CharacterEntity.CharacterEntityDto.getServerName(adventure.getServerId()))
+                    .serverName(CharactersUtil.getServerName(adventure.getServerId()))
                     .build();
         }
     }
@@ -186,7 +187,7 @@ public class Adventure extends AuditingFields {
                             : adventure.getCharacters().stream().map(CharacterEntity.CharacterEntityRankingResponse::from).collect(Collectors.toList()))
                     .adventureFame(adventure.getAdventureFame())
                     .adventureDamageIncreaseAndBuffPower(adventure.getAdventureDamageIncreaseAndBuffPower())
-                    .serverName(CharacterEntity.CharacterEntityDto.getServerName(adventure.getServerId()))
+                    .serverName(CharactersUtil.getServerName(adventure.getServerId()))
                     .characterCount((long) adventure.getCharacters().size())
                     .build();
         }
