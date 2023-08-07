@@ -26,6 +26,7 @@ public class SecurityService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        try{
         Optional<UserAccount> _account = userAccountRepository.findById(username);
         if (_account.isEmpty()) {
             throw new UsernameNotFoundException("사용자를 찾을수 없습니다.");
@@ -46,5 +47,10 @@ public class SecurityService implements UserDetailsService {
                 .profileIcon(Objects.requireNonNull(SaveFile.SaveFileDto.from(account.getProfileIcon())))
                 .authorities(authorities)
                 .build();
+    }
+        catch (Exception e){
+            log.error("SecurityService loadUserByUsername error",e);
+            throw e;
+        }
     }
 }
