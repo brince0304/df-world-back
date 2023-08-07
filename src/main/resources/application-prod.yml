@@ -38,7 +38,6 @@ spring:
   freemarker:
     expose-session-attributes: true
 server:
-  port: 8080
   ssl:
     enabled: true
     key-store: classpath:ssl/keystore.p12
