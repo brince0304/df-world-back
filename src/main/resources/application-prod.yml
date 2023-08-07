@@ -38,7 +38,7 @@ spring:
   freemarker:
     expose-session-attributes: true
 server:
-  port: 443
+  port: 8080
   ssl:
     enabled: true
     key-store: classpath:ssl/keystore.p12
@@ -46,7 +46,7 @@ server:
     key-store-type: PKCS12
     key-alias: tomcat
 getfile:
-  path: https://api.df-world.kr
+  path: https://api.df-world.kr:8080
 
 
 
