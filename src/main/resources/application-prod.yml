@@ -43,7 +43,6 @@ server:
     key-store: classpath:ssl/keystore.p12
     key-store-password: ${KEY_STORE_PASSWORD}
     key-store-type: PKCS12
-    key-alias: tomcat
 getfile:
   path: https://api.df-world.kr:8080
 
