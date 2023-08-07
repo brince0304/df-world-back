@@ -38,7 +38,7 @@ spring:
   freemarker:
     expose-session-attributes: true
 getfile:
-  path: https://api.df-world.kr:8080
+  path: https://api.df-world.kr/
 
 
 
