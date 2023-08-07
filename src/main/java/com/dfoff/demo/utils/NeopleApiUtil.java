@@ -135,23 +135,30 @@ public class NeopleApiUtil {
     }
 
     public <T> T parseJsonFromUri(String url, Class<T> clazz) throws InterruptedException {
-        log.info("api_key : {}", API_KEY);
-        log.info("url : {}", url);
-        String newUrl = url.replace("{API_KEY}", API_KEY);
-        HashMap<String, String> result = new HashMap<>();
-        HttpHeaders header = new HttpHeaders();
-        HttpEntity<?> entity = new HttpEntity<>(header);
-        UriComponents uri = UriComponentsBuilder.fromHttpUrl(newUrl).build();
-        ResponseEntity<?> response = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, String.class);
-        if(response.getStatusCode() == HttpStatus.BAD_REQUEST){
-            TimeUnit.MILLISECONDS.sleep(500);
-            return parseJsonFromUri(newUrl, clazz);
-        }if(response.getStatusCode().is5xxServerError()){
-            throw new IllegalArgumentException("서버가 점검중이거나 장애가 발생하였습니다.");
-        }if(response.getStatusCode().is4xxClientError()){
+        try {
+            log.info("api_key : {}", API_KEY);
+            log.info("url : {}", url);
+            String newUrl = url.replace("{API_KEY}", API_KEY);
+            HashMap<String, String> result = new HashMap<>();
+            HttpHeaders header = new HttpHeaders();
+            HttpEntity<?> entity = new HttpEntity<>(header);
+            UriComponents uri = UriComponentsBuilder.fromHttpUrl(newUrl).build();
+            ResponseEntity<?> response = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, String.class);
+            if (response.getStatusCode() == HttpStatus.BAD_REQUEST) {
+                TimeUnit.MILLISECONDS.sleep(500);
+                return parseJsonFromUri(newUrl, clazz);
+            }
+            if (response.getStatusCode().is5xxServerError()) {
+                throw new IllegalArgumentException("서버가 점검중이거나 장애가 발생하였습니다.");
+            }
+            if (response.getStatusCode().is4xxClientError()) {
+                throw new IllegalArgumentException("잘못된 요청입니다.");
+            }
+            return gson.fromJson(Objects.requireNonNull(response.getBody()).toString(), clazz);
+        } catch (Exception e) {
+            log.error("parseJsonFromUri error : {}", e.getMessage());
             throw new IllegalArgumentException("잘못된 요청입니다.");
         }
-        return gson.fromJson(Objects.requireNonNull(response.getBody()).toString(), clazz);
     }
 
 
