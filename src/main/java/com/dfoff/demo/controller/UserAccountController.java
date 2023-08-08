@@ -242,8 +242,8 @@ public class UserAccountController {
      try{
          TokenDto token =userAccountService.getToken(request.getUsername(), request.getPassword());
          redisService.set(TokenProvider.REFRESH_TOKEN_NAME+request.getUsername(),token.getRefreshToken(),TokenProvider.REFRESH_TOKEN_VALIDATION_SECOND);
-            res.addCookie(CookieUtil.createAccessTokenCookie(token.getAccessToken(), TokenProvider.TOKEN_VALIDATION_SECOND));
-            res.addCookie(CookieUtil.createRefreshTokenCookie(token.getRefreshToken(), TokenProvider.REFRESH_TOKEN_VALIDATION_SECOND));
+            res.addHeader("Set-Cookie",CookieUtil.createAccessTokenCookie(token.getAccessToken(), TokenProvider.TOKEN_VALIDATION_SECOND).toString());
+            res.addHeader("Set-Cookie",CookieUtil.createRefreshTokenCookie(token.getRefreshToken(), TokenProvider.REFRESH_TOKEN_VALIDATION_SECOND).toString());
             return new ResponseEntity<>(userAccountService.getLoginResponse(request.getUsername()),HttpStatus.OK);
      }catch(BadCredentialsException e){
             return new ResponseEntity<>("아이디 또는 비밀번호가 틀렸습니다.", HttpStatus.BAD_REQUEST);
@@ -257,8 +257,8 @@ public class UserAccountController {
             TokenDto token = oauthDto.getTokenDto();
             oAuthLoginService.authenticateUser(dto);
             redisService.set(TokenProvider.REFRESH_TOKEN_NAME+dto.userId(),token.getRefreshToken(),TokenProvider.REFRESH_TOKEN_VALIDATION_SECOND);
-            res.addCookie(CookieUtil.createAccessTokenCookie(token.getAccessToken(), TokenProvider.TOKEN_VALIDATION_SECOND));
-            res.addCookie(CookieUtil.createRefreshTokenCookie(token.getRefreshToken(), TokenProvider.REFRESH_TOKEN_VALIDATION_SECOND));
+            res.addHeader("Set-Cookie",CookieUtil.createAccessTokenCookie(token.getAccessToken(), TokenProvider.TOKEN_VALIDATION_SECOND).toString());
+            res.addHeader("Set-Cookie",CookieUtil.createRefreshTokenCookie(token.getRefreshToken(), TokenProvider.REFRESH_TOKEN_VALIDATION_SECOND).toString());
         return new ResponseEntity<>(userAccountService.getLoginResponse(dto.userId()),HttpStatus.OK);
     }
 
@@ -271,8 +271,8 @@ public class UserAccountController {
         if(accessToken!=null && refreshToken!=null){
             redisService.delete(TokenProvider.REFRESH_TOKEN_NAME+principal.getUsername());
             redisService.setBlackList(principal.getUsername(),accessToken.getValue(), TokenProvider.TOKEN_VALIDATION_SECOND);
-            response.addCookie(CookieUtil.createAccessTokenCookie("", 0));
-            response.addCookie(CookieUtil.createRefreshTokenCookie("", 0));
+            response.addHeader("Set-Cookie",CookieUtil.createExpiredCookie(TokenProvider.ACCESS_TOKEN_NAME).toString());
+            response.addHeader("Set-Cookie",CookieUtil.createExpiredCookie(TokenProvider.REFRESH_TOKEN_NAME).toString());
             return new ResponseEntity<>("로그아웃 되었습니다.", HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

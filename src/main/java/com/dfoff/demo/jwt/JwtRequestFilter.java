@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.el.parser.Token;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -72,8 +73,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(dto, null, dto.getAuthorities());
                 usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                accessTokenCookie = CookieUtil.createAccessTokenCookie(tokenProvider.generateToken(dto),TokenProvider.TOKEN_VALIDATION_SECOND );
-                response.addCookie(accessTokenCookie);
+                ResponseCookie accessTokenResponseCookie = CookieUtil.createAccessTokenCookie(tokenProvider.generateToken(dto),TokenProvider.TOKEN_VALIDATION_SECOND);
+                 accessTokenCookie = CookieUtil.getCookieFromResponseCookie(accessTokenResponseCookie);
+                response.addHeader("Set-Cookie",accessTokenResponseCookie.toString());
             }
             // 액세스 토큰 만료됐을 때 && 리프레쉬 토큰은 만료되면 쿠키가 없기 때문에 예외 발생 X
         } catch (ExpiredJwtException e) {
@@ -86,20 +88,23 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 String redisJwt = redisService.get(TokenProvider.REFRESH_TOKEN_NAME + refreshUname);
                 if (refreshJwt.equals(redisJwt)) {
                     UserAccount.PrincipalDto dto = (UserAccount.PrincipalDto) securityService.loadUserByUsername(refreshUname);
-                    accessTokenCookie = CookieUtil.createAccessTokenCookie(tokenProvider.doGenerateToken(dto, TokenProvider.TOKEN_VALIDATION_SECOND), TokenProvider.REFRESH_TOKEN_VALIDATION_SECOND);
-                    response.addCookie(accessTokenCookie);
+                    ResponseCookie accessTokenResponseCookie = CookieUtil.createAccessTokenCookie(tokenProvider.generateToken(dto),TokenProvider.TOKEN_VALIDATION_SECOND);
+                    accessTokenCookie = CookieUtil.getCookieFromResponseCookie(accessTokenResponseCookie);
+                    response.addHeader("Set-Cookie",accessTokenResponseCookie.toString());
                     UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(dto, null, dto.getAuthorities());
                     usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 }
             }else{
-                accessTokenCookie = CookieUtil.createAccessTokenCookie("",0);
+                ResponseCookie cookie = CookieUtil.createExpiredCookie(TokenProvider.ACCESS_TOKEN_NAME);
+                accessTokenCookie = CookieUtil.getCookieFromResponseCookie(cookie);
                 response.addCookie(accessTokenCookie);
             }
         }catch (UsernameNotFoundException e){
             log.warn(e.getMessage());
             log.warn("username not found");
-            accessTokenCookie = CookieUtil.createAccessTokenCookie("",0);
+            ResponseCookie cookie = CookieUtil.createExpiredCookie(TokenProvider.ACCESS_TOKEN_NAME);
+            accessTokenCookie = CookieUtil.getCookieFromResponseCookie(cookie);
             response.addCookie(accessTokenCookie);
         }
         filterChain.doFilter(request, response);
