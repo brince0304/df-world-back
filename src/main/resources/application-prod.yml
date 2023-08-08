@@ -39,6 +39,12 @@ spring:
     expose-session-attributes: true
 getfile:
   path: https://api.df-world.kr
+server:
+  reactive:
+    session:
+      cookie:
+        same-site: none
+        secure: true
 
 
 
