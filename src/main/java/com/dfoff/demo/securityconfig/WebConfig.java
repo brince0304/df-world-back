@@ -9,7 +9,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry corsRegistry) {
         corsRegistry.addMapping("/**")
-                .allowedOrigins("https://legendary-jalebi-9c6bf2.netlify.app","http://localhost:3000","https://df-world.kr")
+                .allowedOrigins("https://df-world.netlify.app","http://localhost:3000","https://df-world.kr")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH")
                 .allowCredentials(true)
         .maxAge(3600L);
