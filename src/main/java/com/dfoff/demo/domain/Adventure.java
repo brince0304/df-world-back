@@ -131,7 +131,7 @@ public class Adventure extends AuditingFields {
     public static class AdventureMainPageResponse {
         private String adventureName;
 
-        private String representCharacterId;
+        private String representCharacterName;
 
         private String serverId;
 
@@ -143,15 +143,20 @@ public class Adventure extends AuditingFields {
 
         private List<Board.CharacterBoardResponse> characters;
 
+        private Integer characterCount;
+
         public static AdventureMainPageResponse from(Adventure adventure){
             return AdventureMainPageResponse.builder()
                     .adventureName(adventure.getAdventureName())
                     .serverId(adventure.getServerId())
-                    .characters(adventure.getCharacters().size()>4? adventure.getCharacters().stream().map(Board.CharacterBoardResponse::from).collect(Collectors.toList()).subList(0,3)
+                    .characters(adventure.getCharacters().size()>4? adventure.getCharacters().stream().map(Board.CharacterBoardResponse::from).collect(Collectors.toList()).subList(0,4)
                             : adventure.getCharacters().stream().map(Board.CharacterBoardResponse::from).collect(Collectors.toList()))
                     .adventureFame(adventure.getAdventureFame())
                     .adventureDamageIncreaseAndBuffPower(adventure.getAdventureDamageIncreaseAndBuffPower())
                     .serverName(CharactersUtil.getServerName(adventure.getServerId()))
+                    .characterCount(adventure.getCharacters().size())
+                    .representCharacterName(adventure.getRepresentCharacter() != null? adventure.getRepresentCharacter().getCharacterName() :
+                    adventure.getCharacters().stream().findFirst().get().getCharacterName())
                     .build();
         }
     }
