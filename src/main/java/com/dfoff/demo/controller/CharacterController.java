@@ -118,6 +118,14 @@ public class CharacterController {
     }
 
 
+    @GetMapping("/characters/mainAdventureRank")
+    public ResponseEntity<?> getCharacterMainAdventureRanking(@RequestParam String searchType){
+        if(searchType.equals("adventureFame")){
+            return ResponseEntity.ok(adventureService.getAdventureRankingBest5OrderByAdventureFame());
+        }
+        return ResponseEntity.ok(adventureService.getAdventureRankingBest5OrderByAdventureDamageIncreaseAndBuffPower());
+    }
+
 
 
 
