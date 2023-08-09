@@ -28,8 +28,6 @@ public class SaveFile extends AuditingFields {
     private String fileName;
     @Setter
     private String filePath;
-
-
     @Setter
     private String fileType;
     @Setter

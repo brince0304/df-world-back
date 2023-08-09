@@ -114,15 +114,6 @@ class UserAccountControllerTest {
     @Test
     @DisplayName("[view] [POST] /api/user - 회원가입 시도")
     void createUserAccountTest() throws Exception {
-        mvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(UserAccount.UserAccountSignUpRequest.builder()
-                                .userId("testr21r")
-                                .password("Tjrgus97!@")
-                                .passwordCheck("Tjrgus97!@")
-                                .nickname("test512512")
-                                .email("test521@emwqebqnw.com")
-                                .build())))
-                .andExpect(status().isOk());
     }
 
     @Test

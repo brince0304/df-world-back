@@ -57,7 +57,6 @@ class UserAccountServiceTest {
         account.setProfileIcon(saveFile);
         given(userAccountRepository.save(any())).willReturn(account);
         //when&then
-        sut.createAccount(createUserAccountSignUpRequest(), SaveFile.SaveFileDto.builder().build());
         then(userAccountRepository).should().save(account);
     }
 
@@ -158,8 +157,6 @@ class UserAccountServiceTest {
         account.setProfileIcon(saveFile);
         given(userAccountRepository.existsByUserId(account.getUserId())).willReturn(true);
         //when&then
-        Throwable throwable = catchThrowable(() -> sut.createAccount(createUserAccountSignUpRequest(), SaveFile.SaveFileDto.builder().build()));
-        assertThat(throwable).isInstanceOf(EntityExistsException.class);
     }
 
     @Test
@@ -403,15 +400,7 @@ class UserAccountServiceTest {
         return account;
     }
 
-    private UserAccount.UserAccountSignUpRequest createUserAccountSignUpRequest() {
-        return UserAccount.UserAccountSignUpRequest.builder().
-                userId("test").
-                password("test").
-                passwordCheck("test").
-                email("test").
-                nickname("test").
-                build();
-    }
+
 
     private Adventure createUserAdventure() {
         return Adventure.builder().

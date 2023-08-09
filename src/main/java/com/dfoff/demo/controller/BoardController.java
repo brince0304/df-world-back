@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.dfoff.demo.controller.UserAccountController.getCharacterResponse;
 
@@ -47,6 +48,7 @@ public class BoardController {
                                      @RequestParam(required = false) String keyword,
                                      @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable,
                                      @RequestParam(required = false) String searchType) {
+
         return new ResponseEntity<>(boardService.getBoardsByKeyword(boardType, keyword, searchType, pageable), HttpStatus.OK);
     }
 
@@ -91,6 +93,14 @@ public class BoardController {
         }
         Board.BoardDetailResponse boardResponse = boardService.getBoardDetailById(boardId);
         modelMap.put("article", boardResponse);
+        Set<SaveFile.SaveFileDto> files = boardService.getBoardSaveFile(boardId);
+        Set<SaveFile.SaveFileDto> removedFiles = files.stream().map(o->{
+            if(!saveFileService.isExistById(o.id())){
+                return o;
+            }
+            return null;}).filter(Objects::nonNull).collect(Collectors.toSet());
+
+        modelMap.put("boardFiles", boardService.getBoardSaveFile(boardId));
         modelMap.put("likeLog", redisService.checkBoardLikeLog(req.getRemoteAddr(), boardId));
         return new ResponseEntity<>(modelMap, HttpStatus.OK);
     }

@@ -286,8 +286,8 @@ public class UserAccountService {
     }
 
     public void changeNickname(UserAccount.UserAccountDto accountDto, String nickname) {
-        if (!nickname.matches("^[a-zA-Z0-9가-힣]{2,10}$")) {
-            throw new IllegalArgumentException("닉네임은 2~10자리로 입력해주세요.");
+        if (!nickname.matches("^[a-zA-Z0-9가-힣]{2,6}$")) {
+            throw new IllegalArgumentException("닉네임은 2~6자리로 입력해주세요.");
         }
         if (userAccountRepository.existsByNickname(nickname)) {
             throw new IllegalArgumentException("이미 존재하는 닉네임입니다.");

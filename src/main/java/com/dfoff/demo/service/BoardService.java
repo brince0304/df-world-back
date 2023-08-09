@@ -26,7 +26,6 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final HashtagRepository hashtagRepository;
-
     private final BoardHashtagMapperRepository mapper;
 
 
@@ -42,6 +41,15 @@ public class BoardService {
             board_.setCharacter(CharacterEntity.CharacterEntityDto.toEntity(character));
         }
         return board_.getId();
+    }
+
+    @Transactional
+    public void cleanRemovedFiles (Long boardId, Set<SaveFile.SaveFileDto> removedFiles){
+        Board board = boardRepository.findById(boardId).orElseThrow(()-> new EntityNotFoundException("게시글이 없습니다."));
+        Set<SaveFile> saveFiles = board.getBoardFiles();
+        for (SaveFile.SaveFileDto removedFile : removedFiles) {
+            saveFiles.removeIf(o-> o.getFileName().equals(removedFile.fileName()));
+        }
     }
 
     public void saveHashtagAndBoard(Board board , List<Hashtag.HashtagRequest> hashtags){

@@ -17,15 +17,15 @@ import org.springframework.web.servlet.ModelAndView;
 @Slf4j
 public class BasicControllerAdvice {
     @ExceptionHandler(EntityNotFoundException.class)
-    public ModelAndView handleEntityNotFoundException(EntityNotFoundException exception) {
+    public ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException exception) {
         log.error(exception.getMessage());
-        return new ModelAndView ("errorPage/404",HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(HttpClientErrorException.class)
-    public ModelAndView handleHttpClientErrorException(HttpClientErrorException exception) {
+    public ResponseEntity<?> handleHttpClientErrorException(HttpClientErrorException exception) {
         log.error(exception.getMessage());
-        return new ModelAndView (exception.getMessage(),HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(exception.getMessage(), exception.getStatusCode());
     }
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentExceptionException(IllegalArgumentException exception) {
@@ -41,23 +41,23 @@ public class BasicControllerAdvice {
 
 
     @ExceptionHandler(IllegalAccessException.class)
-    public ModelAndView handleIllegalAccessException(IllegalAccessException exception) {
+    public ResponseEntity<?> handleIllegalAccessException(IllegalAccessException exception) {
         log.error(exception.getMessage());
-        return new ModelAndView("errorPage/403", HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(SecurityException.class)
-    public ModelAndView handleSecurityExceptionException(SecurityException exception) {
+    public ResponseEntity<?> handleSecurityExceptionException(SecurityException exception) {
         log.error(exception.getMessage());
-        return new ModelAndView("errorPage/401", HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ModelAndView handleMissingServletRequestParameterException
+    public ResponseEntity<?> handleMissingServletRequestParameterException
             (MissingServletRequestParameterException
                      exception) {
         log.error(exception.getMessage());
-        return new ModelAndView("errorPage/404", HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(EntityExistsException.class)

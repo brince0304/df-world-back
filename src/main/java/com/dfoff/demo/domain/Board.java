@@ -207,20 +207,13 @@ public class Board extends AuditingFields {
         private final Integer boardViewCount;
         private final Integer boardLikeCount;
         private final String commentCount;
-
         private final String userId;
-
         private final String userNickname;
-
         private final String userProfileImgUrl;
-
         private final Boolean userAdventureExist;
-
         private final String profileCharacterIcon;
         private final String profileCharacterIconClassName;
-
         private final CharacterBoardResponse character;
-
         private final Set<String> hashtags;
 
 
@@ -341,7 +334,7 @@ public class Board extends AuditingFields {
             BoardType boardType,
             @Size(min = 2, max = 50, message = "제목은 2자 이상 50자 이하로 입력해주세요.")
             String boardTitle,
-            @Size(min = 12, max = 5000, message = "내용은 5자 이상 5000자 이하로 입력해주세요.")
+            @Size(min = 10, max = 5000, message = "내용은 10자 이상 5000자 이하로 입력해주세요.")
             String boardContent,
             List<Hashtag.HashtagRequest> hashtag,
 
@@ -377,32 +370,21 @@ public class Board extends AuditingFields {
         private final String modifiedBy;
         private final Long id;
         private final BoardType boardType;
-
         private final String boardTitle;
-
         private final String boardContent;
-
         private Boolean deleted;
         private final Integer boardViewCount;
         private final Integer boardLikeCount;
-
         private final CharacterBoardResponse character;
-
         private final String userId;
-
         private final String userNickname;
-
         private final String userProfileIconPath;
-
         private final String commentCount;
-
         private final List<String> hashtags;
-
         private final Boolean userAdventureExist;
-
         private final String profileCharacterIcon;
-
         private final String profileCharacterIconClassName;
+        private final String boardFiles;
 
         public String convert(String date) {
             return converter.convert(date);
@@ -445,6 +427,7 @@ public class Board extends AuditingFields {
                     .userAdventureExist(board.getUserAccount().getAdventure() != null)
                     .profileCharacterIcon(board.getUserAccount().getProfileCharacterIcon() == null ? "" : board.getUserAccount().getProfileCharacterIcon())
                     .profileCharacterIconClassName(board.getUserAccount().getProfileCharacterIcon() == null ? "" : board.getUserAccount().getProfileCharacterIconClassName())
+                    .boardFiles(board.getBoardFiles().stream().map(SaveFile::getId).map(String::valueOf).collect(Collectors.joining(",")))
                     .build();
         }
     }
